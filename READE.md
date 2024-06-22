@@ -1,3 +1,0 @@
-
-## EZBUY BACKEND
-
