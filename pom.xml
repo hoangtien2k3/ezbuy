@@ -68,7 +68,18 @@
     </dependencies>
 
     <modules>
+        <module>analytics-service</module>
+        <module>auth-service</module>
+        <module>cart-service</module>
+        <module>category-service</module>
+        <module>inventory-service</module>
+        <module>notification-service</module>
         <module>order-service</module>
+        <module>payment-service</module>
+        <module>product-service</module>
+        <module>review-service</module>
+        <module>shipping-service</module>
+        <module>user-service</module>
     </modules>
 
 </project>
