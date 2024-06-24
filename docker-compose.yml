@@ -6,10 +6,10 @@ services:
     image: postgres:16.3
     container_name: postgres
     build: ./docker/postgres
-    hostname: ${POSTGRES_HOST}
+    hostname: ${POSTGRES_HOSTNAME}
     restart: always
     ports:
-      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+      - "${POSTGRES_PORT}:${POSTGRES_HOST}"
     volumes:
       - ./docker/postgres/postgresql.conf.sample:/usr/share/postgresql/postgresql.conf.sample
       - ./postgres_init.sql:/docker-entrypoint-initdb.d/postgres_init.sql
@@ -25,7 +25,7 @@ services:
     image: dpage/pgadmin4:8.8
     container_name: pgadmin
     ports:
-      - "5050:80"
+      - "${PGADMIN_LISTEN_PORT}:80"
     volumes:
       - pgadmin:/var/lib/pgadmin
     environment:
