@@ -1,7 +1,6 @@
--- Quản lý người dùng
-
+-- Table: users -> Quản lý người dùng
 -- Chứa thông tin về trạng thái của người dùng.
-CREATE TYPE user_status AS ENUM ('active', 'inactive', 'banned');
+CREATE TYPE USER_STATUS AS ENUM ('active', 'inactive', 'banned');
 
 -- Chứa thông tin cơ bản của người dùng.
 CREATE TABLE users
@@ -9,14 +8,15 @@ CREATE TABLE users
     user_id         SERIAL PRIMARY KEY,
     username        VARCHAR(50) UNIQUE  NOT NULL,
     email           VARCHAR(100) UNIQUE NOT NULL,
-    password_hash   TEXT                NOT NULL,
+    password        TEXT                NOT NULL,
     first_name      VARCHAR(50),
     last_name       VARCHAR(50),
+    full_name       VARCHAR(100),
     phone_number    VARCHAR(15),
     gender          VARCHAR(10) CHECK ( gender IN ('male', 'female', 'other')),
     date_of_birth   DATE,
     profile_picture TEXT,
-    status          user_status         NOT NULL DEFAULT 'active',
+    status          USER_STATUS         NOT NULL DEFAULT 'active',
     postal_code     VARCHAR(20)         NOT NULL,
     country         VARCHAR(100)        NOT NULL,
     created_at      TIMESTAMP                    DEFAULT CURRENT_TIMESTAMP,
@@ -87,13 +87,3 @@ CREATE TABLE user_settings
     PRIMARY KEY (user_id, setting_key),
     FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
-
--- tạo index cho bảng
--- CREATE INDEX idx_users_email ON users(email);
--- CREATE INDEX idx_user_roles_user_id ON user_roles(user_id);
--- CREATE INDEX idx_addresses_user_id ON addresses(user_id);
--- CREATE INDEX idx_user_activity_user_id ON user_activity(user_id);
--- CREATE INDEX idx_login_history_user_id ON login_history(user_id);
--- CREATE INDEX idx_user_settings_user_id ON user_settings(user_id);
--- CREATE INDEX idx_user_sessions_user_id ON user_sessions(user_id);
--- CREATE INDEX idx_user_preferences_user_id ON user_preferences(user_id);
