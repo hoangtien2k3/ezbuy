@@ -3,7 +3,7 @@ server:
 
 spring:
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/data
+    url: r2dbc:postgresql://localhost:5434/data
     username: admin
     password: admin
     pool:

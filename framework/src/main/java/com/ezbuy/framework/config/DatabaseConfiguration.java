@@ -29,26 +29,25 @@
 //
 //    private final DatabaseConversion databaseConversion;
 //
-//
 //    @Bean
-//    @ConfigurationProperties(prefix = "spring.r2dbc.mariadb")
-//    public R2dbcProperties mariaDbProperties() {
+//    @ConfigurationProperties(prefix = "spring.r2dbc.postgresql")
+//    public R2dbcProperties postgresqlProperties() {
 //        return new R2dbcProperties();
 //    }
 //
 //    @Bean
 //    @Override
 //    public ConnectionFactory connectionFactory() {
-//        ConnectionFactory connectionFactory = ConnectionFactories.get(mariaDbProperties().getUrl());
+//        ConnectionFactory connectionFactory = ConnectionFactories.get(postgresqlProperties().getUrl());
 //        ConnectionPoolConfiguration configuration = ConnectionPoolConfiguration.builder(connectionFactory)
-//                .maxSize(mariaDbProperties().getPool().getMaxSize())
-//                .initialSize(mariaDbProperties().getPool().getInitialSize())
+//                .maxSize(postgresqlProperties().getPool().getMaxSize())
+//                .initialSize(postgresqlProperties().getPool().getInitialSize())
 //                .build();
 //        return new ConnectionPool(configuration);
 //    }
 //
 //    @Bean
-//    public R2dbcEntityOperations mariaDbEntityTemplate(ConnectionFactory connectionFactory) {
+//    public R2dbcEntityOperations postgresqlEntityTemplate(ConnectionFactory connectionFactory) {
 //        DatabaseClient databaseClient = DatabaseClient.builder()
 //                .connectionFactory(connectionFactory)
 //                .bindMarkers(MySqlDialect.INSTANCE.getBindMarkersFactory())
