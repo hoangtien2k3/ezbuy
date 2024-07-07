@@ -1,0 +1,23 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /customer
+
+spring:
+  application:
+    name: customer
+  messages:
+    basename: lang
+    encoding: UTF-8
+    cache-duration: 3600
+
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5434/customer
+    username: admin
+    password: admin
+    pool:
+      initial-size: 50
+      max-size: 100
+      enabled: true
+      validation-query: select 1
+      max-life-time: 9223372036854775807

@@ -8,8 +8,7 @@
         <version>3.3.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-
-    <groupId>com.ezbuy</groupId>
+    <groupId>com.ezbuy.ecommerce</groupId>
     <artifactId>ezbuy-backend</artifactId>
     <version>${revision}</version>
     <name>ezbuy-backend</name>
@@ -17,30 +16,18 @@
     <description>EzBuy</description>
 
     <modules>
-        <module>analytics-model</module>
-        <module>analytics-service</module>
-        <module>auth-model</module>
-        <module>auth-service</module>
-        <module>cart-model</module>
-        <module>cart-service</module>
-        <module>category-model</module>
-        <module>category-service</module>
-        <module>inventory-model</module>
-        <module>inventory-service</module>
-        <module>notification-model</module>
-        <module>notification-service</module>
-        <module>order-model</module>
-        <module>order-service</module>
-        <module>payment-model</module>
-        <module>payment-service</module>
-        <module>product-model</module>
-        <module>product-service</module>
-        <module>review-model</module>
-        <module>review-service</module>
-        <module>shipping-model</module>
-        <module>shipping-service</module>
-        <module>user-model</module>
-        <module>user-service</module>
+        <module>coupon</module>
+        <module>customer</module>
+        <module>data</module>
+        <module>framework</module>
+        <module>order</module>
+        <module>payment</module>
+        <module>product</module>
+        <module>report</module>
+        <module>setting</module>
+        <module>shipping</module>
+        <module>system</module>
+        <module>tax</module>
     </modules>
 
     <properties>
@@ -73,21 +60,18 @@
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+
 <!--        <dependency>-->
-<!--            <groupId>org.postgresql</groupId>-->
-<!--            <artifactId>postgresql</artifactId>-->
-<!--            <version>42.7.3</version>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-data-jpa</artifactId>-->
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <groupId>org.springframework.boot</groupId>-->
+<!--                    <artifactId>spring-boot-starter-logging</artifactId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
 <!--        </dependency>-->
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>

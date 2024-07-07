@@ -1,0 +1,12 @@
+server:
+  port: 8954
+
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/data
+    username: admin
+    password: admin
+    pool:
+      enabled: true
+      initial-size: 10
+      max-size: 20
