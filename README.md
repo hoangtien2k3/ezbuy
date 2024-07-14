@@ -1,7 +1,7 @@
-<p style="display: inline-block; vertical-align: middle;">
-  <img src="docs/image/ezbuy_logo.png" alt="EzBuy Logo" style="height: 50px; vertical-align: middle; margin-right: 10px;" />
-  <span style="font-size: 50px; vertical-align: middle;">EZBUY</span>
-</p>
+<div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+  <img src="docs/image/ezbuy_logo.png" alt="EzBuy Logo" style="max-width: 100%; height: auto; width: 300px;" />
+</div>
+
 
 ## EzBuy E-Commerce
 EzBuy Backend
