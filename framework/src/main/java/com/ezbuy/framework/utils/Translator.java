@@ -52,8 +52,9 @@ public class Translator {
         } else {
             locale = localeContextResolver.resolveLocaleContext(exchange).getLocale();
         }
-        return Mono.fromSupplier(() -> messageSource.getMessage(msgCode, params, locale == null ? Objects.requireNonNull(defaultLocale) :
-                locale)).subscribeOn(Schedulers.boundedElastic());
+        return Mono.fromSupplier(() -> messageSource.getMessage(msgCode, params, locale == null
+                ? Objects.requireNonNull(defaultLocale) : locale)
+        ).subscribeOn(Schedulers.boundedElastic());
     }
 
     public static String toLocale(String msgCode, Object... params) {

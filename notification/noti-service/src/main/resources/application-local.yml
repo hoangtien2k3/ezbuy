@@ -1,0 +1,62 @@
+server:
+  port: 7777
+logging:
+  level:
+      root: DEBUG
+client:
+  product:
+    internal-oauth: true
+    address: http://localhost:8090/product/v1/product
+    name: product
+    pool:
+      max-size: 100
+      max-pending-acquire: 100
+  auth:
+    internal-oauth: true
+    address: http://171.244.139.171:8089/v1/
+    name: auth
+    pool:
+      max-size: 100
+      max-pending-acquire: 100
+    timeout:
+      read: 60000
+      write: 1000
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  r2dbc:
+    url: r2dbc:mariadb://10.207.222.154:9001/sme_notification
+    username: admin
+    password: 123456@
+  mail:
+    host: smtp.viettel.com.vn
+    port: 465
+    username: crawler@viettel.com.vn
+    password: Bccs@202112
+    protocol: smtp
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true
+      ssl.trust: smtp.viettel.com.vn
+      ssl.enable: true
+      tls.trust: smtp.viettel.com.vn
+      tls.enable: true
+application:
+  http-logging:
+    request:
+      enable: true
+      header: true
+      param: true
+      body: true
+    response:
+      enable: true
+      body: true
+  whiteList:
+    - uri: /actuator/health
+      methods:
+        - GET
+    - uri: /**
+      methods:
+        - OPTIONS
+config:
+  resendCount: 2

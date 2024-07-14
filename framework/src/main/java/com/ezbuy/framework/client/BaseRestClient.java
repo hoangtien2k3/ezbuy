@@ -20,15 +20,7 @@ public interface BaseRestClient<T> {
 
     Optional<T> processReturn(String response, Class<?> resultClass);
 
-    /**
-     * call api ca, tach rieng do khong the convert chuoi base64 ve Object
-     * @param webClient
-     * @param url
-     * @param headerList
-     * @param payload
-     * @param resultClass
-     * @return
-     */
+    // call api ca, tach rieng do khong the convert chuoi base64 ve Object
     Mono<String> callApiCertificateFileService(WebClient webClient, String url, MultiValueMap<String, String> headerList, Object payload, Class<?> resultClass);
 
     Mono<Optional<T>> callPostBodyJson(WebClient webClient, String url, MultiValueMap<String, String> headerList, Object payload, Class<?> resultClass);

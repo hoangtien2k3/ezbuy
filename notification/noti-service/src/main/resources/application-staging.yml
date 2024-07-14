@@ -1,0 +1,43 @@
+server:
+  port: 7777
+oauth2:
+  keycloak:
+    client-uri: http://localhost:36355/auth/realms/sme-portal/protocol/openid-connect/token
+    client-id: web-client
+    client-secret: jzLlmUxlxLMMOpnjkNU3wMDZuCKB8GUE
+client:
+  keycloak:
+    address: http://sme-keycloak.bu-order.svc:8080/auth/realms/sme-portal/protocol/openid-connect/token
+    name: keycloak
+    auth:
+      client-id: web-client
+      client-secret: 123
+management:
+  endpoint:
+    health:
+      show-details: never
+  health:
+    elasticsearch:
+      enabled: false
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: noti_service
+  r2dbc:
+    mariadb:
+      url: r2dbc:mariadb://admin:123456%40@10.207.222.154:9001/sme_notification
+      pool:
+        initial-size: 50
+        max-size: 100
+        enabled: true
+        validation-query: select 1
+        max-life-time: 9223372036854775807
+application:
+  white-list:
+    - uri: /v1/**
+      methods:
+        - GET
+    - uri: /v1/**
+      methods:
+        - PUT

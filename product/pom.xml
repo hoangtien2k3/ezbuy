@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.ezbuy.ecommerce</groupId>
-		<artifactId>ezbuy-backend</artifactId>
+		<artifactId>ezbuy</artifactId>
 		<version>${revision}</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<groupId>com.ezbuy.product</groupId>
+	<groupId>com.ezbuy.ecommerce</groupId>
 	<artifactId>product</artifactId>
 	<version>${revision}</version>
 	<name>product</name>

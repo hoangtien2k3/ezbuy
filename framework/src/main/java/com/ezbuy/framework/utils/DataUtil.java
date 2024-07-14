@@ -50,7 +50,7 @@ public class DataUtil {
     /**
      * Ham chuyen String sang boolean
      *
-     * @param ob
+     * @param
      * @return
      */
     public static boolean isNullOrEmpty(Object ob) {
@@ -76,22 +76,10 @@ public class DataUtil {
         return true;
     }
 
-    /**
-     * Ham chuyen Collection sang boolean
-     *
-     * @param collection
-     * @return
-     */
     public static boolean isNullOrEmpty(final Collection<?> collection) {
         return collection == null || collection.isEmpty();
     }
 
-    /**
-     * Ham chuyen Object sang boolean
-     *
-     * @param collection
-     * @return
-     */
     public static boolean isNullOrEmpty(final Object[] collection) {
         return collection == null || collection.length == 0;
     }
@@ -281,7 +269,7 @@ public class DataUtil {
     /**
      * Safe trim
      *
-     * @param Object
+     * @param
      * @return
      */
     public static String safeTrim(Object input) {
@@ -291,7 +279,7 @@ public class DataUtil {
     /**
      * Safe trim
      *
-     * @param String
+     * @param
      * @return
      */
     public static String safeTrim(String input) {
@@ -301,8 +289,8 @@ public class DataUtil {
     /**
      * Safe trim
      *
-     * @param Object obj1
-     * @param Object obj2
+     * @param
+     * @param
      * @return
      */
     public static boolean safeEqual(Object obj1, Object obj2) {
@@ -337,7 +325,7 @@ public class DataUtil {
      *
      * @param content
      * @param clz
-     * @param defaultValue
+     * @param
      * @return
      */
     public static <T> T parseStringToObject(String content, Class clz) {
@@ -398,7 +386,7 @@ public class DataUtil {
     /**
      * Ham chuyen convert string to local date time
      *
-     * @param obj
+     * @param
      * @return
      */
     public static LocalDateTime convertStringToLocalDateTime(String input, String format) {
@@ -417,7 +405,7 @@ public class DataUtil {
     /**
      * Ham chuyen format date
      *
-     * @param obj
+     * @param
      * @return
      */
     public static String formatDate(TemporalAccessor date, String format, String fallbackValue) {
@@ -431,7 +419,7 @@ public class DataUtil {
     /**
      * Ham chuyen sum list string
      *
-     * @param obj
+     * @param
      * @return
      */
     public static String sumListString(String... list) {
@@ -445,7 +433,7 @@ public class DataUtil {
     /**
      * Ham chuyen get like string
      *
-     * @param obj
+     * @param
      * @return
      */
     public static String getLikeStr(String str) {
@@ -458,7 +446,7 @@ public class DataUtil {
     /**
      * Ham validate json format
      *
-     * @param obj
+     * @param
      * @return
      */
     public static boolean isValidFormatJson(String json) {
@@ -491,7 +479,7 @@ public class DataUtil {
     }
 
     /**
-     * Ham chuyen string sang date
+     * Ham chuyen string sang local date time
      *
      * @param dateString
      * @return
@@ -518,7 +506,7 @@ public class DataUtil {
     /**
      * Ham chuyen object sang json
      *
-     * @param obj
+     * @param
      * @return
      */
     public static String appendLikeQuery(String field) {
@@ -528,11 +516,11 @@ public class DataUtil {
     /**
      * Ham chuyen object sang json
      *
-     * @param obj
+     * @param
      * @return
      */
-    public static <T> Mono<Optional<T>> optional(Mono<T> in) {
-        return in.map(Optional::of).switchIfEmpty(Mono.just(Optional.empty()));
+    public static <T> Mono<Optional<T>> optional(Mono<T> input) {
+        return input.map(Optional::of).switchIfEmpty(Mono.just(Optional.empty()));
     }
 
     /**
@@ -562,8 +550,8 @@ public class DataUtil {
     /**
      * Ham chuyen xml to object
      *
-     * @param xmlStr
-     * @param clazz
+     * @param
+     * @param
      * @return
      */
     private static String convertDocumentToString(Document doc) {
@@ -586,7 +574,7 @@ public class DataUtil {
      * Ham chuyen xml to object
      *
      * @param xmlStr
-     * @param clazz
+     * @param
      * @return
      */
     private static Document convertStringToDocument(String xmlStr) throws Exception {
@@ -708,7 +696,7 @@ public class DataUtil {
     /**
      * Ham format date
      *
-     * @param value
+     * @param
      * @return
      */
     public static String convertDate2yyyyMMddStringNoSlash(Date value) {

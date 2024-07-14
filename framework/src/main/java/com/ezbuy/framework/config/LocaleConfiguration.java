@@ -21,7 +21,7 @@ public class LocaleConfiguration {
     public ReloadableResourceBundleMessageSource messageSource() {
         ReloadableResourceBundleMessageSource rs = new ReloadableResourceBundleMessageSource();
         rs.setDefaultEncoding("UTF-8");
-        rs.setBasenames("classpath:/i18n/messages_vi");
+        rs.setBasenames("classpath:/i18n/messages");
         rs.setUseCodeAsDefaultMessage(true);
         return rs;
     }

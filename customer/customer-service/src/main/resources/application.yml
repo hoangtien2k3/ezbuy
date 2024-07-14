@@ -1,0 +1,26 @@
+server:
+  port: 8901
+logging:
+  level:
+    root: INFO
+
+# spring config
+spring:
+  application:
+    name: customer-service
+  main:
+    allow-bean-definition-overriding: true
+  messages:
+    basename: messages
+
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5434/customer
+    username: admin
+    password: admin
+    pool:
+      initial-size: 50
+      max-size: 100
+      enabled: true
+#      validation-query: select 1
+#      max-life-time: 9223372036854775807
+

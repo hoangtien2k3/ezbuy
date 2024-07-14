@@ -7,7 +7,7 @@ import com.ezbuy.framework.model.response.TraceErrorResponse;
 import com.ezbuy.framework.utils.DataUtil;
 import com.ezbuy.framework.utils.Translator;
 import io.micrometer.tracing.Tracer;
-//import io.r2dbc.spi.R2dbcException;
+import io.r2dbc.spi.R2dbcException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -23,6 +23,7 @@ import reactor.core.publisher.Mono;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -32,43 +33,43 @@ public class ExceptionResponseConfig {
     private final Tracer tracer;
 
     @ExceptionHandler(RuntimeException.class)
-    public Mono<ResponseEntity<TraceErrorResponse>> runtimeException(RuntimeException ex, ServerWebExchange serverWebExchange) {
-        String traceId = tracer.currentSpan().context().traceId();
+    public Mono<ResponseEntity<TraceErrorResponse<Object>>> runtimeException(RuntimeException ex, ServerWebExchange serverWebExchange) {
+        String traceId = Objects.requireNonNull(tracer.currentSpan()).context().traceId();
         log.error("Runtime exception trace-id {} , error ", traceId, ex);
-        return Mono.just(new ResponseEntity<>(new TraceErrorResponse(CommonErrorCode.INTERNAL_SERVER_ERROR, "Server error", null, traceId), HttpStatus.INTERNAL_SERVER_ERROR));
+        return Mono.just(new ResponseEntity<>(new TraceErrorResponse<>(CommonErrorCode.INTERNAL_SERVER_ERROR, "Server error", null, traceId), HttpStatus.INTERNAL_SERVER_ERROR));
     }
 
-//    @ExceptionHandler(R2dbcException.class)
-//    public Mono<ResponseEntity<TraceErrorResponse>> r2dbcException(R2dbcException ex, ServerWebExchange serverWebExchange) {
-//        String traceId = tracer.currentSpan().context().traceId();
-//        log.error("R2dbc trace-id {} , error ", traceId, ex);
-//        return Mono.just(new ResponseEntity<>(new TraceErrorResponse(CommonErrorCode.SQL_ERROR, "Server error", null, traceId), HttpStatus.INTERNAL_SERVER_ERROR));
-//    }
+    @ExceptionHandler(R2dbcException.class)
+    public Mono<ResponseEntity<TraceErrorResponse<Object>>> r2dbcException(R2dbcException ex, ServerWebExchange serverWebExchange) {
+        String traceId = Objects.requireNonNull(tracer.currentSpan()).context().traceId();
+        log.error("R2dbc trace-id {} , error ", traceId, ex);
+        return Mono.just(new ResponseEntity<>(new TraceErrorResponse<>(CommonErrorCode.SQL_ERROR, "Server error", null, traceId), HttpStatus.INTERNAL_SERVER_ERROR));
+    }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public Mono<ResponseEntity<TraceErrorResponse>> accessDeniedException(AccessDeniedException ex, ServerWebExchange serverWebExchange) {
-        String traceId = tracer.currentSpan().context().traceId();
+    public Mono<ResponseEntity<TraceErrorResponse<Object>>> accessDeniedException(AccessDeniedException ex, ServerWebExchange serverWebExchange) {
+        String traceId = Objects.requireNonNull(tracer.currentSpan()).context().traceId();
         log.error("Access denied trace-id {} , error ", traceId, ex);
-        return Mono.just(new ResponseEntity<>(new TraceErrorResponse(CommonErrorCode.ACCESS_DENIED, "Access denied", null, traceId), HttpStatus.FORBIDDEN));
+        return Mono.just(new ResponseEntity<>(new TraceErrorResponse<>(CommonErrorCode.ACCESS_DENIED, "Access denied", null, traceId), HttpStatus.FORBIDDEN));
     }
 
     @ExceptionHandler(DataBufferLimitException.class)
-    public Mono<ResponseEntity<TraceErrorResponse>> dataBufferLimitException(DataBufferLimitException ex) {
-        String traceId = tracer.currentSpan().context().traceId();
+    public Mono<ResponseEntity<TraceErrorResponse<Object>>> dataBufferLimitException(DataBufferLimitException ex) {
+        String traceId = Objects.requireNonNull(tracer.currentSpan()).context().traceId();
         log.error("DataBuffer limit trace-id {} , error ", traceId, ex);
-        return Mono.just(new ResponseEntity<>(new TraceErrorResponse(CommonErrorCode.BAD_REQUEST, Translator.toLocale("request.databuffer.limit"), null, traceId), HttpStatus.BAD_REQUEST));
+        return Mono.just(new ResponseEntity<>(new TraceErrorResponse<>(CommonErrorCode.BAD_REQUEST, Translator.toLocale("request.databuffer.limit"), null, traceId), HttpStatus.BAD_REQUEST));
     }
 
     @ExceptionHandler(ServerWebInputException.class)
-    public Mono<ResponseEntity<TraceErrorResponse>> serverInputException(ServerWebInputException ex, ServerWebExchange serverWebExchange) {
-        String traceId = tracer.currentSpan().context().traceId();
+    public Mono<ResponseEntity<TraceErrorResponse<Object>>> serverInputException(ServerWebInputException ex, ServerWebExchange serverWebExchange) {
+        String traceId = Objects.requireNonNull(tracer.currentSpan()).context().traceId();
         log.error("Request Input invalid format trace-id {} , error ", traceId, ex);
-        return Mono.just(new ResponseEntity<>(new TraceErrorResponse(CommonErrorCode.INVALID_PARAMS, ex.getReason(), null, traceId), HttpStatus.BAD_REQUEST));
+        return Mono.just(new ResponseEntity<>(new TraceErrorResponse<>(CommonErrorCode.INVALID_PARAMS, ex.getReason(), null, traceId), HttpStatus.BAD_REQUEST));
     }
 
     @ExceptionHandler(WebExchangeBindException.class)
-    public Mono<ResponseEntity<TraceErrorResponse>> serverInputException(WebExchangeBindException ex, ServerWebExchange serverWebExchange) {
-        String traceId = tracer.currentSpan().context().traceId();
+    public Mono<ResponseEntity<TraceErrorResponse<Object>>> serverInputException(WebExchangeBindException ex, ServerWebExchange serverWebExchange) {
+        String traceId = Objects.requireNonNull(tracer.currentSpan()).context().traceId();
         List<String> errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
@@ -77,17 +78,15 @@ public class ExceptionResponseConfig {
                 .collect(Collectors.toList());
 
         String errorValue = String.join(", ", errors);
-
         // exception convert data fail
         if (errorValue.contains("Failed to convert property value")) {
-            return Mono.just(new ResponseEntity<>(new TraceErrorResponse(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("params.invalid.format"), null, traceId), HttpStatus.BAD_REQUEST));
+            return Mono.just(new ResponseEntity<>(new TraceErrorResponse<>(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("params.invalid.format"), null, traceId), HttpStatus.BAD_REQUEST));
         }
-
-        return Mono.just(new ResponseEntity<>(new TraceErrorResponse(CommonErrorCode.INVALID_PARAMS, errorValue, null, traceId), HttpStatus.BAD_REQUEST));
+        return Mono.just(new ResponseEntity<>(new TraceErrorResponse<>(CommonErrorCode.INVALID_PARAMS, errorValue, null, traceId), HttpStatus.BAD_REQUEST));
     }
 
     @ExceptionHandler(BusinessException.class)
-    public Mono<ResponseEntity<TraceErrorResponse>> businessException(BusinessException ex, ServerWebExchange serverWebExchange) {
+    public Mono<ResponseEntity<TraceErrorResponse<Object>>> businessException(BusinessException ex, ServerWebExchange serverWebExchange) {
         String traceId = tracer.currentSpan().context().traceId();
         String errorCode = ex.getErrorCode();
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
@@ -104,10 +103,10 @@ public class ExceptionResponseConfig {
     }
 
     @ExceptionHandler(ValidationException.class)
-    public Mono<ResponseEntity<TraceErrorResponse>> validationException(ValidationException ex, ServerWebExchange serverWebExchange) {
-        String traceId = tracer.currentSpan().context().traceId();
+    public Mono<ResponseEntity<TraceErrorResponse<Object>>> validationException(ValidationException ex, ServerWebExchange serverWebExchange) {
+        String traceId = Objects.requireNonNull(tracer.currentSpan()).context().traceId();
         log.error("Validation exception trace-id {} , error ", traceId, ex);
-        return Translator.toLocaleMono(ex.getErrorMessage(), null, ex.getParamsMsg())
+        return Translator.toLocaleMono(ex.getErrorMessage(), null, (Object) ex.getParamsMsg())
                 .map(msg -> new ResponseEntity<>(new TraceErrorResponse<>(CommonErrorCode.INVALID_PARAMS, msg, null, traceId), HttpStatus.BAD_REQUEST));
     }
 }

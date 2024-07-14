@@ -10,3 +10,7 @@ spring:
       enabled: true
       initial-size: 10
       max-size: 20
+
+  sleuth:
+    sampler:
+      probability: 1.0

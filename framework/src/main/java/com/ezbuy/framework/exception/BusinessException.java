@@ -20,5 +20,4 @@ public class BusinessException extends RuntimeException {
         this.message = message;
         this.paramsMsg = paramsMsg;
     }
-
 }
