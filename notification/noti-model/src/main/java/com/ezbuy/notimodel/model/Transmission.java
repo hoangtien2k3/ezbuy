@@ -6,8 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-
-import javax.persistence.Table;
+import org.springframework.data.relational.core.mapping.Table;
 
 @ToString
 @Table(name = "transmission")

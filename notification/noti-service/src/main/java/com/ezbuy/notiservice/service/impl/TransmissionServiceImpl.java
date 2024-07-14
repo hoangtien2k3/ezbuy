@@ -1,5 +1,13 @@
 package com.ezbuy.notiservice.service.impl;
 
+import com.ezbuy.framework.constants.CommonErrorCode;
+import com.ezbuy.framework.constants.Regex;
+import com.ezbuy.framework.exception.BusinessException;
+import com.ezbuy.framework.model.response.DataResponse;
+import com.ezbuy.framework.utils.DataUtil;
+import com.ezbuy.framework.utils.SortingUtils;
+import com.ezbuy.framework.utils.Translator;
+import com.ezbuy.framework.utils.ValidateUtils;
 import com.ezbuy.notimodel.dto.request.CreateNotificationDTO;
 import com.ezbuy.notimodel.dto.request.NotiContentDTO;
 import com.ezbuy.notimodel.dto.request.ReceiverDataDTO;
@@ -10,12 +18,6 @@ import com.ezbuy.notimodel.model.NotificationContent;
 import com.ezbuy.notimodel.model.Transmission;
 import com.ezbuy.notiservice.client.AuthClient;
 import com.ezbuy.notiservice.repository.*;
-import com.viettel.sme.framework.constants.CommonErrorCode;
-import com.viettel.sme.framework.constants.Regex;
-import com.viettel.sme.framework.exception.BusinessException;
-import com.viettel.sme.framework.model.response.DataResponse;
-import com.viettel.sme.framework.utils.*;
-import com.viettel.sme.notiservice.repository.*;
 import com.ezbuy.notiservice.service.TransmissionService;
 import io.r2dbc.spi.Row;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.ezbuy.framework.constants.CommonErrorCode.*;
+import static com.ezbuy.framework.constants.Constants.DateTimePattern.LOCAL_DATE_TIME_PATTERN;
+import static com.ezbuy.notimodel.common.ConstValue.Channel.*;
 import static com.ezbuy.notimodel.common.ConstValue.CommonMessageNoti.INVALID_FORMAT_SPEC;
 import static com.ezbuy.notimodel.common.ConstValue.ContentTypeConstant.HTML;
 import static com.ezbuy.notimodel.common.ConstValue.ContentTypeConstant.TEXT;
@@ -39,15 +44,12 @@ import static com.ezbuy.notimodel.common.ConstValue.NotiServerity.CRITICAL;
 import static com.ezbuy.notimodel.common.ConstValue.NotiServerity.NORMAL;
 import static com.ezbuy.notimodel.common.ConstValue.NotificationConstant.THONG_BAO;
 import static com.ezbuy.notimodel.common.ConstValue.NotificationConstant.TIN_TUC;
-import static com.viettel.sme.framework.constants.CommonErrorCode.*;
-import static com.viettel.sme.framework.constants.Constants.DateTimePattern.LOCAL_DATE_TIME_PATTERN;
-import static com.viettel.sme.framework.constants.MessageConstant.SUCCESS;
+import static com.ezbuy.notimodel.common.ConstValue.TransmissionState.*;
 
 
 @Service
 @RequiredArgsConstructor
 public class TransmissionServiceImpl implements TransmissionService {
-
 
     private final TransmissionRepository transmissionRepository;
     private final NotificationCategoryRepository notificationCategoryRepository;

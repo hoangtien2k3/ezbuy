@@ -1,6 +1,6 @@
 package com.ezbuy.notiservice.client.properties;
 
-import com.viettel.sme.framework.client.properties.WebClientProperties;
+import com.ezbuy.framework.client.properties.WebClientProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

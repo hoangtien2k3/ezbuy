@@ -1,17 +1,16 @@
 package com.ezbuy.notiservice.controller;
 
+import com.ezbuy.framework.model.response.DataResponse;
 import com.ezbuy.notimodel.dto.request.CreateNotificationDTO;
 import com.ezbuy.notimodel.dto.response.NotificationHeader;
 import com.ezbuy.notimodel.model.NotificationContent;
-import com.viettel.sme.framework.model.response.DataResponse;
 import com.ezbuy.notiservice.service.TransmissionService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
 import java.util.List;
 
 import static com.ezbuy.notimodel.common.ConstValue.ControllerPath.TRANSMISSION_PATH;

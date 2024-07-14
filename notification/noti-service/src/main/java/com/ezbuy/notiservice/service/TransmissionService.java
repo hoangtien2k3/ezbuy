@@ -1,9 +1,9 @@
 package com.ezbuy.notiservice.service;
 
+import com.ezbuy.framework.model.response.DataResponse;
 import com.ezbuy.notimodel.dto.request.CreateNotificationDTO;
 import com.ezbuy.notimodel.dto.response.NotificationHeader;
 import com.ezbuy.notimodel.model.NotificationContent;
-import com.viettel.sme.framework.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 
 import java.util.List;

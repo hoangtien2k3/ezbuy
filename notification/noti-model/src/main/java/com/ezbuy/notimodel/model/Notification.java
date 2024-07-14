@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 @Data

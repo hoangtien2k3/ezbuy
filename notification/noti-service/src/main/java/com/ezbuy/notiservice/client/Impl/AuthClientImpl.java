@@ -1,8 +1,8 @@
 package com.ezbuy.notiservice.client.Impl;
 
+import com.ezbuy.framework.client.BaseRestClient;
+import com.ezbuy.framework.utils.DataUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.viettel.sme.framework.client.BaseRestClient;
-import com.viettel.sme.framework.utils.DataUtil;
 import com.ezbuy.notiservice.client.AuthClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
