@@ -18,7 +18,6 @@ public class LoggerQueue {
     private int countFalse = 0;
     private int countSuccess = 0;
 
-
     public static LoggerQueue getInstance() {
         if (mMe == null) {
             mMe = new LoggerQueue();

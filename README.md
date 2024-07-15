@@ -1,7 +1,9 @@
-<div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-  <img src="docs/image/ezbuy_logo.png" alt="EzBuy Logo" style="max-width: 100%; height: auto; width: 200px;" />
+<div align="center">
+
+![Ezbuy](docs/image/ezbuy_logo.png) 
+
+[📚 Docs](https://tabby.tabbyml.com) • [💬 Slack](https://links.tabbyml.com/join-slack) • [✨ Live Demo](https://links.tabbyml.com/live-demo)
+
 </div>
 
-
 ## EzBuy E-Commerce
-EzBuy Backend

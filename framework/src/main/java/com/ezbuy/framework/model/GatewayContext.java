@@ -12,26 +12,32 @@ import org.springframework.util.MultiValueMap;
 @ToString
 public class GatewayContext {
     public static final String CACHE_GATEWAY_CONTEXT = "cacheGatewayContext";
+
     /**
      * whether read request data
      */
     protected Boolean readRequestData = true;
+
     /**
      * whether read response data
      */
     protected Boolean readResponseData = true;
+
     /**
      * cache json body
      */
     protected String requestBody;
+
     /**
      * cache Response Body
      */
     protected Object responseBody;
+
     /**
      * request headers
      */
     protected HttpHeaders requestHeaders;
+
     /**
      * cache form data
      */

@@ -4,9 +4,8 @@ import lombok.Getter;
 
 @Getter
 public class StepResult {
-
-    private boolean success;
-    private String message;
+    private final boolean success;
+    private final String message;
 
     private StepResult(boolean success, String message) {
         this.success = success;
@@ -20,5 +19,4 @@ public class StepResult {
     public static StepResult failure(String message) {
         return new StepResult(false, message);
     }
-
 }
