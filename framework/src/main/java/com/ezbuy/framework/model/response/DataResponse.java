@@ -2,6 +2,8 @@ package com.ezbuy.framework.model.response;
 
 import com.ezbuy.framework.constants.MessageConstant;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(Include.NON_NULL)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,6 +34,7 @@ public class DataResponse<T> implements Serializable {
 
     public static <T> DataResponse<T> success(T data) {
         return DataResponse.<T>builder()
+                .errorCode(MessageConstant.ERROR_CODE_SUCCESS)
                 .message(MessageConstant.SUCCESS)
                 .data(data)
                 .build();

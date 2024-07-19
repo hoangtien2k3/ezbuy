@@ -101,18 +101,19 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
         if (enableResponse) {
             logResponse(exchange, logs);
         }
-        log.info(String.join("|", logs));
-        log.info("Execute {} take {} ms", exchange.getRequest().getPath(), takeDuration(exchange));
+        log.info(String.join(" | ", logs));
+        log.info("Execute: {} | {}ms", exchange.getRequest().getPath(), takeDuration(exchange));
     }
 
     private void logRequest(ServerWebExchange exchange, List<String> logs) {
         ServerHttpRequest request = exchange.getRequest();
         URI requestURI = request.getURI();
         HttpHeaders headers = request.getHeaders();
-        if (requestURI.getPath().startsWith("/"))
+        if (requestURI.getPath().startsWith("/")) {
             logs.add(String.format("%s", requestURI.getPath().substring(1)));
-        else
+        } else {
             logs.add(String.format("%s", requestURI.getPath()));
+        }
         logs.add(String.format("%s", request.getMethod()));
         logs.add(String.format("%s", RequestUtils.getIpAddress(request)));
         logs.add(String.format("%s", requestURI.getHost()));

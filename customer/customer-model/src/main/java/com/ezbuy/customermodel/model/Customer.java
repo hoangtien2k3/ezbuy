@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
-
 import java.time.LocalDateTime;
 
 @Builder
@@ -30,6 +29,6 @@ public class Customer {
     private String gender; // gioi tinh
     private LocalDateTime createdAt; // thoi gian tao
     private LocalDateTime updatedAt; // thoi gian cap nhat
-    private Integer isVerifiedEmail; // xac thuc email
+    private Integer emailVerified; // xac thuc email
     private Boolean subscribedToNewsletter; // dang ky nhan thong bao
 }

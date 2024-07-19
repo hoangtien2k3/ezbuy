@@ -9,7 +9,6 @@
 		<version>${revision}</version>
 	</parent>
 
-	<groupId>com.ezbuy.ecommerce</groupId>
 	<artifactId>customer</artifactId>
 	<version>${revision}</version>
 	<packaging>pom</packaging>

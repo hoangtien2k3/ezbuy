@@ -198,7 +198,7 @@ public final class Constants {
         public static final String GROUP = "GROUP";
     }
 
-    public static final HashSet<String> EXCLUDE_LOGGING_ENDPOINTS = new HashSet<>(Arrays.asList(
+    public static final HashSet<String> EXCLUDE_LOGGING_ENDPOINTS = new HashSet<>(List.of(
             "/actuator/health"
     ));
 

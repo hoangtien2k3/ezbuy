@@ -38,7 +38,7 @@ public record CustomerDTO(
                 .gender(customer.getGender())
                 .createdAt(customer.getCreatedAt())
                 .updatedAt(customer.getUpdatedAt())
-                .isVerifiedEmail(customer.getIsVerifiedEmail())
+                .isVerifiedEmail(customer.getEmailVerified())
                 .subscribedToNewsletter(customer.getSubscribedToNewsletter())
                 .build();
     }

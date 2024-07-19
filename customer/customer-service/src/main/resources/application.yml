@@ -13,6 +13,7 @@ spring:
   messages:
     basename: messages
 
+  # database postgresql
   r2dbc:
     url: r2dbc:postgresql://localhost:5434/customer
     username: admin
@@ -24,3 +25,11 @@ spring:
 #      validation-query: select 1
 #      max-life-time: 9223372036854775807
 
+  # liquibase
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+# jwt token
+jwt:
+  token-expiration-seconds: 36000
+  secret-key: e9b7826de98f5e8cb9108ac1db21a3a5b82a516b984a9efc10f32032d467e7d2

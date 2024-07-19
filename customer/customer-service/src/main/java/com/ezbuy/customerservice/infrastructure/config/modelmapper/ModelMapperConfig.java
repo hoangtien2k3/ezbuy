@@ -1,4 +1,4 @@
-package com.ezbuy.customerservice.infrastructure.config;
+package com.ezbuy.customerservice.infrastructure.config.modelmapper;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

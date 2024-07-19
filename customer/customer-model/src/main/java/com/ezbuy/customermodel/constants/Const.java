@@ -1,4 +1,4 @@
-package com.ezbuy.customerservice.app.common.constants;
+package com.ezbuy.customermodel.constants;
 
 public class Const {
     public static final String EMPTY = "";
@@ -12,6 +12,11 @@ public class Const {
 
     public static Boolean TRUE = true;
     public static Boolean FALSE = false;
+
+    public static final class ErrorCode {
+        public static final String ERROR_CODE_SUCCESS = "0";
+        public static final String ERROR_CODE_FALSE = "-1";
+    }
 
     public static final class Notification {
         public static final String SEVERITY = "NORMAL";
@@ -106,6 +111,7 @@ public class Const {
     public static class ROLE {
         public static String ADMIN = "ADMIN";
         public static String USER = "USER";
+        public static String SHOP = "SHOP";
     }
 
     public static class CUST_GROUP {
@@ -114,5 +120,10 @@ public class Const {
         public static Long SILVER = 3L;
         public static Long REGULAR = 4L;
         public static Long NEW = 5L;
+    }
+
+    public static class VERIFY {
+        public static String NOT_VERIFY = "0";
+        public static String VERIFY = "1";
     }
 }

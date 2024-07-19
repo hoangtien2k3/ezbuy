@@ -1,7 +1,11 @@
 package com.ezbuy.customerservice.domain.customer.service;
 
 import com.ezbuy.customermodel.dto.CustomerDTO;
+import com.ezbuy.customermodel.dto.request.AuthenticationRequest;
 import com.ezbuy.customermodel.dto.request.CreateCustomerRequest;
+import com.ezbuy.customermodel.dto.request.CustomerLoginRequest;
+import com.ezbuy.customermodel.dto.response.AuthenticationResponse;
+import com.ezbuy.customermodel.dto.response.TokenDTO;
 import com.ezbuy.framework.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 
@@ -14,6 +18,17 @@ public interface CustomerService {
      * @author hoangtien2k3
      */
     Mono<DataResponse<CustomerDTO>> createCustomer(CreateCustomerRequest customerRequest);
+
+    /**
+     * Login a customer
+     *
+     * @param customerLoginRequest
+     * @return
+     * @author hoangtien2k3
+     */
+    Mono<DataResponse<AuthenticationResponse>> authenticateRequest (AuthenticationRequest authenticationRequest);
+
+//    Mono<DataResponse<TokenDTO>> loginCustomer(CustomerLoginRequest customerLoginRequest);
 
 //    Mono<DataResponse<CustomerResponse>> getCustomerById(Integer customerId);
 //
