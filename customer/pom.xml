@@ -2,37 +2,54 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
 	<parent>
 		<groupId>com.ezbuy.ecommerce</groupId>
 		<artifactId>ezbuy</artifactId>
 		<version>${revision}</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
-
 	<artifactId>customer</artifactId>
 	<version>${revision}</version>
-	<packaging>pom</packaging>
 	<name>customer</name>
 	<description>customer</description>
-
-	<modules>
-		<module>customer-model</module>
-		<module>customer-service</module>
-	</modules>
-
 	<properties>
 		<java.version>21</java.version>
 		<revision>1.0-SNAPSHOT</revision>
+		<jjwt-version>0.12.3</jjwt-version>
+		<version>1.0-SNAPSHOT</version>
+		<liquibase.version>4.28.0</liquibase.version>
 	</properties>
-
 	<dependencies>
 		<dependency>
+			<groupId>com.ezbuy.ecommerce</groupId>
+			<artifactId>framework</artifactId>
+			<version>${revision}</version>
+		</dependency>
+		<!-- Liquibase Dependency -->
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+			<version>${liquibase.version}</version>
+		</dependency>
+		<!-- Security Dependency -->
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-r2dbc</artifactId>
+			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>io.r2dbc</groupId>
-			<artifactId>r2dbc-pool</artifactId>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>${jjwt-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>${jjwt-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>${jjwt-version}</version>
 		</dependency>
 	</dependencies>
 
