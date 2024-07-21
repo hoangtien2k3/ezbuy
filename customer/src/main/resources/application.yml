@@ -4,17 +4,6 @@ logging:
   level:
     root: INFO
 
-# jwt token
-jwt:
-  token-expiration-seconds: 36000
-  secret-key: e9b7826de98f5e8cb9108ac1db21a3a5b82a516b984a9efc10f32032d467e7d2
-
-app:
-  config:
-    keycloak:
-      url: http://sme-keycloak.bu-order.svc:8080/auth
-      realm: sme-portal
-
 # spring config
 spring:
   application:
@@ -140,10 +129,20 @@ application:
   data:
     sync-customer:
       limit: 500
+
 keycloak:
   clientId: web-client
-  clientSecret: ${CLIENT_KEYCLOAK_SECRET}
+  clientSecret: 5Rj8acZcC7KVQgVmnCRI0OdpjqPIJfoQ
   realm: sme-portal
   serverUrl: http://sme-keycloak.bu-order.svc:8080/auth
 
+app:
+  config:
+    keycloak:
+      url: http://sme-keycloak.bu-order.svc:8080/auth
+      realm: sme-portal
 
+# jwt token
+jwt:
+  token-expiration-seconds: 36000
+  secret-key: e9b7826de98f5e8cb9108ac1db21a3a5b82a516b984a9efc10f32032d467e7d2
