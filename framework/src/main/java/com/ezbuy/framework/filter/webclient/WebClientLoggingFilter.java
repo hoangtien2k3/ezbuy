@@ -23,8 +23,10 @@ public class WebClientLoggingFilter implements ExchangeFilterFunction {
             log.info("body ", request.body());
         }
         if (log.isDebugEnabled()) {
-            request.headers().forEach(
-                    (name, values) -> values.forEach(value -> log.debug("Request header: {}={}", name, obfuscateHeader.contains(name) ? OBFUSCATE_HEADER : value)));
+            request.headers().forEach((name, values) ->
+                    values.forEach(value ->
+                            log.debug("Request header: {}={}", name, obfuscateHeader.contains(name) ? OBFUSCATE_HEADER : value))
+            );
         }
 
         return next.exchange(request).flatMap(clientResponse -> {

@@ -4,10 +4,7 @@ import com.ezbuy.framework.constants.CommonErrorCode;
 import com.ezbuy.framework.constants.Regex;
 import com.ezbuy.framework.exception.BusinessException;
 import com.ezbuy.framework.model.response.DataResponse;
-import com.ezbuy.framework.utils.DataUtil;
-import com.ezbuy.framework.utils.SortingUtils;
-import com.ezbuy.framework.utils.Translator;
-import com.ezbuy.framework.utils.ValidateUtils;
+import com.ezbuy.framework.utils.*;
 import com.ezbuy.notimodel.dto.request.CreateNotificationDTO;
 import com.ezbuy.notimodel.dto.request.NotiContentDTO;
 import com.ezbuy.notimodel.dto.request.ReceiverDataDTO;
@@ -45,7 +42,6 @@ import static com.ezbuy.notimodel.common.ConstValue.NotiServerity.NORMAL;
 import static com.ezbuy.notimodel.common.ConstValue.NotificationConstant.THONG_BAO;
 import static com.ezbuy.notimodel.common.ConstValue.NotificationConstant.TIN_TUC;
 import static com.ezbuy.notimodel.common.ConstValue.TransmissionState.*;
-
 
 @Service
 @RequiredArgsConstructor
@@ -281,25 +277,22 @@ public class TransmissionServiceImpl implements TransmissionService {
                             .bind("categoryType", DataUtil.safeTrim(categoryType))
                             .bind("pageSize", pageSize)
                             .bind("index", index)
-                            .map(this::build)
+                            .map(row -> build((Row) row))
                             .all()
                             .collectList()
                             .flatMap(notificationContent -> Mono.just(new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), notificationContent)))
                             .switchIfEmpty(Mono.just(new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), new ArrayList<>())));
 
                 });
-
     }
 
     public Mono<DataResponse<Object>> validateCreateNotificationDTO(CreateNotificationDTO createNotificationDTO) {
-
         if (DataUtil.isNullOrEmpty(createNotificationDTO.getSeverity())) {
             createNotificationDTO.setSeverity(NORMAL);
         }
         if (!DataUtil.safeTrim(createNotificationDTO.getSeverity()).equals(NORMAL) && !DataUtil.safeTrim(createNotificationDTO.getSeverity()).equals(CRITICAL)) {
             return Mono.error(new BusinessException(INVALID_PARAMS, Translator.toLocaleVi(INVALID_FORMAT_SPEC, "severity")));
         }
-
         if (!DataUtil.safeTrim(createNotificationDTO.getCategoryType()).equals(THONG_BAO) && !DataUtil.safeTrim(createNotificationDTO.getCategoryType()).equals(TIN_TUC)) {
             return Mono.error(new BusinessException(INVALID_PARAMS, Translator.toLocaleVi(INVALID_FORMAT_SPEC, "CategoryType")));
         }
@@ -326,8 +319,7 @@ public class TransmissionServiceImpl implements TransmissionService {
                         }
                         List<ReceiverDataDTO> receiverDataDTOList = createNotificationDTO.getReceiverList();
                         receiverDataDTOList.addAll(list.stream().
-                                map(x -> new ReceiverDataDTO(x, null))
-                                .collect(Collectors.toList()));
+                                map(x -> new ReceiverDataDTO(x, null)).toList());
                         createNotificationDTO.setReceiverList(receiverDataDTOList);
                         return Mono.just(new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), createNotificationDTO));
                     }
@@ -341,7 +333,6 @@ public class TransmissionServiceImpl implements TransmissionService {
     }
 
     private void notiContentDTOIsValid(NotiContentDTO notiContentDTO) {
-
         if (DataUtil.isNullOrEmpty(notiContentDTO)) {
             throw new BusinessException(INVALID_PARAMS, Translator.toLocaleVi("params.object.null", NotiContentDTO.builder().build().getClass().getSimpleName()));
         }
@@ -361,7 +352,6 @@ public class TransmissionServiceImpl implements TransmissionService {
         if (DataUtil.safeTrim(notiContentDTO.getUrl()).length() > 300 && !DataUtil.isNullOrEmpty(notiContentDTO.getUrl())) {
             throw new BusinessException(INVALID_PARAMS, Translator.toLocaleVi("params.url.outOfLength"));
         }
-
     }
 
     private void isReceiverDataDTOValid(ReceiverDataDTO receiverDataDTO) {

@@ -4,6 +4,17 @@ logging:
   level:
     root: INFO
 
+# jwt token
+jwt:
+  token-expiration-seconds: 36000
+  secret-key: e9b7826de98f5e8cb9108ac1db21a3a5b82a516b984a9efc10f32032d467e7d2
+
+app:
+  config:
+    keycloak:
+      url: http://sme-keycloak.bu-order.svc:8080/auth
+      realm: sme-portal
+
 # spring config
 spring:
   application:
@@ -22,14 +33,117 @@ spring:
       initial-size: 50
       max-size: 100
       enabled: true
-#      validation-query: select 1
-#      max-life-time: 9223372036854775807
+  #      validation-query: select 1
+  #      max-life-time: 9223372036854775807
 
   # liquibase
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
-# jwt token
-jwt:
-  token-expiration-seconds: 36000
-  secret-key: e9b7826de98f5e8cb9108ac1db21a3a5b82a516b984a9efc10f32032d467e7d2
+
+  # security
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            token-uri: ${app.config.keycloak.url}/realms/${app.config.keycloak.realm}/protocol/openid-connect/token
+        registration:
+          oidc:
+            client-id: sme-system
+            client-secret: 5Rj8acZcC7KVQgVmnCRI0OdpjqPIJfoQ
+            authorization-grant-type: client_credentials
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${app.config.keycloak.url}/realms/${app.config.keycloak.realm}/protocol/openid-connect/certs
+      keycloak:
+        client-id: web-client
+
+
+oauth2:
+  keycloak:
+    client-uri: http://sme-keycloak.bu-order.svc:8080/auth/realms/sme-portal/protocol/openid-connect/token
+    client-id: web-client
+    client-secret: ${CLIENT_KEYCLOAK_SECRET}
+client:
+  keycloak:
+    address: http://sme-keycloak.bu-order.svc:8080/auth/realms/sme-portal/protocol/openid-connect/token
+    name: keycloak
+    auth:
+      client-id: web-client
+      client-secret: ${CLIENT_KEYCLOAK_SECRET}
+  product:
+    address: http://localhost:8088/v1
+    name: product
+  noti:
+    address: http://192.168.27.39:7777/v1/transmission
+    name: notiServiceClient
+    pool:
+      max-size: 100
+      max-pending-acquire: 100
+    timeout:
+      read: 60000
+      write: 1000
+  auth:
+    address: http://localhost:8080/
+    name: authServiceClient
+    pool:
+      max-size: 100
+      max-pending-acquire: 100
+    timeout:
+      read: 60000
+      write: 1000
+  sync:
+    internal-oauth: true
+    address: http://10.207.252.223/sme-sync/
+    name: syncClient
+  setting:
+    internal-oauth: true
+    address: http://10.207.252.223/sme-setting/
+    name: settingClient
+# unauthenticated endpoints config
+application:
+  http-logging:
+    request:
+      enable: true
+      header: true
+      param: true
+      body: true
+    response:
+      enable: true
+      body: true
+  whiteList:
+    - uri: /actuator/health
+      methods:
+        - GET
+    - uri: /v1/auth/login
+      methods:
+        - POST
+    - uri: /v1/auth/refresh
+      methods:
+        - POST
+    - uri: /**
+      methods:
+        - OPTIONS
+    - uri: /v1/auth/signup
+      methods:
+        - POST
+    - uri: /v1/auth/forgot-password
+      methods:
+        - POST
+    - uri: /v1/auth/reset-password
+      methods:
+        - POST
+    - uri: /v1/auth/get-all
+      methods:
+        - GET
+  data:
+    sync-customer:
+      limit: 500
+keycloak:
+  clientId: web-client
+  clientSecret: ${CLIENT_KEYCLOAK_SECRET}
+  realm: sme-portal
+  serverUrl: http://sme-keycloak.bu-order.svc:8080/auth
+
+

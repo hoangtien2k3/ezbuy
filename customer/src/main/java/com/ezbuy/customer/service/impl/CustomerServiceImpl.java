@@ -2,16 +2,16 @@ package com.ezbuy.customer.service.impl;//package com.ezbuy.customer.domain.cust
 
 import com.ezbuy.customer.constants.Const;
 import com.ezbuy.customer.model.dto.CustomerDTO;
-import com.ezbuy.customer.model.dto.NotiContentDTO;
-import com.ezbuy.customer.model.dto.ReceiverDataDTO;
+import com.ezbuy.customer.model.NotiContentDTO;
+import com.ezbuy.customer.model.ReceiverDataDTO;
 import com.ezbuy.customer.model.dto.request.AuthenticationRequest;
 import com.ezbuy.customer.model.dto.request.CreateCustomerRequest;
 import com.ezbuy.customer.model.dto.ValidateCustomerDto;
 import com.ezbuy.customer.model.dto.request.CreateNotificationDTO;
 import com.ezbuy.customer.model.dto.response.AuthenticationResponse;
-import com.ezbuy.customer.model.Address;
-import com.ezbuy.customer.model.Customer;
-import com.ezbuy.customer.model.ShopUser;
+import com.ezbuy.customer.model.postgresql.Address;
+import com.ezbuy.customer.model.postgresql.Customer;
+import com.ezbuy.customer.model.postgresql.ShopUser;
 import com.ezbuy.customer.repository.AddressRepository;
 import com.ezbuy.customer.service.TokenService;
 import com.ezbuy.customer.repository.CustomerGroupRepository;

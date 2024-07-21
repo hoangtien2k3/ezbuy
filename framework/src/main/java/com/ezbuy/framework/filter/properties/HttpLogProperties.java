@@ -9,9 +9,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * @author huannt16
+ * @author hoangtien2k3
  * <p>
  * cau hinh log cho http request và http response cua ung dung
+ * <p>
  */
 @Component
 @ConfigurationProperties(prefix = "application.http-logging", ignoreInvalidFields = true)

@@ -120,7 +120,7 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
 
         var logHeader = new StringBuilder();
         headers.forEach((key, value) -> logHeader.append(String.format("{%s:%s}", key, value)));
-        if (logHeader.length() > 0) {
+        if (!logHeader.isEmpty()) {
             logs.add(String.format("%s", logHeader));
         }
 

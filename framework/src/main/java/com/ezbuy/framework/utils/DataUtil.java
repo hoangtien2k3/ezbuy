@@ -1,5 +1,6 @@
 package com.ezbuy.framework.utils;
 
+import com.ezbuy.framework.constants.CommonConstant;
 import com.ezbuy.framework.constants.CommonErrorCode;
 import com.ezbuy.framework.exception.BusinessException;
 import com.ezbuy.framework.factory.ObjectMapperFactory;
@@ -33,6 +34,9 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.security.SecureRandom;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -42,10 +46,154 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
 import java.util.*;
+import java.util.regex.Pattern;
+
+import static com.ezbuy.framework.constants.CommonConstant.DATE_FORMAT_YM2;
 
 @Slf4j
 public class DataUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(DataUtil.class);
+
+    public static final SimpleDateFormat FORMAT_YMD = new SimpleDateFormat(CommonConstant.DATE_FORMAT_YMD);
+    public static final SimpleDateFormat FORMAT_DMY = new SimpleDateFormat(CommonConstant.DATE_FORMAT_DMY);
+    public static final SimpleDateFormat FORMAT_S_MY = new SimpleDateFormat(CommonConstant.DATE_FORMAT_S_MY);
+    public static final SimpleDateFormat FORMAT_S_YM = new SimpleDateFormat(CommonConstant.DATE_FORMAT_S_YM);
+    public static final SimpleDateFormat FORMAT_HH_MM = new SimpleDateFormat(CommonConstant.DATE_FORMAT_HH_MM);
+    public static final SimpleDateFormat FORMAT_HH_MM_24 = new SimpleDateFormat(CommonConstant.DATE_FORMAT_HM);
+
+    public static final SimpleDateFormat FORMAT_DMYHMS_HYPHEN = new SimpleDateFormat(CommonConstant.DATE_FORMAT_DMY_HMS);
+    public static final SimpleDateFormat FORMAT_MDYHMS_12_HOUR = new SimpleDateFormat(CommonConstant.DATE_FORMAT_MDY_HMS_12_HOUR);
+    public static final DecimalFormat NUMBER_DF = new DecimalFormat("#.##");
+    public static final SimpleDateFormat FORMAT_DMY_HYPHEN = new SimpleDateFormat(CommonConstant.FORMAT_DATE_DMY_HYPHEN);
+    public static final SimpleDateFormat FORMAT_DMYHMS = new SimpleDateFormat(CommonConstant.DATE_FORMAT_DMYHMS);
+    public static final SimpleDateFormat FORMAT_DMYHM = new SimpleDateFormat(CommonConstant.DATE_FORMAT_DMYHM);
+    public static final SimpleDateFormat FORMAT_DATE_FORMAT_YM2 = new SimpleDateFormat(DATE_FORMAT_YM2);
+    public static final SimpleDateFormat FORMAT_DATE_FORMAT_SHORT_YYYY = new SimpleDateFormat(CommonConstant.DATE_FORMAT_SHORT_YYYY);
+    public static final SimpleDateFormat FORMAT_YMD_T_HH_MM_SS = new SimpleDateFormat(CommonConstant.DATE_FORMAT_YMD_T_HH_MM_SS);
+    public static final SimpleDateFormat FORMAT_YMD_T_HMS = new SimpleDateFormat(CommonConstant.DATE_FORMAT_YMD_T_HMS);
+    public static final SimpleDateFormat FORMAT_HMS = new SimpleDateFormat(CommonConstant.DATE_FORMAT_HMS);
+    public static final SimpleDateFormat FORMAT_SHORT = new SimpleDateFormat(CommonConstant.DATE_FORMAT_SHORT);
+    public static final SimpleDateFormat FORMAT_HMS_NORMAL = new SimpleDateFormat(CommonConstant.DATE_FORMAT_HMS_NORMAL);
+    public static final SimpleDateFormat FORMAT_YDM_INSTANT = new SimpleDateFormat(CommonConstant.DATE_FORMAT_YDM_INSTANT);
+    public static final SimpleDateFormat FORMAT_DMY_HMS = new SimpleDateFormat(CommonConstant.DATE_FORMAT_DMY_HMS);
+    public static final SimpleDateFormat FORMAT_DATE = new SimpleDateFormat(CommonConstant.DATE_FORMAT);
+    public static final SimpleDateFormat FORMAT_DATE_2 = new SimpleDateFormat(CommonConstant.DATE_FORMAT_2);
+    public static final SimpleDateFormat FORMAT_DATE_3 = new SimpleDateFormat(CommonConstant.DATE_FORMAT_3);
+    public static final SimpleDateFormat FORMAT_YMD_HMS = new SimpleDateFormat(CommonConstant.DATE_FORMAT_YMD_HMS);
+    public static final SimpleDateFormat FORMAT_YMDHMS = new SimpleDateFormat(CommonConstant.DATE_FORMAT_YMDHMS);
+    public static final SimpleDateFormat FORMAT_YMDH = new SimpleDateFormat(CommonConstant.DATE_FORMAT_YMDH);
+    public static final SimpleDateFormat FORMAT_HMDMY = new SimpleDateFormat(CommonConstant.DATE_TIME_FORMAT_HMDMY);
+    public static final SimpleDateFormat FORMAT_YM2 = new SimpleDateFormat(DATE_FORMAT_YM2);
+    public static final SimpleDateFormat FORMAT_MD_HMS_END_DAY = new SimpleDateFormat(CommonConstant.DATE_FORMAT_END_DAY);
+    public static final SimpleDateFormat FORMAT_YMD_HMS_BEGIN_DAY = new SimpleDateFormat(CommonConstant.DATE_FORMAT_BEGIN_DAY);
+    public static final SimpleDateFormat FORMAT_YMDTHMS_ZER0 = new SimpleDateFormat(CommonConstant.DATE_FORMAT_YMDTHMS_ZER0);
+    public static final SimpleDateFormat FORMAT_YMDTHMS_ZER0_24HRS = new SimpleDateFormat(CommonConstant.DATE_FORMAT_YMDTHMS_ZERO_24HRS);
+    public static final SimpleDateFormat FORMAT_HM_DMY = new SimpleDateFormat(CommonConstant.DATE_FORMAT_HM_DMY);
+    public static final SimpleDateFormat FORMAT_HM_DMY1 = new SimpleDateFormat(CommonConstant.DATE_FORMAT_HM_DMY1);
+    public static final SimpleDateFormat FORMAT_S_YMD = new SimpleDateFormat(CommonConstant.DATE_FORMAT_S_YMD);
+    public static final SimpleDateFormat FORMAT_S_YMD_HMS = new SimpleDateFormat(CommonConstant.DATE_FORMAT_S_YMD_HMS);
+    public static final SimpleDateFormat FORMAT_YMDTHMS_GMT_7 = new SimpleDateFormat(CommonConstant.DATE_FORMAT_YMDTHMS_GMT_7);
+    public static final SimpleDateFormat FORMAT_YMDTHMS_GMT_7_2 = new SimpleDateFormat(CommonConstant.DATE_FORMAT_YMDTHMS_GMT_7_2);
+    public static final SimpleDateFormat FORMAT_DATE_DMY_HM = new SimpleDateFormat(CommonConstant.DATE_FORMAT_DMY_HM);
+    public static final SimpleDateFormat FORMAT_FORMAT_HM_DMY = new SimpleDateFormat(CommonConstant.DATE_FORMAT_HM_DMY);
+    public static final DateTimeFormatter DATE_TIME_YMD = DateTimeFormatter.ofPattern(CommonConstant.DATE_FORMAT_YMD);
+    public static final DateTimeFormatter DATE_TIME_DMY_HMS = DateTimeFormatter.ofPattern(CommonConstant.DATE_FORMAT_DMY_HMS);
+    public static final DateTimeFormatter DATE_TIME_DMY = DateTimeFormatter.ofPattern(CommonConstant.DATE_FORMAT_DMY);
+    public static final DateTimeFormatter DATE_FORMAT_DMYHM = DateTimeFormatter.ofPattern(CommonConstant.DATE_FORMAT_DMYHM);
+    public static final DateTimeFormatter DATE_TIME_YMDTHMS_ZEO_24HRS = DateTimeFormatter.ofPattern(CommonConstant.DATE_FORMAT_YMDTHMS_ZERO_24HRS);
+    public static final Pattern PATTERN_REGEX_PHONE_ASTERISK = Pattern.compile(CommonConstant.REGEX_PHONE_ASTERISK);
+    public static final Pattern PATTERN_REGEX_PATTERN_CHECK = Pattern.compile(CommonConstant.PATTER_CHECK);
+    public static final Pattern PATTERN_REGEX_NUMBER_PREFIX_CHECK = Pattern.compile(CommonConstant.COMMON_PREFIX.NUMBER_PREFIX);
+    public static final Pattern PATTERN_REGEX_ONLY_NUMBER_CHECK = Pattern.compile(CommonConstant.COMMON_PREFIX.REGEX_ONLY_NUMBER);
+    public static final SimpleDateFormat FORMAT_DATE_FORMAT = new SimpleDateFormat(CommonConstant.DATE_FORMAT);
+    public static final SimpleDateFormat FORMAT_DATE_FORMAT_MILI = new SimpleDateFormat(CommonConstant.DATE_FORMAT_MILI);
+    public static final SimpleDateFormat FORMAT_DATE_FORMAT_HM = new SimpleDateFormat(CommonConstant.DATE_FORMAT_HM);
+    public static final SimpleDateFormat DATE_FORMAT_END_DAY = new SimpleDateFormat(CommonConstant.DATE_FORMAT_END_DAY);
+
+    public static final DecimalFormatSymbols NUMBER_SEPARATOR_SYMBOL_FORMAT = new DecimalFormatSymbols();
+    public static final DecimalFormat NUMBER_SEPARATOR_SYMBOL = new DecimalFormat("", NUMBER_SEPARATOR_SYMBOL_FORMAT);
+    public static final DecimalFormat DECIMAL_FORMAT_NUMBER_SEPERATOR = new DecimalFormat("#,##0");
+
+    public static final DecimalFormatSymbols DECIMAL_FORMAT_SYMBOLS = new DecimalFormatSymbols(Locale.GERMAN);
+    public static final DecimalFormat DECIMAL_FORMAT_NUMBER_COMMA = new DecimalFormat("#,###,###,###.###", DECIMAL_FORMAT_SYMBOLS);
+
+    public static final SecureRandom RANDOM = new SecureRandom();
+
+    public static final String TEXT_TIMEZONE_VN = "Asia/Ha_Noi";
+    public static final TimeZone TIMEZONE_VN = TimeZone.getTimeZone(TEXT_TIMEZONE_VN);
+    public static Calendar CALENDAR = Calendar.getInstance();
+    public static final String[] hasSign = {
+            "à", "á", "ạ", "ả", "ã", "â", "ầ", "ấ", "ậ", "ẩ", "ẫ", "ă", "ằ", "ắ", "ặ", "ẳ", "ẵ", "&agrave;", "&aacute;", "&acirc;", "&atilde;",
+            "è", "é", "ẹ", "ẻ", "ẽ", "ê", "ề", "ế", "ệ", "ể", "ễ", "&egrave;", "&eacute;", "&ecirc;",
+            "ì", "í", "ị", "ỉ", "ĩ", "&igrave;", "&iacute;", "&icirc;",
+            "ò", "ó", "ọ", "ỏ", "õ", "ô", "ồ", "ố", "ộ", "ổ", "ỗ", "ơ", "ờ", "ớ", "ợ", "ở", "ỡ", "&ograve;", "&oacute;", "&ocirc;", "&otilde;",
+            "ù", "ú", "ụ", "ủ", "ũ", "ư", "ừ", "ứ", "ự", "ử", "ữ", "&ugrave;", "&uacute;",
+            "ỳ", "ý", "ỵ", "ỷ", "ỹ", "&yacute;",
+            "đ", "&eth;",
+            "À", "Á", "Ạ", "Ả", "Ã", "Â", "Ầ", "Ấ", "Ậ", "Ẩ", "Ẫ", "Ă", "Ằ", "Ắ", "Ặ", "Ẳ", "Ẵ", "&Agrave;", "&Aacute;", "&Acirc;", "&Atilde;",
+            "È", "É", "Ẹ", "Ẻ", "Ẽ", "Ê", "Ề", "Ế", "Ệ", "Ể", "Ễ", "&Egrave;", "&Eacute;", "&Ecirc;",
+            "Ì", "Í", "Ị", "Ỉ", "Ĩ", "&Igrave;", "&Iacute;", "&Icirc;",
+            "Ò", "Ó", "Ọ", "Ỏ", "Õ", "Ô", "Ồ", "Ố", "Ộ", "Ổ", "Ỗ", "Ơ", "Ờ", "Ớ", "Ợ", "Ở", "Ỡ", "&Ograve;", "&Oacute;", "&Ocirc;", "&Otilde;",
+            "Ù", "Ú", "Ụ", "Ủ", "Ũ", "Ư", "Ừ", "Ứ", "Ự", "Ử", "Ữ", "&Ugrave;", "&Uacute;",
+            "Ỳ", "Ý", "Ỵ", "Ỷ", "Ỹ", "&Yacute;",
+            "Đ", "&ETH;"
+    };
+    public static final String[] noSign = {
+            "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a",
+            "e", "e", "e", "e", "e", "e", "e", "e", "e", "e", "e", "e", "e", "e",
+            "i", "i", "i", "i", "i", "i", "i", "i",
+            "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o",
+            "u", "u", "u", "u", "u", "u", "u", "u", "u", "u", "u", "u", "u",
+            "y", "y", "y", "y", "y", "y",
+            "d", "d",
+            "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A",
+            "E", "E", "E", "E", "E", "E", "E", "E", "E", "E", "E", "E", "E", "E",
+            "I", "I", "I", "I", "I", "I", "I", "I",
+            "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O",
+            "U", "U", "U", "U", "U", "U", "U", "U", "U", "U", "U", "U", "U",
+            "Y", "Y", "Y", "Y", "Y", "Y",
+            "D", "D"
+    };
+    private static final Random rand = new Random();
+
+    static {
+        FORMAT_YMD.setTimeZone(TIMEZONE_VN);
+        FORMAT_S_MY.setTimeZone(TIMEZONE_VN);
+        FORMAT_S_YM.setTimeZone(TIMEZONE_VN);
+        FORMAT_DMY.setTimeZone(TIMEZONE_VN);
+        FORMAT_HH_MM.setTimeZone(TIMEZONE_VN);
+        FORMAT_DMYHMS.setTimeZone(TIMEZONE_VN);
+        FORMAT_DMY_HYPHEN.setTimeZone(TIMEZONE_VN);
+        FORMAT_HMS.setTimeZone(TIMEZONE_VN);
+        FORMAT_YDM_INSTANT.setTimeZone(TIMEZONE_VN);
+        FORMAT_DMYHMS_HYPHEN.setTimeZone(TIMEZONE_VN);
+        FORMAT_DATE.setTimeZone(TIMEZONE_VN);
+        FORMAT_DATE_2.setTimeZone(TIMEZONE_VN);
+        FORMAT_YMD_HMS.setTimeZone(TIMEZONE_VN);
+        FORMAT_YMDHMS.setTimeZone(TIMEZONE_VN);
+        FORMAT_YMDH.setTimeZone(TIMEZONE_VN);
+        FORMAT_HMDMY.setTimeZone(TIMEZONE_VN);
+        FORMAT_MD_HMS_END_DAY.setTimeZone(TIMEZONE_VN);
+        FORMAT_FORMAT_HM_DMY.setTimeZone(TIMEZONE_VN);
+        FORMAT_DATE_FORMAT_YM2.setTimeZone(TIMEZONE_VN);
+        FORMAT_DATE_FORMAT_SHORT_YYYY.setTimeZone(TIMEZONE_VN);
+        FORMAT_HM_DMY.setTimeZone(TIMEZONE_VN);
+        FORMAT_HM_DMY1.setTimeZone(TIMEZONE_VN);
+        FORMAT_DATE_DMY_HM.setTimeZone(TIMEZONE_VN);
+        FORMAT_DATE_FORMAT.setTimeZone(TIMEZONE_VN);
+        FORMAT_DATE_FORMAT_MILI.setTimeZone(TIMEZONE_VN);
+        FORMAT_YMD_HMS_BEGIN_DAY.setTimeZone(TIMEZONE_VN);
+        FORMAT_DATE_FORMAT_HM.setTimeZone(TIMEZONE_VN);
+
+        NUMBER_SEPARATOR_SYMBOL_FORMAT.setDecimalSeparator('.');
+        NUMBER_SEPARATOR_SYMBOL_FORMAT.setGroupingSeparator(',');
+
+        DECIMAL_FORMAT_NUMBER_SEPERATOR.setGroupingSize(3);
+        DECIMAL_FORMAT_SYMBOLS.setDecimalSeparator(',');
+        DECIMAL_FORMAT_SYMBOLS.setGroupingSeparator('.');
+
+        CALENDAR.setTimeZone(TIMEZONE_VN);
+    }
 
     /**
      * Ham chuyen String sang boolean

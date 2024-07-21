@@ -35,13 +35,13 @@ public class LoggerSchedule {
         int numSuccess = 0;
         int numFalse = 0;
         List<LoggerDTO> records = LoggerQueue.getInstance().getRecords();
-        for (int i = 0; i < records.size(); i++) {
+        for (LoggerDTO record : records) {
             try {
-                process(records.get(i));
+                process(record);
                 numSuccess++;
             } catch (Exception e) {
                 numFalse++;
-                log.error("Error while handle record queue: ", e.getMessage());
+                log.error("Error while handle record queue: {}", e.getMessage());
             }
         }
 //        log.info("AsyncLog analyId {}: QueueSize: {}, addSuccess: {}, addFalse: {}, writeSuccess:{}, writeFalse:{}",
@@ -60,7 +60,9 @@ public class LoggerSchedule {
                     ServerHttpRequest request = serverWebExchange.getRequest();
                     ipAddress = RequestUtils.getIpAddress(request);
 
-                    if (serverWebExchange.getRequest() != null && serverWebExchange.getRequest().getHeaders() != null && !DataUtil.isNullOrEmpty(serverWebExchange.getRequest().getHeaders().getFirst("Request-Id"))) {
+                    serverWebExchange.getRequest();
+                    serverWebExchange.getRequest().getHeaders();
+                    if (!DataUtil.isNullOrEmpty(serverWebExchange.getRequest().getHeaders().getFirst("Request-Id"))) {
                         requestId = serverWebExchange.getRequest().getHeaders().getFirst("Request-Id");
                     }
                 }

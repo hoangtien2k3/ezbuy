@@ -133,7 +133,7 @@ public class GatewayContextFilter implements WebFilter, Ordered {
                      * substring with the last char '&'
                      */
                     String formDataBodyString = "";
-                    if (formDataBodyBuilder.length() > 0) {
+                    if (!formDataBodyBuilder.isEmpty()) {
                         formDataBodyString = formDataBodyBuilder.substring(0, formDataBodyBuilder.length() - 1);
                     }
                     /*

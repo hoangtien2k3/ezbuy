@@ -7,10 +7,10 @@
         <property name="webClients">
             <list>
                 <ref bean="keycloakProperties"></ref>
-                <ref bean="notiServiceProperties"></ref>
-                <ref bean="authServiceProperties"></ref>
-                <ref bean="syncClientProperties"></ref>
-                <ref bean="settingServiceProperties"></ref>
+<!--                <ref bean="notiServiceProperties"></ref>-->
+<!--                <ref bean="authServiceProperties"></ref>-->
+<!--                <ref bean="syncClientProperties"></ref>-->
+<!--                <ref bean="settingServiceProperties"></ref>-->
             </list>
         </property>
     </bean>

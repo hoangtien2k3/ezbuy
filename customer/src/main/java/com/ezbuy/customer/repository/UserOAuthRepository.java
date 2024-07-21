@@ -1,6 +1,6 @@
 package com.ezbuy.customer.repository;
 
-import com.ezbuy.customer.model.UserOAuth;
+import com.ezbuy.customer.model.postgresql.UserOAuth;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Mono;
 

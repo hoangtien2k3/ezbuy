@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpMethod;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Data
@@ -16,6 +15,6 @@ import java.util.List;
 public class RetryProperties {
     private boolean isEnable = true;
     private int count = 2;
-    private List<HttpMethod> methods = Arrays.asList(HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE);
-    private List<? extends Class<? extends Exception>> exceptions = Arrays.asList(ConnectTimeoutException.class, ReadTimeoutException.class);
+    private List<HttpMethod> methods = List.of(HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE);
+    private List<? extends Class<? extends Exception>> exceptions = List.of(ConnectTimeoutException.class, ReadTimeoutException.class);
 }

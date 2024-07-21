@@ -1,7 +1,7 @@
 package com.ezbuy.customer.model.dto.request;
 
-import com.ezbuy.customer.model.dto.NotiContentDTO;
-import com.ezbuy.customer.model.dto.ReceiverDataDTO;
+import com.ezbuy.customer.model.NotiContentDTO;
+import com.ezbuy.customer.model.ReceiverDataDTO;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;

@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @ToString
-//@Profile("!prod")
+@Profile("!prod")
 @Component
 public class GatewayPluginProperties implements InitializingBean {
     public static final String GATEWAY_PLUGIN_PROPERTIES_PREFIX = "spring.plugin.config";
@@ -27,10 +28,12 @@ public class GatewayPluginProperties implements InitializingBean {
      * Enable Or Disable Read Request Data 。 If true, all request body will cached
      */
     private Boolean readRequestData = false;
+
     /**
      * Enable Or Disable Read Response Data
      */
     private Boolean readResponseData = false;
+
     /**
      * Enable Or Disable Log Request Detail
      */

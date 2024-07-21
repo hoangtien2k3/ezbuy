@@ -18,7 +18,7 @@ public class BodyInserterContext implements BodyInserter.Context{
     }
 
     public BodyInserterContext(ExchangeStrategies exchangeStrategies) {
-        this.exchangeStrategies = exchangeStrategies; // TODO: support custom strategies
+        this.exchangeStrategies = exchangeStrategies;
     }
 
     @Override
@@ -33,6 +33,6 @@ public class BodyInserterContext implements BodyInserter.Context{
 
     @Override
     public Map<String, Object> hints() {
-        return Collections.emptyMap(); // TODO: support hints
+        return Collections.emptyMap();
     }
 }

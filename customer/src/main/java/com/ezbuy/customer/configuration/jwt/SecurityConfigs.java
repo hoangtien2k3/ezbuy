@@ -37,6 +37,5 @@ public class SecurityConfigs {
                         .authenticated()
                 )
                 .build();
-
     }
 }

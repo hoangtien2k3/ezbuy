@@ -19,7 +19,7 @@ import java.util.Optional;
 @Configuration
 @Slf4j
 public class CacheAspect {
-        @Pointcut("@annotation(com.ezbuy.framework.annotations.LocalCache)")
+    @Pointcut("@annotation(com.ezbuy.framework.annotations.LocalCache)")
     private void processAnnotation() {
     }
 

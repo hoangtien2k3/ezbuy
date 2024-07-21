@@ -8,7 +8,6 @@
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-
     <artifactId>framework</artifactId>
     <version>${revision}</version>
     <name>framework</name>
@@ -24,7 +23,6 @@
         <spring-cloud.version>2023.0.2</spring-cloud.version>
     </properties>
 
-    <!-- dependencies mng-->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -42,6 +40,10 @@
             <groupId>axis</groupId>
             <artifactId>axis</artifactId>
             <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>
@@ -175,7 +177,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
-            <version>2.6.8</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
