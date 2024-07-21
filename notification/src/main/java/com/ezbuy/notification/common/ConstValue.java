@@ -1,48 +1,48 @@
 package com.ezbuy.notification.common;
 
 public class ConstValue {
-    public interface Channel {
-        String CHANNEL_SMS = "SMS";
-        String CHANNEL_REST = "REST";
-        String CHANNEL_WEB_SOCKET = "WEB_SOCKET";
-        String CHANNEL_EMAIL = "EMAIL";
+    public static final class Channel {
+        public static final String CHANNEL_SMS = "SMS";
+        public static final String CHANNEL_REST = "REST";
+        public static final String CHANNEL_WEB_SOCKET = "WEB_SOCKET";
+        public static final String CHANNEL_EMAIL = "EMAIL";
     }
 
-    public interface Category {
-        String NEW = "TIN_TUC";
-        String NOTICE = "THONG_BAO";
+    public static final class Category {
+        public static final String NEW = "TIN_TUC";
+        public static final String NOTICE = "THONG_BAO";
     }
 
-    public interface NotiServerity {
-        String NORMAL = "NORMAL";
-        String CRITICAL = "CRITICAL";
+    public static final class NotiServerity {
+        public static final String NORMAL = "NORMAL";
+        public static final String CRITICAL = "CRITICAL";
     }
 
-    public interface TransmissionState {
-        String FAILED = "FAILED";
-        String UNREAD = "UNREAD";
-        String PENDING = "PENDING";
-        String READ = "READ";
-        String NEW = "NEW";
-        String SENT = "SENT";
+    public static final class TransmissionState {
+        public static final String FAILED = "FAILED";
+        public static final String UNREAD = "UNREAD";
+        public static final String PENDING = "PENDING";
+        public static final String READ = "READ";
+        public static final String NEW = "NEW";
+        public static final String SENT = "SENT";
     }
 
-    public interface NotificationConstant {
-        String TIN_TUC = "TIN_TUC";
-        String THONG_BAO = "THONG_BAO";
-        Integer PAGE_SIZE = 7;
+    public static final class NotificationConstant {
+        public static final String TIN_TUC = "TIN_TUC";
+        public static final String THONG_BAO = "THONG_BAO";
+        public static final Integer PAGE_SIZE = 7;
     }
 
-    public interface ControllerPath {
-        String TRANSMISSION_PATH = "/v1/transmission";
+    public static final class ControllerPath {
+        public static final String TRANSMISSION_PATH = "/v1/transmission";
     }
 
-    public interface ContentTypeConstant {
-        String TEXT = "text/plain";
-        String HTML = "html/plain";
+    public static final class ContentTypeConstant {
+        public static final String TEXT = "text/plain";
+        public static final String HTML = "html/plain";
     }
 
-    public interface CommonMessageNoti {
-        String INVALID_FORMAT_SPEC = "params.invalid.format.spec";
+    public static final class CommonMessageNoti {
+        public static final String INVALID_FORMAT_SPEC = "params.invalid.format.spec";
     }
 }
