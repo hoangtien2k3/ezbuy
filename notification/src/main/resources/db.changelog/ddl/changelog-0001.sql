@@ -1,20 +1,27 @@
+-- changeset liquibase:0001
+-- author: hoangtien2k3
+-- create table channel, notification_category, notification_content, notification, transmission
+-- database: notification
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE channel
 (
-    id     SERIAL PRIMARY KEY,
+    id     UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     status INTEGER,
     type   VARCHAR(255)
 );
 
 CREATE TABLE notification_category
 (
-    id     SERIAL PRIMARY KEY,
+    id     UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     status INTEGER,
     type   VARCHAR(255)
 );
 
 CREATE TABLE notification_content
 (
-    id            SERIAL PRIMARY KEY,
+    id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     title         VARCHAR(255),
     sub_title     VARCHAR(255),
     image_url     VARCHAR(255),
@@ -30,14 +37,14 @@ CREATE TABLE notification_content
 
 CREATE TABLE notification
 (
-    id                      SERIAL PRIMARY KEY,
+    id                      UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     sender                  VARCHAR(255),
     severity                VARCHAR(255),
-    notification_content_id INTEGER,
+    notification_content_id UUID,
     expect_send_time        TIMESTAMP,
     status                  INTEGER,
     content_type            VARCHAR(255),
-    category_id             INTEGER,
+    category_id             UUID,
     create_at               TIMESTAMP,
     create_by               VARCHAR(255),
     update_at               TIMESTAMP,
@@ -46,11 +53,11 @@ CREATE TABLE notification
 
 CREATE TABLE transmission
 (
-    id              SERIAL PRIMARY KEY,
-    notification_id INTEGER,
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    notification_id UUID,
     receiver        VARCHAR(255),
     email           VARCHAR(255),
-    channel_id      INTEGER,
+    channel_id      UUID,
     state           VARCHAR(255),
     status          INTEGER,
     resend_count    INTEGER,
