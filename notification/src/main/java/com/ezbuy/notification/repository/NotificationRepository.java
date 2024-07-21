@@ -15,4 +15,5 @@ public interface NotificationRepository extends R2dbcRepository<Notification, St
 
     @Query(insertNotification)
     Mono<Void> insert(String id, String sender, String severity, String notificationContentId, String contentType, LocalDateTime createAt, String createBy, LocalDateTime updateAt, String updateBy, String categoryId, Integer status, LocalDateTime expectSendTime);
+
 }

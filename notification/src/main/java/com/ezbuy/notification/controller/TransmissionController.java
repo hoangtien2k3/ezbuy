@@ -46,7 +46,7 @@ public class TransmissionController {
         return transmissionService.changeTransmissionStateByIdAndReceiver(state, notificationContentId, transmissionId);
     }
 
-    @PreAuthorize("hasAnyAuthority('admin','system')")
+    @PreAuthorize("hasAnyAuthority('admin', 'system')")
     @PostMapping("/create-noti")
     public Mono<DataResponse<Object>> insertTransmission(@Valid @RequestBody CreateNotificationDTO createNotificationDTO) {
         return transmissionService.insertTransmission(createNotificationDTO);

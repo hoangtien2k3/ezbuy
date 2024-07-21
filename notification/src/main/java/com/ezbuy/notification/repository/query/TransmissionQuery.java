@@ -15,6 +15,7 @@ public interface TransmissionQuery {
             "AND n.status = 1\n" +
             "AND c2.status =1\n" +
             "GROUP BY c.type;";
+
     String getAllByNotificationByCategoryType = "SELECT nc.*,tr.state \n" +
             "FROM notification_content nc\n" +
             "INNER JOIN notification n\n" +
@@ -37,6 +38,7 @@ public interface TransmissionQuery {
             "ORDER BY :sort \n" +
             "LIMIT :pageSize \n" +
             "OFFSET :index;";
+
     String changeStateTransmissionByType = "UPDATE transmission tr\n" +
             "            SET tr.state = :state , tr.update_at= Now(), tr.update_by='system'\n" +
             "            WHERE tr.receiver = :receiver\n" +
@@ -47,9 +49,9 @@ public interface TransmissionQuery {
             "                                      Where c.id = :notificationContentId\n" +
             "                                      )\n";
 
-
     String insertTransmission = "INSERT INTO transmission (id, receiver, state, status, resend_count, create_at, create_by, update_at, update_by, channel_id, notification_id)\n" +
             "VALUES(:id, :receiver, :state, :status, :resendCount, :createAt, :createBy, :updateAt, :updateBy, :channelId, :notificationId);";
+
     String getAllNotificationContentByCreateAtAfter = "SELECT nc.* FROM notification_content nc\n" +
             "INNER JOIN notification n\n" +
             "ON nc.id = n.notification_content_id\n" +
@@ -100,6 +102,7 @@ public interface TransmissionQuery {
             "    update_at    = now(),\n" +
             "    update_by    = 'system'\n" +
             "WHERE id IN (:transmissionIds);";
+
     String getTransmissionByNotificationContentId = "SELECT tr.id FROM transmission tr \n" +
             "INNER JOIN notification n ON tr.notification_id = n.id \n" +
             "INNER JOIN notification_content nc ON n.notification_content_id = nc.id \n" +
@@ -108,6 +111,9 @@ public interface TransmissionQuery {
             "AND n.status =1\n" +
             "AND nc.status =1\n" +
             "AND tr.receiver = :receiver;";
+
     String findByIdAndStatus = "SELECT * FROM transmission WHERE id =:id AND status = :status";
+
     String updateStateById = "UPDATE transmission SET state = :state,update_by='system' WHERE id = :id";
+
 }

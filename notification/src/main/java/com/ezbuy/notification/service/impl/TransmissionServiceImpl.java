@@ -123,7 +123,7 @@ public class TransmissionServiceImpl implements TransmissionService {
                                             .switchIfEmpty(Mono.just(new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), null)));
                                 });
                     } else {
-                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("params.state.invalid")));
+                        return Mono.error(new BusinessException(INVALID_PARAMS, Translator.toLocaleVi("params.state.invalid")));
                     }
                 });
     }
@@ -131,7 +131,6 @@ public class TransmissionServiceImpl implements TransmissionService {
     @Transactional
     @Override
     public Mono<DataResponse<Object>> insertTransmission(CreateNotificationDTO createNotificationDTO) {
-
         return validateCreateNotificationDTO(createNotificationDTO)
                 .flatMap(validatedDTO -> SecurityUtils.getCurrentUser())
                 .flatMap(tokenUser -> {
@@ -219,10 +218,10 @@ public class TransmissionServiceImpl implements TransmissionService {
     @Override
     public Mono<DataResponse<List<NotificationContent>>> getNewNotiWhenOnline(String newestNotiTime) {
         if (DataUtil.isNullOrEmpty(newestNotiTime)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("params.newestNotiTime.notnull")));
+            return Mono.error(new BusinessException(INVALID_PARAMS, Translator.toLocaleVi("params.newestNotiTime.notnull")));
         }
         if (DataUtil.isNullOrEmpty(DataUtil.convertStringToLocalDateTime(newestNotiTime, LOCAL_DATE_TIME_PATTERN))) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("params.invalid.format")));
+            return Mono.error(new BusinessException(INVALID_PARAMS, Translator.toLocaleVi("params.invalid.format")));
         }
         return SecurityUtils.getCurrentUser().flatMap(
                 tokenUser -> transmissionRepository.getAllNotificationContentByCreateAtAfter(tokenUser.getId(), DataUtil.convertStringToLocalDateTime(newestNotiTime, LOCAL_DATE_TIME_PATTERN))
@@ -237,10 +236,10 @@ public class TransmissionServiceImpl implements TransmissionService {
         return SecurityUtils.getCurrentUser()
                 .flatMap(user -> {
                     if (pageIndex < 1) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("params.pageIndex.invalid")));
+                        return Mono.error(new BusinessException(INVALID_PARAMS, Translator.toLocaleVi("params.pageIndex.invalid")));
                     }
                     if (pageSize < 1) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("params.pageSize.invalid")));
+                        return Mono.error(new BusinessException(INVALID_PARAMS, Translator.toLocaleVi("params.pageSize.invalid")));
                     }
                     StringBuilder sortingString = new StringBuilder();
                     sortingString.append(SortingUtils.parseSorting(sort, NotificationHeader.class));
@@ -249,28 +248,28 @@ public class TransmissionServiceImpl implements TransmissionService {
                     }
                     StringBuilder query = new StringBuilder();
                     query.append(" SELECT nc.*,tr.state  \n" +
-                            "             FROM notification_content nc \n" +
-                            "             INNER JOIN notification n \n" +
-                            "             ON n.notification_content_id = nc.id \n" +
-                            "             INNER JOIN notification_category nca \n" +
-                            "             ON n.category_id = nca.id \n" +
-                            "             INNER JOIN transmission tr \n" +
-                            "             ON tr.notification_id = n.id \n" +
-                            "             INNER JOIN channel c \n" +
-                            "             ON tr.channel_id = c.id \n" +
-                            "             where tr.receiver = (:receiver)   \n" +
-                            "             AND tr.status =1 \n" +
-                            "             AND tr.state IN ('NEW','UNREAD','READ') \n" +
-                            "             AND nc.status =1 \n" +
-                            "             AND n.status =1 \n" +
-                            "             AND nca.status =1 \n" +
-                            "             AND c.status =1 \n" +
-                            "             AND c.type = 'REST' \n" +
-                            "             AND nca.type = (:categoryType)  \n" +
-                            "             ORDER BY ");
+                            " FROM notification_content nc \n" +
+                            " INNER JOIN notification n \n" +
+                            " ON n.notification_content_id = nc.id \n" +
+                            " INNER JOIN notification_category nca \n" +
+                            " ON n.category_id = nca.id \n" +
+                            " INNER JOIN transmission tr \n" +
+                            " ON tr.notification_id = n.id \n" +
+                            " INNER JOIN channel c \n" +
+                            " ON tr.channel_id = c.id \n" +
+                            " where tr.receiver = (:receiver)   \n" +
+                            " AND tr.status =1 \n" +
+                            " AND tr.state IN ('NEW','UNREAD','READ') \n" +
+                            " AND nc.status =1 \n" +
+                            " AND n.status =1 \n" +
+                            " AND nca.status =1 \n" +
+                            " AND c.status =1 \n" +
+                            " AND c.type = 'REST' \n" +
+                            " AND nca.type = (:categoryType)  \n" +
+                            " ORDER BY ");
                     query.append(sortingString);
                     query.append(" LIMIT :pageSize  \n" +
-                            "             OFFSET :index;");
+                            " OFFSET :index;");
                     BigDecimal index = (new BigDecimal(pageIndex - 1)).multiply(new BigDecimal(pageSize));
                     return template.getDatabaseClient().sql(String.valueOf(query))
                             .bind("receiver", user.getId())

@@ -9,6 +9,7 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDateTime;
 
 public interface NotificationContentRepository extends R2dbcRepository<NotificationContent, String> {
+
     Mono<NotificationContent> findById(String id);
 
     @Query(NotificationContentQuery.insertNotificationContent)

@@ -21,7 +21,6 @@ public interface TransmissionRepository extends R2dbcRepository<Transmission, St
     @Query(value = getTransmissionByNotificationContentId)
     Flux<String> getListTransId(String receiver, String notificationContentId);
 
-
     @Query(value = changeStateTransmissionByType)
     Mono<Void> changeStateTransmissionByNotiIdAndReceiver(String state, String receiver, String notificationContentId);
 

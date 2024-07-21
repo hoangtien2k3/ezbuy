@@ -1,4 +1,4 @@
-package com.ezbuy.customer.service.impl;//package com.ezbuy.customer.domain.customer.service;
+package com.ezbuy.customer.service.impl;
 
 import com.ezbuy.customer.client.NotiServiceClient;
 import com.ezbuy.customer.constants.Const;
@@ -17,13 +17,12 @@ import com.ezbuy.customer.repository.AddressRepository;
 import com.ezbuy.customer.service.TokenService;
 import com.ezbuy.customer.repository.CustomerGroupRepository;
 import com.ezbuy.customer.repository.CustomerRepository;
-//import com.ezbuy.customerservice.service.NotiServiceClient;
 import com.ezbuy.customer.repository.ShopUserRepository;
 import com.ezbuy.customer.service.CustomerService;
 import com.ezbuy.framework.constants.CommonErrorCode;
-import com.ezbuy.framework.constants.Regex;
 import com.ezbuy.framework.exception.BusinessException;
 import com.ezbuy.framework.model.response.DataResponse;
+import com.ezbuy.framework.utils.AppUtils;
 import com.ezbuy.framework.utils.DataUtil;
 import com.ezbuy.framework.utils.PasswordGenerator;
 import com.ezbuy.framework.utils.Translator;
@@ -40,6 +39,9 @@ import java.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.ezbuy.framework.constants.CommonErrorCode.*;
+import static com.ezbuy.framework.constants.Regex.*;
 
 @Slf4j
 @Service
@@ -97,10 +99,10 @@ public class CustomerServiceImpl implements CustomerService {
                             }).flatMap(savedCustomer -> Mono.just(DataResponse.success(CustomerDTO.fromModel(savedCustomer))))
                             .doOnSuccess(dto -> {
                                 if (isSendMail) {
-//                                    AppUtils.runHiddenStream(sendMail(dto.getData().username(), dto.getData().id().toString(), dto.getData().email(), false));
+                                    AppUtils.runHiddenStream(sendMail(dto.getData().username(), dto.getData().id().toString(), dto.getData().email(), false));
                                 }
                                 // sending info account for customer
-//                                AppUtils.runHiddenStream(sendMail(dto.getData().username(), dto.getData().id().toString(), dto.getData().email(), true));
+                                AppUtils.runHiddenStream(sendMail(dto.getData().username(), dto.getData().id().toString(), dto.getData().email(), true));
                             })
                             .doOnError(throwable -> log.error("Error saving customer data: {}", throwable.getMessage()));
                 }).doOnError(throwable -> log.error("Insert error: {}", throwable.getMessage()));
@@ -134,41 +136,40 @@ public class CustomerServiceImpl implements CustomerService {
         ValidateCustomerDto customerDto = new ValidateCustomerDto(Const.TRUE, Const.ErrorCode.ERROR_CODE_SUCCESS, Const.EMPTY);
         try {
             if (DataUtil.isNullOrEmpty(customerRequest.firstName())) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.notNull", "first.name");
+                throw new BusinessException(INVALID_PARAMS, "customer.input.notNull", "first.name");
             }
             if (DataUtil.isNullOrEmpty(customerRequest.lastName())) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.notNull","last.name");
+                throw new BusinessException(INVALID_PARAMS, "customer.input.notNull", "last.name");
             }
             if (DataUtil.isNullOrEmpty(customerRequest.phoneNumber())) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.notNull", "contact.phone.number");
+                throw new BusinessException(INVALID_PARAMS, "customer.input.notNull", "contact.phone.number");
             }
             if (DataUtil.isNullOrEmpty(customerRequest.email())) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.notNull", "contact.email");
+                throw new BusinessException(INVALID_PARAMS, "customer.input.notNull", "contact.email");
             }
             if (DataUtil.isNullOrEmpty(customerRequest.password())) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.notNull", "contact.password");
+                throw new BusinessException(INVALID_PARAMS, "customer.input.notNull", "contact.password");
             }
             // Validate password length
             if (customerRequest.password().length() < Const.CUST_PASSWORD.MIN_LENGTH ||
                     customerRequest.password().length() > Const.CUST_PASSWORD.MAX_LENGTH) {
-                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS,
-                        "customer.password.length", "8", "20"));
+                return Mono.error(new BusinessException(INVALID_PARAMS, "customer.password.length", "8", "20"));
             }
             // validate regex
-            if (!customerRequest.phoneNumber().matches(Regex.PHONE_REGEX)) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.invalid", "customer.phone.number");
+            if (!customerRequest.phoneNumber().matches(PHONE_REGEX)) {
+                throw new BusinessException(INVALID_PARAMS, "customer.input.invalid", "customer.phone.number");
             }
-            if (!customerRequest.email().matches(Regex.EMAIL_REGEX)) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.invalid", "contact.email");
+            if (!customerRequest.email().matches(EMAIL_REGEX)) {
+                throw new BusinessException(INVALID_PARAMS, "customer.input.invalid", "contact.email");
             }
-            if (!customerRequest.password().matches(Regex.PASSWORD_REGEX)) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.invalid", "contact.password");
+            if (!customerRequest.password().matches(PASSWORD_REGEX)) {
+                throw new BusinessException(INVALID_PARAMS, "customer.input.invalid", "contact.password");
             }
             return Mono.just(customerDto);
         } catch (BusinessException e) {
             return Mono.just(new ValidateCustomerDto(Const.FALSE, e.getErrorCode(), e.getMessage()));
-        } catch(Exception ex) {
-            return Mono.just(new ValidateCustomerDto(Const.FALSE, CommonErrorCode.INVALID_PARAMS, ex.getMessage()));
+        } catch (Exception ex) {
+            return Mono.just(new ValidateCustomerDto(Const.FALSE, INVALID_PARAMS, ex.getMessage()));
         }
     }
 
@@ -176,16 +177,16 @@ public class CustomerServiceImpl implements CustomerService {
         ValidateCustomerDto customerDto = new ValidateCustomerDto(Const.TRUE, Const.ErrorCode.ERROR_CODE_SUCCESS, Const.EMPTY);
         try {
             if (DataUtil.isNullOrEmpty(auth.email())) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.notNull", "contact.email");
+                throw new BusinessException(INVALID_PARAMS, "customer.input.notNull", "contact.email");
             }
             if (DataUtil.isNullOrEmpty(auth.password())) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.notNull", "contact.password");
+                throw new BusinessException(INVALID_PARAMS, "customer.input.notNull", "contact.password");
             }
-            if (!auth.email().matches(Regex.EMAIL_REGEX)) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.invalid", "contact.email");
+            if (!auth.email().matches(EMAIL_REGEX)) {
+                throw new BusinessException(INVALID_PARAMS, "customer.input.invalid", "contact.email");
             }
-            if (!auth.password().matches(Regex.PASSWORD_REGEX)) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.invalid", "contact.password");
+            if (!auth.password().matches(PASSWORD_REGEX)) {
+                throw new BusinessException(INVALID_PARAMS, "customer.input.invalid", "contact.password");
             }
             return Mono.just(customerDto);
         } catch (BusinessException e) {
@@ -211,7 +212,7 @@ public class CustomerServiceImpl implements CustomerService {
                 log.info("Send mail to customer {} success ", email);
                 return Mono.just(true);
             }
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, (objects.isPresent()) ? objects.get().getMessage() : "params.invalid"));
+            return Mono.error(new BusinessException(INVALID_PARAMS, (objects.isPresent()) ? objects.get().getMessage() : "params.invalid"));
         }).onErrorResume(throwable -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "noti.service.error")));
     }
 

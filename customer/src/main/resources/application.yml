@@ -90,6 +90,7 @@ client:
     internal-oauth: true
     address: http://10.207.252.223/sme-setting/
     name: settingClient
+
 # unauthenticated endpoints config
 application:
   http-logging:

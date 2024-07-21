@@ -8,15 +8,14 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-
 public interface TransmissionService {
+    Mono<DataResponse<Object>> insertTransmission(CreateNotificationDTO createNotificationDTO);
+
     Mono<DataResponse> getCountNoticeResponseDTO();
 
-    Mono<DataResponse<List<NotificationHeader>>> getNotificationContentListByCategoryType(String type, Integer pageIndex, Integer pageSize, String sort);
+    Mono<DataResponse<List<NotificationContent>>> getNewNotiWhenOnline(String newestNotiTime);
 
     Mono<DataResponse<Object>> changeTransmissionStateByIdAndReceiver(String state, String notificationContentId, String transmissionId);
 
-    Mono<DataResponse<Object>> insertTransmission(CreateNotificationDTO createNotificationDTO);
-
-    Mono<DataResponse<List<NotificationContent>>> getNewNotiWhenOnline(String newestNotiTime);
+    Mono<DataResponse<List<NotificationHeader>>> getNotificationContentListByCategoryType(String type, Integer pageIndex, Integer pageSize, String sort);
 }

@@ -22,9 +22,9 @@ import java.util.Optional;
 @DependsOn("webClientFactory")
 public class AuthClientImpl implements AuthClient {
 
-    private final BaseRestClient baseRestClient;
     @Qualifier(value = "auth")
     private final WebClient auth;
+    private final BaseRestClient baseRestClient;
 
     @Override
     public Mono<List<String>> getAllUserId() {
