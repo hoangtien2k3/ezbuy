@@ -1,5 +1,6 @@
 package com.ezbuy.customer.service.impl;//package com.ezbuy.customer.domain.customer.service;
 
+import com.ezbuy.customer.client.NotiServiceClient;
 import com.ezbuy.customer.constants.Const;
 import com.ezbuy.customer.model.dto.CustomerDTO;
 import com.ezbuy.customer.model.NotiContentDTO;
@@ -24,6 +25,7 @@ import com.ezbuy.framework.constants.Regex;
 import com.ezbuy.framework.exception.BusinessException;
 import com.ezbuy.framework.model.response.DataResponse;
 import com.ezbuy.framework.utils.DataUtil;
+import com.ezbuy.framework.utils.PasswordGenerator;
 import com.ezbuy.framework.utils.Translator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,8 +53,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final PasswordEncoder passwordEncoder;
     private final ReactiveUserDetailsService reactiveUserDetailsService;
     private final TokenService tokenProvider;
-
-//    private final NotiServiceClient notiServiceClient;
+    private final NotiServiceClient notiServiceClient;
 
     @Override
     public Mono<DataResponse<CustomerDTO>> createCustomer(CreateCustomerRequest customerRequest) {
@@ -110,7 +111,7 @@ public class CustomerServiceImpl implements CustomerService {
         return validateCustomerLogin(authRequest)
                 .flatMap(validate -> {
                     if (!validate.isValid()) {
-                        return Mono.error(new BusinessException(String.valueOf(HttpStatus.BAD_REQUEST.value()), validate.errorMessage()));
+                        return Mono.error(new BusinessException(validate.errorCode(), validate.errorMessage()));
                     }
                     return reactiveUserDetailsService.findByUsername(authRequest.email())
                             .flatMap(cus -> {
@@ -130,87 +131,89 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     private Mono<ValidateCustomerDto> validRequestCreateCustomer(CreateCustomerRequest customerRequest) {
-        ValidateCustomerDto customerDto = new ValidateCustomerDto(Const.TRUE, Const.EMPTY);
+        ValidateCustomerDto customerDto = new ValidateCustomerDto(Const.TRUE, Const.ErrorCode.ERROR_CODE_SUCCESS, Const.EMPTY);
         try {
             if (DataUtil.isNullOrEmpty(customerRequest.firstName())) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("first.name.null.or.empty"));
+                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.notNull", "first.name");
             }
             if (DataUtil.isNullOrEmpty(customerRequest.lastName())) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("last.name.null.or.empty"));
+                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.notNull","last.name");
             }
             if (DataUtil.isNullOrEmpty(customerRequest.phoneNumber())) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("contact.phone.number.null.or.empty"));
+                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.notNull", "contact.phone.number");
             }
             if (DataUtil.isNullOrEmpty(customerRequest.email())) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("contact.email.null.or.empty"));
+                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.notNull", "contact.email");
             }
             if (DataUtil.isNullOrEmpty(customerRequest.password())) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("contact.password.null.or.empty"));
+                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.notNull", "contact.password");
             }
             // Validate password length
             if (customerRequest.password().length() < Const.CUST_PASSWORD.MIN_LENGTH ||
                     customerRequest.password().length() > Const.CUST_PASSWORD.MAX_LENGTH) {
                 return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS,
-                        Translator.toLocaleVi("customer.password.length", Const.CUST_PASSWORD.MIN_LENGTH, Const.CUST_PASSWORD.MAX_LENGTH)));
+                        "customer.password.length", "8", "20"));
             }
             // validate regex
             if (!customerRequest.phoneNumber().matches(Regex.PHONE_REGEX)) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("customer.phone.number.invalid"));
+                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.invalid", "customer.phone.number");
             }
             if (!customerRequest.email().matches(Regex.EMAIL_REGEX)) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("customer.email.invalid"));
+                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.invalid", "contact.email");
             }
             if (!customerRequest.password().matches(Regex.PASSWORD_REGEX)) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("customer.password.invalid"));
+                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.invalid", "contact.password");
             }
-
             return Mono.just(customerDto);
         } catch (BusinessException e) {
-            log.error("validate error: ", e);
-            return Mono.just(new ValidateCustomerDto(Const.FALSE, e.getMessage()));
+            return Mono.just(new ValidateCustomerDto(Const.FALSE, e.getErrorCode(), e.getMessage()));
         } catch(Exception ex) {
-            log.error("Exception: validate error: ", ex);
-            return Mono.just(new ValidateCustomerDto(Const.FALSE, ex.getMessage()));
+            return Mono.just(new ValidateCustomerDto(Const.FALSE, CommonErrorCode.INVALID_PARAMS, ex.getMessage()));
         }
     }
 
     private Mono<ValidateCustomerDto> validateCustomerLogin(AuthenticationRequest auth) {
-        ValidateCustomerDto customerDto = new ValidateCustomerDto(Const.TRUE, Const.EMPTY);
+        ValidateCustomerDto customerDto = new ValidateCustomerDto(Const.TRUE, Const.ErrorCode.ERROR_CODE_SUCCESS, Const.EMPTY);
         try {
             if (DataUtil.isNullOrEmpty(auth.email())) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("contact.email.null.or.empty"));
+                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.notNull", "contact.email");
             }
             if (DataUtil.isNullOrEmpty(auth.password())) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("contact.password.null.or.empty"));
+                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.notNull", "contact.password");
+            }
+            if (!auth.email().matches(Regex.EMAIL_REGEX)) {
+                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.invalid", "contact.email");
+            }
+            if (!auth.password().matches(Regex.PASSWORD_REGEX)) {
+                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "customer.input.invalid", "contact.password");
             }
             return Mono.just(customerDto);
         } catch (BusinessException e) {
-            return Mono.just(new ValidateCustomerDto(Const.FALSE, e.getMessage()));
+            return Mono.just(new ValidateCustomerDto(Const.FALSE, e.getErrorCode(), e.getMessage()));
         }
     }
 
-
-//    private Mono<Boolean> sendMail(String userName, String customerId, String email, boolean hasPassword) {
-//        String subTitle, title, template;
-//        if (hasPassword) {
-//            String password = PasswordGenerator.generateCommonLangPassword();
-//            subTitle = userName + "-" + password;
-//            title = Translator.toLocaleVi("email.title.register.customer.success");
-//            template = Const.TemplateMail.CUSTOMER_REGISTER_SUCCESS;
-//        } else {
-//            subTitle = userName;
-//            title = Translator.toLocaleVi("email.title.active.account.success");
-//            template = Const.TemplateMail.CUSTOMER_ACTIVE_SUCCESS;
-//        }
-//        CreateNotificationDTO createNotificationDTO = getNotificationDTO(subTitle, title, template, ReceiverDataDTO.builder().userId(customerId).email(email).build());
-//        return notiServiceClient.insertTransmission(createNotificationDTO).flatMap(objects -> {
-//            if (objects.isPresent() && (DataUtil.isNullOrEmpty(objects.get().getErrorCode()) && !DataUtil.isNullOrEmpty(objects.get().getMessage()))) {
-//                log.info("Send mail to customer {} success ", email);
-//                return Mono.just(true);
-//            }
-//            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, (objects.isPresent()) ? objects.get().getMessage() : "params.invalid"));
-//        }).onErrorResume(throwable -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "noti.service.error")));
-//    }
+    private Mono<Boolean> sendMail(String userName, String customerId, String email, boolean hasPassword) {
+        String subTitle, title, template;
+        if (hasPassword) {
+            String password = PasswordGenerator.generateCommonLangPassword();
+            subTitle = userName + "-" + password;
+            title = Translator.toLocaleVi("email.title.register.customer.success");
+            template = Const.TemplateMail.CUSTOMER_REGISTER_SUCCESS;
+        } else {
+            subTitle = userName;
+            title = Translator.toLocaleVi("email.title.active.account.success");
+            template = Const.TemplateMail.CUSTOMER_ACTIVE_SUCCESS;
+        }
+        CreateNotificationDTO createNotificationDTO = getNotificationDTO(subTitle, title, template, ReceiverDataDTO.builder().userId(customerId).email(email).build());
+        return notiServiceClient.insertTransmission(createNotificationDTO).flatMap(objects -> {
+            if (objects.isPresent() && (DataUtil.isNullOrEmpty(objects.get().getErrorCode()) && !DataUtil.isNullOrEmpty(objects.get().getMessage()))) {
+                log.info("Send mail to customer {} success ", email);
+                return Mono.just(true);
+            }
+            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, (objects.isPresent()) ? objects.get().getMessage() : "params.invalid"));
+        }).onErrorResume(throwable -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "noti.service.error")));
+    }
 
     private CreateNotificationDTO getNotificationDTO(String subTitle, String title, String template, ReceiverDataDTO data) {
         CreateNotificationDTO createNotificationDTO = new CreateNotificationDTO();

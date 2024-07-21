@@ -2,7 +2,6 @@ package com.ezbuy.framework.config.exception;
 
 import com.ezbuy.framework.constants.CommonErrorCode;
 import com.ezbuy.framework.exception.BusinessException;
-import com.ezbuy.framework.exception.ValidationException;
 import com.ezbuy.framework.model.response.TraceErrorResponse;
 import com.ezbuy.framework.utils.DataUtil;
 import com.ezbuy.framework.utils.Translator;
@@ -87,7 +86,7 @@ public class ExceptionResponseConfig {
 
     @ExceptionHandler(BusinessException.class)
     public Mono<ResponseEntity<TraceErrorResponse<Object>>> businessException(BusinessException ex, ServerWebExchange serverWebExchange) {
-        String traceId = tracer.currentSpan().context().traceId();
+        String traceId = Objects.requireNonNull(tracer.currentSpan()).context().traceId();
         String errorCode = ex.getErrorCode();
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
         if (!DataUtil.isNullOrEmpty(errorCode)) {
@@ -97,16 +96,7 @@ public class ExceptionResponseConfig {
                 httpStatus = HttpStatus.FORBIDDEN;
             }
         }
-        final HttpStatus status = httpStatus;
-        return Translator.toLocaleMono(ex.getMessage(), null, ex.getParamsMsg())
-                .map(msg -> new ResponseEntity<>(new TraceErrorResponse<>(ex.getErrorCode(), msg, null, traceId), status));
+        return Mono.just(new ResponseEntity<>(new TraceErrorResponse<>(ex.getErrorCode(), ex.getMessage(), null, traceId), httpStatus));
     }
 
-    @ExceptionHandler(ValidationException.class)
-    public Mono<ResponseEntity<TraceErrorResponse<Object>>> validationException(ValidationException ex, ServerWebExchange serverWebExchange) {
-        String traceId = Objects.requireNonNull(tracer.currentSpan()).context().traceId();
-        log.error("Validation exception trace-id {} , error ", traceId, ex);
-        return Translator.toLocaleMono(ex.getErrorMessage(), null, (Object) ex.getParamsMsg())
-                .map(msg -> new ResponseEntity<>(new TraceErrorResponse<>(CommonErrorCode.INVALID_PARAMS, msg, null, traceId), HttpStatus.BAD_REQUEST));
-    }
 }
