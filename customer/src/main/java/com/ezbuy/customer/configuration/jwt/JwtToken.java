@@ -1,9 +1,10 @@
 package com.ezbuy.customer.configuration.jwt;
 
-import lombok.Getter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import lombok.Getter;
 
 @Getter
 public class JwtToken extends AbstractAuthenticationToken {

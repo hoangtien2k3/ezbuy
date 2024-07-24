@@ -1,11 +1,11 @@
 package com.ezbuy.framework.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 
 @JsonIgnoreProperties
 @Data
@@ -17,7 +17,7 @@ public class TokenUser {
     private String id; // userId in table user_entity of schema sme_keycloak
     private String name;
     private String email;
-//    @JsonProperty("individual_id")
-//    private String individualId;
+    //    @JsonProperty("individual_id")
+    //    private String individualId;
     private String organizationId;
 }

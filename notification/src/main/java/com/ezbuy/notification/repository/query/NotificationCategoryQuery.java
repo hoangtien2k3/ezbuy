@@ -2,6 +2,6 @@ package com.ezbuy.notification.repository.query;
 
 public interface NotificationCategoryQuery {
 
-    String findCategoryIdByType = "SELECT nc.id from notification_category nc WHERE nc.type=:categoryType AND status = 1";
-
+    String findCategoryIdByType =
+            "SELECT nc.id from notification_category nc WHERE nc.type=:categoryType AND status = 1";
 }

@@ -1,3 +1,7 @@
+:root {
+  --white: #ffffff;
+}
+
 body,
 html {
   display: flex;
@@ -10,9 +14,11 @@ html {
   margin: 0;
   height: 100%;
 }
+
 body {
   margin: 0;
 }
+
 .login-content {
   background-size: cover;
   background-position: center;
@@ -22,6 +28,7 @@ body {
   justify-content: center;
   flex-direction: column;
 }
+
 .login-content .box {
   width: 448px;
   border-radius: 8px;
@@ -29,46 +36,42 @@ body {
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.24), 0 0 2px 0 rgba(0, 0, 0, 0.12);
   margin: auto;
 }
+
 .login-content .box .box-container {
   width: 100%;
   padding-left: 32px;
 }
+
 .login-content .box .logo {
   display: block;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 30px;
+  margin: 30px auto 0 auto;
 }
+
 .login-content .box .application-name {
   width: 270px;
-  font-family: Muli;
+  font-family: Muli, sans-serif;
   font-size: 24px;
   font-weight: 600;
-  font-style: normal;
-  font-stretch: normal;
   line-height: 0.83;
   letter-spacing: -0.4px;
   text-align: left;
   color: #0055b8;
-  margin-left: 32px;
-  margin-top: 40px;
+  margin: 40px 0 0 32px;
 }
+
 input {
   cursor: pointer;
 }
+
 .login-content .box .form {
-  margin-left: 32px;
-  margin-top: 55px;
-  margin-bottom: -55px;
+  margin: 55px 0 -55px 32px;
 }
+
 .login-content .box .login-field {
   width: 320px;
   height: 24px;
-  font-family: Muli;
+  font-family: Muli, sans-serif;
   font-size: 14px;
-  font-weight: normal;
-  font-style: normal;
-  font-stretch: normal;
   letter-spacing: -0.4px;
   text-align: left;
   color: #000000;
@@ -77,32 +80,31 @@ input {
   outline: none;
   background-color: #fff;
 }
+
 .login-content .box input[type="text"]:focus,
 .login-content .box input[type="password"]:focus {
   border-bottom: 2px solid #0055b8;
 }
+
 .login-content .box input[type="text"]:-webkit-autofill,
 .login-content .box input[type="password"]:-webkit-autofill {
   box-shadow: 0 0 0px 1000px white inset;
 }
+
 .login-content .box .submit {
   width: 320px;
   height: 36px;
   border-radius: 2px;
   background-color: #00754a;
-  font-family: Muli;
+  font-family: Muli, sans-serif;
   font-size: 14px;
   font-weight: bold;
-  font-style: normal;
-  font-stretch: normal;
-  line-height: normal;
-  letter-spacing: normal;
   text-align: center;
   color: #ffffff;
-  border-style: none;
-  margin-top: 5rem;
-  margin-bottom: 4rem;
+  border: none;
+  margin: 5rem 0 4rem 0;
 }
+
 .login-content .box .visibility {
   position: relative;
   left: 296px;
@@ -112,6 +114,7 @@ input {
   opacity: 0.54;
   border: none;
 }
+
 .login-content .box .copyright {
   min-width: 320px;
   text-align: center;
@@ -120,39 +123,35 @@ input {
   position: relative;
   top: 50px;
 }
+
 .message-text {
   width: 322px;
   height: 22px;
   opacity: 0.87;
-  font-family: Muli;
+  font-family: Muli, sans-serif;
   font-size: 14px;
-  font-weight: normal;
-  font-style: normal;
-  font-stretch: normal;
   line-height: 1.3;
   letter-spacing: -0.4px;
   text-align: left;
   color: #b8082a;
-  border: 0px;
+  border: 0;
   position: relative;
   top: 235px;
   left: 64px;
   display: inline-flex;
   align-items: center;
 }
+
 .identity-providers {
   width: 270px;
-  font-family: Muli;
+  font-family: Muli, sans-serif;
   font-size: 16px;
   font-weight: 600;
-  font-style: normal;
-  font-stretch: normal;
   line-height: 0.83;
   letter-spacing: -0.4px;
   text-align: left;
   color: #0055b8;
-  margin-left: 32px;
-  margin-top: 20px;
+  margin: 20px 0 0 32px;
 }
 
 .login-content .box .social-link-style {
@@ -160,28 +159,21 @@ input {
   height: 36px;
   border-radius: 2px;
   background-color: var(--white);
-  font-family: Muli;
+  font-family: Muli, sans-serif;
   font-size: 14px;
   font-weight: bold;
-  font-style: normal;
-  font-stretch: normal;
-  line-height: normal;
-  letter-spacing: normal;
   text-align: center;
   color: #00754a;
-  border-style: solid;
-  border-color: #00754a;
-  margin-top: 0px;
-  margin-left: 30px;
-
-  margin-bottom: 10px;
+  border: solid #00754a;
+  margin: 0 0 10px 30px;
 }
 
 .login-content .box .para {
-  font-family: Muli;
+  font-family: Muli, sans-serif;
   font-size: 14px;
   margin-left: 30px;
 }
+
 .logoyas {
   max-width: 10px;
   max-height: 10px;
@@ -196,14 +188,13 @@ a {
   height: 36px;
   border-radius: 2px;
   background-color: white;
-  font-family: Muli;
+  font-family: Muli, sans-serif;
   font-size: 14px;
   font-weight: bold;
   text-align: center;
   color: black;
-  margin-left: 16px;
-  margin-top: 5px;
-  border-style: 1px solid black;
+  margin: 5px 0 0 16px;
+  border: 1px solid black;
 }
 
 .backtologin {
@@ -217,18 +208,13 @@ a {
   height: 36px;
   border-radius: 2px;
   background-color: #00754a;
-  font-family: Muli;
+  font-family: Muli, sans-serif;
   font-size: 14px;
   font-weight: bold;
-  font-style: normal;
-  font-stretch: normal;
-  line-height: normal;
-  letter-spacing: normal;
   text-align: center;
   color: #ffffff;
-  border-style: none;
-  margin-top: 2rem;
-  margin-bottom: 3rem;
+  border: none;
+  margin: 2rem 0 3rem 0;
 }
 
 .input-group {

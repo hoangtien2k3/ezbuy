@@ -20,7 +20,7 @@
             }
         </script>
             <div class="logoyas">
-           <img class="logo" src="${url.resourcesPath}/img/yaslogo.png" alt="yas">
+           <img class="logo" src="${url.resourcesPath}/img/ezbuy-logo.png" alt="ezbuy">
         </div>
     <#elseif section = "form">
     
@@ -46,7 +46,7 @@
             </div>
         </#if>
         <div>
-            <p class="copyright">&copy; copyright - yas.nashtech-garage ${.now?string('yyyy')}</p>
+            <p class="copyright">&copy; copyright - ezbuy.vn ${.now?string('yyyy')}</p>
         </div>
     </#if>
 </@layout.registrationLayout>

@@ -1,17 +1,27 @@
+/*
+ * Copyright 2024 - Hoàng Anh Tiến
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.framework.client.impl;
 
-import com.ezbuy.framework.client.BaseRestClient;
-import com.ezbuy.framework.constants.CommonErrorCode;
-import com.ezbuy.framework.constants.Constants;
-import com.ezbuy.framework.exception.BusinessException;
-import com.ezbuy.framework.utils.DataUtil;
-import com.ezbuy.framework.utils.ObjectMapperUtil;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.epoll.EpollChannelOption;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
-import lombok.extern.slf4j.Slf4j;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Objects;
+import java.util.Optional;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -23,27 +33,40 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+
+import com.ezbuy.framework.client.BaseRestClient;
+import com.ezbuy.framework.constants.CommonErrorCode;
+import com.ezbuy.framework.constants.Constants;
+import com.ezbuy.framework.exception.BusinessException;
+import com.ezbuy.framework.utils.DataUtil;
+import com.ezbuy.framework.utils.ObjectMapperUtil;
+
+import io.netty.channel.ChannelOption;
+import io.netty.channel.epoll.EpollChannelOption;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.resources.ConnectionProvider;
 import reactor.netty.transport.ProxyProvider;
-
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.Objects;
-import java.util.Optional;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Slf4j
 @Service
 public class BaseRestClientImpl<T> implements BaseRestClient<T> {
 
     @Override
-    public Mono<Optional<T>> get(WebClient webClient, String url, MultiValueMap<String, String> headerMap, MultiValueMap<String, String> payload, Class<?> resultClass) {
+    public Mono<Optional<T>> get(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerMap,
+            MultiValueMap<String, String> payload,
+            Class<?> resultClass) {
         return webClient
                 .get()
-                .uri(uriBuilder -> uriBuilder.path(url)
+                .uri(uriBuilder -> uriBuilder
+                        .path(url)
                         .queryParams(getSafePayload(payload))
                         .build())
                 .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerMap)))
@@ -68,10 +91,15 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
     }
 
     @Override
-    public Mono<String> getRaw(WebClient webClient, String url, MultiValueMap<String, String> headerMap, MultiValueMap<String, String> payload) {
+    public Mono<String> getRaw(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerMap,
+            MultiValueMap<String, String> payload) {
         return webClient
                 .get()
-                .uri(uriBuilder -> uriBuilder.path(url)
+                .uri(uriBuilder -> uriBuilder
+                        .path(url)
                         .queryParams(getSafePayload(payload))
                         .build())
                 .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerMap)))
@@ -85,7 +113,12 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
     }
 
     @Override
-    public Mono<Optional<T>> post(WebClient webClient, String url, MultiValueMap<String, String> headerList, Object payload, Class<?> resultClass) {
+    public Mono<Optional<T>> post(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerList,
+            Object payload,
+            Class<?> resultClass) {
         if (DataUtil.isNullOrEmpty(payload)) {
             payload = new LinkedMultiValueMap<>();
         }
@@ -97,8 +130,8 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
                 .bodyValue(payload)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(String.class)
-                        .flatMap(errorBody -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody)))
-                )
+                        .flatMap(errorBody ->
+                                Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody))))
                 .bodyToMono(String.class)
                 .map(response -> processReturn(response, resultClass))
                 .onErrorResume(WebClientResponseException.class, e -> {
@@ -110,7 +143,12 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
     }
 
     @Override
-    public Mono<Optional<T>> postFormData(WebClient webClient, String url, MultiValueMap<String, String> headerList, MultiValueMap<String, String> formData, Class<?> resultClass) {
+    public Mono<Optional<T>> postFormData(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerList,
+            MultiValueMap<String, String> formData,
+            Class<?> resultClass) {
         if (formData == null) {
             formData = new LinkedMultiValueMap<>();
         }
@@ -141,10 +179,16 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
     }
 
     @Override
-    public Mono<Optional<T>> delete(WebClient webClient, String url, MultiValueMap<String, String> headerList, MultiValueMap<String, String> payload, Class<?> resultClass) {
+    public Mono<Optional<T>> delete(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerList,
+            MultiValueMap<String, String> payload,
+            Class<?> resultClass) {
         return webClient
                 .delete()
-                .uri(uriBuilder -> uriBuilder.path(url)
+                .uri(uriBuilder -> uriBuilder
+                        .path(url)
                         .queryParams(getSafePayload(payload))
                         .build())
                 .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
@@ -177,7 +221,12 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
     }
 
     @Override
-    public Mono<String> callApiCertificateFileService(WebClient webClient, String url, MultiValueMap<String, String> headerList, Object payload, Class<?> resultClass) {
+    public Mono<String> callApiCertificateFileService(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerList,
+            Object payload,
+            Class<?> resultClass) {
         if (DataUtil.isNullOrEmpty(payload)) {
             payload = new LinkedMultiValueMap<>();
         }
@@ -188,8 +237,8 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
                 .bodyValue(payload)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(String.class)
-                        .flatMap(errorBody -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody)))
-                )
+                        .flatMap(errorBody ->
+                                Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody))))
                 .bodyToMono(String.class)
                 .map(response -> response)
                 .onErrorResume(WebClientResponseException.class, e -> {
@@ -199,9 +248,13 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
                 });
     }
 
-
     @Override
-    public Mono<Optional<T>> callPostBodyJson(WebClient webClient, String url, MultiValueMap<String, String> headerList, Object payload, Class<?> resultClass) {
+    public Mono<Optional<T>> callPostBodyJson(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerList,
+            Object payload,
+            Class<?> resultClass) {
         if (DataUtil.isNullOrEmpty(payload)) {
             payload = new LinkedMultiValueMap<>();
         }
@@ -214,8 +267,8 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
                 .bodyValue(Objects.requireNonNull(ObjectMapperUtil.convertObjectToJson(payload)))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(String.class)
-                        .flatMap(errorBody -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody)))
-                )
+                        .flatMap(errorBody ->
+                                Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody))))
                 .bodyToMono(String.class)
                 .map(response -> processReturn(response, resultClass))
                 .onErrorResume(WebClientResponseException.class, e -> {
@@ -245,23 +298,23 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
         if (proxyEnable) {
             SslContext sslContext;
             try {
-                sslContext = SslContextBuilder
-                        .forClient()
+                sslContext = SslContextBuilder.forClient()
                         .trustManager(InsecureTrustManagerFactory.INSTANCE)
                         .build();
             } catch (Exception ex) {
                 return null;
             }
-            httpClient = httpClient.proxy(proxy -> proxy
-                            .type(ProxyProvider.Proxy.HTTP)
-                            .host(proxyHost)
-                            .port(proxyPort))
+            httpClient = httpClient
+                    .proxy(proxy ->
+                            proxy.type(ProxyProvider.Proxy.HTTP).host(proxyHost).port(proxyPort))
                     .secure(t -> t.sslContext(sslContext));
         }
         var clientConnector = new ReactorClientHttpConnector(httpClient);
         return WebClient.builder()
                 .codecs(clientCodecConfigurer -> {
-                    clientCodecConfigurer.defaultCodecs().maxInMemorySize(16 * 1024 * 1024); //config max memory in byte
+                    clientCodecConfigurer
+                            .defaultCodecs()
+                            .maxInMemorySize(16 * 1024 * 1024); // config max memory in byte
                 })
                 .clientConnector(clientConnector)
                 .build();
@@ -273,11 +326,8 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
     @Override
     public WebClient proxyHttpClient(String proxyHost, Integer proxyPort) {
         HttpClient httpClient = HttpClient.create()
-                .proxy(proxy -> proxy
-                        .type(ProxyProvider.Proxy.HTTP)
-                        .host(proxyHost)
-                        .port(proxyPort)
-                );
+                .proxy(proxy ->
+                        proxy.type(ProxyProvider.Proxy.HTTP).host(proxyHost).port(proxyPort));
         ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
         return WebClient.builder()
                 .clientConnector(connector)
@@ -286,7 +336,12 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
     }
 
     @Override
-    public Mono<Optional<T>> callPostBodyJsonForLocalDateTime(WebClient webClient, String url, MultiValueMap<String, String> headerList, Object payload, Class<?> resultClass) {
+    public Mono<Optional<T>> callPostBodyJsonForLocalDateTime(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerList,
+            Object payload,
+            Class<?> resultClass) {
         if (DataUtil.isNullOrEmpty(payload)) {
             payload = new LinkedMultiValueMap<>();
         }
@@ -297,8 +352,8 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
                 .bodyValue(Objects.requireNonNull(ObjectMapperUtil.convertObjectToJsonForLocalDateTime(payload)))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(String.class)
-                        .flatMap(errorBody -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody)))
-                )
+                        .flatMap(errorBody ->
+                                Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody))))
                 .bodyToMono(String.class)
                 .map(response -> processReturn(response, resultClass))
                 .onErrorResume(WebClientResponseException.class, e -> {
@@ -310,7 +365,8 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
     }
 
     @Override
-    public Mono<String> postRawBodyJson(WebClient webClient, String url, MultiValueMap<String, String> headerList, Object payload) {
+    public Mono<String> postRawBodyJson(
+            WebClient webClient, String url, MultiValueMap<String, String> headerList, Object payload) {
         return webClient
                 .post()
                 .uri(url)
@@ -318,8 +374,8 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
                 .bodyValue(Objects.requireNonNull(ObjectMapperUtil.convertObjectToJson(payload)))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(String.class)
-                        .flatMap(errorBody -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody)))
-                )
+                        .flatMap(errorBody ->
+                                Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody))))
                 .bodyToMono(String.class)
                 .map(DataUtil::safeToString)
                 .onErrorResume(WebClientResponseException.class, e -> {
@@ -342,5 +398,4 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
                     return Mono.just("");
                 });
     }
-
 }

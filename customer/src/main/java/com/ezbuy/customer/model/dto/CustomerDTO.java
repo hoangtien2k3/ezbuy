@@ -1,9 +1,10 @@
 package com.ezbuy.customer.model.dto;
 
-import com.ezbuy.customer.model.postgresql.Customer;
-import lombok.Builder;
-
 import java.time.LocalDateTime;
+
+import com.ezbuy.customer.model.postgresql.Customer;
+
+import lombok.Builder;
 
 @Builder
 public record CustomerDTO(
@@ -21,8 +22,7 @@ public record CustomerDTO(
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         Integer isVerifiedEmail,
-        Boolean subscribedToNewsletter
-) {
+        Boolean subscribedToNewsletter) {
     public static CustomerDTO fromModel(Customer customer) {
         return CustomerDTO.builder()
                 .id(customer.getId())

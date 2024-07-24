@@ -1,9 +1,10 @@
 package com.ezbuy.notification.dto.response;
 
-import com.ezbuy.notification.dto.ContactInfoDTO;
-import lombok.Data;
-
 import java.util.List;
+
+import com.ezbuy.notification.dto.ContactInfoDTO;
+
+import lombok.Data;
 
 @Data
 public class ContactResponse {

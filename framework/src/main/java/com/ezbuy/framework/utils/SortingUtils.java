@@ -1,14 +1,15 @@
 package com.ezbuy.framework.utils;
 
-import com.ezbuy.framework.constants.Constants;
-import com.ezbuy.framework.constants.Regex;
-import com.ezbuy.framework.model.TokenUser;
-import lombok.extern.slf4j.Slf4j;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import com.ezbuy.framework.constants.Constants;
+import com.ezbuy.framework.constants.Regex;
+import com.ezbuy.framework.model.TokenUser;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author huannt16
@@ -24,11 +25,14 @@ public class SortingUtils {
     }
 
     public static String parseSorting(String sortConfig, Class objectClass) {
-        List<String> convertSorting = convertSorting(sortConfig.replaceAll(Regex.CAMELCASE, Constants.Sorting.FILED_DISPLAY), objectClass);
+        List<String> convertSorting =
+                convertSorting(sortConfig.replaceAll(Regex.CAMELCASE, Constants.Sorting.FILED_DISPLAY), objectClass);
         if (convertSorting == null || convertSorting.isEmpty()) {
             return null;
         }
-        return String.join(Constants.Sorting.SPLIT_OPERATOR, convertSorting.toString().toLowerCase().replace("[", "").replace("]", ""));
+        return String.join(
+                Constants.Sorting.SPLIT_OPERATOR,
+                convertSorting.toString().toLowerCase().replace("[", "").replace("]", ""));
     }
 
     public static List<String> convertSorting(String sortConfig, Class objectClass) {
@@ -91,5 +95,4 @@ public class SortingUtils {
         }
         return fields;
     }
-
 }

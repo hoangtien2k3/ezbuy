@@ -1,13 +1,11 @@
 package com.ezbuy.framework.filter.http;
 
-import brave.Span;
-import brave.Tracer;
-import com.ezbuy.framework.constants.CommonConstant;
-import com.ezbuy.framework.model.GatewayContext;
-import com.ezbuy.framework.utils.DataUtil;
-import com.ezbuy.framework.utils.RequestUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -22,14 +20,19 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.ezbuy.framework.constants.CommonConstant;
+import com.ezbuy.framework.model.GatewayContext;
+import com.ezbuy.framework.utils.DataUtil;
+import com.ezbuy.framework.utils.RequestUtils;
+
+import brave.Span;
+import brave.Tracer;
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 import reactor.util.context.Context;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Component
 @RequiredArgsConstructor
@@ -43,7 +46,8 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         long startMillis = System.currentTimeMillis();
-        String name = exchange.getRequest().getPath().pathWithinApplication().value().substring(1);
+        String name =
+                exchange.getRequest().getPath().pathWithinApplication().value().substring(1);
         Span newSpan = tracer.nextSpan().name(name);
         var contextRef = new AtomicReference<Context>();
 
@@ -60,7 +64,8 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
                 .contextWrite(context -> {
                     var currContext = (Context) context;
                     contextRef.set(currContext);
-                    // the error happens in a different thread, so get the trace from context, set in MDC and downstream to doOnError
+                    // the error happens in a different thread, so get the trace from context, set in MDC and downstream
+                    // to doOnError
                     setTraceIdFromContext(newSpan.context().traceIdString());
                     return context;
                 })
@@ -71,7 +76,8 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
                 }));
     }
 
-    private void logPerf(ServerWebExchange exchange, Span newSpan, String name, Long start, String result, Throwable o) {
+    private void logPerf(
+            ServerWebExchange exchange, Span newSpan, String name, Long start, String result, Throwable o) {
         newSpan.finish();
         long duration = System.currentTimeMillis() - start;
         if (duration < 50 || name.equals("health")) return;
@@ -79,20 +85,25 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
         setTraceIdInMDC(newSpan.context().traceIdString());
         String msisdn = exchange.getAttribute(CommonConstant.MSISDN_TOKEN);
         MDC.put(CommonConstant.MSISDN_TOKEN, !DataUtil.isNullOrEmpty(msisdn) ? msisdn : "-");
-        if(exchange != null && exchange.getRequest() != null && exchange.getRequest().getHeaders() != null) {
+        if (exchange != null
+                && exchange.getRequest() != null
+                && exchange.getRequest().getHeaders() != null) {
             String requestId = exchange.getRequest().getHeaders().getFirst("Request-Id");
             MDC.put(CommonConstant.REQUEST_ID, !DataUtil.isNullOrEmpty(requestId) ? requestId : "-");
         }
 
-        logPerf.info(new StringBuilder(name).append(" ")
-                .append(duration).append(" ")
+        logPerf.info(new StringBuilder(name)
+                .append(" ")
+                .append(duration)
+                .append(" ")
                 .append(result)
-                .append(" A2 ") //M1: tu backend Java1, M2 tu backend Java2
+                .append(" A2 ") // M1: tu backend Java1, M2 tu backend Java2
                 .append(o == null ? "-" : o.getMessage())
                 .toString());
     }
 
-    private void logPerf(AtomicReference<Context> contextRef, Span newSpan, String name, Long start, String result, Throwable o) {
+    private void logPerf(
+            AtomicReference<Context> contextRef, Span newSpan, String name, Long start, String result, Throwable o) {
         newSpan.finish();
         long duration = System.currentTimeMillis() - start;
         if (duration < 50 || name.equals("health")) return;
@@ -102,14 +113,15 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
             var context = contextRef.get();
             if (context.hasKey(CommonConstant.MSISDN_TOKEN))
                 MDC.put(CommonConstant.MSISDN_TOKEN, contextRef.get().get(CommonConstant.MSISDN_TOKEN));
-            else
-                MDC.put(CommonConstant.MSISDN_TOKEN, "-");
+            else MDC.put(CommonConstant.MSISDN_TOKEN, "-");
         }
 
-        logPerf.info(new StringBuilder(name).append(" ")
-                .append(duration).append(" ")
+        logPerf.info(new StringBuilder(name)
+                .append(" ")
+                .append(duration)
+                .append(" ")
                 .append(result)
-                .append(" A2 ") //M1: tu backend Java1, M2 tu backend Java2
+                .append(" A2 ") // M1: tu backend Java1, M2 tu backend Java2
                 .append(o == null ? "-" : o.getMessage())
                 .toString());
     }
@@ -127,8 +139,7 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
         HttpHeaders headers = request.getHeaders();
         if (requestURI.getPath().startsWith("/"))
             logs.add(String.format("%s", requestURI.getPath().substring(1)));
-        else
-            logs.add(String.format("%s", requestURI.getPath()));
+        else logs.add(String.format("%s", requestURI.getPath()));
         logs.add(String.format("%s", request.getMethod()));
         logs.add(String.format("%s", RequestUtils.getIpAddress(request)));
         logs.add(String.format("%s", requestURI.getHost()));
@@ -139,16 +150,17 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
             logs.add(String.format("%s", logHeader));
         }
 
-//        var logHeader = new StringBuilder();
-//        headers.forEach((key, value) ->
-//        {
-//            if (!gatewayPluginProperties.getHideHeaderList().stream().anyMatch(header -> header.equalsIgnoreCase(key))) {
-//                logHeader.append(String.format("{%s:%s}", key, value));
-//            }
-//        });
-//        if (logHeader.length() > 0) {
-//            logs.add(String.format("%s", logHeader));
-//        }
+        //        var logHeader = new StringBuilder();
+        //        headers.forEach((key, value) ->
+        //        {
+        //            if (!gatewayPluginProperties.getHideHeaderList().stream().anyMatch(header ->
+        // header.equalsIgnoreCase(key))) {
+        //                logHeader.append(String.format("{%s:%s}", key, value));
+        //            }
+        //        });
+        //        if (logHeader.length() > 0) {
+        //            logs.add(String.format("%s", logHeader));
+        //        }
         GatewayContext gatewayContext = exchange.getAttribute(GatewayContext.CACHE_GATEWAY_CONTEXT);
         if (gatewayContext != null && !gatewayContext.getReadRequestData()) {
             reqResLog.debug("[RequestLogFilter]Properties Set Not To Read Request Data");
@@ -164,8 +176,10 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
         }
         MediaType contentType = headers.getContentType();
         long length = headers.getContentLength();
-        if (length > 0 && null != contentType && (contentType.includes(MediaType.APPLICATION_JSON)
-                || contentType.includes(MediaType.APPLICATION_JSON))) {
+        if (length > 0
+                && null != contentType
+                && (contentType.includes(MediaType.APPLICATION_JSON)
+                        || contentType.includes(MediaType.APPLICATION_JSON))) {
             logs.add(String.format("%s", truncateBody(gatewayContext.getRequestBody())));
         } else if (length > 0 && null != contentType && (contentType.includes(MediaType.APPLICATION_FORM_URLENCODED))) {
             logs.add(String.format("%s", truncateBody(gatewayContext.getFormData())));

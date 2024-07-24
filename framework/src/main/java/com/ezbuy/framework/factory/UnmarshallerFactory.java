@@ -1,20 +1,21 @@
 package com.ezbuy.framework.factory;
 
-//import org.apache.logging.log4j.LogManager;
-//import org.apache.logging.log4j.Logger;
+// import org.apache.logging.log4j.LogManager;
+// import org.apache.logging.log4j.Logger;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import java.util.HashMap;
-import java.util.Map;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class UnmarshallerFactory {
 
-//    private static final Logger log = LogManager.getLogger(UnmarshallerFactory.class);
+    //    private static final Logger log = LogManager.getLogger(UnmarshallerFactory.class);
 
     private static Map<Class, Unmarshaller> instance = new HashMap<>();
 
@@ -32,6 +33,4 @@ public class UnmarshallerFactory {
             return null;
         }
     }
-
-
 }

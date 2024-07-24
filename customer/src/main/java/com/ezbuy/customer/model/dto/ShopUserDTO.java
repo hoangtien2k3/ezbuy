@@ -10,6 +10,4 @@ public record ShopUserDTO(
         String roles,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        Integer loyalty_points
-) {
-}
+        Integer loyalty_points) {}

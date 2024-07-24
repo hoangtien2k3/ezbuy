@@ -1,12 +1,14 @@
 package com.ezbuy.framework.annotations.cache;
 
+import java.lang.reflect.Method;
+
+import org.springframework.stereotype.Component;
+
 import com.ezbuy.framework.config.ApplicationContextProvider;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
-
-import java.lang.reflect.Method;
 
 @Slf4j
 @Component
@@ -20,8 +22,10 @@ public class CacheUtils {
             Mono<Object> rs = (Mono<Object>) method.invoke(t);
             rs.subscribe();
         } catch (Exception exception) {
-            log.error("Error when autoload cache " + method.getDeclaringClass().getSimpleName() + "." + method.getName()
-                    , exception.getMessage(), exception);
+            log.error(
+                    "Error when autoload cache " + method.getDeclaringClass().getSimpleName() + "." + method.getName(),
+                    exception.getMessage(),
+                    exception);
         }
     }
 }

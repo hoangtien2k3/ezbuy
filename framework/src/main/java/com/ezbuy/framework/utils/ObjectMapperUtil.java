@@ -1,24 +1,28 @@
 package com.ezbuy.framework.utils;
 
-import com.ezbuy.framework.constants.CommonErrorCode;
-import com.ezbuy.framework.exception.UnRetryableException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import com.ezbuy.framework.constants.CommonErrorCode;
+import com.ezbuy.framework.exception.UnRetryableException;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
 public class ObjectMapperUtil {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final DateFormat dateFormatYMdHms = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
     static {
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -73,8 +77,7 @@ public class ObjectMapperUtil {
     public <T> List<T> convertToObject(List<Object> input, Class<T> valueType) {
         try {
             List<T> results = new ArrayList<>();
-            for (Object object : input
-            ) {
+            for (Object object : input) {
                 results.add(objectMapper.convertValue(object, valueType));
             }
             return results;
@@ -91,7 +94,7 @@ public class ObjectMapperUtil {
         }
     }
 
-    public static <T> T convertObject(Object input, Class<T> valueType){
+    public static <T> T convertObject(Object input, Class<T> valueType) {
         return objectMapper.convertValue(input, valueType);
     }
 

@@ -1,20 +1,22 @@
 package com.ezbuy.framework.constants;
 
-import org.slf4j.MDC;
-import org.springframework.http.MediaType;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+import org.slf4j.MDC;
+import org.springframework.http.MediaType;
+
 public final class Constants {
-    public static final String NAME_PATTERN = "^[a-zA-ZàáãạảăắằẳẵặâấầẩẫậèéẹẻẽêềếểễệđìíĩỉịòóõọỏôốồổỗộơớờởỡợùúũụủưứừửữựỳỵỷỹýÀÁÃẠẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẺẼÊỀẾỂỄỆĐÌÍĨỈỊÒÓÕỌỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝ\\s]+$";
+    public static final String NAME_PATTERN =
+            "^[a-zA-ZàáãạảăắằẳẵặâấầẩẫậèéẹẻẽêềếểễệđìíĩỉịòóõọỏôốồổỗộơớờởỡợùúũụủưứừửữựỳỵỷỹýÀÁÃẠẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẺẼÊỀẾỂỄỆĐÌÍĨỈỊÒÓÕỌỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝ\\s]+$";
     public static final String EMAIL_PATTERN = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
     public static final String DATE_PATTERN = "\\d{2}[/]\\d{2}[/]\\d{4}";
     public static final String ID_NO_PATTERN = "^[0-9\\-]+$";
     public static final String NUMBER_PATTERN = "^[0-9]+$";
     public static final String USERNAME_PATTERN = "^[A-Za-z0-9_-]+$";
-    public static final List<String> IMAGE_EXTENSION_LIST = Arrays.asList("jpg", "jpeg", "png", "gif", "bmp", "tiff", "tif", "svg", "raw", "psd", "ai", "eps");
+    public static final List<String> IMAGE_EXTENSION_LIST =
+            Arrays.asList("jpg", "jpeg", "png", "gif", "bmp", "tiff", "tif", "svg", "raw", "psd", "ai", "eps");
     public static final int MAX_FILE_SIZE_MB = 3;
     public static final int EMPLOYEE_CODE_LENGTH = 6;
     public static final String EMPLOYEE_CODE_MIN = "000001";
@@ -26,12 +28,8 @@ public final class Constants {
             MediaType.APPLICATION_JSON_UTF8,
             MediaType.TEXT_PLAIN,
             MediaType.TEXT_XML,
-            MediaType.MULTIPART_FORM_DATA
-    );
-    private static final List<String> SENSITIVE_HEADERS = Arrays.asList(
-            "authorization",
-            "proxy-authorization"
-    );
+            MediaType.MULTIPART_FORM_DATA);
+    private static final List<String> SENSITIVE_HEADERS = Arrays.asList("authorization", "proxy-authorization");
 
     // for prevent sonar issues
     public static List<String> getSensitiveHeaders() {
@@ -143,7 +141,7 @@ public final class Constants {
         public static final String CUSTOMER_REGISTER_SUCCESS = "CUSTOMER_REGISTER_SUCCESS";
         public static final String EMPLOYEE_REGISTER_SUCCESS = "EMPLOYEE_REGISTER_SUCCESS";
         public static final String ACCOUNT_ACTIVE = "ACCOUNT_ACTIVE";
-        public static final String SIGN_UP_PASSWORD ="SIGN_UP_PASSWORD";
+        public static final String SIGN_UP_PASSWORD = "SIGN_UP_PASSWORD";
         public static final String VERIFY_ACCOUNT_SUCESS = "VERIFY_ACCOUNT_SUCESS";
         public static final String NOTI_VERIFY_ACCOUNT = "NOTI_VERIFY_ACCOUNT";
     }
@@ -170,7 +168,6 @@ public final class Constants {
         public static final String STR_STATUS_INACTIVE = "0";
     }
 
-
     public static class ORGANIZATION_STATUS {
         public static final Integer ACTIVE = 1;
         public static final Integer INACTIVE = 0;
@@ -182,12 +179,13 @@ public final class Constants {
         public static final Integer DELETE = -1;
     }
 
-    public static class STATE{
+    public static class STATE {
         public static final Integer ACTIVE = 1;
         public static final Integer INACTIVE = 0;
         public static final Integer DELETE = 3;
     }
-    public static class IDENTIFY{
+
+    public static class IDENTIFY {
         public static final String MST = "MST";
         public static final String GPKD = "DKKD";
         public static final Integer DELETE = 3;
@@ -198,13 +196,11 @@ public final class Constants {
         public static final String GROUP = "GROUP";
     }
 
-    public static final HashSet<String> EXCLUDE_LOGGING_ENDPOINTS = new HashSet<>(List.of(
-            "/actuator/health"
-    ));
+    public static final HashSet<String> EXCLUDE_LOGGING_ENDPOINTS = new HashSet<>(List.of("/actuator/health"));
 
     public static final int MAX_BYTE = 4096;
 
-    public static class POOL{
+    public static class POOL {
         public static final String REST_CLIENT_POLL = "Rest-client-Pool"; // name of Rest client poll for https proxy
     }
 
@@ -213,7 +209,8 @@ public final class Constants {
         public static final String ADD_ROLE_TEMPLATE = "/template/employee/ADD_ROLE_TEMPLATE.xlsx";
         public static final String ADD_UNIT_TEMPLATE = "/template/employee/ADD_UNIT_ORGANIZATION_TEMPLATE.xlsx";
 
-        public static final String ADD_EMPLOYEE_TEMPLATE_RESULT = "/template/employee/ADD_EMPLOYEE_TEMPLATE_RESULT.xlsx";
+        public static final String ADD_EMPLOYEE_TEMPLATE_RESULT =
+                "/template/employee/ADD_EMPLOYEE_TEMPLATE_RESULT.xlsx";
         public static final String ADD_ROLE_TEMPLATE_RESULT = "/template/employee/ADD_ROLE_TEMPLATE_RESULT.xlsx";
     }
 
@@ -224,6 +221,7 @@ public final class Constants {
         public static final String ADD_EMPLOYEE_RESULT_FILE_NAME = "ADD_EMPLOYEE_TEMPLATE_RESULT.xlsx";
         public static final String ADD_ROLE_RESULT_FILE_NAME = "ADD_ROLE_TEMPLATE_RESULT.xlsx";
     }
+
     public static final class Role {
         public static final String ENTERPRISE_STAFF = "ENTERPRISE_STAFF";
         public static final String ENTERPRISE_ADMIN = "ENTERPRISE_ADMIN";
@@ -234,6 +232,7 @@ public final class Constants {
         public static final String SHORT_ENTERPRISE_ADMIN = "A";
         public static final String SHORT_ENTERPRISE_USER = "U";
     }
+
     public static final class Gender {
         public static final String SHORT_MALE = "M";
         public static final String SHORT_FEMALE = "F";
@@ -255,7 +254,7 @@ public final class Constants {
         public static final String EMPLOYEE_CODE = "employee.code";
         public static final String ACCOUNT_EMAIL = "email.account";
         public static final String CODE = "employee.code";
-        public static final String SEX_DESCRIPTION= "sex.des";
+        public static final String SEX_DESCRIPTION = "sex.des";
 
         public static final String ORGANIZATION = "organization";
         public static final String POSITION = "working.position";
@@ -269,12 +268,11 @@ public final class Constants {
     }
 
     public static final class CONFIG_SME {
-        public static final String OTP_AM_CODE = "AM_CONNECT_OTP";//type nhan vien AM gui OTP
-        public static final String ALIAS_AM_CODE = "155";//type nhan vien AM gui OTP
+        public static final String OTP_AM_CODE = "AM_CONNECT_OTP"; // type nhan vien AM gui OTP
+        public static final String ALIAS_AM_CODE = "155"; // type nhan vien AM gui OTP
     }
 
-
     public static final class OptionSetCode {
-        public static final String SUB_TITLE_MAIL = "SUB_TITLE_MAIL";//Cau hinh thong tin truyen vao mail
+        public static final String SUB_TITLE_MAIL = "SUB_TITLE_MAIL"; // Cau hinh thong tin truyen vao mail
     }
 }

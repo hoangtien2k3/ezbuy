@@ -1,9 +1,9 @@
-//package com.ezbuy.framework.utils;
+// package com.ezbuy.framework.utils;
 //
-//import org.springframework.security.oauth2.client.*;
-//import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
+// import org.springframework.security.oauth2.client.*;
+// import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 //
-//public class ReactiveOAuth2Utils {
+// public class ReactiveOAuth2Utils {
 //    public static ReactiveOAuth2AuthorizedClientManager createAuthorizedClientManager(
 //            ReactiveClientRegistrationRepository clientRegistrationRepository,
 //            ReactiveOAuth2AuthorizedClientService authorizedClientService) {
@@ -14,11 +14,12 @@
 //                        .build();
 //
 //        AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager authorizedClientManager =
-//                new AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager(clientRegistrationRepository, authorizedClientService);
+//                new AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager(clientRegistrationRepository,
+// authorizedClientService);
 //
 //        authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
 //
 //        return authorizedClientManager;
 //    }
 //
-//}
+// }

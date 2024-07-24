@@ -1,13 +1,13 @@
 package com.ezbuy.framework.utils;
 
-import lombok.extern.slf4j.Slf4j;
+import static com.ezbuy.framework.constants.Regex.LINK;
+import static com.ezbuy.framework.constants.Regex.NUMBER_REGEX;
 
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.ezbuy.framework.constants.Regex.LINK;
-import static com.ezbuy.framework.constants.Regex.NUMBER_REGEX;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ValidateUtils {

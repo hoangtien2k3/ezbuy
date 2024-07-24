@@ -1,10 +1,12 @@
 package com.ezbuy.framework.filter.http;
 
-import com.ezbuy.framework.constants.Constants;
-import com.ezbuy.framework.filter.properties.HttpLogProperties;
-import com.ezbuy.framework.model.GatewayContext;
-import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
@@ -22,20 +24,20 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
+
+import com.ezbuy.framework.constants.Constants;
+import com.ezbuy.framework.filter.properties.HttpLogProperties;
+import com.ezbuy.framework.model.GatewayContext;
+
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
 
 @Component
 @Log4j2
 @AllArgsConstructor
-//@Profile("!prod")
+// @Profile("!prod")
 public class GatewayContextFilter implements WebFilter, Ordered {
     private HttpLogProperties httpLogProperties;
     private CodecConfigurer codecConfigurer;
@@ -50,7 +52,8 @@ public class GatewayContextFilter implements WebFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         boolean enableRequest = httpLogProperties.getRequest().isEnable();
         boolean enableResponse = httpLogProperties.getResponse().isEnable();
-        if (Constants.EXCLUDE_LOGGING_ENDPOINTS.contains(request.getPath().toString()) || (!enableRequest && !enableResponse)) {
+        if (Constants.EXCLUDE_LOGGING_ENDPOINTS.contains(request.getPath().toString())
+                || (!enableRequest && !enableResponse)) {
             return chain.filter(exchange);
         }
         GatewayContext gatewayContext = new GatewayContext();
@@ -80,7 +83,6 @@ public class GatewayContextFilter implements WebFilter, Ordered {
         }
         log.debug("[GatewayContext]ContentType:{},Gateway context is set with {}", contentType, gatewayContext);
         return chain.filter(exchange);
-
     }
 
     /**
@@ -121,10 +123,18 @@ public class GatewayContextFilter implements WebFilter, Ordered {
                             entryValue = entry.getValue();
                             if (entryValue.size() > 1) {
                                 for (String value : entryValue) {
-                                    formDataBodyBuilder.append(entryKey).append("=").append(URLEncoder.encode(value, charsetName)).append("&");
+                                    formDataBodyBuilder
+                                            .append(entryKey)
+                                            .append("=")
+                                            .append(URLEncoder.encode(value, charsetName))
+                                            .append("&");
                                 }
                             } else {
-                                formDataBodyBuilder.append(entryKey).append("=").append(URLEncoder.encode(entryValue.get(0), charsetName)).append("&");
+                                formDataBodyBuilder
+                                        .append(entryKey)
+                                        .append("=")
+                                        .append(URLEncoder.encode(entryValue.get(0), charsetName))
+                                        .append("&");
                             }
                         }
                     } catch (UnsupportedEncodingException e) {
@@ -151,24 +161,28 @@ public class GatewayContextFilter implements WebFilter, Ordered {
                     /*
                      * use BodyInserter to InsertFormData Body
                      */
-                    BodyInserter<String, ReactiveHttpOutputMessage> bodyInserter = BodyInserters.fromObject(formDataBodyString);
-                    CachedBodyOutputMessage cachedBodyOutputMessage = new CachedBodyOutputMessage(exchange, httpHeaders);
+                    BodyInserter<String, ReactiveHttpOutputMessage> bodyInserter =
+                            BodyInserters.fromObject(formDataBodyString);
+                    CachedBodyOutputMessage cachedBodyOutputMessage =
+                            new CachedBodyOutputMessage(exchange, httpHeaders);
                     log.debug("[GatewayContext]Rewrite Form Data :{}", formDataBodyString);
-                    return bodyInserter.insert(cachedBodyOutputMessage, new BodyInserterContext())
+                    return bodyInserter
+                            .insert(cachedBodyOutputMessage, new BodyInserterContext())
                             .then(Mono.defer(() -> {
-                                ServerHttpRequestDecorator decorator = new ServerHttpRequestDecorator(
-                                        exchange.getRequest()) {
-                                    @Override
-                                    public HttpHeaders getHeaders() {
-                                        return httpHeaders;
-                                    }
+                                ServerHttpRequestDecorator decorator =
+                                        new ServerHttpRequestDecorator(exchange.getRequest()) {
+                                            @Override
+                                            public HttpHeaders getHeaders() {
+                                                return httpHeaders;
+                                            }
 
-                                    @Override
-                                    public Flux<DataBuffer> getBody() {
-                                        return cachedBodyOutputMessage.getBody();
-                                    }
-                                };
-                                return chain.filter(exchange.mutate().request(decorator).build());
+                                            @Override
+                                            public Flux<DataBuffer> getBody() {
+                                                return cachedBodyOutputMessage.getBody();
+                                            }
+                                        };
+                                return chain.filter(
+                                        exchange.mutate().request(decorator).build());
                             }));
                 }));
     }
@@ -181,29 +195,30 @@ public class GatewayContextFilter implements WebFilter, Ordered {
      * @return
      */
     private Mono<Void> readBody(ServerWebExchange exchange, WebFilterChain chain, GatewayContext gatewayContext) {
-        return DataBufferUtils.join(exchange.getRequest().getBody())
-                .flatMap(dataBuffer -> {
-                    DataBufferUtils.retain(dataBuffer);
-                    Flux<DataBuffer> cachedFlux = Flux.defer(() -> Flux.just(dataBuffer.slice(0, dataBuffer.readableByteCount())));
-                    /*
-                     * repackage ServerHttpRequest
-                     */
-                    ServerHttpRequest mutatedRequest = new ServerHttpRequestDecorator(exchange.getRequest()) {
-                        @Override
-                        public Flux<DataBuffer> getBody() {
-                            return cachedFlux;
-                        }
-                    };
-                    ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
-                    return ServerRequest.create(mutatedExchange, codecConfigurer.getReaders())
-                            .bodyToMono(String.class)
-                            .doOnNext(objectValue -> {
-                                if (objectValue != null)
-                                    objectValue = objectValue.replaceAll("\r", "").replaceAll("\n", "");
-                                gatewayContext.setRequestBody(objectValue);
-                                log.debug("[GatewayContext]Read JsonBody Success");
-                            }).then(chain.filter(mutatedExchange));
-                });
+        return DataBufferUtils.join(exchange.getRequest().getBody()).flatMap(dataBuffer -> {
+            DataBufferUtils.retain(dataBuffer);
+            Flux<DataBuffer> cachedFlux =
+                    Flux.defer(() -> Flux.just(dataBuffer.slice(0, dataBuffer.readableByteCount())));
+            /*
+             * repackage ServerHttpRequest
+             */
+            ServerHttpRequest mutatedRequest = new ServerHttpRequestDecorator(exchange.getRequest()) {
+                @Override
+                public Flux<DataBuffer> getBody() {
+                    return cachedFlux;
+                }
+            };
+            ServerWebExchange mutatedExchange =
+                    exchange.mutate().request(mutatedRequest).build();
+            return ServerRequest.create(mutatedExchange, codecConfigurer.getReaders())
+                    .bodyToMono(String.class)
+                    .doOnNext(objectValue -> {
+                        if (objectValue != null)
+                            objectValue = objectValue.replaceAll("\r", "").replaceAll("\n", "");
+                        gatewayContext.setRequestBody(objectValue);
+                        log.debug("[GatewayContext]Read JsonBody Success");
+                    })
+                    .then(chain.filter(mutatedExchange));
+        });
     }
-
 }
