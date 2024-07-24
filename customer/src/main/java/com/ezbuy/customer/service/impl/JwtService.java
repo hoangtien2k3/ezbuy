@@ -1,23 +1,26 @@
 package com.ezbuy.customer.service.impl;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+
+import javax.crypto.SecretKey;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
 import com.ezbuy.customer.configuration.jwt.JwtAuthenticationException;
 import com.ezbuy.customer.service.TokenService;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
-import javax.crypto.SecretKey;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
 @Slf4j
 @Service
@@ -25,6 +28,7 @@ public class JwtService implements TokenService {
 
     @Value("${jwt.secret-key}")
     private String secretKey;
+
     @Value("${jwt.token-expiration-seconds}")
     private long tokenExpiration;
 
@@ -54,10 +58,12 @@ public class JwtService implements TokenService {
         return Jwts.builder()
                 .claims(extraClaims)
                 .subject(userDetails.getUsername())
-                .claim("roles", userDetails.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .map(role -> role.substring("ROLE_".length()))
-                        .toArray())
+                .claim(
+                        "roles",
+                        userDetails.getAuthorities().stream()
+                                .map(GrantedAuthority::getAuthority)
+                                .map(role -> role.substring("ROLE_".length()))
+                                .toArray())
                 .issuedAt(new Date(currentTimeMillis))
                 .expiration(new Date(currentTimeMillis + tokenExpiration * 1000))
                 .signWith(getSigningKey(), Jwts.SIG.HS256)
@@ -80,6 +86,7 @@ public class JwtService implements TokenService {
             throw new JwtAuthenticationException(e.getMessage());
         }
     }
+
     private SecretKey getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);

@@ -1,24 +1,28 @@
 package com.ezbuy.framework.annotations.cache;
 
-import com.ezbuy.framework.annotations.LocalCache;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.Scheduler;
+import java.lang.reflect.Method;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.annotation.PostConstruct;
-import lombok.extern.slf4j.Slf4j;
+
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import io.prometheus.client.cache.caffeine.CacheMetricsCollector;
 
-import java.lang.reflect.Method;
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.Scheduler;
+
+import com.ezbuy.framework.annotations.LocalCache;
+
+import io.prometheus.client.cache.caffeine.CacheMetricsCollector;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -32,7 +36,8 @@ public class CacheStore {
     private static void init() {
         log.info("Start initializing cache");
         Reflections reflections = new Reflections(reflectionPath, Scanners.MethodsAnnotated);
-        Set<Method> methods = reflections.get(Scanners.MethodsAnnotated.with(LocalCache.class).as(Method.class));
+        Set<Method> methods =
+                reflections.get(Scanners.MethodsAnnotated.with(LocalCache.class).as(Method.class));
         for (Method method : methods) {
             String className = method.getDeclaringClass().getSimpleName();
             LocalCache localCache = method.getAnnotation(LocalCache.class);
@@ -78,5 +83,4 @@ public class CacheStore {
             log.info("Finish auto load cache");
         }
     }
-
 }

@@ -1,12 +1,13 @@
 package com.ezbuy.framework.filter.http;
 
-import com.ezbuy.framework.constants.Constants;
-import com.ezbuy.framework.filter.properties.HttpLogProperties;
-import com.ezbuy.framework.model.GatewayContext;
-import com.ezbuy.framework.utils.RequestUtils;
-import com.ezbuy.framework.utils.TruncateUtils;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import static com.ezbuy.framework.constants.Constants.MAX_BYTE;
+import static reactor.core.scheduler.Schedulers.single;
+
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.reactivestreams.Publisher;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -20,16 +21,17 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
+
+import com.ezbuy.framework.constants.Constants;
+import com.ezbuy.framework.filter.properties.HttpLogProperties;
+import com.ezbuy.framework.model.GatewayContext;
+import com.ezbuy.framework.utils.RequestUtils;
+import com.ezbuy.framework.utils.TruncateUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.ezbuy.framework.constants.Constants.MAX_BYTE;
-import static reactor.core.scheduler.Schedulers.single;
 
 /**
  * @author hoangtien2k3
@@ -49,44 +51,46 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        ServerHttpResponseDecorator loggingServerHttpResponseDecorator = new ServerHttpResponseDecorator(exchange.getResponse()) {
-            @Override
-            public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
-                if (httpLogProperties.getResponse().isEnable()) {
-                    final MediaType contentType = super.getHeaders().getContentType();
-                    if (Constants.VISIBLE_TYPES.contains(contentType)) {
-                        if (body instanceof Mono) {
-                            final Mono<DataBuffer> monoBody = (Mono<DataBuffer>) body;
-                            return super.writeWith(monoBody.publishOn(single())
-                                    .map(buffer -> {
-                                        logResponseBody(buffer, exchange);
-                                        return buffer;
-                                    }));
-                        } else if (body instanceof Flux) {
-                            final Flux<DataBuffer> fluxBody = (Flux<DataBuffer>) body;
-                            return super.writeWith(fluxBody.publishOn(single())
-                                    .map(buffer -> {
-                                        logResponseBody(buffer, exchange);
-                                        return buffer;
-                                    }));
+        ServerHttpResponseDecorator loggingServerHttpResponseDecorator =
+                new ServerHttpResponseDecorator(exchange.getResponse()) {
+                    @Override
+                    public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
+                        if (httpLogProperties.getResponse().isEnable()) {
+                            final MediaType contentType = super.getHeaders().getContentType();
+                            if (Constants.VISIBLE_TYPES.contains(contentType)) {
+                                if (body instanceof Mono) {
+                                    final Mono<DataBuffer> monoBody = (Mono<DataBuffer>) body;
+                                    return super.writeWith(
+                                            monoBody.publishOn(single()).map(buffer -> {
+                                                logResponseBody(buffer, exchange);
+                                                return buffer;
+                                            }));
+                                } else if (body instanceof Flux) {
+                                    final Flux<DataBuffer> fluxBody = (Flux<DataBuffer>) body;
+                                    return super.writeWith(
+                                            fluxBody.publishOn(single()).map(buffer -> {
+                                                logResponseBody(buffer, exchange);
+                                                return buffer;
+                                            }));
+                                }
+                            }
                         }
+                        return super.writeWith(body);
                     }
-                }
-                return super.writeWith(body);
-            }
-        };
-        return chain.filter(exchange.mutate().response(loggingServerHttpResponseDecorator).build())
-                .doOnSuccess(o -> {
-                })
-                .doOnError(err -> {
-                })
+                };
+        return chain.filter(exchange.mutate()
+                        .response(loggingServerHttpResponseDecorator)
+                        .build())
+                .doOnSuccess(o -> {})
+                .doOnError(err -> {})
                 .then(Mono.fromRunnable(() -> {
                     logReqResponse(exchange);
                 }));
     }
 
     private void logReqResponse(ServerWebExchange exchange) {
-        if (Constants.EXCLUDE_LOGGING_ENDPOINTS.contains(exchange.getRequest().getPath().toString())) {
+        if (Constants.EXCLUDE_LOGGING_ENDPOINTS.contains(
+                exchange.getRequest().getPath().toString())) {
             return;
         }
         boolean enableRequest = httpLogProperties.getRequest().isEnable();
@@ -140,11 +144,17 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
         MediaType contentType = headers.getContentType();
         long length = headers.getContentLength();
         String requestBody = null;
-        if (length > 0 && null != contentType && (contentType.includes(MediaType.APPLICATION_JSON)
-                || contentType.includes(MediaType.APPLICATION_JSON)) && gatewayContext.getRequestBody() != null) {
+        if (length > 0
+                && null != contentType
+                && (contentType.includes(MediaType.APPLICATION_JSON)
+                        || contentType.includes(MediaType.APPLICATION_JSON))
+                && gatewayContext.getRequestBody() != null) {
             requestBody = TruncateUtils.truncateBody(gatewayContext.getRequestBody());
             logs.add(String.format("%s", TruncateUtils.truncate(requestBody, MAX_BYTE)));
-        } else if (length > 0 && null != contentType && (contentType.includes(MediaType.APPLICATION_FORM_URLENCODED)) && gatewayContext.getFormData() != null) {
+        } else if (length > 0
+                && null != contentType
+                && (contentType.includes(MediaType.APPLICATION_FORM_URLENCODED))
+                && gatewayContext.getFormData() != null) {
             requestBody = TruncateUtils.truncateBody(gatewayContext.getFormData());
             logs.add(String.format("%s", TruncateUtils.truncate(requestBody, MAX_BYTE)));
         } else {
@@ -154,7 +164,9 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
 
     private Long takeDuration(ServerWebExchange exchange) {
         GatewayContext gatewayContext = exchange.getAttribute(GatewayContext.CACHE_GATEWAY_CONTEXT);
-        return gatewayContext.getStartTime() != null ? System.currentTimeMillis() - gatewayContext.getStartTime() : null;
+        return gatewayContext.getStartTime() != null
+                ? System.currentTimeMillis() - gatewayContext.getStartTime()
+                : null;
     }
 
     private Mono<Void> logResponse(ServerWebExchange exchange, List<String> logs) {
@@ -189,7 +201,10 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
         try {
             Integer capacity = dataBuffer.capacity();
             if (capacity < Constants.LoggingTitle.BODY_SIZE_REQUEST_MAX) {
-                message = StandardCharsets.UTF_8.decode(dataBuffer.asByteBuffer()).toString().replaceAll("\\s", "");
+                message = StandardCharsets.UTF_8
+                        .decode(dataBuffer.asByteBuffer())
+                        .toString()
+                        .replaceAll("\\s", "");
             }
         } catch (Exception ex) {
             log.error("Convert body request to string error ", ex);

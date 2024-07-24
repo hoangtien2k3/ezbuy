@@ -1,5 +1,7 @@
 package com.ezbuy.framework.factory;
 
+import java.io.IOException;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -9,12 +11,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import java.io.IOException;
-
 public class ObjectMapperFactory {
     private static ObjectMapper objectMapper;
     private static ObjectMapper objectMapperV2 = new ObjectMapper();
-    private static ObjectMapper defaultGetInstance= new ObjectMapper();
+    private static ObjectMapper defaultGetInstance = new ObjectMapper();
 
     public static ObjectMapper getInstance() {
         if (objectMapper == null) {
@@ -36,6 +36,7 @@ public class ObjectMapperFactory {
         objectMapperV2.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         return objectMapperV2;
     }
+
     public static ObjectMapper defaultGetInstance() {
         defaultGetInstance.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         defaultGetInstance.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
@@ -46,8 +47,7 @@ public class ObjectMapperFactory {
 
     private static class NumericBooleanDeserializer extends JsonDeserializer<Boolean> {
         @Override
-        public Boolean deserialize(JsonParser p, DeserializationContext ctxt)
-                throws IOException {
+        public Boolean deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
             if ("1".equals(p.getText()) || "true".equals(p.getText())) {
                 return Boolean.TRUE;
             }
@@ -56,6 +56,5 @@ public class ObjectMapperFactory {
             }
             return null;
         }
-
     }
 }

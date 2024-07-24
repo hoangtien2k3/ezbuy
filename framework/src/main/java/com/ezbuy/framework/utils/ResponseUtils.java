@@ -1,12 +1,14 @@
 package com.ezbuy.framework.utils;
 
+import java.util.Optional;
+
+import org.springframework.http.ResponseEntity;
+
 import com.ezbuy.framework.constants.CommonErrorCode;
 import com.ezbuy.framework.exception.BusinessException;
 import com.ezbuy.framework.model.response.DataResponse;
-import org.springframework.http.ResponseEntity;
-import reactor.core.publisher.Mono;
 
-import java.util.Optional;
+import reactor.core.publisher.Mono;
 
 public class ResponseUtils {
 
@@ -20,22 +22,26 @@ public class ResponseUtils {
 
     public static Mono<Object> getResponse(Optional<DataResponse> response, String extraInfo) {
         return getResponseWithoutData(response, extraInfo)
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, extraInfo + " data is null "+ response)))
-                .flatMap(data ->{
+                .switchIfEmpty(Mono.error(new BusinessException(
+                        CommonErrorCode.INTERNAL_SERVER_ERROR, extraInfo + " data is null " + response)))
+                .flatMap(data -> {
                     if (data == null) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, extraInfo + " data is null "+ response));
+                        return Mono.error(new BusinessException(
+                                CommonErrorCode.INTERNAL_SERVER_ERROR, extraInfo + " data is null " + response));
                     }
                     return Mono.just(data);
                 });
     }
 
-    public static Mono<Object> getResponseWithoutData(Optional<DataResponse> response, String extraInfo){
+    public static Mono<Object> getResponseWithoutData(Optional<DataResponse> response, String extraInfo) {
         if (response.isEmpty()) {
-            return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, extraInfo + " response empty"));
+            return Mono.error(
+                    new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, extraInfo + " response empty"));
         }
         var data = response.get();
         if (data.getErrorCode() != null) {
-            return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, extraInfo + " errorCode exist " + data.getErrorCode()));
+            return Mono.error(new BusinessException(
+                    CommonErrorCode.INTERNAL_SERVER_ERROR, extraInfo + " errorCode exist " + data.getErrorCode()));
         }
         return Mono.justOrEmpty(data.getData());
     }

@@ -1,9 +1,9 @@
 package com.ezbuy.customer.app.common.enums.Gender;
 
+import java.util.Arrays;
+
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-
-import java.util.Arrays;
 
 public class GenderSubSetValidator implements ConstraintValidator<GenderSubset, Gender> {
     private Gender[] genders;

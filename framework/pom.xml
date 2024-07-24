@@ -21,6 +21,7 @@
         <micrometer.registry.version>1.13.1</micrometer.registry.version>
         <micrometer.core.version>1.13.1</micrometer.core.version>
         <spring-cloud.version>2023.0.2</spring-cloud.version>
+        <spotless.version>2.43.0</spotless.version>
     </properties>
 
     <dependencyManagement>
@@ -265,19 +266,21 @@
             <artifactId>r2dbc-pool</artifactId>
         </dependency>
 
-		<!--Log4j-->
-<!--        <dependency>-->
-<!--            <groupId>org.apache.logging.log4j</groupId>-->
-<!--            <artifactId>log4j-api</artifactId>-->
-<!--        </dependency>-->
-<!--		<dependency>-->
-<!--			<groupId>log4j</groupId>-->
-<!--			<artifactId>log4j</artifactId>-->
-<!--			<version>1.2.17</version>-->
-<!--		</dependency>-->
+        <!--Log4j-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.logging.log4j</groupId>-->
+        <!--            <artifactId>log4j-api</artifactId>-->
+        <!--        </dependency>-->
+        <!--		<dependency>-->
+        <!--			<groupId>log4j</groupId>-->
+        <!--			<artifactId>log4j</artifactId>-->
+        <!--			<version>1.2.17</version>-->
+        <!--		</dependency>-->
+
     </dependencies>
 
     <build>
         <defaultGoal>install</defaultGoal>
     </build>
+
 </project>

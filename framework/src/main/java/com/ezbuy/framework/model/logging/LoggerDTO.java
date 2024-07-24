@@ -1,12 +1,12 @@
 package com.ezbuy.framework.model.logging;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import brave.Span;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import reactor.util.context.Context;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 @Data
 @NoArgsConstructor

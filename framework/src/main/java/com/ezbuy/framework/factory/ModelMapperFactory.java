@@ -8,5 +8,4 @@ public class ModelMapperFactory {
     public static ModelMapper getInstance() {
         return modelMapper;
     }
-
 }

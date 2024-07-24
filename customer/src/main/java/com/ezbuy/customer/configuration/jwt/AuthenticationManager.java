@@ -1,11 +1,13 @@
 package com.ezbuy.customer.configuration.jwt;
 
-import com.ezbuy.customer.service.impl.JwtService;
-import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.stereotype.Component;
+
+import com.ezbuy.customer.service.impl.JwtService;
+
+import lombok.AllArgsConstructor;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -20,7 +22,8 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
 
         return Mono.just(authToken)
                 .filter(jwtService::isTokenValid)
-                .flatMap(token -> reactiveUserDetailsService.findByUsername(jwtService.extractUsername(token))
+                .flatMap(token -> reactiveUserDetailsService
+                        .findByUsername(jwtService.extractUsername(token))
                         .map(userDetails -> new JwtToken(token, userDetails))
                         .cast(Authentication.class))
                 .map(auth -> ((JwtToken) auth).withAuthenticated(true))

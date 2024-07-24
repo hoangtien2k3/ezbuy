@@ -1,29 +1,31 @@
 package com.ezbuy.framework.annotations.logging;
 
-import brave.Span;
-import brave.Tracer;
-import com.ezbuy.framework.annotations.LogPerformance;
-import com.ezbuy.framework.exception.BusinessException;
-import com.ezbuy.framework.utils.DataUtil;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicReference;
+
+import javax.annotation.PostConstruct;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import com.ezbuy.framework.annotations.LogPerformance;
+import com.ezbuy.framework.exception.BusinessException;
+import com.ezbuy.framework.utils.DataUtil;
+
+import brave.Span;
+import brave.Tracer;
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.context.Context;
 
-import javax.annotation.PostConstruct;
-import java.lang.reflect.Method;
-import java.util.concurrent.atomic.AtomicReference;
-
 @Component
 @RequiredArgsConstructor
-//@Slf4j
+// @Slf4j
 public class LoggerAspectUtils {
 
     private static final Logger logPerf = LoggerFactory.getLogger("perfLogger");
@@ -35,8 +37,7 @@ public class LoggerAspectUtils {
     private boolean detailException;
 
     @PostConstruct
-    private void init() {
-    }
+    private void init() {}
 
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
@@ -44,7 +45,8 @@ public class LoggerAspectUtils {
         LogPerformance logPerformance = method.getAnnotation(LogPerformance.class);
 
         long start = System.currentTimeMillis();
-        String name = joinPoint.getTarget().getClass().getSimpleName() + "." + joinPoint.getSignature().getName();
+        String name = joinPoint.getTarget().getClass().getSimpleName() + "."
+                + joinPoint.getSignature().getName();
 
         String logType = joinPoint.getTarget().getClass().getName();
         String actionType = joinPoint.getTarget().getClass().getSimpleName();
@@ -67,20 +69,30 @@ public class LoggerAspectUtils {
 
         var result = joinPoint.proceed();
         if (result instanceof Mono) {
-            return logMonoResult(joinPoint, start, (Mono) result, newSpan, name, logType, actionType, logOutput, logInput, title);
+            return logMonoResult(
+                    joinPoint, start, (Mono) result, newSpan, name, logType, actionType, logOutput, logInput, title);
         }
         if (result instanceof Flux) {
-            return logFluxResult(joinPoint, start, (Flux) result, newSpan, name, logType, actionType, logOutput, logInput, title);
+            return logFluxResult(
+                    joinPoint, start, (Flux) result, newSpan, name, logType, actionType, logOutput, logInput, title);
         } else {
             return result;
         }
-
     }
 
-    private Mono logMonoResult(ProceedingJoinPoint joinPoint, long start, Mono result, Span newSpan, String name, String logType, String actionType, boolean logOutput, boolean logInput, String title) {
+    private Mono logMonoResult(
+            ProceedingJoinPoint joinPoint,
+            long start,
+            Mono result,
+            Span newSpan,
+            String name,
+            String logType,
+            String actionType,
+            boolean logOutput,
+            boolean logInput,
+            String title) {
         var contextRef = new AtomicReference<Context>();
-        return result
-                .doOnSuccess(o -> {
+        return result.doOnSuccess(o -> {
                     Object[] args = null;
                     if (logInput) {
                         args = joinPoint.getArgs();
@@ -90,10 +102,12 @@ public class LoggerAspectUtils {
                     } else {
                         logPerf(contextRef, newSpan, name, start, "0", null, logType, actionType, args, title);
                     }
-                }).contextWrite(context -> {
+                })
+                .contextWrite(context -> {
                     var currContext = (Context) context;
                     contextRef.set(currContext);
-                    // the error happens in a different thread, so get the trace from context, set in MDC and downstream to doOnError
+                    // the error happens in a different thread, so get the trace from context, set in MDC and downstream
+                    // to doOnError
                     return context;
                 })
                 .doOnError(o -> {
@@ -108,15 +122,26 @@ public class LoggerAspectUtils {
                 });
     }
 
-    private Flux logFluxResult(ProceedingJoinPoint joinPoint, long start, Flux result, Span newSpan, String name, String logType, String actionType, boolean logOutput, boolean logInput, String title) {
+    private Flux logFluxResult(
+            ProceedingJoinPoint joinPoint,
+            long start,
+            Flux result,
+            Span newSpan,
+            String name,
+            String logType,
+            String actionType,
+            boolean logOutput,
+            boolean logInput,
+            String title) {
         var contextRef = new AtomicReference<Context>();
-        return result
-                .doFinally(o -> {
+        return result.doFinally(o -> {
                     logPerf(contextRef, newSpan, name, start, "1", null, logType, actionType, null, title);
-                }).contextWrite(context -> {
+                })
+                .contextWrite(context -> {
                     var currContext = (Context) context;
                     contextRef.set(currContext);
-                    // the error happens in a different thread, so get the trace from context, set in MDC and downstream to doOnError
+                    // the error happens in a different thread, so get the trace from context, set in MDC and downstream
+                    // to doOnError
                     return context;
                 })
                 .doOnError(o -> {
@@ -124,25 +149,48 @@ public class LoggerAspectUtils {
                 });
     }
 
-    private void logPerf(AtomicReference<Context> contextRef, Span newSpan, String name, Long start, String result, Object o) {
+    private void logPerf(
+            AtomicReference<Context> contextRef, Span newSpan, String name, Long start, String result, Object o) {
         newSpan.finish();
         long duration = System.currentTimeMillis() - start;
         if (duration < 50) return;
-        logPerf.info(new StringBuilder(name).append(" ")
-                .append(duration).append(" ")
+        logPerf.info(new StringBuilder(name)
+                .append(" ")
+                .append(duration)
+                .append(" ")
                 .append(result)
-                .append(" M2 ") //M1: tu backend Java1, M2 tu backend Java2
+                .append(" M2 ") // M1: tu backend Java1, M2 tu backend Java2
                 .append(o == null ? "-" : o.toString())
                 .toString());
     }
 
-
-    private void logPerf(AtomicReference<Context> contextRef, Span newSpan, String name, Long startTime, String result, Object obj, String logType, String actionType, Object[] args, String title) {
+    private void logPerf(
+            AtomicReference<Context> contextRef,
+            Span newSpan,
+            String name,
+            Long startTime,
+            String result,
+            Object obj,
+            String logType,
+            String actionType,
+            Object[] args,
+            String title) {
         newSpan.finish();
         long endTime = System.currentTimeMillis();
         if (endTime - startTime > 50) {
-            LoggerQueue.getInstance().addQueue(contextRef, newSpan, name, startTime, endTime, result, obj, logType, actionType, args, title);
+            LoggerQueue.getInstance()
+                    .addQueue(
+                            contextRef,
+                            newSpan,
+                            name,
+                            startTime,
+                            endTime,
+                            result,
+                            obj,
+                            logType,
+                            actionType,
+                            args,
+                            title);
         }
     }
-
 }
