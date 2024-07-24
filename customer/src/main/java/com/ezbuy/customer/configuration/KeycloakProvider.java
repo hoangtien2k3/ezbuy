@@ -8,11 +8,10 @@ import org.keycloak.admin.client.KeycloakBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
 @Getter
 @NoArgsConstructor
+@Configuration
 public class KeycloakProvider {
-
     @Value("${keycloak.serverUrl}")
     public String serverURL;
     @Value("${keycloak.realm}")
@@ -24,16 +23,15 @@ public class KeycloakProvider {
 
     private static Keycloak keycloak = null;
     public Keycloak getInstance() {
-        if (keycloak == null) {
-            return KeycloakBuilder.builder()
-                    .realm(realm)
-                    .serverUrl(serverURL)
-                    .clientId(clientID)
-                    .clientSecret(clientSecret)
-                    .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
-                    .build();
+        if (keycloak != null) {
+            return keycloak;
         }
-        return keycloak;
+        return KeycloakBuilder.builder()
+                .realm(realm)
+                .serverUrl(serverURL)
+                .clientId(clientID)
+                .clientSecret(clientSecret)
+                .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
+                .build();
     }
-
 }

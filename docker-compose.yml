@@ -1,7 +1,7 @@
 version: '3.9'
 
 services:
-
+  # postgresql:
   postgres:
     image: postgres:16.3
     container_name: postgres
@@ -9,7 +9,7 @@ services:
     hostname: ${POSTGRES_HOSTNAME}
     restart: always
     ports:
-      - "${POSTGRES_PORT}:${POSTGRES_HOST}"
+      - "${POSTGRES_PORT}:5432"
     volumes:
       - ./docker/postgres/postgresql.conf.sample:/usr/share/postgresql/postgresql.conf.sample
       - ./postgres_init.sql:/docker-entrypoint-initdb.d/postgres_init.sql
@@ -21,6 +21,7 @@ services:
     networks:
       - ezbuy-network
 
+  # pgadmin:
   pgadmin:
     image: dpage/pgadmin4:8.8
     container_name: pgadmin
@@ -34,29 +35,37 @@ services:
     networks:
       - ezbuy-network
 
-
+  # keycloak:
   keycloak:
     image: quay.io/keycloak/keycloak:25.0.2
+    container_name: keycloak
     command: start-dev
-    restart: always
-    links:
+    depends_on:
       - postgres
     ports:
-      - "9080:8080"
+      - "${KEYCLOAK_PORT}:8080"
     environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
       KC_DB: postgres
-#      KC_PROXY: passthrough
-      KC_DB_SCHEMA: public
-      KC_DB_USERNAME: admin
-      KC_DB_PASSWORD: admin
-      KC_DB_URL: jdbc:postgresql://postgres:5434/keycloak
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: ${POSTGRES_USER}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+
       KC_HOSTNAME: localhost
-      KC_FEATURES: token-exchange,admin-fine-grained-authz
-#    volumes:
-#      - ./identity/realm-export.json:/opt/keycloak/data/import/realm-export.json
-#      - ./identity/themes/yas/theme:/opt/keycloak/themes
+      KC_HOSTNAME_PORT: 8080
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+
+      KC_LOG_LEVEL: info
+      KC_METRICS_ENABLED: true
+      KC_HEALTH_ENABLED: true
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+
+      KC_HTTP_PORT: 8080
+      KC_HTTPS_PORT: 8443
+    volumes:
+#      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
+      - ./keycloak/themes/ezbuy/theme:/opt/keycloak/themes
     networks:
       - ezbuy-network
 
