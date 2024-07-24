@@ -1,6 +1,7 @@
 package com.ezbuy.framework.filter.http;
 
-import lombok.Getter;
+import java.util.function.Supplier;
+
 import org.jetbrains.annotations.NotNull;
 import org.reactivestreams.Publisher;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -9,10 +10,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ReactiveHttpOutputMessage;
 import org.springframework.http.client.reactive.ClientHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
+
+import lombok.Getter;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.function.Supplier;
 
 /**
  * Implementation of {@link ClientHttpRequest} that saves body as a field.
@@ -30,8 +31,8 @@ public class CachedBodyOutputMessage implements ReactiveHttpOutputMessage {
      * @return body as {@link Flux}
      */
     @Getter
-    private Flux<DataBuffer> body = Flux
-            .error(new IllegalStateException("The body is not set. " + "Did handling complete with success?"));
+    private Flux<DataBuffer> body =
+            Flux.error(new IllegalStateException("The body is not set. " + "Did handling complete with success?"));
 
     public CachedBodyOutputMessage(ServerWebExchange exchange, HttpHeaders httpHeaders) {
         this.bufferFactory = exchange.getResponse().bufferFactory();
@@ -39,9 +40,7 @@ public class CachedBodyOutputMessage implements ReactiveHttpOutputMessage {
     }
 
     @Override
-    public void beforeCommit(Supplier<? extends Mono<Void>> action) {
-
-    }
+    public void beforeCommit(Supplier<? extends Mono<Void>> action) {}
 
     @Override
     public boolean isCommitted() {

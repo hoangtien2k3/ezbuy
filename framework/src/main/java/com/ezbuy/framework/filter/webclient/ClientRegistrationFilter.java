@@ -1,12 +1,12 @@
-//package com.ezbuy.framework.filter.webclient;
+// package com.ezbuy.framework.filter.webclient;
 //
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.security.oauth2.client.*;
-//import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
+// import org.springframework.context.annotation.Bean;
+// import org.springframework.context.annotation.Configuration;
+// import org.springframework.security.oauth2.client.*;
+// import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 //
-//@Configuration
-//public class ClientRegistrationFilter {
+// @Configuration
+// public class ClientRegistrationFilter {
 //    @Bean
 //    public ReactiveOAuth2AuthorizedClientManager authorizedClientManager(
 //            ReactiveClientRegistrationRepository clientRegistrationRepository,
@@ -18,10 +18,11 @@
 //                        .build();
 //
 //        AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager authorizedClientManager =
-//                new AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager(clientRegistrationRepository, authorizedClientService);
+//                new AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager(clientRegistrationRepository,
+// authorizedClientService);
 //
 //        authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
 //
 //        return authorizedClientManager;
 //    }
-//}
+// }

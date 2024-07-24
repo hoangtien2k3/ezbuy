@@ -1,12 +1,11 @@
-package com.ezbuy.framework.filter.http;//package com.viettel.sme.framework.filter.http;
+package com.ezbuy.framework.filter.http;
 
-import com.ezbuy.framework.model.GatewayContext;
-import com.ezbuy.framework.utils.LogUtils;
-import io.netty.buffer.UnpooledByteBufAllocator;
-import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import static reactor.core.scheduler.Schedulers.single;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+
 import org.reactivestreams.Publisher;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
@@ -23,13 +22,15 @@ import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
+
+import com.ezbuy.framework.model.GatewayContext;
+import com.ezbuy.framework.utils.LogUtils;
+
+import io.netty.buffer.UnpooledByteBufAllocator;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-
-import static reactor.core.scheduler.Schedulers.single;
 
 /**
  * @classDesc:
@@ -40,16 +41,17 @@ import static reactor.core.scheduler.Schedulers.single;
 @Log4j2
 @AllArgsConstructor
 @Component
-//@Profile("!prod")
+// @Profile("!prod")
 public class ResponseLogFilter implements WebFilter, Ordered {
     private final ExchangeStrategies exchangeStrategies = ExchangeStrategies.builder()
-            .codecs(cl -> cl.defaultCodecs().maxInMemorySize(50 * 1024 * 1024)).build();
+            .codecs(cl -> cl.defaultCodecs().maxInMemorySize(50 * 1024 * 1024))
+            .build();
 
     private static byte[] toByteArray(InputStream inStream) {
         ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
         byte[] buff = new byte[100];
         int rc = 0;
-        byte[] in_b = new byte[]{};
+        byte[] in_b = new byte[] {};
         try {
             while ((rc = inStream.read(buff, 0, 100)) > 0) {
                 swapStream.write(buff, 0, rc);
@@ -75,12 +77,12 @@ public class ResponseLogFilter implements WebFilter, Ordered {
                 if (LogUtils.legalLogMediaTypes.contains(contentType)) {
                     if (body instanceof Mono) {
                         final Mono<DataBuffer> monoBody = (Mono<DataBuffer>) body;
-                        return super.writeWith(monoBody.publishOn(single())
-                                .map(buffer -> logRequestBody(buffer, exchange)));
+                        return super.writeWith(
+                                monoBody.publishOn(single()).map(buffer -> logRequestBody(buffer, exchange)));
                     } else if (body instanceof Flux) {
                         final Flux<DataBuffer> monoBody = (Flux<DataBuffer>) body;
-                        return super.writeWith(monoBody.publishOn(single())
-                                .map(buffer -> logRequestBody(buffer, exchange)));
+                        return super.writeWith(
+                                monoBody.publishOn(single()).map(buffer -> logRequestBody(buffer, exchange)));
                     }
                 }
                 return super.writeWith(body);
@@ -88,8 +90,7 @@ public class ResponseLogFilter implements WebFilter, Ordered {
 
             @Override
             public Mono<Void> writeAndFlushWith(Publisher<? extends Publisher<? extends DataBuffer>> body) {
-                return writeWith(Flux.from(body)
-                        .flatMapSequential(p -> p));
+                return writeWith(Flux.from(body).flatMapSequential(p -> p));
             }
         };
         return chain.filter(exchange.mutate().response(responseDecorator).build());

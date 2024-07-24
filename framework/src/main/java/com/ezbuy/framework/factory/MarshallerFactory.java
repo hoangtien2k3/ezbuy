@@ -1,20 +1,21 @@
 package com.ezbuy.framework.factory;
 
-//import org.apache.logging.log4j.LogManager;
-//import org.apache.logging.log4j.Logger;
+// import org.apache.logging.log4j.LogManager;
+// import org.apache.logging.log4j.Logger;
 
-import lombok.extern.slf4j.Slf4j;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 public class MarshallerFactory {
-//    private static final Logger log = LogManager.getLogger(MarshallerFactory.class);
+    //    private static final Logger log = LogManager.getLogger(MarshallerFactory.class);
     private static Map<Class, Marshaller> instance = new HashMap<>();
 
     public static String convertObjectToXML(Object obj, Class cls) {

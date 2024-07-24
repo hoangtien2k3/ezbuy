@@ -1,14 +1,15 @@
 package com.ezbuy.framework.annotations.logging;
 
-import brave.Span;
-import com.ezbuy.framework.model.logging.LoggerDTO;
-import lombok.extern.slf4j.Slf4j;
-import reactor.util.context.Context;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicReference;
+
+import com.ezbuy.framework.model.logging.LoggerDTO;
+
+import brave.Span;
+import lombok.extern.slf4j.Slf4j;
+import reactor.util.context.Context;
 
 @Slf4j
 public class LoggerQueue {
@@ -46,13 +47,21 @@ public class LoggerQueue {
         return false;
     }
 
-
-    public boolean addQueue(AtomicReference<Context> contextRef, Span newSpan, String service, Long startTime, Long endTime, String result, Object obj, String logType, String actionType, Object[] args, String title) {
+    public boolean addQueue(
+            AtomicReference<Context> contextRef,
+            Span newSpan,
+            String service,
+            Long startTime,
+            Long endTime,
+            String result,
+            Object obj,
+            String logType,
+            String actionType,
+            Object[] args,
+            String title) {
         try {
-            if (myQueue.add(
-                    new LoggerDTO(contextRef, newSpan, service, startTime, endTime,
-                            result, obj, logType, actionType, args, title)
-            )) {
+            if (myQueue.add(new LoggerDTO(
+                    contextRef, newSpan, service, startTime, endTime, result, obj, logType, actionType, args, title))) {
                 countSuccess++;
                 return true;
             }

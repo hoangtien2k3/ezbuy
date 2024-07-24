@@ -9,5 +9,4 @@ public interface SagaStep {
     Mono<StepResult> execute();
 
     Mono<Boolean> revert();
-
 }

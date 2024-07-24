@@ -1,10 +1,10 @@
 package com.ezbuy.framework.constants;
 
 public class CommonConstant {
-    public final static String MSISDN_TOKEN = "msisdn";
-    public final static String NAME_PARAM = "name";
-    public final static String PATH_PARAM = "path";
-    public final static String REQUEST_ID = "requestId";
+    public static final String MSISDN_TOKEN = "msisdn";
+    public static final String NAME_PARAM = "name";
+    public static final String PATH_PARAM = "path";
+    public static final String REQUEST_ID = "requestId";
 
     public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public static final String DATE_FORMAT_MILI = "yyyy-MM-dd HH:mm:ss.S";
@@ -57,14 +57,14 @@ public class CommonConstant {
     public static final String DATE_FORMAT_HM = "HH:mm";
     public static final String DATE_FORMAT_DMY_HM = "dd/MM/yyyy-HH:mm";
     public static final String DAY_START_MONTH = "01-";
-    public static final Long MILI_SECOND_OF_YEAR = 31536000000L; //1000*60*60*24*365L=31536000000L : mili second of one year
-    public static final Long MILI_SECOND_OF_HOUR = 3600000L; //1000*60*60=36000000L : mili second of one hour
+    public static final Long MILI_SECOND_OF_YEAR = 31536000000L; // 1000*60*60*24*365L=31536000000L
+    public static final Long MILI_SECOND_OF_HOUR = 3600000L; // 1000*60*60=36000000L
     public static final String SALTCHARS = "1234567890";
     public static final String DATE_TIMEZONE = "UTC";
     public static final String TIMEZONE_GMT7 = "GMT+07";
 
-    public final static String FORMAT_DATE_DMY_HYPHEN = "dd-MM-yyyy";
-    public final static String FORMAT_DATE_DMY_HYPHEN_SHORT = "d-M-y";
+    public static final String FORMAT_DATE_DMY_HYPHEN = "dd-MM-yyyy";
+    public static final String FORMAT_DATE_DMY_HYPHEN_SHORT = "d-M-y";
 
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
@@ -84,20 +84,23 @@ public class CommonConstant {
     public static final String COMMON_DECL_VALUE_1 = "1";
     public static final String REGEX_PLUS = "\\+";
     public static final String REGEX_DATE_DMY = "([0-9]{2})-([0-9]{2})-([0-9]{4})";
-    public static final String REGEX_VIETTEL_NUMBER_FORMAT = "^8496\\d{7}$|^8497\\d{7}$|^8498\\d{7}$|^8416\\d{8}$|0?96\\d{7}$|0?97\\d{7}$|^0?98\\d{7}$|^0?16\\d{8}$";
+    public static final String REGEX_VIETTEL_NUMBER_FORMAT =
+            "^8496\\d{7}$|^8497\\d{7}$|^8498\\d{7}$|^8416\\d{8}$|0?96\\d{7}$|0?97\\d{7}$|^0?98\\d{7}$|^0?16\\d{8}$";
     public static final String REGEX_PAPER_NUMBER_FORMAT = "/\\=(.*?)\\;/";
     public static final String REGEX_PAPER_NUMBER_FORMAT_2 = "^[0-9a-zA-Z]{8,12}$";
-    public static final String REGEX_DATE_FORMAT_DMY = "^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[012])-((20|2[0-9])[0-9]{2})$";
+    public static final String REGEX_DATE_FORMAT_DMY =
+            "^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[012])-((20|2[0-9])[0-9]{2})$";
     public static final String REGEX_CHECK_ID_NO = "/^.{9,12}$/u";
     public static final String REGEX_CHECK_BASE_64 = "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$";
     public static final String REGEX_CALENDAR_FROM_TIME = "(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])";
-    public final static String PATTER_CHECK = "^[^*]+$";
+    public static final String PATTER_CHECK = "^[^*]+$";
 
     // pattern
     public static final String PHONE_PATTERN = "^[0-9]{9,11}$";
     public static final String PHONE_PATTERN_2 = "^[0-9]{9,12}$";
     public static final String REGEX_PHONE_ASTERISK = "^[-*0-9]+$";
-    public static final String REGEX_BASE_64 = "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$";
+    public static final String REGEX_BASE_64 =
+            "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$";
     public static final String REGEX_ASTERISK = "^[^*]+$";
     public static final String PREFIX_NUMBER_REGEX = "^[0-9].*$";
     public static final String FILTER_NUMBER_REGEX = "\\d+";
@@ -123,10 +126,8 @@ public class CommonConstant {
     public static final String AMP = "amp;";
 
     public interface COMMON_PREFIX {
-        public final static String NUMBER_PREFIX = "^[-*0-9]+$";
-        public final static String REGEX_ONLY_NUMBER = "[^\\d.]";
-        public final static String REGEX_NOT_NUMBER = "[^0-9]+";
+        public static final String NUMBER_PREFIX = "^[-*0-9]+$";
+        public static final String REGEX_ONLY_NUMBER = "[^\\d.]";
+        public static final String REGEX_NOT_NUMBER = "[^0-9]+";
     }
 }
-
-

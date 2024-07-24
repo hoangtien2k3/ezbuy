@@ -1,10 +1,9 @@
 package com.ezbuy.framework.utils;
 
-import com.ezbuy.framework.constants.Constants;
-import com.ezbuy.framework.factory.UnmarshallerFactory;
-import lombok.extern.slf4j.Slf4j;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -15,18 +14,21 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+
+import com.ezbuy.framework.constants.Constants;
+import com.ezbuy.framework.factory.UnmarshallerFactory;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class DataWsUtil {
 
     public static String getDataByTag(String realData, String fromKey, String toKey) {
         String data = "";
-        if (!DataUtil.isNullOrEmpty(fromKey) && !DataUtil.isNullOrEmpty(realData)
-                && realData.contains(fromKey)) {
+        if (!DataUtil.isNullOrEmpty(fromKey) && !DataUtil.isNullOrEmpty(realData) && realData.contains(fromKey)) {
             data = realData.substring(realData.indexOf(fromKey) + fromKey.length(), realData.indexOf(toKey));
             if (DataUtil.isNullOrEmpty(data) || DataUtil.safeEqual(data, "N/A")) {
                 data = "";
@@ -36,9 +38,7 @@ public class DataWsUtil {
     }
 
     public static String wrapTag(String data, String openTag, String closeTag) {
-        if (DataUtil.isNullOrEmpty(openTag)
-                || DataUtil.isNullOrEmpty(closeTag)
-                || DataUtil.isNullOrEmpty(data)) {
+        if (DataUtil.isNullOrEmpty(openTag) || DataUtil.isNullOrEmpty(closeTag) || DataUtil.isNullOrEmpty(data)) {
             return "";
         }
         return openTag + data + closeTag;
@@ -47,7 +47,6 @@ public class DataWsUtil {
     public static String wrapTagReturn(String data) {
         return wrapTag(data, Constants.XmlConst.TAG_OPEN_RETURN, Constants.XmlConst.TAG_OPEN_RETURN);
     }
-
 
     public static <T> T xmlToObj(String xml, Class clz) {
         try {
@@ -83,7 +82,8 @@ public class DataWsUtil {
         // Xerces 2 - http://xerces.apache.org/xerces2-j/features.html#external-parameter-entities
         FEATURE = "http://xml.org/sax/features/external-parameter-entities";
         dbf.setFeature(FEATURE, false);
-        // and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks" (see reference below)
+        // and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks" (see reference
+        // below)
         dbf.setXIncludeAware(false);
         dbf.setExpandEntityReferences(false);
     }

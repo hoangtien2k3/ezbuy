@@ -1,10 +1,11 @@
 package com.ezbuy.notification.model;
 
+import org.springframework.data.relational.core.mapping.Table;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.relational.core.mapping.Table;
 
 @Data
 @NoArgsConstructor

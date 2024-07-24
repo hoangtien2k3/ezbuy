@@ -1,13 +1,15 @@
 package com.ezbuy.notification.model;
 
+import java.time.LocalDateTime;
+
+import org.springframework.data.relational.core.mapping.Table;
+
 import com.ezbuy.notification.model.base.EntityBase;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.relational.core.mapping.Table;
-
-import java.time.LocalDateTime;
 
 @Data
 @Table(name = "notification_content")
@@ -24,8 +26,18 @@ public class NotificationContent extends EntityBase {
     private String templateMail;
     private String externalData;
 
-    public NotificationContent(LocalDateTime createAt, String createBy, LocalDateTime updateAt, String updateBy, String id, String title, String subTitle,
-                               String imageUrl, String url, Integer status, String externalData) {
+    public NotificationContent(
+            LocalDateTime createAt,
+            String createBy,
+            LocalDateTime updateAt,
+            String updateBy,
+            String id,
+            String title,
+            String subTitle,
+            String imageUrl,
+            String url,
+            Integer status,
+            String externalData) {
         super(createAt, createBy, updateAt, updateBy);
         this.id = id;
         this.title = title;
@@ -36,8 +48,14 @@ public class NotificationContent extends EntityBase {
         this.externalData = externalData;
     }
 
-    public NotificationContent(String id, String title, String subTitle, String imageUrl,
-                               String url, Integer status, String externalData) {
+    public NotificationContent(
+            String id,
+            String title,
+            String subTitle,
+            String imageUrl,
+            String url,
+            Integer status,
+            String externalData) {
         this.id = id;
         this.title = title;
         this.subTitle = subTitle;
@@ -47,6 +65,5 @@ public class NotificationContent extends EntityBase {
         this.externalData = externalData;
     }
 
-    public NotificationContent(String id, String title, String subTitle, String imageUrl, String url, Integer status) {
-    }
+    public NotificationContent(String id, String title, String subTitle, String imageUrl, String url, Integer status) {}
 }

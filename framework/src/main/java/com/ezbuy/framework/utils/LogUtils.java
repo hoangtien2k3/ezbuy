@@ -1,16 +1,17 @@
 package com.ezbuy.framework.utils;
 
-import io.netty.buffer.UnpooledByteBufAllocator;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.logging.log4j.Logger;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.core.io.buffer.NettyDataBufferFactory;
 import org.springframework.http.MediaType;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
+import io.netty.buffer.UnpooledByteBufAllocator;
 
 /**
  * @author: hoangtien2k3qx1@gmail.com
@@ -27,8 +28,7 @@ public class LogUtils {
             MediaType.APPLICATION_JSON_UTF8,
             MediaType.TEXT_PLAIN,
             MediaType.TEXT_XML,
-            MediaType.MULTIPART_FORM_DATA
-    );
+            MediaType.MULTIPART_FORM_DATA);
 
     @SuppressWarnings("unchecked")
     public static <T extends DataBuffer> T loggingRequest(org.apache.logging.log4j.Logger log, T buffer) {
@@ -52,7 +52,7 @@ public class LogUtils {
         ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
         byte[] buff = new byte[100];
         int rc = 0;
-        byte[] in_b = new byte[]{};
+        byte[] in_b = new byte[] {};
         try {
             while ((rc = inStream.read(buff, 0, 100)) > 0) {
                 swapStream.write(buff, 0, rc);

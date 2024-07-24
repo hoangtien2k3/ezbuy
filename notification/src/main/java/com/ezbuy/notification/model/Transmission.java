@@ -1,12 +1,14 @@
 package com.ezbuy.notification.model;
 
+import org.springframework.data.relational.core.mapping.Table;
+
 import com.ezbuy.notification.model.base.EntityBase;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.relational.core.mapping.Table;
 
 @ToString
 @Table(name = "transmission")

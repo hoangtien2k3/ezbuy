@@ -1,12 +1,14 @@
 package com.ezbuy.framework.filter.properties;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
 import com.ezbuy.framework.model.logging.HttpLogRequest;
 import com.ezbuy.framework.model.logging.HttpLogResponse;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
  * @author hoangtien2k3

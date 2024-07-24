@@ -1,14 +1,16 @@
 package com.ezbuy.customer.controller;
 
+import org.springframework.web.bind.annotation.*;
+
 import com.ezbuy.customer.model.dto.CustomerDTO;
 import com.ezbuy.customer.model.dto.request.AuthenticationRequest;
 import com.ezbuy.customer.model.dto.request.CreateCustomerRequest;
 import com.ezbuy.customer.model.dto.response.AuthenticationResponse;
 import com.ezbuy.customer.service.CustomerService;
 import com.ezbuy.framework.model.response.DataResponse;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -20,13 +22,15 @@ public class CustomerController {
 
     @PostMapping("/create")
     public Mono<DataResponse<CustomerDTO>> createCustomer(@RequestBody CreateCustomerRequest customerRequest) {
-        return customerService.createCustomer(customerRequest)
+        return customerService
+                .createCustomer(customerRequest)
                 .doOnError(throwable -> log.error("Error creating customer: {}", throwable.getMessage()));
     }
 
     @PostMapping("/auth")
     public Mono<DataResponse<AuthenticationResponse>> authenticateCustomer(@RequestBody AuthenticationRequest auth) {
-        return customerService.authenticateRequest(auth)
+        return customerService
+                .authenticateRequest(auth)
                 .doOnError(throwable -> log.error("Error authenticating customer: {}", throwable.getMessage()));
     }
 
@@ -39,5 +43,4 @@ public class CustomerController {
     public Mono<String> testAccess() {
         return Mono.just("Access successful");
     }
-
 }

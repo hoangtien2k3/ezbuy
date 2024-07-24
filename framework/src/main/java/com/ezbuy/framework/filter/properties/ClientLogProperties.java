@@ -1,11 +1,12 @@
 package com.ezbuy.framework.filter.properties;
 
+import java.util.List;
+
 import com.ezbuy.framework.constants.Constants;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @AllArgsConstructor
 @Data

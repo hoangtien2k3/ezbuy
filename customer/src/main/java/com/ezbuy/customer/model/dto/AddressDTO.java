@@ -9,6 +9,4 @@ public record AddressDTO(
         String addressDetail,
         String postcode,
         String countryCode,
-        String company
-) {
-}
+        String company) {}

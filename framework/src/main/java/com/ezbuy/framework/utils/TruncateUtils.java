@@ -1,11 +1,13 @@
 package com.ezbuy.framework.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.MultiValueMap;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
+
+import org.springframework.util.MultiValueMap;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TruncateUtils {

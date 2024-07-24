@@ -1,10 +1,22 @@
+/*
+ * Copyright 2024 - Hoàng Anh Tiến
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.framework.config.security.http;
 
-import com.ezbuy.framework.config.WhiteListProperties;
-import com.ezbuy.framework.model.WhiteList;
-import com.ezbuy.framework.utils.DataUtil;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -14,16 +26,19 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-import reactor.core.publisher.Mono;
 
-import java.util.List;
+import com.ezbuy.framework.config.WhiteListProperties;
+import com.ezbuy.framework.model.WhiteList;
+import com.ezbuy.framework.utils.DataUtil;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -35,7 +50,8 @@ public class WebConfig {
     private final WhiteListProperties whiteListProperties;
 
     @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http, Converter<Jwt, Mono<AbstractAuthenticationToken>> jwtAuthenticationConverter) {
+    public SecurityWebFilterChain springSecurityFilterChain(
+            ServerHttpSecurity http, Converter<Jwt, Mono<AbstractAuthenticationToken>> jwtAuthenticationConverter) {
         http.csrf(ServerHttpSecurity.CsrfSpec::disable);
 
         List<WhiteList> whiteListList = whiteListProperties.getWhiteList();
@@ -48,41 +64,37 @@ public class WebConfig {
                     for (String method : methods) {
                         HttpMethod convertedMethod = HttpMethod.valueOf(method);
                         http.authorizeExchange(authorize ->
-                                authorize.pathMatchers(convertedMethod, uri).permitAll()
-                        );
+                                authorize.pathMatchers(convertedMethod, uri).permitAll());
                     }
                 } else {
-                    http.authorizeExchange(authorize ->
-                            authorize.pathMatchers(uri).permitAll()
-                    );
+                    http.authorizeExchange(
+                            authorize -> authorize.pathMatchers(uri).permitAll());
                 }
             }
         }
 
         http.cors(corsSpec -> corsSpec.configurationSource(corsConfigurationSource()))
-                .authorizeExchange(authorize ->
-                        authorize.anyExchange().authenticated()
-                )
-                .oauth2ResourceServer(oauth2 ->
-                        oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter))
-                );
+                .authorizeExchange(authorize -> authorize.anyExchange().authenticated())
+                .oauth2ResourceServer(
+                        oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)));
 
-        http.headers(headers -> headers.frameOptions(frameOptions ->
-                frameOptions.mode(XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN)));
+        http.headers(headers -> headers.frameOptions(
+                frameOptions -> frameOptions.mode(XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN)));
 
         return http.build();
     }
 
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        UrlBasedCorsConfigurationSource configurationSource = new UrlBasedCorsConfigurationSource();
-//        CorsConfiguration corsConfiguration = new CorsConfiguration();
-//        corsConfiguration.setAllowedOrigins(List.of("*"));
-//        corsConfiguration.setAllowedMethods(List.of("*"));
-//        corsConfiguration.setAllowedHeaders(List.of("*"));
-//        configurationSource.registerCorsConfiguration("/**", corsConfiguration);
-//        return configurationSource;
-//    }
+    //    @Bean
+    //    public CorsConfigurationSource corsConfigurationSource() {
+    //        UrlBasedCorsConfigurationSource configurationSource = new
+    // UrlBasedCorsConfigurationSource();
+    //        CorsConfiguration corsConfiguration = new CorsConfiguration();
+    //        corsConfiguration.setAllowedOrigins(List.of("*"));
+    //        corsConfiguration.setAllowedMethods(List.of("*"));
+    //        corsConfiguration.setAllowedHeaders(List.of("*"));
+    //        configurationSource.registerCorsConfiguration("/**", corsConfiguration);
+    //        return configurationSource;
+    //    }
 
     private CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -98,4 +110,3 @@ public class WebConfig {
         return source;
     }
 }
-

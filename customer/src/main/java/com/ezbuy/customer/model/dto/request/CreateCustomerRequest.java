@@ -10,6 +10,4 @@ public record CreateCustomerRequest(
         String phoneNumber,
         String email,
         String password,
-        Boolean subscribedToNewsletter
-) {
-}
+        Boolean subscribedToNewsletter) {}

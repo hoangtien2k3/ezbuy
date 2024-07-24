@@ -1,17 +1,20 @@
 package com.ezbuy.framework.exception;
 
-import com.ezbuy.framework.utils.Translator;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.util.Arrays;
 
+import com.ezbuy.framework.utils.Translator;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 public class BusinessException extends RuntimeException {
     private String errorCode;
     private String message;
-    private String[] paramsMsg;
+    private Object[] paramsMsg;
 
     public BusinessException(String errorCode, String message) {
         this.errorCode = errorCode;
@@ -21,6 +24,6 @@ public class BusinessException extends RuntimeException {
     public BusinessException(String errorCode, String message, String... paramsMsg) {
         this.errorCode = errorCode;
         this.paramsMsg = Arrays.stream(paramsMsg).map(Translator::toLocaleVi).toArray(String[]::new);
-        this.message = Translator.toLocaleVi(message,  this.paramsMsg);
+        this.message = Translator.toLocaleVi(message, this.paramsMsg);
     }
 }

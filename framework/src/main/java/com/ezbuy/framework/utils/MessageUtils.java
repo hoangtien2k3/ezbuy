@@ -1,16 +1,17 @@
 package com.ezbuy.framework.utils;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.i18n.LocaleContextHolder;
-
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.springframework.context.i18n.LocaleContextHolder;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 public class MessageUtils {
 
-    private final static String BASE_NAME = "lang";
+    private static final String BASE_NAME = "lang";
 
     public static String getMessage(String code, Locale locale) {
         return getMessage(code, locale, null);
@@ -37,5 +38,4 @@ public class MessageUtils {
     public static String getMessage(String code, Object... args) {
         return getMessage(code, LocaleContextHolder.getLocale(), args);
     }
-
 }

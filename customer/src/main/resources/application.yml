@@ -4,10 +4,9 @@ logging:
   level:
     root: INFO
 
-# spring config
 spring:
   application:
-    name: customer-service
+    name: customer
   main:
     allow-bean-definition-overriding: true
   messages:
@@ -29,7 +28,6 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
-
   # security
   security:
     oauth2:
@@ -47,7 +45,6 @@ spring:
           jwk-set-uri: ${app.config.keycloak.url}/realms/${app.config.keycloak.realm}/protocol/openid-connect/certs
       keycloak:
         client-id: web-client
-
 
 oauth2:
   keycloak:

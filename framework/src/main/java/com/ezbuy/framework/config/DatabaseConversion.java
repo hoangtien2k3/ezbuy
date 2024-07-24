@@ -1,7 +1,25 @@
+/*
+ * Copyright 2024 - Hoàng Anh Tiến
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.framework.config;
 
-import io.r2dbc.spi.Blob;
-import lombok.extern.slf4j.Slf4j;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.time.*;
+import java.util.*;
+
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
@@ -11,12 +29,10 @@ import org.springframework.data.r2dbc.dialect.MySqlDialect;
 import org.springframework.data.r2dbc.mapping.R2dbcMappingContext;
 import org.springframework.data.relational.core.mapping.NamingStrategy;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.time.*;
-import java.util.*;
+import io.r2dbc.spi.Blob;
+import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
@@ -71,8 +87,12 @@ public class DatabaseConversion {
         @Override
         public String convert(Blob source) {
             try {
-                return source == null ? null :
-                        Mono.from(source.stream()).map(bb -> StandardCharsets.UTF_8.decode(bb).toString()).toFuture().get();
+                return source == null
+                        ? null
+                        : Mono.from(source.stream())
+                                .map(bb -> StandardCharsets.UTF_8.decode(bb).toString())
+                                .toFuture()
+                                .get();
             } catch (Exception e) {
                 log.error("Exception when read blob value", e);
                 return null;
@@ -92,7 +112,6 @@ public class DatabaseConversion {
             return bb.array();
         }
     }
-
 
     @ReadingConverter
     public enum BinaryToUUIDConverter implements Converter<byte[], UUID> {

@@ -1,11 +1,12 @@
 package com.ezbuy.customer.model.postgresql;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.relational.core.mapping.Table;
-import org.springframework.data.annotation.Id;
 
 @Builder
 @AllArgsConstructor
@@ -15,6 +16,7 @@ import org.springframework.data.annotation.Id;
 public class CustomerGroup {
     @Id
     private Long id; // id
+
     private String code; // code
     private String name; // ten
 }
