@@ -12,9 +12,8 @@ import lombok.NoArgsConstructor;
 
 /**
  * @author hoangtien2k3
- * <p>
- * cau hinh log cho http request và http response cua ung dung
- * <p>
+ *     <p>cau hinh log cho http request và http response cua ung dung
+ *     <p>
  */
 @Component
 @ConfigurationProperties(prefix = "application.http-logging", ignoreInvalidFields = true)

@@ -15,8 +15,7 @@ import io.netty.buffer.UnpooledByteBufAllocator;
 
 /**
  * @author: hoangtien2k3qx1@gmail.com
- * @since: 20/07/2024 11:16
- * description: LogUtils
+ * @since: 20/07/2024 11:16 description: LogUtils
  * @update:
  */
 public class LogUtils {

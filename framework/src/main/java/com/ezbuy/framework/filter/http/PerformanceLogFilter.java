@@ -64,7 +64,8 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
                 .contextWrite(context -> {
                     var currContext = (Context) context;
                     contextRef.set(currContext);
-                    // the error happens in a different thread, so get the trace from context, set in MDC and downstream
+                    // the error happens in a different thread, so get the trace from context, set in MDC
+                    // and downstream
                     // to doOnError
                     setTraceIdFromContext(newSpan.context().traceIdString());
                     return context;

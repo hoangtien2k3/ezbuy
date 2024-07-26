@@ -28,13 +28,17 @@ public class Translator {
     }
 
     public static String toLocaleVi(String msgCode, Object... params) {
-        if (msgCode == null) return "";
+        if (msgCode == null) {
+            return "";
+        }
 
         return messageSource.getMessage(msgCode, params, defaultLocale);
     }
 
     public static String toLocale(String msgCode, ServerWebExchange exchange, Object... params) {
-        if (msgCode == null) return "";
+        if (msgCode == null) {
+            return "";
+        }
         Locale locale;
         if (exchange == null) {
             locale = defaultLocale;
@@ -46,7 +50,9 @@ public class Translator {
     }
 
     public static Mono<String> toLocaleMono(String msgCode, ServerWebExchange exchange, Object... params) {
-        if (msgCode == null) return Mono.just("");
+        if (msgCode == null) {
+            return Mono.just("");
+        }
         Locale locale;
         if (exchange == null) {
             locale = defaultLocale;
@@ -59,7 +65,9 @@ public class Translator {
     }
 
     public static String toLocale(String msgCode, Object... params) {
-        if (msgCode == null) return "";
+        if (msgCode == null) {
+            return "";
+        }
         Locale locale = LocaleContextHolder.getLocale();
         return messageSource.getMessage(msgCode, params, locale);
     }

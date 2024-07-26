@@ -267,11 +267,6 @@ public final class Constants {
         public static final String OBLIGATORY = "(*)";
     }
 
-    public static final class CONFIG_SME {
-        public static final String OTP_AM_CODE = "AM_CONNECT_OTP"; // type nhan vien AM gui OTP
-        public static final String ALIAS_AM_CODE = "155"; // type nhan vien AM gui OTP
-    }
-
     public static final class OptionSetCode {
         public static final String SUB_TITLE_MAIL = "SUB_TITLE_MAIL"; // Cau hinh thong tin truyen vao mail
     }

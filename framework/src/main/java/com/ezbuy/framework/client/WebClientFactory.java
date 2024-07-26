@@ -110,7 +110,8 @@ public class WebClientFactory implements InitializingBean {
         if (!DataUtil.isNullOrEmpty(webClientProperties.getUsername())) {
             exchangeStrategies.defaultHeader(
                     Constants.Security.AUTHORIZATION,
-                    Constants.Security.BEARER + " "
+                    Constants.Security.BEARER
+                            + " "
                             + Base64.getEncoder()
                                     .encodeToString((webClientProperties.getUsername() + ":"
                                                     + webClientProperties.getPassword())

@@ -106,7 +106,8 @@ public class LoggerAspectUtils {
                 .contextWrite(context -> {
                     var currContext = (Context) context;
                     contextRef.set(currContext);
-                    // the error happens in a different thread, so get the trace from context, set in MDC and downstream
+                    // the error happens in a different thread, so get the trace from context, set in MDC
+                    // and downstream
                     // to doOnError
                     return context;
                 })
@@ -140,7 +141,8 @@ public class LoggerAspectUtils {
                 .contextWrite(context -> {
                     var currContext = (Context) context;
                     contextRef.set(currContext);
-                    // the error happens in a different thread, so get the trace from context, set in MDC and downstream
+                    // the error happens in a different thread, so get the trace from context, set in MDC
+                    // and downstream
                     // to doOnError
                     return context;
                 })

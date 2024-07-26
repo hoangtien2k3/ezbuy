@@ -15,9 +15,7 @@ import lombok.Getter;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/**
- * Implementation of {@link ClientHttpRequest} that saves body as a field.
- */
+/** Implementation of {@link ClientHttpRequest} that saves body as a field. */
 public class CachedBodyOutputMessage implements ReactiveHttpOutputMessage {
     private final DataBufferFactory bufferFactory;
     private final HttpHeaders httpHeaders;
@@ -25,8 +23,7 @@ public class CachedBodyOutputMessage implements ReactiveHttpOutputMessage {
     private boolean cached = false;
 
     /**
-     * -- GETTER --
-     *  Return the request body, or an error stream if the body was never set or when.
+     * -- GETTER -- Return the request body, or an error stream if the body was never set or when.
      *
      * @return body as {@link Flux}
      */

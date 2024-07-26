@@ -82,7 +82,8 @@ public class DataWsUtil {
         // Xerces 2 - http://xerces.apache.org/xerces2-j/features.html#external-parameter-entities
         FEATURE = "http://xml.org/sax/features/external-parameter-entities";
         dbf.setFeature(FEATURE, false);
-        // and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks" (see reference
+        // and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
+        // (see reference
         // below)
         dbf.setXIncludeAware(false);
         dbf.setExpandEntityReferences(false);

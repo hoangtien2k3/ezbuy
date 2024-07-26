@@ -279,9 +279,7 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
                 });
     }
 
-    /**
-     * proxy for https protocol
-     */
+    /** proxy for https protocol */
     @Override
     public WebClient proxyClient(String proxyHost, Integer proxyPort, Boolean proxyEnable) {
         ConnectionProvider connectionProvider = ConnectionProvider.builder(Constants.POOL.REST_CLIENT_POLL)
@@ -320,9 +318,7 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
                 .build();
     }
 
-    /**
-     * proxy for http protocol (dang phai su dung lib khac vi ham proxyClient khong ho tro http)
-     */
+    /** proxy for http protocol (dang phai su dung lib khac vi ham proxyClient khong ho tro http) */
     @Override
     public WebClient proxyHttpClient(String proxyHost, Integer proxyPort) {
         HttpClient httpClient = HttpClient.create()

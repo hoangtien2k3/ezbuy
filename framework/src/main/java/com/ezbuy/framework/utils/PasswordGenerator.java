@@ -20,10 +20,9 @@ public class PasswordGenerator {
                 .concat(totalChars);
         List<Character> pwdChars = combinedChars.chars().mapToObj(c -> (char) c).collect(Collectors.toList());
         Collections.shuffle(pwdChars);
-        String password = pwdChars.stream()
+        return pwdChars.stream()
                 .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
                 .toString();
-        return password;
     }
 
     public static void main(String[] args) {

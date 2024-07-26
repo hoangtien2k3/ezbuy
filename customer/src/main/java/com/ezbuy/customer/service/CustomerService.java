@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono;
 public interface CustomerService {
     /**
      * Register a new customer
+     *
      * @param customerRequest
      * @return DataResponse<CustomerDTO>
      * @author hoangtien2k3
@@ -19,6 +20,7 @@ public interface CustomerService {
 
     /**
      * Login a customer
+     *
      * @param authenticationRequest
      * @return DataResponse<AuthenticationResponse>
      * @author hoangtien2k3
@@ -29,7 +31,8 @@ public interface CustomerService {
 
     //    Mono<DataResponse<CustomerResponse>> getCustomerById(Integer customerId);
     //
-    //    Mono<DataResponse<CustomerResponse>> updateCustomer(Integer customerId, CreateCustomerRequest
+    //    Mono<DataResponse<CustomerResponse>> updateCustomer(Integer customerId,
+    // CreateCustomerRequest
     // customerRequest);
     //
     //    Mono<DataResponse<CustomerResponse>> deleteCustomer(Integer customerId);

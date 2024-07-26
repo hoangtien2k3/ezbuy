@@ -25,22 +25,22 @@ spring:
   main:
     allow-bean-definition-overriding: true
   r2dbc:
-    url: r2dbc:mariadb://10.207.222.154:9001/sme_notification
+    url: r2dbc:postgresql://localhost:5434/notification
     username: admin
-    password: 123456@
-  mail:
-    host: smtp.viettel.com.vn
-    port: 465
-    username: crawler@viettel.com.vn
-    password: Bccs@202112
-    protocol: smtp
-    properties.mail.smtp:
-      auth: true
-      starttls.enable: true
-      ssl.trust: smtp.viettel.com.vn
-      ssl.enable: true
-      tls.trust: smtp.viettel.com.vn
-      tls.enable: true
+    password: admin
+#  mail:
+#    host: smtp.viettel.com.vn
+#    port: 465
+#    username: crawler@viettel.com.vn
+#    password: Bccs@202112
+#    protocol: smtp
+#    properties.mail.smtp:
+#      auth: true
+#      starttls.enable: true
+#      ssl.trust: smtp.viettel.com.vn
+#      ssl.enable: true
+#      tls.trust: smtp.viettel.com.vn
+#      tls.enable: true
 application:
   http-logging:
     request:

@@ -38,8 +38,10 @@
 //    @Bean
 //    @Override
 //    public ConnectionFactory connectionFactory() {
-//        ConnectionFactory connectionFactory = ConnectionFactories.get(postgresqlProperties().getUrl());
-//        ConnectionPoolConfiguration configuration = ConnectionPoolConfiguration.builder(connectionFactory)
+//        ConnectionFactory connectionFactory =
+// ConnectionFactories.get(postgresqlProperties().getUrl());
+//        ConnectionPoolConfiguration configuration =
+// ConnectionPoolConfiguration.builder(connectionFactory)
 //                .maxSize(postgresqlProperties().getPool().getMaxSize())
 //                .initialSize(postgresqlProperties().getPool().getInitialSize())
 //                .build();
@@ -53,7 +55,8 @@
 //                .bindMarkers(MySqlDialect.INSTANCE.getBindMarkersFactory())
 //                .build();
 //
-//        return new R2dbcEntityTemplate(databaseClient, MySqlDialect.INSTANCE, databaseConversion.getR2dbcConverter());
+//        return new R2dbcEntityTemplate(databaseClient, MySqlDialect.INSTANCE,
+// databaseConversion.getR2dbcConverter());
 //    }
 //
 //    @Override

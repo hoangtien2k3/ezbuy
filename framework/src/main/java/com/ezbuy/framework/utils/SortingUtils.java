@@ -13,8 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author huannt16
- * <p>
- * Ho tro parse sorting thanh cau query trong database
+ *     <p>Ho tro parse sorting thanh cau query trong database
  */
 @Slf4j
 public class SortingUtils {

@@ -45,7 +45,8 @@ public class LoggerSchedule {
                 log.error("Error while handle record queue: {}", e.getMessage());
             }
         }
-        //        log.info("AsyncLog analyId {}: QueueSize: {}, addSuccess: {}, addFalse: {}, writeSuccess:{},
+        //        log.info("AsyncLog analyId {}: QueueSize: {}, addSuccess: {}, addFalse: {},
+        // writeSuccess:{},
         // writeFalse:{}",
         //                analyId, records.size(), LoggerQueue.getInstance().getCountSuccess(),
         // LoggerQueue.getInstance().getCountFalse(), numSuccess, numFalse);

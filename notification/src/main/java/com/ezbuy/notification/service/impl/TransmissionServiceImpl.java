@@ -297,7 +297,8 @@ public class TransmissionServiceImpl implements TransmissionService {
                 sortingString.append("");
             }
             StringBuilder query = new StringBuilder();
-            query.append(" SELECT nc.*,tr.state  \n" + " FROM notification_content nc \n"
+            query.append(" SELECT nc.*,tr.state  \n"
+                    + " FROM notification_content nc \n"
                     + " INNER JOIN notification n \n"
                     + " ON n.notification_content_id = nc.id \n"
                     + " INNER JOIN notification_category nca \n"

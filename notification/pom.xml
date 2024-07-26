@@ -12,7 +12,7 @@
     <artifactId>notification</artifactId>
     <version>${revision}</version>
     <name>notification</name>
-    <description>notification</description>
+    <description>notification-service</description>
 
     <properties>
         <java.version>21</java.version>

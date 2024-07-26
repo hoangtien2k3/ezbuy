@@ -10,7 +10,8 @@
 //    @Override
 //    public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
 //        return ExchangeFilterFunction.ofResponseProcessor(clientResponse -> {
-//            if(clientResponse.statusCode()!=null && (clientResponse.statusCode().is5xxServerError() ||
+//            if(clientResponse.statusCode()!=null &&
+// (clientResponse.statusCode().is5xxServerError() ||
 // clientResponse.statusCode().is4xxClientError()) ) {
 //                return clientResponse.bodyToMono(String.class)
 //                        .flatMap(errorBody -> {

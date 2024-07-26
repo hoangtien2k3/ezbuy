@@ -6,7 +6,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.3.1</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
     <groupId>com.ezbuy.ecommerce</groupId>
     <artifactId>ezbuy</artifactId>
@@ -16,6 +16,7 @@
     <description>ezbuy</description>
 
     <modules>
+        <module>auth</module>
         <module>coupon</module>
         <module>customer</module>
         <module>data</module>
@@ -136,7 +137,6 @@
                     <formats>
                         <format>
                             <includes>
-                                <include>.gitattributes</include>
                                 <include>.gitignore</include>
                             </includes>
                             <toggleOffOn/>
@@ -148,7 +148,6 @@
                             </indent>
                         </format>
                     </formats>
-
                     <java>
                         <includes>
                             <include>src/main/java/**/*.java</include>
@@ -156,12 +155,10 @@
                         </includes>
                         <formatAnnotations/>
                         <removeUnusedImports/>
-                        <!--<googleJavaFormat/>-->
                         <palantirJavaFormat/>
                         <importOrder>
                             <order>java,jakarta,javax,org,com,com.diffplug,com.ezbuy,</order>
                         </importOrder>
-
 <!--                        <licenseHeader>-->
 <!--                            <content><![CDATA[-->
 <!--                        /*-->

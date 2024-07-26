@@ -14,9 +14,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Gateway Plugin Properties
- */
+/** Gateway Plugin Properties */
 @Slf4j
 @Getter
 @Setter
@@ -25,24 +23,17 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class GatewayPluginProperties implements InitializingBean {
     public static final String GATEWAY_PLUGIN_PROPERTIES_PREFIX = "spring.plugin.config";
-    /**
-     * Enable Or Disable Read Request Data 。 If true, all request body will cached
-     */
+
+    /** Enable Or Disable Read Request Data 。 If true, all request body will cached */
     private Boolean readRequestData = false;
 
-    /**
-     * Enable Or Disable Read Response Data
-     */
+    /** Enable Or Disable Read Response Data */
     private Boolean readResponseData = false;
 
-    /**
-     * Enable Or Disable Log Request Detail
-     */
+    /** Enable Or Disable Log Request Detail */
     private boolean logRequest = false;
 
-    /**
-     * Hide header on log
-     */
+    /** Hide header on log */
     private List<String> hideHeaderList = Collections.emptyList();
 
     private boolean logResponse = true;

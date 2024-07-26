@@ -35,8 +35,7 @@ import reactor.core.publisher.Mono;
 
 /**
  * @author hoangtien2k3
- * <p>
- * filter log cho toan bo http request va http response
+ *     <p>filter log cho toan bo http request va http response
  */
 @Component
 @Slf4j
