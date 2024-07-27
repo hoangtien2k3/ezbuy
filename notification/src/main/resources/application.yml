@@ -2,7 +2,7 @@ server:
   port: 7777
 logging:
   level:
-      root: DEBUG
+    root: DEBUG
 client:
   product:
     internal-oauth: true
@@ -28,19 +28,41 @@ spring:
     url: r2dbc:postgresql://localhost:5434/notification
     username: admin
     password: admin
-#  mail:
-#    host: smtp.viettel.com.vn
-#    port: 465
-#    username: crawler@viettel.com.vn
-#    password: Bccs@202112
-#    protocol: smtp
-#    properties.mail.smtp:
-#      auth: true
-#      starttls.enable: true
-#      ssl.trust: smtp.viettel.com.vn
-#      ssl.enable: true
-#      tls.trust: smtp.viettel.com.vn
-#      tls.enable: true
+    pool:
+      initial-size: 50
+      max-size: 100
+      enabled: true
+      validation-query: select 1
+      max-life-time: 9223372036854775807
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            token-uri: ${app.config.keycloak.url}/realms/${app.config.keycloak.realm}/protocol/openid-connect/token
+        registration:
+          oidc:
+            client-id: sme-system
+            client-secret: 5Rj8acZcC7KVQgVmnCRI0OdpjqPIJfoQ
+            authorization-grant-type: client_credentials
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${app.config.keycloak.url}/realms/${app.config.keycloak.realm}/protocol/openid-connect/certs
+      keycloak:
+        client-id: web-client
+  mail:
+    host: smtp.viettel.com.vn
+    port: 465
+    username: crawler@viettel.com.vn
+    password: Bccs@202112
+    protocol: smtp
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true
+      ssl.trust: smtp.viettel.com.vn
+      ssl.enable: true
+      tls.trust: smtp.viettel.com.vn
+      tls.enable: true
 application:
   http-logging:
     request:
@@ -58,5 +80,21 @@ application:
     - uri: /**
       methods:
         - OPTIONS
+    #test
+    - uri: /v1/transmission/create-noti
+      methods:
+        - POST
+
+keycloak:
+  clientId: web-client
+  clientSecret: 5Rj8acZcC7KVQgVmnCRI0OdpjqPIJfoQ
+  realm: sme-portal
+  serverUrl: http://sme-keycloak.bu-order.svc:8080/auth
+app:
+  config:
+    keycloak:
+      url: http://sme-keycloak.bu-order.svc:8080/auth
+      realm: sme-portal
+
 config:
   resendCount: 2

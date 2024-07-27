@@ -1,12 +1,14 @@
 package com.ezbuy.auth.repository;
 
-import com.ezbuy.auth.model.postgresql.UserOtp;
-import org.springframework.data.r2dbc.repository.Query;
-import org.springframework.data.r2dbc.repository.R2dbcRepository;
-import reactor.core.publisher.Mono;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import org.springframework.data.r2dbc.repository.Query;
+import org.springframework.data.r2dbc.repository.R2dbcRepository;
+
+import com.ezbuy.auth.model.postgresql.UserOtp;
+
+import reactor.core.publisher.Mono;
 
 public interface OtpRepository extends R2dbcRepository<UserOtp, UUID> {
 
@@ -19,6 +21,8 @@ public interface OtpRepository extends R2dbcRepository<UserOtp, UUID> {
     @Query(value = "Select now() from dual")
     Mono<LocalDateTime> currentTimeDb();
 
-    @Query(value = "select exists(select o.id from user_otp o where o.email =:email and o.type =:type and o.otp=:otp and o.exp_time >= now() and o.status =:status LIMIT 1)")
+    @Query(
+            value =
+                    "select exists(select o.id from user_otp o where o.email =:email and o.type =:type and o.otp=:otp and o.exp_time >= now() and o.status =:status LIMIT 1)")
     Mono<Boolean> confirmOtp(String email, String type, String otp, Integer status);
 }

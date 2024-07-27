@@ -1,12 +1,15 @@
 package com.ezbuy.auth.model.dto.request;
 
+import java.time.LocalDateTime;
+
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotEmpty;
+
+import org.hibernate.validator.constraints.Length;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
-
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -17,10 +20,10 @@ public class OrganizationRequest {
     @NotEmpty(message = "organization.name.not.empty")
     private String name;
 
-
     @Length(max = 5, message = "organization.provinceCode.over.length")
     @NotEmpty(message = "organization.provinceCode.not.empty")
     private String provinceCode;
+
     @Length(max = 5, message = "organization.districtCode.over.length")
     @NotEmpty(message = "organization.districtCode.not.empty")
     private String districtCode;

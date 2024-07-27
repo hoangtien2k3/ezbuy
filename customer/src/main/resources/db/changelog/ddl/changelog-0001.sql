@@ -1,4 +1,7 @@
 --changeset hoangtien2k3:issue-1
+
+-- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE shop_user
 (
     id                SERIAL PRIMARY KEY,

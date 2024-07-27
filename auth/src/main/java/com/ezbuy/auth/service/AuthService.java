@@ -1,23 +1,25 @@
 package com.ezbuy.auth.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.web.server.ServerWebExchange;
+
 import com.ezbuy.auth.model.dto.AccessToken;
 import com.ezbuy.auth.model.dto.request.*;
 import com.ezbuy.auth.model.dto.response.GetActionLoginReportResponse;
 import com.ezbuy.auth.model.dto.response.GetTwoWayPasswordResponse;
-import com.ezbuy.framework.model.response.DataResponse;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
 import com.ezbuy.auth.model.dto.response.Permission;
-import com.ezbuy.auth.model.postgresql.UserOtp;
 import com.ezbuy.auth.model.postgresql.Individual;
+import com.ezbuy.auth.model.postgresql.UserOtp;
+import com.ezbuy.framework.model.response.DataResponse;
 
-import java.util.List;
-import java.util.Optional;
+import reactor.core.publisher.Mono;
 
 public interface AuthService {
     Mono<Optional<AccessToken>> getToken(LoginRequest loginRequest);
 
-//    Mono<Optional<AccessToken>> getToken(ClientLogin clientLogin, ServerWebExchange serverWebExchange);
+    //    Mono<Optional<AccessToken>> getToken(ClientLogin clientLogin, ServerWebExchange serverWebExchange);
 
     Mono<Optional<AccessToken>> getToken(ProviderLogin providerLogin);
 
@@ -33,11 +35,12 @@ public interface AuthService {
 
     Mono<UserOtp> signUp(SignupRequest signupRequest);
 
-//    Mono<Individual> createAccount(CreateOrgAccount createOrgAccount);
+    //    Mono<Individual> createAccount(CreateOrgAccount createOrgAccount);
 
     Mono<UserOtp> forgotPassword(ForgotPasswordRequest forgotPasswordRequest);
 
-    Mono<DataResponse<Object>> resetPassword(ResetPasswordRequest resetPasswordRequest, ServerWebExchange serverWebExchange);
+    Mono<DataResponse<Object>> resetPassword(
+            ResetPasswordRequest resetPasswordRequest, ServerWebExchange serverWebExchange);
 
     Mono<Void> changePassword(ChangePasswordRequest request, ServerWebExchange serverWebExchange);
 

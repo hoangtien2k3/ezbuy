@@ -1,15 +1,18 @@
 package com.ezbuy.auth.model.dto.request;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import jakarta.validation.constraints.*;
+
+import org.hibernate.validator.constraints.Length;
+
 import com.ezbuy.auth.model.dto.response.IndividualDTO;
 import com.ezbuy.auth.model.postgresql.TenantIdentify;
-import jakarta.validation.constraints.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @AllArgsConstructor

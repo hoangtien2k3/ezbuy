@@ -2,6 +2,7 @@ package com.ezbuy.auth.model.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,5 +20,4 @@ public class SignupRequest {
     public void setEmail(@NonNull String email) {
         this.email = email.trim();
     }
-
 }

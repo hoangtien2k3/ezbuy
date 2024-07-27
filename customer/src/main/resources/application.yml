@@ -1,9 +1,9 @@
 server:
   port: 8901
 
-#logging:
-#  level:
-#    root: INFO
+logging:
+  level:
+    root: INFO
 
 spring:
   application:

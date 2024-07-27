@@ -1,12 +1,14 @@
 package com.ezbuy.auth.repository;
 
-import com.ezbuy.auth.model.postgresql.UserCredential;
+import java.util.UUID;
+
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import org.springframework.stereotype.Repository;
-import reactor.core.publisher.Mono;
 
-import java.util.UUID;
+import com.ezbuy.auth.model.postgresql.UserCredential;
+
+import reactor.core.publisher.Mono;
 
 @Repository
 public interface UserCredentialRepository extends R2dbcRepository<UserCredential, UUID> {
