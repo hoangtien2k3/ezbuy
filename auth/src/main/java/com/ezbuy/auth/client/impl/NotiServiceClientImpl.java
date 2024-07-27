@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.ezbuy.auth.client.NotiServiceClient;
-import com.ezbuy.auth.dto.request.CreateNotificationDTO;
+import com.ezbuy.auth.model.dto.request.CreateNotificationDTO;
 import com.ezbuy.framework.client.BaseRestClient;
 import com.ezbuy.framework.model.response.DataResponse;
 

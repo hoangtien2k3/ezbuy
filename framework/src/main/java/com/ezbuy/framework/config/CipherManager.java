@@ -1,18 +1,3 @@
-/*
- * Copyright 2024 - Hoàng Anh Tiến
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.ezbuy.framework.config;
 
 import java.security.KeyFactory;
@@ -46,7 +31,6 @@ public class CipherManager {
             byte[] encryptedBytes = rsaCipher.doFinal(message.getBytes());
             return Base64.getEncoder().encodeToString(encryptedBytes);
         } catch (Exception ex) {
-            // throw Runtime exception when hashing password fault
             throw new BusinessException(CommonErrorCode.HASHING_PASSWORD_FAULT, ex.getMessage());
         }
     }

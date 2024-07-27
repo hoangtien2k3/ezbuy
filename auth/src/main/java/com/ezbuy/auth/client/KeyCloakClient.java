@@ -8,19 +8,19 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.representations.idm.authorization.GroupPolicyRepresentation;
 import org.keycloak.representations.idm.authorization.RolePolicyRepresentation;
 
-import com.ezbuy.auth.dto.AccessToken;
-import com.ezbuy.auth.dto.ClientResource;
-import com.ezbuy.auth.dto.RoleDTO;
-import com.ezbuy.auth.dto.request.ClientLogin;
-import com.ezbuy.auth.dto.request.CreateRoleUserKeycloakRequest;
-import com.ezbuy.auth.dto.request.EmployeeCreateRequest;
-import com.ezbuy.auth.dto.request.LoginRequest;
-import com.ezbuy.auth.dto.request.LoginRequestSync;
-import com.ezbuy.auth.dto.request.LogoutRequest;
-import com.ezbuy.auth.dto.request.ProviderLogin;
-import com.ezbuy.auth.dto.request.RefreshTokenRequest;
-import com.ezbuy.auth.dto.request.UpdateUserKeycloakRequest;
-import com.ezbuy.auth.dto.response.Permission;
+import com.ezbuy.auth.model.dto.AccessToken;
+import com.ezbuy.auth.model.dto.ClientResource;
+import com.ezbuy.auth.model.dto.RoleDTO;
+import com.ezbuy.auth.model.dto.request.ClientLogin;
+import com.ezbuy.auth.model.dto.request.CreateRoleUserKeycloakRequest;
+import com.ezbuy.auth.model.dto.request.EmployeeCreateRequest;
+import com.ezbuy.auth.model.dto.request.LoginRequest;
+import com.ezbuy.auth.model.dto.request.LoginRequestSync;
+import com.ezbuy.auth.model.dto.request.LogoutRequest;
+import com.ezbuy.auth.model.dto.request.ProviderLogin;
+import com.ezbuy.auth.model.dto.request.RefreshTokenRequest;
+import com.ezbuy.auth.model.dto.request.UpdateUserKeycloakRequest;
+import com.ezbuy.auth.model.dto.response.Permission;
 
 import reactor.core.publisher.Mono;
 
