@@ -16,6 +16,7 @@ public final class ErrorCode {
         public static final String INVALID = "AEC_02";
         public static final String USER_EXISTED = "AEC_03";
     }
+
     public static final class KeycloakErrorCode {
         public static final String CREATE_GROUP_FAILURE = "KC_GROUP_ADD_ERROR";
         public static final String CREATE_POLICY_FAILURE = "KC_POLICY_ADD_ERROR";

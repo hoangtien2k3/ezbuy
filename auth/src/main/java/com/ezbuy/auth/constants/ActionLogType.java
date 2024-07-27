@@ -1,8 +1,8 @@
 package com.ezbuy.auth.constants;
 
-import com.ezbuy.framework.utils.Translator;
-
 import java.util.Map;
+
+import com.ezbuy.framework.utils.Translator;
 
 public interface ActionLogType {
 
@@ -14,5 +14,4 @@ public interface ActionLogType {
             Map.entry(LOGIN, Translator.toLocale("action.login")),
             Map.entry(CHANGE_PASSWORD, Translator.toLocale("action.change.password")),
             Map.entry(FORGOT_PASSWORD, Translator.toLocale("action.forgot.password")));
-
 }

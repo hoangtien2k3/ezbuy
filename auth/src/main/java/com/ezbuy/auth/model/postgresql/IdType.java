@@ -1,11 +1,12 @@
 package com.ezbuy.auth.model.postgresql;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
 
 @Data
 @AllArgsConstructor
@@ -15,6 +16,7 @@ import org.springframework.data.relational.core.mapping.Table;
 public class IdType {
     @Id
     private String id;
+
     private String name;
     private String code;
     private Integer status;

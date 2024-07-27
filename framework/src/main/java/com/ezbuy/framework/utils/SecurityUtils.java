@@ -47,7 +47,7 @@ public class SecurityUtils {
         if (jwt == null) return null;
         Map<String, Object> claims = jwt.getClaims();
         if (claims == null) return null;
-        TokenUser user = TokenUser.builder()
+        return TokenUser.builder()
                 .username((String) claims.get(Constants.TokenProperties.USERNAME))
                 .id((String) claims.get(Constants.TokenProperties.ID))
                 .email((String) claims.get(Constants.TokenProperties.EMAIL))
@@ -56,12 +56,10 @@ public class SecurityUtils {
                 // claims.get(Constants.TokenProperties.INDIVIDUAL_ID))
                 .organizationId(DataUtil.safeToString(claims.get(Constants.TokenProperties.ORGANIZATION_ID)))
                 .build();
-        return user;
     }
 
     public static String hmac(String data, String key, String algorithm) throws SignatureException {
         String result;
-
         try {
             SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), algorithm);
             Mac mac = Mac.getInstance(algorithm);

@@ -1,11 +1,12 @@
 package com.ezbuy.auth.model.dto.request;
 
+import java.time.LocalDate;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor

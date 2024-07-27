@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.ezbuy.auth.model.dto.request.*;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -36,6 +35,7 @@ import com.ezbuy.auth.model.dto.AccessToken;
 import com.ezbuy.auth.model.dto.ClientResource;
 import com.ezbuy.auth.model.dto.KeycloakError;
 import com.ezbuy.auth.model.dto.RoleDTO;
+import com.ezbuy.auth.model.dto.request.*;
 import com.ezbuy.auth.model.dto.response.Permission;
 import com.ezbuy.framework.constants.CommonErrorCode;
 import com.ezbuy.framework.constants.Constants;
@@ -82,8 +82,10 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                     .switchIfEmpty(
                             Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "client.id.not.valid")));
         } else {
-            formParameters.add(OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().getClientId());
-            formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().getClientSecret());
+            formParameters.add(
+                    OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().getClientId());
+            formParameters.add(
+                    OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().getClientSecret());
         }
         return requestToken(formParameters);
     }
@@ -104,13 +106,16 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                     if (!DataUtil.isNullOrEmpty(redirectUrl)) {
                         formParameters.add(OAuth2ParameterNames.REDIRECT_URI, redirectUrl);
                     } else {
-                        formParameters.add(OAuth2ParameterNames.REDIRECT_URI, clientRepresentation.getRedirectUris().get(0));
+                        formParameters.add(
+                                OAuth2ParameterNames.REDIRECT_URI,
+                                clientRepresentation.getRedirectUris().get(0));
                     }
                     formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, clientRepresentation.getSecret());
                     formParameters.add(OAuth2ParameterNames.CLIENT_ID, clientLogin.getClientId());
                     return requestToken(formParameters);
                 })
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "login.client.id.not.exist")));
+                .switchIfEmpty(
+                        Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "login.client.id.not.exist")));
     }
 
     /**
@@ -535,7 +540,8 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .bodyValue(roleRepresentations)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
-                        .flatMap(errorBody -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
+                        .flatMap(errorBody -> Mono.error(
+                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .bodyToMono(Object.class)
                 .switchIfEmpty(Mono.just(true))
                 .map(response -> true)

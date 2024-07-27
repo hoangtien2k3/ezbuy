@@ -63,7 +63,6 @@ public final class AuthConstants {
     }
 
     public static final class OrganizationState {
-
         public static final Integer ACTIVE = 1;
         public static final Integer INACTIVE = 0;
         public static final List<Integer> ALLOW_ORGANIZATION_STATE = List.of(INACTIVE, ACTIVE);
