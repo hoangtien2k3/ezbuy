@@ -1,9 +1,9 @@
 package com.ezbuy.auth.dto.request;
 
+import jakarta.validation.constraints.NotEmpty;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotEmpty;
 
 @Data
 @NoArgsConstructor
@@ -13,5 +13,5 @@ public class ClientLogin extends ProviderLogin {
 
     private String redirectUri;
 
-    private String organizationId;//id cong ty chon, phuc vu cho luong sso tu phia doi tac
+    private String organizationId; // id cong ty chon, phuc vu cho luong sso tu phia doi tac
 }

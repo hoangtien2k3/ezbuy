@@ -17,6 +17,7 @@ package com.ezbuy.framework.config.security.keycloak;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.convert.converter.Converter;
@@ -50,8 +51,7 @@ public final class ReactiveKeycloakJwtAuthenticationConverter
     @Override
     public Mono<AbstractAuthenticationToken> convert(@NotNull Jwt jwt) {
         // @formatter:off
-        return this.jwtGrantedAuthoritiesConverter
-                .convert(jwt)
+        return Objects.requireNonNull(this.jwtGrantedAuthoritiesConverter.convert(jwt))
                 .collectList()
                 .map((authorities) -> new JwtAuthenticationToken(jwt, authorities, extractUsername(jwt)));
         // @formatter:on

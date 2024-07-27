@@ -42,9 +42,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestControllerAdvice
-@Slf4j
 public class ExceptionResponseConfig {
     private final Tracer tracer;
 

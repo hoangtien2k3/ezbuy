@@ -1,25 +1,14 @@
 package com.ezbuy.auth.client.impl;
 
-import com.ezbuy.auth.client.KeyCloakClient;
-import com.ezbuy.auth.client.properties.KeycloakClientProperties;
-import com.ezbuy.auth.config.KeycloakProvider;
-import com.ezbuy.auth.constants.AuthConstants;
-import com.ezbuy.auth.dto.AccessToken;
-import com.ezbuy.auth.dto.ClientResource;
-import com.ezbuy.auth.dto.KeycloakError;
-import com.ezbuy.auth.dto.RoleDTO;
-import com.ezbuy.auth.dto.request.*;
-import com.ezbuy.auth.dto.response.Permission;
-import com.ezbuy.framework.constants.CommonErrorCode;
-import com.ezbuy.framework.constants.Constants;
-import com.ezbuy.framework.exception.BusinessException;
-import com.ezbuy.framework.utils.DataUtil;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.keycloak.representations.idm.RoleRepresentation;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.keycloak.representations.idm.GroupRepresentation;
+import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.representations.idm.authorization.GroupPolicyRepresentation;
 import org.keycloak.representations.idm.authorization.RolePolicyRepresentation;
@@ -34,15 +23,29 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+
+import com.ezbuy.auth.client.KeyCloakClient;
+import com.ezbuy.auth.client.properties.KeycloakClientProperties;
+import com.ezbuy.auth.config.KeycloakProvider;
+import com.ezbuy.auth.constants.AuthConstants;
+import com.ezbuy.auth.dto.AccessToken;
+import com.ezbuy.auth.dto.ClientResource;
+import com.ezbuy.auth.dto.KeycloakError;
+import com.ezbuy.auth.dto.RoleDTO;
+import com.ezbuy.auth.dto.request.*;
+import com.ezbuy.auth.dto.response.Permission;
+import com.ezbuy.framework.constants.CommonErrorCode;
+import com.ezbuy.framework.constants.Constants;
+import com.ezbuy.framework.exception.BusinessException;
+import com.ezbuy.framework.utils.DataUtil;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -51,6 +54,7 @@ import java.util.stream.Collectors;
 public class KeyCloakClientImpl implements KeyCloakClient {
     @Qualifier("keycloak")
     private final WebClient keycloak;
+
     private final KeycloakProvider keycloakProvider;
     private final KeycloakClientProperties keyCloakConfig;
 
@@ -68,38 +72,50 @@ public class KeyCloakClientImpl implements KeyCloakClient {
         formParameters.add(OAuth2ParameterNames.PASSWORD, loginRequest.getPassword());
         String clientId = loginRequest.getClientId();
         if (!DataUtil.isNullOrEmpty(clientId)) {
-            return keycloakProvider.getClientWithSecret(clientId).flatMap(clientRepresentation ->{
-                formParameters.add(OAuth2ParameterNames.CLIENT_ID, clientId);
-                formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, clientRepresentation.getSecret());
-                return requestToken(formParameters);
-            }).switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "client.id.not.valid")));
+            return keycloakProvider
+                    .getClientWithSecret(clientId)
+                    .flatMap(clientRepresentation -> {
+                        formParameters.add(OAuth2ParameterNames.CLIENT_ID, clientId);
+                        formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, clientRepresentation.getSecret());
+                        return requestToken(formParameters);
+                    })
+                    .switchIfEmpty(
+                            Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "client.id.not.valid")));
         } else {
-            formParameters.add(OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().getClientId());
-            formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().getClientSecret());
+            formParameters.add(
+                    OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().getClientId());
+            formParameters.add(
+                    OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().getClientSecret());
         }
         return requestToken(formParameters);
     }
 
     @Override
     public Mono<Optional<AccessToken>> getToken(ClientLogin clientLogin) {
-        return  keycloakProvider.getClientWithSecret(clientLogin.getClientId()).flatMap(clientRepresentation ->{
-            if(DataUtil.isNullOrEmpty(clientLogin.getRedirectUri())){
-                clientLogin.setRedirectUri("http://sso-scontract.viettel.vn:8213/callback");
-            }
-            MultiValueMap<String, String> formParameters = new LinkedMultiValueMap<>();
-            formParameters.add(OAuth2ParameterNames.GRANT_TYPE, AuthConstants.OAuth.AUTHOR_CODE);
-            formParameters.add(OAuth2ParameterNames.CODE, clientLogin.getCode());
-            log.info("RedirectUris {}",clientRepresentation.getRedirectUris());
-            String redirectUrl = clientLogin.getRedirectUri();
-            if(!DataUtil.isNullOrEmpty(redirectUrl)){
-                formParameters.add(OAuth2ParameterNames.REDIRECT_URI, redirectUrl);
-            } else{
-                formParameters.add(OAuth2ParameterNames.REDIRECT_URI, clientRepresentation.getRedirectUris().get(0));
-            }
-            formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, clientRepresentation.getSecret());
-            formParameters.add(OAuth2ParameterNames.CLIENT_ID, clientLogin.getClientId());
-            return requestToken(formParameters);
-        }).switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "login.client.id.not.exist")));
+        return keycloakProvider
+                .getClientWithSecret(clientLogin.getClientId())
+                .flatMap(clientRepresentation -> {
+                    if (DataUtil.isNullOrEmpty(clientLogin.getRedirectUri())) {
+                        clientLogin.setRedirectUri("http://sso-scontract.viettel.vn:8213/callback");
+                    }
+                    MultiValueMap<String, String> formParameters = new LinkedMultiValueMap<>();
+                    formParameters.add(OAuth2ParameterNames.GRANT_TYPE, AuthConstants.OAuth.AUTHOR_CODE);
+                    formParameters.add(OAuth2ParameterNames.CODE, clientLogin.getCode());
+                    log.info("RedirectUris {}", clientRepresentation.getRedirectUris());
+                    String redirectUrl = clientLogin.getRedirectUri();
+                    if (!DataUtil.isNullOrEmpty(redirectUrl)) {
+                        formParameters.add(OAuth2ParameterNames.REDIRECT_URI, redirectUrl);
+                    } else {
+                        formParameters.add(
+                                OAuth2ParameterNames.REDIRECT_URI,
+                                clientRepresentation.getRedirectUris().get(0));
+                    }
+                    formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, clientRepresentation.getSecret());
+                    formParameters.add(OAuth2ParameterNames.CLIENT_ID, clientLogin.getClientId());
+                    return requestToken(formParameters);
+                })
+                .switchIfEmpty(
+                        Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "login.client.id.not.exist")));
     }
 
     /**
@@ -111,8 +127,8 @@ public class KeyCloakClientImpl implements KeyCloakClient {
     public Mono<Optional<AccessToken>> getToken(LoginRequestSync loginRequestSync) {
         MultiValueMap<String, String> formParameters = new LinkedMultiValueMap<>();
         formParameters.add(OAuth2ParameterNames.GRANT_TYPE, AuthConstants.OAuth.CLIENT_CREDENTIALS);
-        formParameters.add(OAuth2ParameterNames.CLIENT_SECRET,loginRequestSync.getClientSecret());
-        formParameters.add(OAuth2ParameterNames.CLIENT_ID,loginRequestSync.getClientId());
+        formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, loginRequestSync.getClientSecret());
+        formParameters.add(OAuth2ParameterNames.CLIENT_ID, loginRequestSync.getClientId());
         return requestToken(formParameters);
     }
 
@@ -122,8 +138,10 @@ public class KeyCloakClientImpl implements KeyCloakClient {
         formParameters.add(OAuth2ParameterNames.GRANT_TYPE, AuthConstants.OAuth.AUTHOR_CODE);
         formParameters.add(OAuth2ParameterNames.CODE, providerLogin.getCode());
         formParameters.add(OAuth2ParameterNames.REDIRECT_URI, AuthConstants.OAuth.REDIRECT_URI);
-        formParameters.add(OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().getClientId());
-        formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().getClientSecret());
+        formParameters.add(
+                OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().getClientId());
+        formParameters.add(
+                OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().getClientSecret());
         return requestToken(formParameters);
     }
 
@@ -147,7 +165,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
 
     @Override
     public Mono<Boolean> logout(LogoutRequest logoutRequest) {
-        return keycloakProvider.getClientWithSecret(logoutRequest.getClientId()).flatMap(client ->{
+        return keycloakProvider.getClientWithSecret(logoutRequest.getClientId()).flatMap(client -> {
             MultiValueMap<String, String> formParameters = new LinkedMultiValueMap<>();
             formParameters.add(OAuth2ParameterNames.REFRESH_TOKEN, logoutRequest.getRefreshToken());
             formParameters.add(OAuth2ParameterNames.CLIENT_ID, logoutRequest.getClientId());
@@ -158,8 +176,9 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                     .body(BodyInserters.fromFormData(formParameters))
                     .retrieve()
                     .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
-                            .flatMap(errorBody -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage())))
-                    ).bodyToMono(Object.class)
+                            .flatMap(errorBody -> Mono.error(new BusinessException(
+                                    CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
+                    .bodyToMono(Object.class)
                     .switchIfEmpty(Mono.just(true))
                     .map(response -> true)
                     .doOnError(err -> log.error("Logout error {}", err));
@@ -172,7 +191,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
         formParameters.add(OAuth2ParameterNames.GRANT_TYPE, AuthConstants.OAuth.UMA_TICKET);
         formParameters.add("audience", audience);
         formParameters.add("response_mode", AuthConstants.OAuth.RESPONSE_MODE_PERMISSION);
-        log.info("formParameters {}",formParameters);
+        log.info("formParameters {}", formParameters);
         return keycloak.post()
                 .uri("/token")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -181,7 +200,8 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .header("Host", hostKeycloak)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
-                        .flatMap(errorBody -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
+                        .flatMap(errorBody -> Mono.error(
+                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .bodyToFlux(Map.class)
                 .map(responseMap -> {
                     if (responseMap != null) {
@@ -191,21 +211,23 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                         return permission;
                     }
                     return null;
-                }).collectList()
+                })
+                .collectList()
                 .doOnError(err -> {
                     log.error("Keycloak get token error", err);
                 });
     }
 
     private Mono<Optional<AccessToken>> requestToken(MultiValueMap<String, String> formParameters) {
-        log.info("formParameters {}",formParameters);
+        log.info("formParameters {}", formParameters);
         return keycloak.post()
                 .uri("/token")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(BodyInserters.fromFormData(formParameters))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
-                        .flatMap(errorBody -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
+                        .flatMap(errorBody -> Mono.error(
+                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .bodyToMono(AccessToken.class)
                 .map(response -> Optional.ofNullable(response))
                 .doOnError(err -> {
@@ -214,44 +236,45 @@ public class KeyCloakClientImpl implements KeyCloakClient {
     }
 
     public Mono<List<ClientResource>> getClientResources(String clientId, String token) {
-        String url = keycloakUrl +  "/admin/realms/sme-portal/clients/" + clientId +  "/authz/resource-server/resource";
+        String url = keycloakUrl + "/admin/realms/sme-portal/clients/" + clientId + "/authz/resource-server/resource";
         return keycloak.get()
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {
-                })
+                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {})
                 .map(result -> {
-                    return result.stream().map(record -> {
-                        ClientResource res = new ClientResource();
-                        res.setId((String) record.get("_id"));
-                        res.setName((String) record.get("name"));
-                        return res;
-                    }).collect(Collectors.toList());
+                    return result.stream()
+                            .map(record -> {
+                                ClientResource res = new ClientResource();
+                                res.setId((String) record.get("_id"));
+                                res.setName((String) record.get("name"));
+                                return res;
+                            })
+                            .collect(Collectors.toList());
                 });
     }
 
     @Override
     public Mono<List<GroupPolicyRepresentation>> getGroupPolicies(String clientId, String token) {
-        String url = keycloakUrl +  "/admin/realms/sme-portal/clients/" + clientId +  "/authz/resource-server/policy/group?permission=false";
+        String url = keycloakUrl + "/admin/realms/sme-portal/clients/" + clientId
+                + "/authz/resource-server/policy/group?permission=false";
         return keycloak.get()
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<GroupPolicyRepresentation>>() {
-                })
+                .bodyToMono(new ParameterizedTypeReference<List<GroupPolicyRepresentation>>() {})
                 .onErrorReturn(new ArrayList<GroupPolicyRepresentation>());
     }
 
     @Override
     public Mono<List<RolePolicyRepresentation>> getRolePolicies(String clientId, String token) {
-        String url = keycloakUrl +  "/admin/realms/sme-portal/clients/" + clientId +  "/authz/resource-server/policy/role?permission=false";
+        String url = keycloakUrl + "/admin/realms/sme-portal/clients/" + clientId
+                + "/authz/resource-server/policy/role?permission=false";
         return keycloak.get()
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<RolePolicyRepresentation>>() {
-                })
+                .bodyToMono(new ParameterizedTypeReference<List<RolePolicyRepresentation>>() {})
                 .onErrorReturn(new ArrayList<RolePolicyRepresentation>());
     }
 
@@ -265,7 +288,8 @@ public class KeyCloakClientImpl implements KeyCloakClient {
         List<String> groupIds = new ArrayList<>();
         if (!DataUtil.isNullOrEmpty(employeeCreateRequest.getEmployeePermissionRequestList())) {
             employeeCreateRequest.getEmployeePermissionRequestList().forEach(employeePermissionRequest -> {
-                if (!DataUtil.isNullOrEmpty(employeePermissionRequest) && !DataUtil.isNullOrEmpty(employeePermissionRequest.getPermissionGroupList())) {
+                if (!DataUtil.isNullOrEmpty(employeePermissionRequest)
+                        && !DataUtil.isNullOrEmpty(employeePermissionRequest.getPermissionGroupList())) {
                     employeePermissionRequest.getPermissionGroupList().forEach(employeePermissionGroup -> {
                         if (!DataUtil.isNullOrEmpty(employeePermissionGroup)) {
                             groupIds.add(employeePermissionGroup.getGroupId());
@@ -282,7 +306,8 @@ public class KeyCloakClientImpl implements KeyCloakClient {
 
         // neu groupIds is not null => get groupNames
         return Flux.fromIterable(groupIds)
-                .flatMap(groupId -> getGroupNameById(groupId, token)).collectList()
+                .flatMap(groupId -> getGroupNameById(groupId, token))
+                .collectList()
                 .flatMap(groupNames -> {
                     if (!DataUtil.isNullOrEmpty(groupNames)) {
                         request.setGroups(groupNames);
@@ -292,7 +317,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
     }
 
     public Mono<String> createUserInKeycloak(CreateUserKeycloakRequest request, String token) {
-        String url = keycloakUrl +  "/admin/realms/sme-portal/users/";
+        String url = keycloakUrl + "/admin/realms/sme-portal/users/";
         return keycloak.post()
                 .uri(url)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -300,7 +325,8 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .header("Authorization", "Bearer " + token)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
-                        .flatMap(errorBody -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
+                        .flatMap(errorBody -> Mono.error(
+                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .toEntity(Object.class)
                 .flatMap(response -> {
                     String location = response.getHeaders().get("Location").get(0);
@@ -312,8 +338,12 @@ public class KeyCloakClientImpl implements KeyCloakClient {
     }
 
     @Override
-    public Mono<Boolean> createRoleUser(List<CreateRoleUserKeycloakRequest> roleUserKeycloakRequests, String userId, String clientId, String token) {
-        String url = keycloakUrl +  "/admin/realms/sme-portal/users/" + userId + "/role-mappings/clients/" + clientId;
+    public Mono<Boolean> createRoleUser(
+            List<CreateRoleUserKeycloakRequest> roleUserKeycloakRequests,
+            String userId,
+            String clientId,
+            String token) {
+        String url = keycloakUrl + "/admin/realms/sme-portal/users/" + userId + "/role-mappings/clients/" + clientId;
 
         return keycloak.post()
                 .uri(url)
@@ -322,7 +352,8 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .header("Authorization", "Bearer " + token)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
-                        .flatMap(errorBody -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
+                        .flatMap(errorBody -> Mono.error(
+                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .toEntity(Object.class)
                 .flatMap(response -> {
                     return Mono.just(true);
@@ -334,7 +365,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
 
     @Override
     public Mono<Boolean> updateUser(UpdateUserKeycloakRequest request, String token) {
-        String url = keycloakUrl +  "/admin/realms/sme-portal/users/" + request.getId();
+        String url = keycloakUrl + "/admin/realms/sme-portal/users/" + request.getId();
 
         return keycloak.put()
                 .uri(url)
@@ -343,7 +374,8 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .header("Authorization", "Bearer " + token)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
-                        .flatMap(errorBody -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
+                        .flatMap(errorBody -> Mono.error(
+                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .toEntity(Object.class)
                 .flatMap(response -> {
                     return Mono.just(true);
@@ -355,14 +387,15 @@ public class KeyCloakClientImpl implements KeyCloakClient {
 
     @Override
     public Mono<Boolean> removeGroupToUser(String groupId, String userId, String token) {
-        String url = keycloakUrl +  "/admin/realms/sme-portal/users/" + userId + "/groups/" + groupId;
+        String url = keycloakUrl + "/admin/realms/sme-portal/users/" + userId + "/groups/" + groupId;
 
         return keycloak.delete()
                 .uri(url)
                 .header("Authorization", "Bearer " + token)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
-                        .flatMap(errorBody -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
+                        .flatMap(errorBody -> Mono.error(
+                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .toEntity(Object.class)
                 .flatMap(response -> {
                     return Mono.just(true);
@@ -374,14 +407,15 @@ public class KeyCloakClientImpl implements KeyCloakClient {
 
     @Override
     public Mono<Boolean> addGroupToUser(String groupId, String userId, String token) {
-        String url = keycloakUrl +  "/admin/realms/sme-portal/users/" + userId + "/groups/" + groupId;
+        String url = keycloakUrl + "/admin/realms/sme-portal/users/" + userId + "/groups/" + groupId;
 
         return keycloak.put()
                 .uri(url)
                 .header("Authorization", "Bearer " + token)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
-                        .flatMap(errorBody -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
+                        .flatMap(errorBody -> Mono.error(
+                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .toEntity(Object.class)
                 .flatMap(response -> {
                     return Mono.just(true);
@@ -392,17 +426,21 @@ public class KeyCloakClientImpl implements KeyCloakClient {
     }
 
     @Override
-    public Mono<Boolean> removeRoleUser(List<CreateRoleUserKeycloakRequest> roleUserKeycloakRequests, String userId, String clientId, String token) {
-        String url = keycloakUrl +  "/admin/realms/sme-portal/users/" + userId + "/role-mappings/clients/" + clientId;
+    public Mono<Boolean> removeRoleUser(
+            List<CreateRoleUserKeycloakRequest> roleUserKeycloakRequests,
+            String userId,
+            String clientId,
+            String token) {
+        String url = keycloakUrl + "/admin/realms/sme-portal/users/" + userId + "/role-mappings/clients/" + clientId;
 
-        return keycloak
-                .method(HttpMethod.DELETE)
+        return keycloak.method(HttpMethod.DELETE)
                 .uri(url)
                 .body(BodyInserters.fromValue(roleUserKeycloakRequests))
                 .header("Authorization", "Bearer " + token)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
-                        .flatMap(errorBody -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
+                        .flatMap(errorBody -> Mono.error(
+                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .toEntity(Object.class)
                 .flatMap(response -> {
                     return Mono.just(true);
@@ -414,37 +452,39 @@ public class KeyCloakClientImpl implements KeyCloakClient {
 
     @Override
     public Mono<List<RoleDTO>> getRoleNameByUserIdAndClientId(String userId, String clientId, String token) {
-        String url = keycloakUrl + "/admin/realms/sme-portal/users/" + userId + "/role-mappings/clients/" + clientId + "/composite";
+        String url = keycloakUrl + "/admin/realms/sme-portal/users/" + userId + "/role-mappings/clients/" + clientId
+                + "/composite";
         return keycloak.get()
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
-                        .flatMap(errorBody -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "keycloakClient.failed"))))
+                        .flatMap(errorBody -> Mono.error(
+                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "keycloakClient.failed"))))
                 .bodyToMono(String.class)
                 .map(response -> {
-                            Gson gson = new Gson();
-                            Type listType = new TypeToken<List<RoleDTO>>() {
-                            }.getType();
-                            log.info("response when login {}", response);
-                            List<RoleDTO> roleDTOS = gson.fromJson(response, listType);
-                            return roleDTOS;
-                        }
-                )
+                    Gson gson = new Gson();
+                    Type listType = new TypeToken<List<RoleDTO>>() {}.getType();
+                    log.info("response when login {}", response);
+                    List<RoleDTO> roleDTOS = gson.fromJson(response, listType);
+                    return roleDTOS;
+                })
                 .doOnError(err -> log.error("Call keycloak error ", err))
-                .onErrorResume(throwable -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "Call keycloak that bai")));
+                .onErrorResume(throwable -> Mono.error(
+                        new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "Call keycloak that bai")));
     }
 
     @Override
     public Mono<UserRepresentation> getUser(String userId, String token) {
-        String url = keycloakUrl +  "/admin/realms/sme-portal/users/" + userId;
+        String url = keycloakUrl + "/admin/realms/sme-portal/users/" + userId;
 
         return keycloak.get()
                 .uri(url)
                 .header("Authorization", "Bearer " + token)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
-                        .flatMap(errorBody -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
+                        .flatMap(errorBody -> Mono.error(
+                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .bodyToMono(UserRepresentation.class)
                 .doOnError(err -> {
                     log.error("Get delete user error", err);
@@ -459,20 +499,22 @@ public class KeyCloakClientImpl implements KeyCloakClient {
      * @return
      */
     public Mono<List<String>> getResourcesByClient(String clientId, String token) {
-        String url = keycloakUrl + "/admin/realms/sme-portal/clients/" + clientId + "/authz/resource-server/resource?deep=true&first=0&max=500";
+        String url = keycloakUrl + "/admin/realms/sme-portal/clients/" + clientId
+                + "/authz/resource-server/resource?deep=true&first=0&max=500";
         return keycloak.get()
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {
-                })
+                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {})
                 .doOnError(err -> {
                     log.error("Error when get all resource ", err);
                 })
                 .map(result -> {
-                    return result.stream().map(record -> {
-                        return (String) record.get("name");
-                    }).collect(Collectors.toList());
+                    return result.stream()
+                            .map(record -> {
+                                return (String) record.get("name");
+                            })
+                            .collect(Collectors.toList());
                 });
     }
 
@@ -492,7 +534,8 @@ public class KeyCloakClientImpl implements KeyCloakClient {
 
     // add role for dich vu cho userId
     @Override
-    public Mono<Boolean> addRoleForUserInClientId(String clientId, String token, RoleRepresentation roleRepresentation, String userId) {
+    public Mono<Boolean> addRoleForUserInClientId(
+            String clientId, String token, RoleRepresentation roleRepresentation, String userId) {
         List<RoleRepresentation> roleRepresentations = new ArrayList<>();
         roleRepresentations.add(roleRepresentation);
         String url = keycloakUrl + "/admin/realms/sme-portal/users/" + userId + "/role-mappings/clients/" + clientId;
@@ -503,8 +546,9 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .bodyValue(roleRepresentations)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
-                        .flatMap(errorBody -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage())))
-                ).bodyToMono(Object.class)
+                        .flatMap(errorBody -> Mono.error(
+                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
+                .bodyToMono(Object.class)
                 .switchIfEmpty(Mono.just(true))
                 .map(response -> true)
                 .doOnError(err -> log.error("Logout error {}", err));

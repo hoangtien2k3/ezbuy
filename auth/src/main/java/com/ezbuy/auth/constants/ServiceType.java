@@ -1,16 +1,14 @@
 package com.ezbuy.auth.constants;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 import java.util.Arrays;
 
-public enum ServiceType {
+import com.fasterxml.jackson.annotation.JsonCreator;
 
+public enum ServiceType {
     CA("7", "CA"),
     SINVOICE("37", "SINVOICE"),
     VCONTRACT("101", "VCONTRACT"),
     ESB("208", "EASYBOOKS");
-
 
     private String name;
     private String value;

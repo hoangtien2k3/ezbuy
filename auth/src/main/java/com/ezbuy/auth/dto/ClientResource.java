@@ -1,8 +1,8 @@
 package com.ezbuy.auth.dto;
 
-import lombok.Data;
-
 import java.util.List;
+
+import lombok.Data;
 
 @Data
 public class ClientResource {
@@ -11,5 +11,4 @@ public class ClientResource {
     private String name;
     private String type;
     private List<ResourcePermission> permissions;
-
 }

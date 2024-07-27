@@ -1,9 +1,11 @@
 package com.ezbuy.auth.client;
 
+import java.util.Optional;
+
 import com.ezbuy.auth.dto.request.CreateNotificationDTO;
 import com.ezbuy.framework.model.response.DataResponse;
+
 import reactor.core.publisher.Mono;
-import java.util.Optional;
 
 public interface NotiServiceClient {
 

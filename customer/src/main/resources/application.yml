@@ -1,8 +1,9 @@
 server:
   port: 8901
-logging:
-  level:
-    root: INFO
+
+#logging:
+#  level:
+#    root: INFO
 
 spring:
   application:
@@ -21,8 +22,8 @@ spring:
       initial-size: 50
       max-size: 100
       enabled: true
-  #      validation-query: select 1
-  #      max-life-time: 9223372036854775807
+      validation-query: select 1
+      max-life-time: 9223372036854775807
 
   # liquibase
   liquibase:

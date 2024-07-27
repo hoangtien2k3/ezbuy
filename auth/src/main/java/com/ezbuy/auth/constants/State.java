@@ -1,13 +1,12 @@
 package com.ezbuy.auth.constants;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 import java.util.Arrays;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 public enum State {
     ACTIVE(0, "ACTIVE"),
     INACTIVE(1, "INACTIVE");
-
 
     private Integer value;
     private String name;
@@ -25,5 +24,4 @@ public enum State {
     public Integer value() {
         return value;
     }
-
 }

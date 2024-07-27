@@ -6,5 +6,4 @@ public interface GroupAttribute {
     String CODE = "code";
     String DESCRIPTION = "description";
     String STATUS = "status";
-
 }

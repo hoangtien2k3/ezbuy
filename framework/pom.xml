@@ -38,6 +38,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jcl</artifactId>
+            <version>6.1.11</version>
+        </dependency>
+        <dependency>
             <groupId>axis</groupId>
             <artifactId>axis</artifactId>
             <version>1.4</version>
@@ -46,6 +51,8 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+
+        <!-- Micrometer Tracing -->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-tracing-bridge-brave</artifactId>
@@ -149,16 +156,16 @@
             <version>2.3.1</version>
         </dependency>
 
-        <!--hibernate-->
-        <!--		<dependency>-->
-        <!--			<groupId>org.hibernate</groupId>-->
-        <!--			<artifactId>hibernate-core</artifactId>-->
-        <!--		</dependency>-->
+<!--        hibernate-->
+<!--        		<dependency>-->
+<!--        			<groupId>org.hibernate</groupId>-->
+<!--        			<artifactId>hibernate-core</artifactId>-->
+<!--        		</dependency>-->
 
-        <!--		<dependency>-->
-        <!--			<groupId>org.hibernate.validator</groupId>-->
-        <!--			<artifactId>hibernate-validator</artifactId>-->
-        <!--		</dependency>-->
+<!--        		<dependency>-->
+<!--        			<groupId>org.hibernate.validator</groupId>-->
+<!--        			<artifactId>hibernate-validator</artifactId>-->
+<!--        		</dependency>-->
 
         <!--processor-->
         <dependency>
@@ -188,7 +195,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>31.1-jre</version>
+            <version>33.2.1-jre</version>
         </dependency>
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
@@ -211,37 +218,37 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-reactive-httpclient</artifactId>
-            <version>2.0.8</version>
+            <version>4.0.5</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-client</artifactId>
-            <version>10.0.14</version>
+            <version>12.0.11</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-io</artifactId>
-            <version>10.0.14</version>
+            <version>12.0.11</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-util</artifactId>
-            <version>10.0.14</version>
+            <version>12.0.11</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-http</artifactId>
-            <version>10.0.14</version>
+            <version>12.0.11</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.http2</groupId>
             <artifactId>http2-client</artifactId>
-            <version>10.0.14</version>
+            <version>11.0.22</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.http2</groupId>
             <artifactId>http2-hpack</artifactId>
-            <version>10.0.14</version>
+            <version>11.0.22</version>
         </dependency>
 
         <!-- r2dbc depenedcies-->
@@ -265,17 +272,6 @@
             <groupId>io.r2dbc</groupId>
             <artifactId>r2dbc-pool</artifactId>
         </dependency>
-
-        <!--Log4j-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.apache.logging.log4j</groupId>-->
-        <!--            <artifactId>log4j-api</artifactId>-->
-        <!--        </dependency>-->
-        <!--		<dependency>-->
-        <!--			<groupId>log4j</groupId>-->
-        <!--			<artifactId>log4j</artifactId>-->
-        <!--			<version>1.2.17</version>-->
-        <!--		</dependency>-->
 
     </dependencies>
 

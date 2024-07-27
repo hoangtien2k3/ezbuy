@@ -1,13 +1,10 @@
-package com.ezbuy.auth.dto.request;
+package com.ezbuy.auth.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
-
-import com.ezbuy.auth.dto.NotiContentDTO;
-import com.ezbuy.auth.dto.ReceiverDataDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,31 +1,33 @@
-// package com.ezbuy.framework.config;
+//package com.ezbuy.framework.config;
 //
-// import com.fasterxml.jackson.databind.ObjectMapper;
-// import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-// import io.r2dbc.pool.ConnectionPool;
-// import io.r2dbc.pool.ConnectionPoolConfiguration;
-// import io.r2dbc.spi.ConnectionFactories;
-// import io.r2dbc.spi.ConnectionFactory;
-// import lombok.RequiredArgsConstructor;
-// import org.springframework.boot.autoconfigure.r2dbc.R2dbcProperties;
-// import org.springframework.boot.context.properties.ConfigurationProperties;
-// import org.springframework.context.annotation.Bean;
-// import org.springframework.context.annotation.Configuration;
-// import org.springframework.data.r2dbc.config.AbstractR2dbcConfiguration;
-// import org.springframework.data.r2dbc.core.R2dbcEntityOperations;
-// import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
-// import org.springframework.data.r2dbc.dialect.MySqlDialect;
-// import org.springframework.data.r2dbc.mapping.event.BeforeConvertCallback;
-// import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories;
-// import org.springframework.r2dbc.core.DatabaseClient;
-// import reactor.core.publisher.Mono;
+//import java.util.List;
 //
-// import java.util.List;
+//import org.springframework.boot.autoconfigure.r2dbc.R2dbcProperties;
+//import org.springframework.boot.context.properties.ConfigurationProperties;
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
+//import org.springframework.data.r2dbc.config.AbstractR2dbcConfiguration;
+//import org.springframework.data.r2dbc.core.R2dbcEntityOperations;
+//import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
+//import org.springframework.data.r2dbc.dialect.PostgresDialect;
+//import org.springframework.data.r2dbc.mapping.event.BeforeConvertCallback;
+//import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories;
+//import org.springframework.r2dbc.core.DatabaseClient;
 //
-// @Configuration
-// @EnableR2dbcRepositories
-// @RequiredArgsConstructor
-// public class DatabaseConfiguration extends AbstractR2dbcConfiguration {
+//import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+//
+//import io.r2dbc.pool.ConnectionPool;
+//import io.r2dbc.pool.ConnectionPoolConfiguration;
+//import io.r2dbc.spi.ConnectionFactories;
+//import io.r2dbc.spi.ConnectionFactory;
+//import lombok.RequiredArgsConstructor;
+//import reactor.core.publisher.Mono;
+//
+//@Configuration
+//@EnableR2dbcRepositories
+//@RequiredArgsConstructor
+//public class DatabaseConfiguration extends AbstractR2dbcConfiguration {
 //
 //    private final DatabaseConversion databaseConversion;
 //
@@ -39,9 +41,8 @@
 //    @Override
 //    public ConnectionFactory connectionFactory() {
 //        ConnectionFactory connectionFactory =
-// ConnectionFactories.get(postgresqlProperties().getUrl());
-//        ConnectionPoolConfiguration configuration =
-// ConnectionPoolConfiguration.builder(connectionFactory)
+//                ConnectionFactories.get(postgresqlProperties().getUrl());
+//        ConnectionPoolConfiguration configuration = ConnectionPoolConfiguration.builder(connectionFactory)
 //                .maxSize(postgresqlProperties().getPool().getMaxSize())
 //                .initialSize(postgresqlProperties().getPool().getInitialSize())
 //                .build();
@@ -52,11 +53,11 @@
 //    public R2dbcEntityOperations postgresqlEntityTemplate(ConnectionFactory connectionFactory) {
 //        DatabaseClient databaseClient = DatabaseClient.builder()
 //                .connectionFactory(connectionFactory)
-//                .bindMarkers(MySqlDialect.INSTANCE.getBindMarkersFactory())
+//                .bindMarkers(PostgresDialect.INSTANCE.getBindMarkersFactory())
 //                .build();
 //
-//        return new R2dbcEntityTemplate(databaseClient, MySqlDialect.INSTANCE,
-// databaseConversion.getR2dbcConverter());
+//        return new R2dbcEntityTemplate(
+//                databaseClient, PostgresDialect.INSTANCE, databaseConversion.getR2dbcConverter());
 //    }
 //
 //    @Override
@@ -72,4 +73,4 @@
 //            return Mono.just(entity);
 //        };
 //    }
-// }
+//}

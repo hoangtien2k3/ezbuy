@@ -11,20 +11,18 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(
-		exclude = {
-				DataSourceAutoConfiguration.class,
-				DataSourceTransactionManagerAutoConfiguration.class,
-				HibernateJpaAutoConfiguration.class,
-				SecurityAutoConfiguration.class,
-		})
+        exclude = {
+            DataSourceAutoConfiguration.class,
+            DataSourceTransactionManagerAutoConfiguration.class,
+            HibernateJpaAutoConfiguration.class,
+            SecurityAutoConfiguration.class,
+        })
 @ComponentScan(basePackages = {"com.ezbuy.*"})
 @ImportResource({"classpath*:applicationContext.xml"})
 // @EnableDiscoveryClient
 @EnableScheduling
 public class AuthApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(AuthApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(AuthApplication.class, args);
+    }
 }

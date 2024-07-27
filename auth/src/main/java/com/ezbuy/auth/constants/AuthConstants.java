@@ -33,16 +33,17 @@ public final class AuthConstants {
         public static final String REDIRECT_URI = "http://10.207.252.223/callback";
         public static final String AUTHORIZATION = "Authorization";
         public static final String BEARER = "Bearer ";
-        public static final String CLIENT_CREDENTIALS = "client_credentials"; // grant_type de lay token by clientId va clientSecret
+        public static final String CLIENT_CREDENTIALS =
+                "client_credentials"; // grant_type de lay token by clientId va clientSecret
     }
 
     public static final class MySign {
         public static final Integer SIGH_HASH_SUCCESS = 1;
         public static final Integer SIGH_HASH_WAIT = 4000;
         public static final int SIGN_HASH_ASYNC = 1;
-        public final static String OID_NIST_SHA1 = "1.3.14.3.2.26";
-        public final static String OID_NIST_SHA256 = "2.16.840.1.101.3.4.2.1";
-        public final static String OID_RSA_RSA = "1.2.840.113549.1.1.1";
+        public static final String OID_NIST_SHA1 = "1.3.14.3.2.26";
+        public static final String OID_NIST_SHA256 = "2.16.840.1.101.3.4.2.1";
+        public static final String OID_RSA_RSA = "1.2.840.113549.1.1.1";
     }
 
     public static final class PositionCode {
@@ -65,10 +66,7 @@ public final class AuthConstants {
 
         public static final Integer ACTIVE = 1;
         public static final Integer INACTIVE = 0;
-        public static final List<Integer> ALLOW_ORGANIZATION_STATE = List.of(
-                INACTIVE, ACTIVE
-        );
-
+        public static final List<Integer> ALLOW_ORGANIZATION_STATE = List.of(INACTIVE, ACTIVE);
     }
 
     public static final class IDType {
@@ -145,6 +143,7 @@ public final class AuthConstants {
     public static final class System {
         public static final String SME_HUB = "SME_HUB";
     }
+
     public static final class Proxy {
         // request enable proxy
         public static final Integer ENABLE = 1;
@@ -169,15 +168,16 @@ public final class AuthConstants {
         public static final String PARENT_ID = "parent_id";
     }
 
-    public interface ExtraParams{
+    public interface ExtraParams {
         String SERVICE = "service";
         String HASHED_PASSWORD_TYPE = "hash_password_type";
     }
 
     public static final String SERVICE_ALIAS = "HUB_AUTH_INTERNAL";
 
-    public enum SyncState{
-        WAIT, PUSHED
+    public enum SyncState {
+        WAIT,
+        PUSHED
     }
 
     public static class TelecomServiceIdString {
@@ -194,7 +194,8 @@ public final class AuthConstants {
     }
 
     public interface ALIAS_RULE {
-       List<String> ALIAS_NOT_SYNC_POLICY_FIRST = List.of("SINVOICE", "VCONTRACT", "SCONTRACT"); // lstAlias not sync policy for first
+        List<String> ALIAS_NOT_SYNC_POLICY_FIRST =
+                List.of("SINVOICE", "VCONTRACT", "SCONTRACT"); // lstAlias not sync policy for first
     }
 
     public interface OPTION_SET {
@@ -215,14 +216,14 @@ public final class AuthConstants {
         public static final String PYCXTTT = "PYCXTTT";
     }
 
-    //cau hinh bang sme_setting.setting
+    // cau hinh bang sme_setting.setting
     public static final class Setting {
-        public static final String FLAG_CALL_CRM = "FLAG_CALL_CRM"; //co ON/OFF goi CRM
+        public static final String FLAG_CALL_CRM = "FLAG_CALL_CRM"; // co ON/OFF goi CRM
         public static final String ON = "ON";
         public static final String OFF = "OFF";
     }
 
-    //state bang sme_setting.setting
+    // state bang sme_setting.setting
     public static final class OrgBusinessInfoState {
         public static final String NEW = "new";
         public static final String UPDATED = "updated";

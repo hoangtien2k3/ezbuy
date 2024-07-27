@@ -1,27 +1,28 @@
 package com.ezbuy.auth.client;
 
-import com.ezbuy.auth.dto.ClientResource;
-import com.ezbuy.auth.dto.RoleDTO;
-import com.ezbuy.auth.dto.request.CreateRoleUserKeycloakRequest;
-import com.ezbuy.auth.dto.request.EmployeeCreateRequest;
-import com.ezbuy.auth.dto.request.UpdateUserKeycloakRequest;
+import java.util.List;
+import java.util.Optional;
+
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.representations.idm.authorization.GroupPolicyRepresentation;
 import org.keycloak.representations.idm.authorization.RolePolicyRepresentation;
-import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Optional;
-
-import com.ezbuy.auth.dto.request.LoginRequest;
 import com.ezbuy.auth.dto.AccessToken;
-import com.ezbuy.auth.dto.request.ProviderLogin;
+import com.ezbuy.auth.dto.ClientResource;
+import com.ezbuy.auth.dto.RoleDTO;
 import com.ezbuy.auth.dto.request.ClientLogin;
+import com.ezbuy.auth.dto.request.CreateRoleUserKeycloakRequest;
+import com.ezbuy.auth.dto.request.EmployeeCreateRequest;
+import com.ezbuy.auth.dto.request.LoginRequest;
 import com.ezbuy.auth.dto.request.LoginRequestSync;
-import com.ezbuy.auth.dto.request.RefreshTokenRequest;
 import com.ezbuy.auth.dto.request.LogoutRequest;
+import com.ezbuy.auth.dto.request.ProviderLogin;
+import com.ezbuy.auth.dto.request.RefreshTokenRequest;
+import com.ezbuy.auth.dto.request.UpdateUserKeycloakRequest;
 import com.ezbuy.auth.dto.response.Permission;
+
+import reactor.core.publisher.Mono;
 
 public interface KeyCloakClient {
     Mono<Optional<AccessToken>> getToken(LoginRequest loginRequest);
@@ -50,7 +51,8 @@ public interface KeyCloakClient {
     //    Mono<List<Permission>> getPolicies(String audience, String token);
     Mono<String> createUser(EmployeeCreateRequest employeeCreateRequest, String password, String token);
 
-    Mono<Boolean> createRoleUser(List<CreateRoleUserKeycloakRequest> roleUserKeycloakRequests, String userId, String clientId, String token);
+    Mono<Boolean> createRoleUser(
+            List<CreateRoleUserKeycloakRequest> roleUserKeycloakRequests, String userId, String clientId, String token);
 
     Mono<Boolean> updateUser(UpdateUserKeycloakRequest request, String token);
 
@@ -58,7 +60,8 @@ public interface KeyCloakClient {
 
     Mono<Boolean> addGroupToUser(String groupId, String userId, String token);
 
-    Mono<Boolean> removeRoleUser(List<CreateRoleUserKeycloakRequest> roleUserKeycloakRequests, String userId, String clientId, String token);
+    Mono<Boolean> removeRoleUser(
+            List<CreateRoleUserKeycloakRequest> roleUserKeycloakRequests, String userId, String clientId, String token);
 
     Mono<UserRepresentation> getUser(String userId, String token);
 
@@ -66,5 +69,6 @@ public interface KeyCloakClient {
 
     Mono<String> getGroupNameById(String groupId, String token);
 
-    Mono<Boolean> addRoleForUserInClientId(String clientId, String token, RoleRepresentation roleRepresentation, String userId);
+    Mono<Boolean> addRoleForUserInClientId(
+            String clientId, String token, RoleRepresentation roleRepresentation, String userId);
 }

@@ -8,7 +8,6 @@
 		<version>${revision}</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<groupId>com.ezbuy.auth</groupId>
 	<artifactId>auth</artifactId>
 	<version>${revision}</version>
 	<name>auth</name>
