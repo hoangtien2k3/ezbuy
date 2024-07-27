@@ -1,0 +1,28 @@
+package com.ezbuy.auth.model.dto.request;
+
+import jakarta.validation.constraints.NotEmpty;
+
+import org.hibernate.validator.constraints.Length;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class LoginRequest {
+    @NotEmpty(message = "login.username.not.empty")
+    @Length(max = 255, min = 1, message = "login.username.over.length")
+    private String username;
+
+    @NotEmpty(message = "login.password.not.empty")
+    private String password;
+
+    private String clientId;
+
+    public void setUsername(@NonNull String username) {
+        this.username = username.trim();
+    }
+}

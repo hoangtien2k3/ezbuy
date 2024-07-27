@@ -88,11 +88,8 @@ public class WebClientFactory implements InitializingBean {
                 .build();
 
         HttpClient httpClient = HttpClient.create(connectionProvider)
-                .option(
-                        ChannelOption.CONNECT_TIMEOUT_MILLIS,
-                        webClientProperties.getTimeout().getConnection())
-                .responseTimeout(
-                        Duration.ofMillis(webClientProperties.getTimeout().getRead()))
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, webClientProperties.getTimeout().getConnection())
+                .responseTimeout(Duration.ofMillis(webClientProperties.getTimeout().getRead()))
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .option(EpollChannelOption.TCP_KEEPIDLE, 300)
                 .option(EpollChannelOption.TCP_KEEPINTVL, 60)
