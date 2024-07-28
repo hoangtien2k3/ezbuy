@@ -20,7 +20,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ComponentScan(basePackages = {"com.ezbuy.*"})
 @ImportResource({"classpath*:applicationContext.xml"})
 // @EnableDiscoveryClient
-@EnableScheduling
+@EnableScheduling // Enable scheduling
 public class CustomerApplication {
     public static void main(String[] args) {
         SpringApplication.run(CustomerApplication.class, args);

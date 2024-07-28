@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author hoangtien2k3
- *     <p>Ho tro parse sorting thanh cau query trong database
+ * <p>Ho tro parse sorting thanh cau query trong database
  */
 @Slf4j
 public class SortingUtils {
@@ -23,6 +23,13 @@ public class SortingUtils {
         System.out.println(parseSorting(sort, TokenUser.class));
     }
 
+    /**
+     * Parses the sorting configuration string and converts it to a database query string.
+     *
+     * @param sortConfig  the sorting configuration string
+     * @param objectClass the class of the object to be sorted
+     * @return the database query string for sorting
+     */
     public static String parseSorting(String sortConfig, Class objectClass) {
         List<String> convertSorting =
                 convertSorting(sortConfig.replaceAll(Regex.CAMELCASE, Constants.Sorting.FILED_DISPLAY), objectClass);
@@ -34,6 +41,13 @@ public class SortingUtils {
                 convertSorting.toString().toLowerCase().replace("[", "").replace("]", ""));
     }
 
+    /**
+     * Converts the sorting configuration string to a list of sorting fields.
+     *
+     * @param sortConfig  the sorting configuration string
+     * @param objectClass the class of the object to be sorted
+     * @return the list of sorting fields
+     */
     public static List<String> convertSorting(String sortConfig, Class objectClass) {
         if (DataUtil.isNullOrEmpty(sortConfig)) {
             return null;
@@ -56,6 +70,14 @@ public class SortingUtils {
         return orderList;
     }
 
+    /**
+     * Handles individual sorting elements and adds them to the order list.
+     *
+     * @param element   the sorting element
+     * @param operator  the sorting operator
+     * @param fields    the list of valid fields
+     * @param orderList the list to add the sorting element to
+     */
     private static void handleElement(String element, String operator, List<String> fields, List<String> orderList) {
         if (element.length() <= operator.length()) {
             return;
@@ -66,6 +88,12 @@ public class SortingUtils {
         }
     }
 
+    /**
+     * Retrieves all field names of the given class.
+     *
+     * @param object the class of the object
+     * @return the list of field names
+     */
     private static List<String> getFieldsOfClass(Class object) {
         List<String> filedNames = new ArrayList<>();
         for (Field field : getAllFields(object)) {
@@ -74,6 +102,12 @@ public class SortingUtils {
         return filedNames;
     }
 
+    /**
+     * Converts the sorting operator to the corresponding SQL keyword.
+     *
+     * @param operator the sorting operator
+     * @return the SQL keyword for the sorting operator
+     */
     private static String convertOperator(String operator) {
         if (Constants.Sorting.MINUS_OPERATOR.equals(operator)) {
             return Constants.Sorting.DESC;
@@ -82,6 +116,12 @@ public class SortingUtils {
         }
     }
 
+    /**
+     * Retrieves all fields of the given class, including inherited fields.
+     *
+     * @param clazz the class of the object
+     * @return the array of fields
+     */
     private static Field[] getAllFields(Class<?> clazz) {
         Field[] fields = clazz.getDeclaredFields();
         Class<?> superClass = clazz.getSuperclass();

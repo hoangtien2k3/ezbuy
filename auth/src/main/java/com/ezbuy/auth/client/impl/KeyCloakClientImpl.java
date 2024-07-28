@@ -108,7 +108,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                     } else {
                         formParameters.add(
                                 OAuth2ParameterNames.REDIRECT_URI,
-                                clientRepresentation.getRedirectUris().get(0));
+                                clientRepresentation.getRedirectUris().getFirst());
                     }
                     formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, clientRepresentation.getSecret());
                     formParameters.add(OAuth2ParameterNames.CLIENT_ID, clientLogin.getClientId());

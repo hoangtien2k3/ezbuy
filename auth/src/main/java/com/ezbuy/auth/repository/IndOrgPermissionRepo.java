@@ -12,8 +12,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface IndOrgPermissionRepo extends R2dbcRepository<PermissionPolicy, UUID> {
-    @Query(
-            value = "select pp.id as id, pp.type as type, pp.policy_id as policy_id\n"
+    @Query(value = "select pp.id as id, pp.type as type, pp.policy_id as policy_id\n"
                     + "from individual_organization_permissions iop\n"
                     + "         left join permission_policy pp\n"
                     + "                   on iop.id = pp.individual_organization_permissions_id\n"

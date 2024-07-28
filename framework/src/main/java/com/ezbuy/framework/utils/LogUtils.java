@@ -14,12 +14,17 @@ import org.springframework.http.MediaType;
 import io.netty.buffer.UnpooledByteBufAllocator;
 
 /**
- * @author: hoangtien2k3qx1@gmail.com
- * @since: 20/07/2024 11:16 description: LogUtils
- * @update:
+ * Utility class for logging request and response data buffers.
+ * Provides methods to log the content of DataBuffer objects.
+ * Supports various media types for logging.
+ *
+ * @since 20/07/2024
  */
 public class LogUtils {
 
+    /**
+     * List of media types that are considered legal for logging.
+     */
     public static final List<MediaType> legalLogMediaTypes = Arrays.asList(
             MediaType.TEXT_XML,
             MediaType.APPLICATION_XML,
@@ -29,15 +34,40 @@ public class LogUtils {
             MediaType.TEXT_XML,
             MediaType.MULTIPART_FORM_DATA);
 
+    /**
+     * Logs the content of a request DataBuffer.
+     *
+     * @param log the Logger to use for logging
+     * @param buffer the DataBuffer containing the request data
+     * @param <T> the type of DataBuffer
+     * @return the original DataBuffer wrapped in a new DataBuffer
+     */
     @SuppressWarnings("unchecked")
-    public static <T extends DataBuffer> T loggingRequest(org.apache.logging.log4j.Logger log, T buffer) {
+    public static <T extends DataBuffer> T loggingRequest(Logger log, T buffer) {
         return logging(log, "request: ", buffer);
     }
 
-    public static <T extends DataBuffer> T loggingResponse(org.apache.logging.log4j.Logger log, T buffer) {
+    /**
+     * Logs the content of a response DataBuffer.
+     *
+     * @param log the Logger to use for logging
+     * @param buffer the DataBuffer containing the response data
+     * @param <T> the type of DataBuffer
+     * @return the original DataBuffer wrapped in a new DataBuffer
+     */
+    public static <T extends DataBuffer> T loggingResponse(Logger log, T buffer) {
         return logging(log, "response: ", buffer);
     }
 
+    /**
+     * Logs the content of a DataBuffer with a specified prefix.
+     *
+     * @param log the Logger to use for logging
+     * @param inOrOut the prefix to indicate whether it's a request or response
+     * @param buffer the DataBuffer containing the data
+     * @param <T> the type of DataBuffer
+     * @return the original DataBuffer wrapped in a new DataBuffer
+     */
     private static <T extends DataBuffer> T logging(Logger log, String inOrOut, T buffer) {
         InputStream dataBuffer = buffer.asInputStream();
         byte[] bytes = toByteArray(dataBuffer);
@@ -47,6 +77,12 @@ public class LogUtils {
         return (T) nettyDataBufferFactory.wrap(bytes);
     }
 
+    /**
+     * Converts an InputStream to a byte array.
+     *
+     * @param inStream the InputStream to be converted
+     * @return a byte array containing the data from the InputStream
+     */
     private static byte[] toByteArray(InputStream inStream) {
         ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
         byte[] buff = new byte[100];

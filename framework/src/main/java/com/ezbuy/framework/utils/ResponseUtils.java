@@ -10,16 +10,41 @@ import com.ezbuy.framework.model.response.DataResponse;
 
 import reactor.core.publisher.Mono;
 
+/**
+ * Utility class for handling HTTP responses.
+ * Provides methods to create ResponseEntity objects and to process DataResponse objects.
+ */
 public class ResponseUtils {
 
+    /**
+     * Creates a ResponseEntity with a DataResponse containing the given data and a success message.
+     *
+     * @param data the data to be included in the response
+     * @return a ResponseEntity containing the DataResponse
+     */
     public static ResponseEntity<DataResponse> ok(Object data) {
-        return ResponseEntity.ok(new DataResponse(Translator.toLocale("success"), data));
+        return ResponseEntity.ok(new DataResponse<>(Translator.toLocale("success"), data));
     }
 
+    /**
+     * Creates a ResponseEntity with a DataResponse containing the given data and a custom message.
+     *
+     * @param data the data to be included in the response
+     * @param message the custom message to be included in the response
+     * @return a ResponseEntity containing the DataResponse
+     */
     public static ResponseEntity<DataResponse> ok(Object data, String message) {
-        return ResponseEntity.ok(new DataResponse(Translator.toLocale(message), data));
+        return ResponseEntity.ok(new DataResponse<>(Translator.toLocale(message), data));
     }
 
+    /**
+     * Processes an Optional DataResponse and returns a Mono containing the data.
+     * If the DataResponse is empty or contains an error code, a BusinessException is thrown.
+     *
+     * @param response the Optional DataResponse to be processed
+     * @param extraInfo additional information to be included in the error message
+     * @return a Mono containing the data from the DataResponse
+     */
     public static Mono<Object> getResponse(Optional<DataResponse> response, String extraInfo) {
         return getResponseWithoutData(response, extraInfo)
                 .switchIfEmpty(Mono.error(new BusinessException(
@@ -33,6 +58,14 @@ public class ResponseUtils {
                 });
     }
 
+    /**
+     * Processes an Optional DataResponse and returns a Mono containing the data without any additional processing.
+     * If the DataResponse is empty or contains an error code, a BusinessException is thrown.
+     *
+     * @param response the Optional DataResponse to be processed
+     * @param extraInfo additional information to be included in the error message
+     * @return a Mono containing the data from the DataResponse
+     */
     public static Mono<Object> getResponseWithoutData(Optional<DataResponse> response, String extraInfo) {
         if (response.isEmpty()) {
             return Mono.error(

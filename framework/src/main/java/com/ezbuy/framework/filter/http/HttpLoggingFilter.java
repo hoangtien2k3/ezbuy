@@ -34,8 +34,12 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * @author hoangtien2k3
- *     <p>filter log cho toan bo http request va http response
+ * A filter for logging HTTP requests and responses.
+ *
+ * <p>This filter logs the details of HTTP requests and responses, including headers,
+ * query parameters, and body content. It is designed to be used with Spring WebFlux.
+ *
+ * @author
  */
 @Component
 @Slf4j
@@ -43,11 +47,23 @@ import reactor.core.publisher.Mono;
 public class HttpLoggingFilter implements WebFilter, Ordered {
     private final HttpLogProperties httpLogProperties;
 
+    /**
+     * Returns the order of the filter.
+     *
+     * @return the order of the filter
+     */
     @Override
     public int getOrder() {
         return Ordered.HIGHEST_PRECEDENCE + 1;
     }
 
+    /**
+     * Filters the HTTP request and response, logging the details.
+     *
+     * @param exchange the current server exchange
+     * @param chain the web filter chain
+     * @return a Mono that indicates when request processing is complete
+     */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpResponseDecorator loggingServerHttpResponseDecorator =
@@ -87,6 +103,11 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
                 }));
     }
 
+    /**
+     * Logs the HTTP request and response details.
+     *
+     * @param exchange the current server exchange
+     */
     private void logReqResponse(ServerWebExchange exchange) {
         if (Constants.EXCLUDE_LOGGING_ENDPOINTS.contains(
                 exchange.getRequest().getPath().toString())) {
@@ -108,6 +129,12 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
         log.info("Execute: {} | {}ms", exchange.getRequest().getPath(), takeDuration(exchange));
     }
 
+    /**
+     * Logs the HTTP request details.
+     *
+     * @param exchange the current server exchange
+     * @param logs the list of log messages
+     */
     private void logRequest(ServerWebExchange exchange, List<String> logs) {
         ServerHttpRequest request = exchange.getRequest();
         URI requestURI = request.getURI();
@@ -161,6 +188,12 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
         }
     }
 
+    /**
+     * Calculates the duration of the request.
+     *
+     * @param exchange the current server exchange
+     * @return the duration of the request in milliseconds
+     */
     private Long takeDuration(ServerWebExchange exchange) {
         GatewayContext gatewayContext = exchange.getAttribute(GatewayContext.CACHE_GATEWAY_CONTEXT);
         return gatewayContext.getStartTime() != null
@@ -168,6 +201,13 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
                 : null;
     }
 
+    /**
+     * Logs the HTTP response details.
+     *
+     * @param exchange the current server exchange
+     * @param logs the list of log messages
+     * @return a Mono that indicates when response logging is complete
+     */
     private Mono<Void> logResponse(ServerWebExchange exchange, List<String> logs) {
         ServerHttpResponse response = exchange.getResponse();
         logs.add(String.format("%s", response.getStatusCode().value()));
@@ -179,6 +219,13 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
         return Mono.empty();
     }
 
+    /**
+     * Logs the HTTP response body.
+     *
+     * @param buffer the data buffer containing the response body
+     * @param exchange the current server exchange
+     * @return the data buffer
+     */
     private DataBuffer logResponseBody(DataBuffer buffer, ServerWebExchange exchange) {
         StringBuilder msg = new StringBuilder();
         Integer capacity = buffer.capacity();
@@ -194,6 +241,13 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
         return buffer;
     }
 
+    /**
+     * Logs the HTTP request body.
+     *
+     * @param dataBuffer the data buffer containing the request body
+     * @param prefix the prefix to be added to the log message
+     * @param msg the StringBuilder to append the log message to
+     */
     private void logRequestBody(DataBuffer dataBuffer, String prefix, StringBuilder msg) {
         msg.append(Constants.LoggingTitle.REQUEST_BODY);
         String message = "body request too long to log";
@@ -211,6 +265,12 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
         msg.append(String.format("%s %s", prefix, message)).append("\n");
     }
 
+    /**
+     * Truncates the body of the message list.
+     *
+     * @param messageList the list of messages to be truncated
+     * @return the truncated body as a string
+     */
     private String truncateBody(List<String> messageList) {
         StringBuilder response = new StringBuilder();
         messageList.forEach(item -> {

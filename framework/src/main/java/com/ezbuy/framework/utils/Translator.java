@@ -13,6 +13,11 @@ import org.springframework.web.server.i18n.LocaleContextResolver;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+/**
+ * Utility class for translating message codes to localized messages.
+ * Provides methods to translate message codes to messages in different locales.
+ * Supports synchronous and asynchronous translation.
+ */
 @Component
 public class Translator {
     private static final Locale defaultLocale = Locale.forLanguageTag("vi");
@@ -21,12 +26,26 @@ public class Translator {
     @Qualifier("localeContextResolver2")
     private static LocaleContextResolver localeContextResolver;
 
+    /**
+     * Constructor for Translator.
+     * Initializes the message source and locale context resolver.
+     *
+     * @param messageSource the message source for loading messages
+     * @param localeContextResolver the locale context resolver for resolving locales
+     */
     public Translator(
             ReloadableResourceBundleMessageSource messageSource, LocaleContextResolver localeContextResolver) {
         Translator.messageSource = messageSource;
         Translator.localeContextResolver = localeContextResolver;
     }
 
+    /**
+     * Translates a message code to a message in the default locale (Vietnamese).
+     *
+     * @param msgCode the message code to be translated
+     * @param params optional parameters to be included in the message
+     * @return the translated message in Vietnamese
+     */
     public static String toLocaleVi(String msgCode, Object... params) {
         if (msgCode == null) {
             return "";
@@ -35,6 +54,15 @@ public class Translator {
         return messageSource.getMessage(msgCode, params, defaultLocale);
     }
 
+    /**
+     * Translates a message code to a message in the locale resolved from the given ServerWebExchange.
+     * Falls back to the default locale if the exchange is null or the locale cannot be resolved.
+     *
+     * @param msgCode the message code to be translated
+     * @param exchange the ServerWebExchange from which to resolve the locale
+     * @param params optional parameters to be included in the message
+     * @return the translated message in the resolved locale
+     */
     public static String toLocale(String msgCode, ServerWebExchange exchange, Object... params) {
         if (msgCode == null) {
             return "";
@@ -49,6 +77,15 @@ public class Translator {
                 msgCode, params, locale == null ? Objects.requireNonNull(defaultLocale) : locale);
     }
 
+    /**
+     * Asynchronously translates a message code to a message in the locale resolved from the given ServerWebExchange.
+     * Falls back to the default locale if the exchange is null or the locale cannot be resolved.
+     *
+     * @param msgCode the message code to be translated
+     * @param exchange the ServerWebExchange from which to resolve the locale
+     * @param params optional parameters to be included in the message
+     * @return a Mono containing the translated message in the resolved locale
+     */
     public static Mono<String> toLocaleMono(String msgCode, ServerWebExchange exchange, Object... params) {
         if (msgCode == null) {
             return Mono.just("");
@@ -64,6 +101,14 @@ public class Translator {
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
+    /**
+     * Translates a message code to a message in the current locale.
+     * The current locale is resolved from the LocaleContextHolder.
+     *
+     * @param msgCode the message code to be translated
+     * @param params optional parameters to be included in the message
+     * @return the translated message in the current locale
+     */
     public static String toLocale(String msgCode, Object... params) {
         if (msgCode == null) {
             return "";
@@ -72,10 +117,24 @@ public class Translator {
         return messageSource.getMessage(msgCode, params, locale);
     }
 
+    /**
+     * Translates a message code to a message in the current locale.
+     * The current locale is resolved from the LocaleContextHolder.
+     *
+     * @param msgCode the message code to be translated
+     * @return the translated message in the current locale
+     */
     public static String toLocale(String msgCode) {
         return Translator.toLocale(msgCode, (Object) null);
     }
 
+    /**
+     * Asynchronously translates a message code to a message in the current locale.
+     * The current locale is resolved from the LocaleContextHolder.
+     *
+     * @param msgCode the message code to be translated
+     * @return a Mono containing the translated message in the current locale
+     */
     public static Mono<String> toLocaleMono(String msgCode) {
         return Translator.toLocaleMono(msgCode, null);
     }

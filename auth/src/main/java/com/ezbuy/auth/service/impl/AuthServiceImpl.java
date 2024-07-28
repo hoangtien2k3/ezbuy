@@ -77,6 +77,7 @@ public class AuthServiceImpl implements AuthService {
     // clients
     private final KeyCloakClient keyCloakClient;
     private final KeycloakProvider kcProvider;
+    // notification
     private final NotiServiceClient notiServiceClient;
 
     // repositories
@@ -207,7 +208,7 @@ public class AuthServiceImpl implements AuthService {
                     .getClient(clientId)
                     .flatMap(client -> {
                         var allPermissions = kcProvider
-                                .getReamResource()
+                                .getRealmResource()
                                 .clients()
                                 .get(client.getId())
                                 .authorization()
@@ -501,14 +502,14 @@ public class AuthServiceImpl implements AuthService {
             return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "signup.email.exist"));
         }
         Random rand = new SecureRandom();
-        String otpValue = new DecimalFormat("000000").format(rand.nextInt(999999));
+        String otpValue = new DecimalFormat(Regex.OTP_REGEX).format(rand.nextInt(1000000)); // rand 0 -> 999999
         CreateNotificationDTO createNotificationDTO = createNotificationDTO(
                 otpValue,
                 Translator.toLocaleVi("email.title.signup"),
                 Constants.TemplateMail.SIGN_UP,
                 ReceiverDataDTO.builder().email(requestEmail).build(),
                 null);
-        return otpRepository.currentTimeDb().flatMap(localDateTime -> {
+        return otpRepository.currentTimeDB().flatMap(localDateTime -> {
             UUID id = UUID.randomUUID();
             UserOtp otp = UserOtp.builder()
                     .id(id.toString())
@@ -527,7 +528,7 @@ public class AuthServiceImpl implements AuthService {
                     .flatMap(objects -> {
                         if (objects.isPresent()
                                 && (DataUtil.isNullOrEmpty(objects.get().getErrorCode())
-                                        && !DataUtil.isNullOrEmpty(objects.get().getMessage()))) {
+                                && !DataUtil.isNullOrEmpty(objects.get().getMessage()))) {
                             return Mono.just(otp);
                         }
                         return Mono.error(new BusinessException(
@@ -570,7 +571,7 @@ public class AuthServiceImpl implements AuthService {
             Random rand = new SecureRandom();
             String otpValue = new DecimalFormat("000000").format(rand.nextInt(999999));
             List<UserRepresentation> listUser =
-                    kcProvider.getReamResource().users().search(userName, true);
+                    kcProvider.getRealmResource().users().search(userName, true);
             UserRepresentation user = listUser.getFirst();
             String requestEmail = user.getEmail();
             CreateNotificationDTO createNotificationDTO = createNotificationDTO(
@@ -583,7 +584,7 @@ public class AuthServiceImpl implements AuthService {
                             .build(),
                     null);
             return otpRepository
-                    .currentTimeDb()
+                    .currentTimeDB()
                     .flatMap(time -> {
                         UserOtp otpBuild = UserOtp.builder()
                                 .id(id.toString())
@@ -603,9 +604,9 @@ public class AuthServiceImpl implements AuthService {
                                 .flatMap(objects -> {
                                     if (objects.isPresent()
                                             && (DataUtil.isNullOrEmpty(
-                                                            objects.get().getErrorCode())
-                                                    && !DataUtil.isNullOrEmpty(
-                                                            objects.get().getMessage()))) {
+                                            objects.get().getErrorCode())
+                                            && !DataUtil.isNullOrEmpty(
+                                            objects.get().getMessage()))) {
                                         return Mono.just(otpBuild);
                                     }
                                     return Mono.error(new BusinessException(
@@ -631,20 +632,20 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private boolean isExistedEmail(String email) {
-        return !kcProvider.getReamResource().users().searchByEmail(email, true).isEmpty();
+        return !kcProvider.getRealmResource().users().searchByEmail(email, true).isEmpty();
     }
 
     private Integer countAccountByEmail(String email) {
-        return kcProvider.getReamResource().users().searchByEmail(email, true).size();
+        return kcProvider.getRealmResource().users().searchByEmail(email, true).size();
     }
 
     private boolean isExistedUsername(String username) {
-        return !kcProvider.getReamResource().users().search(username, true).isEmpty();
+        return !kcProvider.getRealmResource().users().search(username, true).isEmpty();
     }
 
     private String createUserKeycloak(String username, String password, String email) {
         // create new keycloak's user
-        UsersResource usersResource = kcProvider.getReamResource().users();
+        UsersResource usersResource = kcProvider.getRealmResource().users();
         UserRepresentation kcUser = new UserRepresentation();
         kcUser.setUsername(username);
         kcUser.setEmail(email);
@@ -661,20 +662,20 @@ public class AuthServiceImpl implements AuthService {
         userResource.resetPassword(passwordCred);
         // get realm roles
         RoleRepresentation userRealmRole = kcProvider
-                .getReamResource()
+                .getRealmResource()
                 .roles()
                 .get(Constants.RoleName.USER)
                 .toRepresentation();
         userResource.roles().realmLevel().add(Collections.singletonList(userRealmRole));
         // get and add role 'user' for web-client
         String clientIdOfHub = kcProvider
-                .getReamResource()
+                .getRealmResource()
                 .clients()
                 .findByClientId(HUB_SME)
-                .get(0)
+                .getFirst()
                 .getId();
         RoleRepresentation adminRoleWebclient = kcProvider
-                .getReamResource()
+                .getRealmResource()
                 .clients()
                 .get(clientIdOfHub)
                 .roles()
@@ -702,7 +703,7 @@ public class AuthServiceImpl implements AuthService {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "dto.password.invalid"));
         }
 
-        List<UserRepresentation> listUser = kcProvider.getReamResource().users().search(requestEmail, true);
+        List<UserRepresentation> listUser = kcProvider.getRealmResource().users().search(requestEmail, true);
         if (DataUtil.isNullOrEmpty(listUser)) {
             return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.not.found"));
         }
@@ -713,7 +714,7 @@ public class AuthServiceImpl implements AuthService {
                     if (Boolean.FALSE.equals(result)) {
                         return Mono.error(new BusinessException(ErrorCode.OtpErrorCode.OTP_NOT_MATCH, "otp.not.match"));
                     }
-                    UsersResource usersResource = kcProvider.getReamResource().users();
+                    UsersResource usersResource = kcProvider.getRealmResource().users();
                     UserResource userResource = usersResource.get(user.getId());
                     CredentialRepresentation passwordCred = new CredentialRepresentation();
                     passwordCred.setTemporary(false);
@@ -769,7 +770,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Mono<Void> changePassword(ChangePasswordRequest request, ServerWebExchange serverWebExchange) {
-        UsersResource usersResource = kcProvider.getInstance().realm(realm).users();
+        UsersResource usersResource = kcProvider.getRealmResource().users();
+//        UsersResource usersResource = kcProvider.getInstance().realm(realm).users();
         return SecurityUtils.getCurrentUser()
                 .flatMap(tokenUser -> {
                     LoginRequest loginRequest = new LoginRequest();
@@ -856,7 +858,7 @@ public class AuthServiceImpl implements AuthService {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "dto.password.invalid"));
         }
         // validate email and otp
-        return otpRepository.confirmOtp(email, Constants.Otp.REGISTER, otp, 1).flatMap(isConfirmOtp -> {
+        return otpRewpository.confirmOtp(email, Constants.Otp.REGISTER, otp, 1).flatMap(isConfirmOtp -> {
             // check if otp matched
             if (!isConfirmOtp) {
                 return Mono.error(new BusinessException(ErrorCode.OtpErrorCode.OTP_NOT_MATCH, "otp.not.match"));
@@ -906,21 +908,13 @@ public class AuthServiceImpl implements AuthService {
                 .passwordChange(false)
                 .isNew(true)
                 .build();
-        // save individual and user_credential
-        var saveIndividual = individualRepository.save(individual);
-        var saveUserCredential = userCredentialRep.save(userCredential);
-
-        return Mono.zip(saveIndividual, saveUserCredential)
-                .map(rs -> {
-                    otpRepository
-                            .disableOtp(username, Constants.Otp.REGISTER, SYSTEM)
-                            .doOnError(err -> {
-                                log.error("Disable OTP failed ", err);
-                            });
-                    return rs.getT1();
-                })
+        // Save individual and user_credential
+        return Mono.zip(individualRepository.save(individual), userCredentialRep.save(userCredential))
+                .flatMap(rs -> otpRepository.disableOtp(username, Constants.Otp.REGISTER, SYSTEM)
+                        .doOnError(err -> log.error("Disable OTP failed ", err))
+                        .thenReturn(rs.getT1()))
                 .onErrorResume(error -> {
-                    kcProvider.getReamResource().users().delete(userId);
+                    kcProvider.getRealmResource().users().delete(userId);
                     return Mono.error(error);
                 });
     }
@@ -929,7 +923,7 @@ public class AuthServiceImpl implements AuthService {
     public Mono<List<String>> getAllUserId() {
         List<String> list = new ArrayList<>();
         Set<UserRepresentation> set = kcProvider
-                .getReamResource()
+                .getRealmResource()
                 .roles()
                 .get(Constants.RoleName.USER)
                 .getRoleUserMembers();
@@ -966,7 +960,7 @@ public class AuthServiceImpl implements AuthService {
                         return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "user.not.found"));
                     }
                     return Mono.just(GetTwoWayPasswordResponse.builder()
-                            .password(rs.get(0).getHashPwd())
+                            .password(rs.getFirst().getHashPwd())
                             .build());
                 });
     }
@@ -1020,7 +1014,7 @@ public class AuthServiceImpl implements AuthService {
         String type = confirmOTPRequest.getType().trim();
         Random rand = new SecureRandom();
         String otpValue = new DecimalFormat("000000").format(rand.nextInt(999999));
-        return otpRepository.currentTimeDb().flatMap(localDateTime -> {
+        return otpRepository.currentTimeDB().flatMap(localDateTime -> {
             UUID id = UUID.randomUUID();
             UserOtp otp = UserOtp.builder()
                     .id(id.toString())
@@ -1051,11 +1045,10 @@ public class AuthServiceImpl implements AuthService {
             return EMPTY;
         }
         try {
-            org.apache.mina.util.Base64 base64 = new Base64();
+            Base64 base64 = new Base64();
 //            com.nimbusds.jose.util.Base64.encode(rawHmac);
             return new String(base64.encode(input.getBytes()));
         } catch (Exception e) {
-            log.error("encodeUrl err: ", e);
             return EMPTY;
         }
     }

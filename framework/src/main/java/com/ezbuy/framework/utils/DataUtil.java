@@ -147,186 +147,186 @@ public class DataUtil {
     public static final TimeZone TIMEZONE_VN = TimeZone.getTimeZone(TEXT_TIMEZONE_VN);
     public static Calendar CALENDAR = Calendar.getInstance();
     public static final String[] hasSign = {
-        "à",
-        "á",
-        "ạ",
-        "ả",
-        "ã",
-        "â",
-        "ầ",
-        "ấ",
-        "ậ",
-        "ẩ",
-        "ẫ",
-        "ă",
-        "ằ",
-        "ắ",
-        "ặ",
-        "ẳ",
-        "ẵ",
-        "&agrave;",
-        "&aacute;",
-        "&acirc;",
-        "&atilde;",
-        "è",
-        "é",
-        "ẹ",
-        "ẻ",
-        "ẽ",
-        "ê",
-        "ề",
-        "ế",
-        "ệ",
-        "ể",
-        "ễ",
-        "&egrave;",
-        "&eacute;",
-        "&ecirc;",
-        "ì",
-        "í",
-        "ị",
-        "ỉ",
-        "ĩ",
-        "&igrave;",
-        "&iacute;",
-        "&icirc;",
-        "ò",
-        "ó",
-        "ọ",
-        "ỏ",
-        "õ",
-        "ô",
-        "ồ",
-        "ố",
-        "ộ",
-        "ổ",
-        "ỗ",
-        "ơ",
-        "ờ",
-        "ớ",
-        "ợ",
-        "ở",
-        "ỡ",
-        "&ograve;",
-        "&oacute;",
-        "&ocirc;",
-        "&otilde;",
-        "ù",
-        "ú",
-        "ụ",
-        "ủ",
-        "ũ",
-        "ư",
-        "ừ",
-        "ứ",
-        "ự",
-        "ử",
-        "ữ",
-        "&ugrave;",
-        "&uacute;",
-        "ỳ",
-        "ý",
-        "ỵ",
-        "ỷ",
-        "ỹ",
-        "&yacute;",
-        "đ",
-        "&eth;",
-        "À",
-        "Á",
-        "Ạ",
-        "Ả",
-        "Ã",
-        "Â",
-        "Ầ",
-        "Ấ",
-        "Ậ",
-        "Ẩ",
-        "Ẫ",
-        "Ă",
-        "Ằ",
-        "Ắ",
-        "Ặ",
-        "Ẳ",
-        "Ẵ",
-        "&Agrave;",
-        "&Aacute;",
-        "&Acirc;",
-        "&Atilde;",
-        "È",
-        "É",
-        "Ẹ",
-        "Ẻ",
-        "Ẽ",
-        "Ê",
-        "Ề",
-        "Ế",
-        "Ệ",
-        "Ể",
-        "Ễ",
-        "&Egrave;",
-        "&Eacute;",
-        "&Ecirc;",
-        "Ì",
-        "Í",
-        "Ị",
-        "Ỉ",
-        "Ĩ",
-        "&Igrave;",
-        "&Iacute;",
-        "&Icirc;",
-        "Ò",
-        "Ó",
-        "Ọ",
-        "Ỏ",
-        "Õ",
-        "Ô",
-        "Ồ",
-        "Ố",
-        "Ộ",
-        "Ổ",
-        "Ỗ",
-        "Ơ",
-        "Ờ",
-        "Ớ",
-        "Ợ",
-        "Ở",
-        "Ỡ",
-        "&Ograve;",
-        "&Oacute;",
-        "&Ocirc;",
-        "&Otilde;",
-        "Ù",
-        "Ú",
-        "Ụ",
-        "Ủ",
-        "Ũ",
-        "Ư",
-        "Ừ",
-        "Ứ",
-        "Ự",
-        "Ử",
-        "Ữ",
-        "&Ugrave;",
-        "&Uacute;",
-        "Ỳ",
-        "Ý",
-        "Ỵ",
-        "Ỷ",
-        "Ỹ",
-        "&Yacute;",
-        "Đ",
-        "&ETH;"
+            "à",
+            "á",
+            "ạ",
+            "ả",
+            "ã",
+            "â",
+            "ầ",
+            "ấ",
+            "ậ",
+            "ẩ",
+            "ẫ",
+            "ă",
+            "ằ",
+            "ắ",
+            "ặ",
+            "ẳ",
+            "ẵ",
+            "&agrave;",
+            "&aacute;",
+            "&acirc;",
+            "&atilde;",
+            "è",
+            "é",
+            "ẹ",
+            "ẻ",
+            "ẽ",
+            "ê",
+            "ề",
+            "ế",
+            "ệ",
+            "ể",
+            "ễ",
+            "&egrave;",
+            "&eacute;",
+            "&ecirc;",
+            "ì",
+            "í",
+            "ị",
+            "ỉ",
+            "ĩ",
+            "&igrave;",
+            "&iacute;",
+            "&icirc;",
+            "ò",
+            "ó",
+            "ọ",
+            "ỏ",
+            "õ",
+            "ô",
+            "ồ",
+            "ố",
+            "ộ",
+            "ổ",
+            "ỗ",
+            "ơ",
+            "ờ",
+            "ớ",
+            "ợ",
+            "ở",
+            "ỡ",
+            "&ograve;",
+            "&oacute;",
+            "&ocirc;",
+            "&otilde;",
+            "ù",
+            "ú",
+            "ụ",
+            "ủ",
+            "ũ",
+            "ư",
+            "ừ",
+            "ứ",
+            "ự",
+            "ử",
+            "ữ",
+            "&ugrave;",
+            "&uacute;",
+            "ỳ",
+            "ý",
+            "ỵ",
+            "ỷ",
+            "ỹ",
+            "&yacute;",
+            "đ",
+            "&eth;",
+            "À",
+            "Á",
+            "Ạ",
+            "Ả",
+            "Ã",
+            "Â",
+            "Ầ",
+            "Ấ",
+            "Ậ",
+            "Ẩ",
+            "Ẫ",
+            "Ă",
+            "Ằ",
+            "Ắ",
+            "Ặ",
+            "Ẳ",
+            "Ẵ",
+            "&Agrave;",
+            "&Aacute;",
+            "&Acirc;",
+            "&Atilde;",
+            "È",
+            "É",
+            "Ẹ",
+            "Ẻ",
+            "Ẽ",
+            "Ê",
+            "Ề",
+            "Ế",
+            "Ệ",
+            "Ể",
+            "Ễ",
+            "&Egrave;",
+            "&Eacute;",
+            "&Ecirc;",
+            "Ì",
+            "Í",
+            "Ị",
+            "Ỉ",
+            "Ĩ",
+            "&Igrave;",
+            "&Iacute;",
+            "&Icirc;",
+            "Ò",
+            "Ó",
+            "Ọ",
+            "Ỏ",
+            "Õ",
+            "Ô",
+            "Ồ",
+            "Ố",
+            "Ộ",
+            "Ổ",
+            "Ỗ",
+            "Ơ",
+            "Ờ",
+            "Ớ",
+            "Ợ",
+            "Ở",
+            "Ỡ",
+            "&Ograve;",
+            "&Oacute;",
+            "&Ocirc;",
+            "&Otilde;",
+            "Ù",
+            "Ú",
+            "Ụ",
+            "Ủ",
+            "Ũ",
+            "Ư",
+            "Ừ",
+            "Ứ",
+            "Ự",
+            "Ử",
+            "Ữ",
+            "&Ugrave;",
+            "&Uacute;",
+            "Ỳ",
+            "Ý",
+            "Ỵ",
+            "Ỷ",
+            "Ỹ",
+            "&Yacute;",
+            "Đ",
+            "&ETH;"
     };
     public static final String[] noSign = {
-        "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "e",
-        "e", "e", "e", "e", "e", "e", "e", "e", "e", "e", "e", "e", "e", "i", "i", "i", "i", "i", "i", "i", "i", "o",
-        "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "u", "u",
-        "u", "u", "u", "u", "u", "u", "u", "u", "u", "u", "u", "y", "y", "y", "y", "y", "y", "d", "d", "A", "A", "A",
-        "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "E", "E", "E", "E",
-        "E", "E", "E", "E", "E", "E", "E", "E", "E", "E", "I", "I", "I", "I", "I", "I", "I", "I", "O", "O", "O", "O",
-        "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "U", "U", "U", "U", "U",
-        "U", "U", "U", "U", "U", "U", "U", "U", "Y", "Y", "Y", "Y", "Y", "Y", "D", "D"
+            "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "e",
+            "e", "e", "e", "e", "e", "e", "e", "e", "e", "e", "e", "e", "e", "i", "i", "i", "i", "i", "i", "i", "i", "o",
+            "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "u", "u",
+            "u", "u", "u", "u", "u", "u", "u", "u", "u", "u", "u", "y", "y", "y", "y", "y", "y", "d", "d", "A", "A", "A",
+            "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "E", "E", "E", "E",
+            "E", "E", "E", "E", "E", "E", "E", "E", "E", "E", "I", "I", "I", "I", "I", "I", "I", "I", "O", "O", "O", "O",
+            "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "U", "U", "U", "U", "U",
+            "U", "U", "U", "U", "U", "U", "U", "U", "Y", "Y", "Y", "Y", "Y", "Y", "D", "D"
     };
     private static final Random rand = new Random();
 
@@ -370,20 +370,20 @@ public class DataUtil {
     }
 
     /**
-     * Ham chuyen String sang boolean
+     * Checks if an object is null or its string representation is empty.
      *
-     * @param
-     * @return
+     * @param ob the object to check
+     * @return true if the object is null or its string representation is empty, false otherwise
      */
     public static boolean isNullOrEmpty(Object ob) {
         return ob == null || ob.toString().trim().isEmpty();
     }
 
     /**
-     * Ham chuyen String sang boolean
+     * Checks if a CharSequence is null or empty.
      *
-     * @param cs
-     * @return
+     * @param cs the CharSequence to check
+     * @return true if the CharSequence is null or empty, false otherwise
      */
     public static boolean isNullOrEmpty(CharSequence cs) {
         int strLen;
@@ -398,30 +398,42 @@ public class DataUtil {
         return true;
     }
 
+    /**
+     * Checks if a collection is null or empty.
+     *
+     * @param collection the collection to check
+     * @return true if the collection is null or empty, false otherwise
+     */
     public static boolean isNullOrEmpty(final Collection<?> collection) {
         return collection == null || collection.isEmpty();
     }
 
+    /**
+     * Checks if an array is null or empty.
+     *
+     * @param collection the array to check
+     * @return true if the array is null or empty, false otherwise
+     */
     public static boolean isNullOrEmpty(final Object[] collection) {
         return collection == null || collection.length == 0;
     }
 
     /**
-     * Ham chuyen Map sang boolean
+     * Checks if a map is null or empty.
      *
-     * @param map
-     * @return
+     * @param map the map to check
+     * @return true if the map is null or empty, false otherwise
      */
     public static boolean isNullOrEmpty(final Map<?, ?> map) {
         return map == null || map.isEmpty();
     }
 
     /**
-     * Ham chuyen Object sang String
+     * Converts an object to a string, returning a default value if the object is null.
      *
-     * @param obj
-     * @param defaultValue
-     * @return
+     * @param obj          the object to convert
+     * @param defaultValue the default value to return if the object is null
+     * @return the string representation of the object or the default value if the object is null
      */
     public static String safeToString(Object obj, String defaultValue) {
         if (obj == null) {
@@ -431,21 +443,21 @@ public class DataUtil {
     }
 
     /**
-     * Ham chuyen Object sang String
+     * Converts an object to a string, returning an empty string if the object is null.
      *
-     * @param obj
-     * @return
+     * @param obj the object to convert
+     * @return the string representation of the object or an empty string if the object is null
      */
     public static String safeToString(Object obj) {
         return safeToString(obj, "");
     }
 
     /**
-     * Ham chuyen Object sang int
+     * Converts an object to an integer, returning a default value if the conversion fails.
      *
-     * @param obj1
-     * @param defaultValue
-     * @return
+     * @param obj1         the object to convert
+     * @param defaultValue the default value to return if the conversion fails
+     * @return the integer representation of the object or the default value if the conversion fails
      */
     public static int safeToInt(Object obj1, int defaultValue) {
         int result = defaultValue;
@@ -460,10 +472,20 @@ public class DataUtil {
     }
 
     /**
-     * Ham chuyen Object sang Boolean
+     * Converts an object to an integer, returning 0 if the conversion fails.
      *
-     * @param obj1
-     * @return
+     * @param obj1 the object to convert
+     * @return the integer representation of the object or 0 if the conversion fails
+     */
+    public static int safeToInt(Object obj1) {
+        return safeToInt(obj1, 0);
+    }
+
+    /**
+     * Converts an object to a boolean.
+     *
+     * @param obj1 the object to convert
+     * @return the boolean representation of the object or null if the conversion fails
      */
     public static Boolean safeToBoolean(Object obj1) {
         Boolean result = null;
@@ -476,31 +498,11 @@ public class DataUtil {
     }
 
     /**
-     * Ham chuyen Object sang int
+     * Converts an object to a long, returning a default value if the conversion fails.
      *
-     * @param obj1
-     * @return
-     */
-    public static int safeToInt(Object obj1) {
-        return safeToInt(obj1, 0);
-    }
-
-    /**
-     * Ham chuyen Object sang Long
-     *
-     * @param obj1
-     * @return
-     */
-    public static Long safeToLong(Object obj1) {
-        return safeToLong(obj1, 0L);
-    }
-
-    /**
-     * Ham chuyen Object sang Long
-     *
-     * @param obj1
-     * @param defaultValue
-     * @return
+     * @param obj1         the object to convert
+     * @param defaultValue the default value to return if the conversion fails
+     * @return the long representation of the object or the default value if the conversion fails
      */
     public static Long safeToLong(Object obj1, Long defaultValue) {
         Long result = defaultValue;
@@ -515,7 +517,8 @@ public class DataUtil {
                 case Double v -> {
                     return v.longValue();
                 }
-                default -> {}
+                default -> {
+                }
             }
 
             try {
@@ -528,11 +531,21 @@ public class DataUtil {
     }
 
     /**
-     * Ham chuyen Object sang Double
+     * Converts an object to a long, returning 0 if the conversion fails.
      *
-     * @param obj
-     * @param defaultValue
-     * @return
+     * @param obj1 the object to convert
+     * @return the long representation of the object or 0 if the conversion fails
+     */
+    public static Long safeToLong(Object obj1) {
+        return safeToLong(obj1, 0L);
+    }
+
+    /**
+     * Converts an object to a double, returning a default value if the conversion fails.
+     *
+     * @param obj          the object to convert
+     * @param defaultValue the default value to return if the conversion fails
+     * @return the double representation of the object or the default value if the conversion fails
      */
     public static Double safeToDouble(Object obj, Double defaultValue) {
         if (obj == null) {
@@ -547,20 +560,20 @@ public class DataUtil {
     }
 
     /**
-     * Ham chuyen Object sang Double
+     * Converts an object to a double, returning 0.0 if the conversion fails.
      *
-     * @param obj
-     * @return
+     * @param obj the object to convert
+     * @return the double representation of the object or 0.0 if the conversion fails
      */
     public static Double safeToDouble(Object obj) {
         return safeToDouble(obj, 0.0D);
     }
 
     /**
-     * Ham chuyen string sang UUID
+     * Converts a string to a UUID.
      *
-     * @param input
-     * @return
+     * @param input the string to convert
+     * @return the UUID representation of the string or null if the conversion fails
      */
     public static UUID safeToUUID(String input) {
         try {
@@ -572,10 +585,10 @@ public class DataUtil {
     }
 
     /**
-     * Ham chuyen string sang UUID
+     * Checks if a string is a valid UUID.
      *
-     * @param input
-     * @return
+     * @param input the string to check
+     * @return true if the string is a valid UUID, false otherwise
      */
     public static boolean isUUID(String input) {
         try {
@@ -588,41 +601,53 @@ public class DataUtil {
     }
 
     /**
-     * Safe trim
+     * Trims the string representation of an object.
      *
-     * @param
-     * @return
+     * @param input the object to trim
+     * @return the trimmed string representation of the object
      */
     public static String safeTrim(Object input) {
         return safeToString(input).trim();
     }
 
     /**
-     * Safe trim
+     * Trims a string.
      *
-     * @param
-     * @return
+     * @param input the string to trim
+     * @return the trimmed string
      */
     public static String safeTrim(String input) {
         return safeToString(input).trim();
     }
 
     /**
-     * Safe trim
+     * Checks if two objects are equal by comparing their string representations.
      *
-     * @param
-     * @param
-     * @return
+     * @param obj1 the first object to compare
+     * @param obj2 the second object to compare
+     * @return true if the string representations of the objects are equal, false otherwise
      */
     public static boolean safeEqual(Object obj1, Object obj2) {
         return ((obj1 != null) && (obj2 != null) && obj2.toString().equals(obj1.toString()));
     }
 
+    /**
+     * Checks if two strings are equal.
+     *
+     * @param obj1 the first string to compare
+     * @param obj2 the second string to compare
+     * @return true if the strings are equal, false otherwise
+     */
     public static boolean safeEqual(String obj1, String obj2) {
         if (obj1 == obj2) return true;
         return ((obj1 != null) && (obj2 != null) && obj1.equals(obj2));
     }
 
+    /**
+     * Creates an ObjectMapper with specific configurations.
+     *
+     * @return the configured ObjectMapper
+     */
     public static ObjectMapper convertObject() {
         return JsonMapper.builder()
                 .addModule(new JavaTimeModule())
@@ -632,22 +657,22 @@ public class DataUtil {
     }
 
     /**
-     * Ham chuyen string sang boolean
+     * Checks if an object is equal to the string "true".
      *
-     * @param obj
-     * @return
+     * @param obj the object to check
+     * @return true if the object is equal to the string "true", false otherwise
      */
     public static boolean isTrue(Object obj) {
         return safeEqual(safeToString(obj), "true");
     }
 
     /**
-     * Ham chuyen string sang object
+     * Parses a JSON string to an object of the specified class.
      *
-     * @param content
-     * @param clz
-     * @param
-     * @return
+     * @param content the JSON string to parse
+     * @param clz     the class of the object to return
+     * @param <T>     the type of the object
+     * @return the parsed object or a new instance of the class if parsing fails
      */
     public static <T> T parseStringToObject(String content, Class clz) {
         if (isNullOrEmpty(content)) {
@@ -667,12 +692,13 @@ public class DataUtil {
     }
 
     /**
-     * Ham chuyen string sang object
+     * Parses a JSON string to an object of the specified type.
      *
-     * @param content
-     * @param clz
-     * @param defaultValue
-     * @return
+     * @param content      the JSON string to parse
+     * @param clz          the TypeReference of the object to return
+     * @param defaultValue the default value to return if parsing fails
+     * @param <T>          the type of the object
+     * @return the parsed object or the default value if parsing fails
      */
     public static <T> T parseStringToObject(String content, TypeReference<T> clz, T defaultValue) {
         if (isNullOrEmpty(content)) {
@@ -687,10 +713,10 @@ public class DataUtil {
     }
 
     /**
-     * Ham chuyen object sang string
+     * Converts an object to a JSON string.
      *
-     * @param obj
-     * @return
+     * @param obj the object to convert
+     * @return the JSON string representation of the object or an empty string if conversion fails
      */
     public static String parseObjectToString(Object obj) {
         if (obj == null) {
@@ -705,10 +731,11 @@ public class DataUtil {
     }
 
     /**
-     * Ham chuyen convert string to local date time
+     * Converts a string to a LocalDateTime using the specified format.
      *
-     * @param
-     * @return
+     * @param input  the string to convert
+     * @param format the format to use for conversion
+     * @return the LocalDateTime representation of the string or null if conversion fails
      */
     public static LocalDateTime convertStringToLocalDateTime(String input, String format) {
         if (isNullOrEmpty(input)) {
@@ -724,10 +751,12 @@ public class DataUtil {
     }
 
     /**
-     * Ham chuyen format date
+     * Formats a TemporalAccessor to a string using the specified format.
      *
-     * @param
-     * @return
+     * @param date          the TemporalAccessor to format
+     * @param format        the format to use
+     * @param fallbackValue the value to return if the date is null
+     * @return the formatted string or the fallback value if the date is null
      */
     public static String formatDate(TemporalAccessor date, String format, String fallbackValue) {
         if (isNullOrEmpty(date)) {
@@ -738,10 +767,10 @@ public class DataUtil {
     }
 
     /**
-     * Ham chuyen sum list string
+     * Concatenates a list of strings.
      *
-     * @param
-     * @return
+     * @param list the list of strings to concatenate
+     * @return the concatenated string
      */
     public static String sumListString(String... list) {
         StringBuilder result = new StringBuilder();
@@ -752,10 +781,10 @@ public class DataUtil {
     }
 
     /**
-     * Ham chuyen get like string
+     * Creates a SQL LIKE query string.
      *
-     * @param
-     * @return
+     * @param str the string to use in the LIKE query
+     * @return the SQL LIKE query string
      */
     public static String getLikeStr(String str) {
         if (str == null) {
@@ -765,10 +794,10 @@ public class DataUtil {
     }
 
     /**
-     * Ham validate json format
+     * Checks if a string is a valid JSON format.
      *
-     * @param
-     * @return
+     * @param json the string to check
+     * @return true if the string is a valid JSON format, false otherwise
      */
     public static boolean isValidFormatJson(String json) {
         try {
@@ -781,11 +810,11 @@ public class DataUtil {
     }
 
     /**
-     * Ham chuyen local date time sang string
+     * Converts a LocalDateTime to a string using the specified format.
      *
-     * @param date
-     * @param format
-     * @return
+     * @param date   the LocalDateTime to convert
+     * @param format the format to use for conversion
+     * @return the string representation of the LocalDateTime or null if conversion fails
      */
     public static String convertLocalDateToString(LocalDateTime date, String format) {
         try {
@@ -799,10 +828,10 @@ public class DataUtil {
     }
 
     /**
-     * Ham chuyen string sang local date time
+     * Converts a string to a LocalDateTime using the format "dd/MM/yyyy".
      *
-     * @param dateString
-     * @return
+     * @param dateString the string to convert
+     * @return the LocalDateTime representation of the string or null if conversion fails
      */
     public static LocalDateTime convertStringToDateTime(String dateString) {
         try {
@@ -824,33 +853,34 @@ public class DataUtil {
     }
 
     /**
-     * Ham chuyen object sang json
+     * Appends a SQL LIKE query wildcard to a string.
      *
-     * @param
-     * @return
+     * @param field the string to append the wildcard to
+     * @return the string with the appended wildcard
      */
     public static String appendLikeQuery(String field) {
         return "%" + field + "%";
     }
 
     /**
-     * Ham chuyen object sang json
+     * Wraps a Mono in an Optional.
      *
-     * @param
-     * @return
+     * @param input the Mono to wrap
+     * @param <T>   the type of the Mono
+     * @return a Mono of Optional containing the input Mono
      */
     public static <T> Mono<Optional<T>> optional(Mono<T> input) {
         return input.map(Optional::of).switchIfEmpty(Mono.just(Optional.empty()));
     }
 
     /**
-     * Ham chuyen object to xml
+     * Converts an object to an XML string.
      *
-     * @param arg0
-     * @param name
-     * @return
+     * @param arg0 the object to convert
+     * @param name the name of the root element
+     * @return the XML string representation of the object
      */
-    public static String ConvertObjectToXMLString(Object arg0, String name) {
+    public static String convertObjectToXMLString(Object arg0, String name) {
         String xml = "";
         try {
             StringWriter sw = new StringWriter();
@@ -868,11 +898,10 @@ public class DataUtil {
     }
 
     /**
-     * Ham chuyen xml to object
+     * Converts a Document to a string.
      *
-     * @param
-     * @param
-     * @return
+     * @param doc the Document to be converted
+     * @return the string representation of the Document
      */
     private static String convertDocumentToString(Document doc) {
         TransformerFactory tf = TransformerFactory.newInstance();
@@ -891,11 +920,11 @@ public class DataUtil {
     }
 
     /**
-     * Ham chuyen xml to object
+     * Converts a string to a Document.
      *
-     * @param xmlStr
-     * @param
-     * @return
+     * @param xmlStr the string to be converted
+     * @return the Document representation of the string
+     * @throws Exception if an error occurs during conversion
      */
     private static Document convertStringToDocument(String xmlStr) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -911,21 +940,21 @@ public class DataUtil {
     }
 
     /**
-     * Safe to float
+     * Converts an object to a float.
      *
-     * @param obj1
-     * @return
+     * @param obj1 the object to be converted
+     * @return the float representation of the object
      */
     public static Float safeToFloat(Object obj1) {
         return safeToFloat(obj1, 0F);
     }
 
     /**
-     * Safe to float
+     * Converts an object to a float with a default value.
      *
-     * @param obj1
-     * @param defaultValue
-     * @return
+     * @param obj1         the object to be converted
+     * @param defaultValue the default value to return if conversion fails
+     * @return the float representation of the object or the default value if conversion fails
      */
     public static Float safeToFloat(Object obj1, Float defaultValue) {
         Float result = defaultValue;
@@ -951,11 +980,11 @@ public class DataUtil {
     }
 
     /**
-     * Validate page size
+     * Validates the page size.
      *
-     * @param pageSize
-     * @param defaultPageSize
-     * @return
+     * @param pageSize        the page size to be validated
+     * @param defaultPageSize the default page size to use if pageSize is null
+     * @return the validated page size
      */
     public static int validatePageSize(Integer pageSize, int defaultPageSize) {
         if (pageSize == null) {
@@ -967,11 +996,11 @@ public class DataUtil {
     }
 
     /**
-     * Validate page index
+     * Validates the page index.
      *
-     * @param pageIndex
-     * @param pageSize
-     * @return
+     * @param pageIndex the page index to be validated
+     * @param pageSize  the page size to be used for validation
+     * @return the validated page index
      */
     public static int validatePageIndex(Integer pageIndex, Integer pageSize) {
         int offset = 1;
@@ -986,12 +1015,11 @@ public class DataUtil {
     }
 
     /**
-     * Convert date string to LocalDateTime
+     * Converts a date string to LocalDateTime.
      *
-     * @param input
-     * @param format
-     * @return
-     * @throws Exception
+     * @param input  the date string to be converted
+     * @param format the format of the date string
+     * @return the LocalDateTime representation of the date string
      */
     public static LocalDateTime convertDateStrToLocalDateTime(String input, String format) {
         if (isNullOrEmpty(input) || DataUtil.isNullOrEmpty(format)) {
@@ -1015,10 +1043,10 @@ public class DataUtil {
     }
 
     /**
-     * Ham format date
+     * Converts a Date to a string in the format yyyyMMdd.
      *
-     * @param
-     * @return
+     * @param value the Date to be converted
+     * @return the string representation of the Date in the format yyyyMMdd
      */
     public static String convertDate2yyyyMMddStringNoSlash(Date value) {
         if (value != null) {

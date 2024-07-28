@@ -6,17 +6,26 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
+/**
+ * Utility class for generating random passwords.
+ * Provides methods to generate passwords with a mix of upper case letters, lower case letters, and numbers.
+ */
 public class PasswordGenerator {
+
+    /**
+     * Generates a random password using Apache Commons Lang's RandomStringUtils.
+     * The password contains a mix of upper case letters, lower case letters, and numbers.
+     *
+     * @return a randomly generated password
+     */
     public static final String generateCommonLangPassword() {
         String upperCaseLetters = RandomStringUtils.random(2, 65, 90, true, true);
         String lowerCaseLetters = RandomStringUtils.random(2, 97, 122, true, true);
         String numbers = RandomStringUtils.randomNumeric(1);
-        //        String specialChar = "!";
         String totalChars = RandomStringUtils.randomAlphanumeric(2);
         String combinedChars = upperCaseLetters
                 .concat(lowerCaseLetters)
                 .concat(numbers)
-                //                .concat(specialChar)
                 .concat(totalChars);
         List<Character> pwdChars = combinedChars.chars().mapToObj(c -> (char) c).collect(Collectors.toList());
         Collections.shuffle(pwdChars);
@@ -25,6 +34,12 @@ public class PasswordGenerator {
                 .toString();
     }
 
+    /**
+     * Main method for testing the password generation.
+     * Prints a randomly generated password to the console.
+     *
+     * @param args command line arguments
+     */
     public static void main(String[] args) {
         System.out.println(generateCommonLangPassword());
     }

@@ -25,36 +25,38 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Component
 public class KeycloakProvider {
-    private static final Keycloak keycloak = null;
-    private static final Map<String, ClientRepresentation> clientMap = new HashMap<>();
 
     @Value("${keycloak.serverUrl}")
     public String serverURL;
-
     @Value("${keycloak.realm}")
     public String realm;
-
     @Value("${keycloak.clientId}")
     public String clientID;
-
     @Value("${keycloak.clientSecret}")
     public String clientSecret;
 
+    private static final Map<String, ClientRepresentation> clientMap = new HashMap<>();
+    private volatile Keycloak keycloak = null;
+
+    // volatile and Double-Checked Locking -> Thread-Safe.
     public Keycloak getInstance() {
         if (keycloak == null) {
-            return KeycloakBuilder.builder()
-                    .realm(realm)
-                    .serverUrl(serverURL)
-                    .clientId(clientID)
-                    .clientSecret(clientSecret)
-                    .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
-                    .build();
+            synchronized (KeycloakProvider.class) {
+                if (keycloak == null) {
+                    keycloak = KeycloakBuilder.builder()
+                            .serverUrl(serverURL)
+                            .realm(realm)
+                            .clientId(clientID)
+                            .clientSecret(clientSecret)
+                            .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
+                            .build();
+                }
+            }
         }
-
         return keycloak;
     }
 
-    public RealmResource getReamResource() {
+    public RealmResource getRealmResource() {
         return getInstance().realm(realm);
     }
 

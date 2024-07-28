@@ -8,6 +8,8 @@ logging:
     io.r2dbc.postgresql.PARAM: DEBUG # for parameters
 # spring config
 spring:
+  application:
+    name: auth-service
   main:
     web-application-type: reactive
     allow-bean-definition-overriding: true
@@ -28,30 +30,30 @@ spring:
             token-uri: ${app.config.keycloak.url}/realms/${app.config.keycloak.realm}/protocol/openid-connect/token
         registration:
           oidc:
-            client-id: sme-system
-            client-secret: 5Rj8acZcC7KVQgVmnCRI0OdpjqPIJfoQ
-            authorization-grant-type: client_credentials
+            client-id: ezbuy-system
+            client-secret: I77WqESHTsYdPHEHX1sAwiKhoOf9Zxsc
+            authorization-grant-type: password #client_credentials
       resourceserver:
         jwt:
           jwk-set-uri: ${app.config.keycloak.url}/realms/${app.config.keycloak.realm}/protocol/openid-connect/certs
       keycloak:
-        client-id: web-client
+        client-id: ezbuy-system
 
 # oauth2 config
 app:
   config:
     keycloak:
-      url: http://sme-keycloak.bu-order.svc:8080/auth
-      realm: sme-portal
+      url: http://localhost:8080
+      realm: ezbuy-server
 
 # web client config
 client:
   keycloak:
-    address: http://10.207.252.78:8430/auth/realms/sme-portal/protocol/openid-connect
+    address: http://localhost:8080/auth/realms/ezbuy-server/protocol/openid-connect
     name: keycloak
     auth:
-      client-id: web-client
-      client-secret: jzLlmUxlxLMMOpnjkNU3wMDZuCKB8GUE
+      client-id: ezbuy-system
+      client-secret: SVJELktHwmXYSHWsJ7QbvY7tmtn7LOjP
   noti:
     internal-oauth: true
     address: http://10.207.252.223/sme-noti
@@ -82,7 +84,7 @@ client:
     address: http://localhost:8077/
     name: syncClient
   ca:
-    address: http://192.168.176.210:8504/WS_CA/SDKPayment/CaServiceForSmePortal #rest api
+    address: http://192.168.176.210:8504/WS_CA/SDKPayment/CaServiceForSmePortal
     username: 1ad0e3d776c05dbce60bfa1b98cd0143
     password: 8964f27dfccd0ecd82dd17dd969a0adf
     name: caClient
@@ -183,10 +185,10 @@ application:
     sync-data:
       limit: 500
 keycloak:
-  clientId: web-client
-  clientSecret: jzLlmUxlxLMMOpnjkNU3wMDZuCKB8GUE
-  realm: sme-portal
-  serverUrl: http://10.207.252.78:8430/auth
+  clientId: ezbuy-system
+  clientSecret: I77WqESHTsYdPHEHX1sAwiKhoOf9Zxsc
+  realm: ezbuy-server
+  serverUrl: http://localhost:8080
   host: sme.viettel.vn
 minio:
   bucket: sme-public

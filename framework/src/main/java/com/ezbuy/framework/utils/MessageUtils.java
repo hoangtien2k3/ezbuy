@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MessageUtils {
 
-    private static final String BASE_NAME = "lang";
+    private static final String BASE_NAME = "messages";
 
     public static String getMessage(String code, Locale locale) {
         return getMessage(code, locale, null);
