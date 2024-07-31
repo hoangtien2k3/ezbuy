@@ -23,7 +23,7 @@ services:
 
   # pgadmin:
   pgadmin:
-    image: dpage/pgadmin4:8.8
+    image: dpage/pgadmin4:8.10
     container_name: pgadmin
     ports:
       - "${PGADMIN_LISTEN_PORT}:80"
