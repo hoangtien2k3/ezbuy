@@ -28,10 +28,13 @@ public class KeycloakProvider {
 
     @Value("${keycloak.serverUrl}")
     public String serverURL;
+
     @Value("${keycloak.realm}")
     public String realm;
+
     @Value("${keycloak.clientId}")
     public String clientID;
+
     @Value("${keycloak.clientSecret}")
     public String clientSecret;
 

@@ -1,8 +1,10 @@
 package com.ezbuy.auth.service;
 
+import org.springframework.core.io.Resource;
+
 import com.ezbuy.auth.model.dto.request.ActionLogRequest;
 import com.ezbuy.auth.model.dto.response.SearchActionLogResponse;
-import org.springframework.core.io.Resource;
+
 import reactor.core.publisher.Mono;
 
 public interface ActionLogService {
@@ -20,5 +22,4 @@ public interface ActionLogService {
      * @return
      */
     Mono<Resource> exportUser(ActionLogRequest request);
-
 }

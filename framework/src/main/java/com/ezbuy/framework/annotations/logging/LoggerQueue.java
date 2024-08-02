@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import com.ezbuy.framework.model.logging.LoggerDTO;
 
 import brave.Span;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import reactor.util.context.Context;
 
@@ -16,7 +17,9 @@ public class LoggerQueue {
     private static LoggerQueue mMe = null;
     private ArrayBlockingQueue<LoggerDTO> myQueue = null;
     private static Object myLock = new Object();
+    @Getter
     private int countFalse = 0;
+    @Getter
     private int countSuccess = 0;
 
     public static LoggerQueue getInstance() {
@@ -81,14 +84,6 @@ public class LoggerQueue {
 
     public int getQueueSize() {
         return myQueue.size();
-    }
-
-    public int getCountFalse() {
-        return countFalse;
-    }
-
-    public int getCountSuccess() {
-        return countSuccess;
     }
 
     public void resetCount() {

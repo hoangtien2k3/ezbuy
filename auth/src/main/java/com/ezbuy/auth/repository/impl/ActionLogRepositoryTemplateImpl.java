@@ -1,23 +1,25 @@
 package com.ezbuy.auth.repository.impl;
 
-import com.ezbuy.framework.repository.BaseTemplateRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import com.ezbuy.auth.model.postgresql.ActionLog;
-import com.ezbuy.auth.model.dto.request.ActionLogRequest;
-import com.ezbuy.framework.utils.DataUtil;
-import com.ezbuy.framework.utils.SQLUtils;
-import com.ezbuy.framework.utils.SortingUtils;
-import com.ezbuy.auth.repository.ActionLogRepositoryTemplate;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.springframework.stereotype.Repository;
+
+import com.ezbuy.auth.model.dto.request.ActionLogRequest;
+import com.ezbuy.auth.model.postgresql.ActionLog;
+import com.ezbuy.auth.repository.ActionLogRepositoryTemplate;
+import com.ezbuy.framework.repository.BaseTemplateRepository;
+import com.ezbuy.framework.utils.DataUtil;
+import com.ezbuy.framework.utils.SQLUtils;
+import com.ezbuy.framework.utils.SortingUtils;
+
+import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Repository
 @RequiredArgsConstructor
@@ -36,10 +38,10 @@ public class ActionLogRepositoryTemplateImpl extends BaseTemplateRepository impl
         buildQuery(query, params, request);
         query.append("ORDER BY ").append(sorting).append(" \n");
         if (!DataUtil.isNullOrEmpty(request.getPageSize())) {
-            query.append(" LIMIT :pageSize  \n" +
-                    "OFFSET :index ");
+            query.append(" LIMIT :pageSize  \n" + "OFFSET :index ");
             params.put("pageSize", request.getPageSize());
-            BigDecimal index = (new BigDecimal(request.getPageIndex() - 1)).multiply(new BigDecimal(request.getPageSize()));
+            BigDecimal index =
+                    (new BigDecimal(request.getPageIndex() - 1)).multiply(new BigDecimal(request.getPageSize()));
             params.put("index", index);
         }
         return listQuery(query.toString(), params, ActionLog.class);
@@ -57,7 +59,9 @@ public class ActionLogRepositoryTemplateImpl extends BaseTemplateRepository impl
         builder.append("select * from action_log where 1=1 ");
         if (!DataUtil.isNullOrEmpty(request.getUsername())) {
             builder.append(" and username LIKE CONCAT('%',:username, '%') ");
-            params.put("username", SQLUtils.replaceSpecialDigit(request.getUsername().trim()));
+            params.put(
+                    "username",
+                    SQLUtils.replaceSpecialDigit(request.getUsername().trim()));
         }
         if (!DataUtil.isNullOrEmpty(request.getIp())) {
             builder.append(" and ip LIKE CONCAT('%',:ip, '%') ");
@@ -73,11 +77,12 @@ public class ActionLogRepositoryTemplateImpl extends BaseTemplateRepository impl
     }
 
     private LocalDateTime getFromDate(LocalDate fromDate) {
-        return fromDate == null ? LocalDateTime.from(LocalDate.now().atStartOfDay().minusDays(32)) : fromDate.atTime(0, 0, 0);
+        return fromDate == null
+                ? LocalDateTime.from(LocalDate.now().atStartOfDay().minusDays(32))
+                : fromDate.atTime(0, 0, 0);
     }
 
     private LocalDateTime getToDate(LocalDate toDate) {
         return toDate == null ? LocalDateTime.from(LocalDate.now().atTime(LocalTime.MAX)) : toDate.atTime(23, 59, 59);
     }
-
 }

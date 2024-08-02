@@ -29,12 +29,14 @@ public class UrlPaths {
         String GET_CONTRACT = "/contract";
         String RECEIVE_SIGN_RESULT = "/receive-sign-result"; // API lay ket qua chuyen ky tu vcontract
         String GET_INDIVIDUAL_BY_USERNAME = "/username";
-        String VIEW_BUSINESS_AUTH_CONTRACT = "/view-business-auth-contract"; // API lay file xac minh doanh nghiep da ky dang base64 tu vcontract de view len giao dien Hub
+        String VIEW_BUSINESS_AUTH_CONTRACT =
+                "/view-business-auth-contract"; // API lay file xac minh doanh nghiep da ky dang base64 tu vcontract de
+        // view len giao dien Hub
 
         String BLOCK_LOGIN = "/block-partner-license-key-login";
 
-        String CONFIRM_OTP = "/confirm-otp";//ham xac nhan otp
-        String GENERATE_OTP = "/generate-otp";//ham sinh ma otp
+        String CONFIRM_OTP = "/confirm-otp"; // ham xac nhan otp
+        String GENERATE_OTP = "/generate-otp"; // ham sinh ma otp
     }
 
     public interface User {
@@ -50,7 +52,6 @@ public class UrlPaths {
         String GET_PROFILES = "{id}";
         String TAX_BRANCHES = "tax-branches";
         String ID_TYPES = "id-types";
-
         String SYNC_SIGN_HASH = "/sync-sign-hash";
     }
 
@@ -79,11 +80,12 @@ public class UrlPaths {
         String VALIDATE_IMPORT_UNIT = "/unit/validate-import";
         String GET_UNIT_RELATION = "/unit/relation";
         String GET_ALL_ORGANIZATION_UNIT_ACTIVE = "/unit/all-organization-active";
-        String GET_ROOT_UNIT = "/unit/root-unit"; //api lay don vi goc
-        String GET_UNIT_BY_CODE = "/unit/code/{organizationId}/{code}"; //api lay don vi theo ma code
-        String GET_UNIT_SUB_BY_PARENT_ID = "/unit/sub"; //api lay don vi con
-        String GET_UNIT_BY_USER_ID_AND_ORGANIZATION_ID = "/unit/user-organization"; //api lay danh sach don vi theo user va to chuc
-        String GET_USER_UNIT = "/user-units"; //api lay danh sach don vi theo user
+        String GET_ROOT_UNIT = "/unit/root-unit"; // api lay don vi goc
+        String GET_UNIT_BY_CODE = "/unit/code/{organizationId}/{code}"; // api lay don vi theo ma code
+        String GET_UNIT_SUB_BY_PARENT_ID = "/unit/sub"; // api lay don vi con
+        String GET_UNIT_BY_USER_ID_AND_ORGANIZATION_ID =
+                "/unit/user-organization"; // api lay danh sach don vi theo user va to chuc
+        String GET_USER_UNIT = "/user-units"; // api lay danh sach don vi theo user
     }
 
     public interface IndividualPermission {
@@ -108,7 +110,6 @@ public class UrlPaths {
         String FIND_REPRESENTATIVE_BY_ORGANIZATION_ID = "/find-representative-by-organization-id";
     }
 
-
     public interface Identify {
         String PREFIX = "v1/identify";
         String UPDATE_IDENTIFY = "update";
@@ -118,17 +119,21 @@ public class UrlPaths {
         String TRUSTED_IDNO_ORGANIZATION_MEMBER = "trusted-idNo-organization-member";
         String GET_ID_NO_ORGANIZATION = "idNo-organization";
         String LST_TRUSTED_IDNO_ORGANIZATION = "lst-trusted-idNo-organization";
-        String GET_INFO_TENANT_IDENTIFY = "info-tenant-identify"; //lay thong tin giay to theo loai giay to
-        String FIND_BY_TENANT_ID_AND_TYPE = "find-by-tenant-id-and-type"; //lay thong tin giay to theo loai giay to va id
-        String IDENTIFY_BY_TYPE_TENANT_ID_TRUST_STATUS = "/type-tenant-trust-status"; // lay danh sach tenant identify theo dieu kien truyen vao
+        String GET_INFO_TENANT_IDENTIFY = "info-tenant-identify"; // lay thong tin giay to theo loai giay to
+        String FIND_BY_TENANT_ID_AND_TYPE =
+                "find-by-tenant-id-and-type"; // lay thong tin giay to theo loai giay to va id
+        String IDENTIFY_BY_TYPE_TENANT_ID_TRUST_STATUS =
+                "/type-tenant-trust-status"; // lay danh sach tenant identify theo dieu kien truyen vao
         String UPDATE_ORG_TRUST_STATUS = "/org-trust-status"; // ham cap nhat trang thai xac minh doanh nghiep
         String GET_CTS_LIST_CA = "/cts-list-ca"; // lay danh sach chung thu so
         String UPDATE_ORG_TRUST_STATUS_BY_TENANT_ID = "/org-trust-status/tenant-id";
-        String UPDATE_BUSINESS_AUTH_TENANT = "update/business-auth-tenant"; //lay thong tin giay to theo loai giay to
-        String GET_INFO_TENANT_IDENTIFY_BY_TYPE = "tenant-identify/type"; //lay thong tin giay to theo loai giay to
+        String UPDATE_BUSINESS_AUTH_TENANT = "update/business-auth-tenant"; // lay thong tin giay to theo loai giay to
+        String GET_INFO_TENANT_IDENTIFY_BY_TYPE = "tenant-identify/type"; // lay thong tin giay to theo loai giay to
 
-        String UPDATE_ORG_TRUST_STATUS_NOT_SIGN = "/org-trust-status/not-sign"; // ham cap nhat trang thai xac thuc doanh nghiep sau khi tao don cts
-        String GET_INFO_TENANT_IDENTIFY_INPROGRESS = "info-tenant-identify/in-progress"; //lay thong tin giay to dang xac thuc
+        String UPDATE_ORG_TRUST_STATUS_NOT_SIGN =
+                "/org-trust-status/not-sign"; // ham cap nhat trang thai xac thuc doanh nghiep sau khi tao don cts
+        String GET_INFO_TENANT_IDENTIFY_INPROGRESS =
+                "info-tenant-identify/in-progress"; // lay thong tin giay to dang xac thuc
     }
 
     public interface SyncData {
@@ -181,7 +186,7 @@ public class UrlPaths {
     }
 
     public interface UserCredential {
-        String PREFIX = "v1/user-credential"; //api lay thong tin user dang nhap
+        String PREFIX = "v1/user-credential"; // api lay thong tin user dang nhap
     }
 
     public interface ActionLog {

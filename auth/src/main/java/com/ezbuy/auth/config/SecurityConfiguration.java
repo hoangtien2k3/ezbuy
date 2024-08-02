@@ -1,18 +1,18 @@
-//package com.ezbuy.auth.config; // package com.viettel.sme.authservice.config;
+// package com.ezbuy.auth.config; // package com.viettel.sme.authservice.config;
 //
-//import java.util.Arrays;
+// import java.util.Arrays;
 //
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.http.HttpMethod;
-//import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
-//import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
-//import org.springframework.web.cors.CorsConfiguration;
-//import org.springframework.web.cors.reactive.CorsConfigurationSource;
-//import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+// import org.springframework.context.annotation.Bean;
+// import org.springframework.http.HttpMethod;
+// import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
+// import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+// import org.springframework.web.cors.CorsConfiguration;
+// import org.springframework.web.cors.reactive.CorsConfigurationSource;
+// import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 //
-//@EnableWebFluxSecurity
-//@EnableReactiveMethodSecurity
-//public class SecurityConfiguration {
+// @EnableWebFluxSecurity
+// @EnableReactiveMethodSecurity
+// public class SecurityConfiguration {
 //
 //    private static final String FRONTEND_LOCALHOST = "http://localhost:3000";
 //    private static final String FRONTEND_CMS = "http://10.207.59.7:8988";
@@ -33,4 +33,4 @@
 //        source.registerCorsConfiguration("/**", corsConfig);
 //        return source;
 //    }
-//}
+// }

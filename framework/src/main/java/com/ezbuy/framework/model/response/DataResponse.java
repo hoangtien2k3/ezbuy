@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import com.ezbuy.framework.constants.MessageConstant;
+import com.ezbuy.framework.utils.Translator;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,10 +36,10 @@ public class DataResponse<T> implements Serializable {
      * Constructs a DataResponse with a message and data.
      *
      * @param message the message to be included in the response
-     * @param data the data to be included in the response
+     * @param data    the data to be included in the response
      */
     public DataResponse(String message, T data) {
-        this.message = message;
+        this.message = Translator.toLocaleVi(message);
         this.data = data;
     }
 
@@ -48,14 +49,14 @@ public class DataResponse<T> implements Serializable {
      * @param message the message to be included in the response
      */
     public DataResponse(String message) {
-        this.message = message;
+        this.message = Translator.toLocaleVi(message);
     }
 
     /**
      * Creates a successful DataResponse with the provided data.
      *
      * @param data the data to be included in the response
-     * @param <T> the type of the response data
+     * @param <T>  the type of the response data
      * @return a DataResponse indicating success
      */
     public static <T> DataResponse<T> success(T data) {
@@ -70,7 +71,7 @@ public class DataResponse<T> implements Serializable {
      * Creates a failed DataResponse with the provided data.
      *
      * @param data the data to be included in the response
-     * @param <T> the type of the response data
+     * @param <T>  the type of the response data
      * @return a DataResponse indicating failure
      */
     public static <T> DataResponse<T> failed(T data) {

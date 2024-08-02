@@ -7,8 +7,8 @@ public final class ErrorCode {
     }
 
     public static final class OtpErrorCode {
-        public static final String OTP_NOT_MATCH = "0EC_01";
-        public static final String OTP_EMPTY = "0EC_02";
+        public static final String OTP_NOT_MATCH = "0TP_01";
+        public static final String OTP_EMPTY = "0TP_02";
     }
 
     public static final class AuthErrorCode {

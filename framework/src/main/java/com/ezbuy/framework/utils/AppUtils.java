@@ -19,8 +19,7 @@ public class AppUtils {
      * @param functionMono the Mono stream to be executed
      */
     public static void runHiddenStream(Mono functionMono) {
-        functionMono
-                .subscribeOn(Schedulers.boundedElastic())
+        functionMono.subscribeOn(Schedulers.boundedElastic())
                 .timeout(Duration.ofMinutes(2))
                 .doOnError(e -> log.error("runHiddenStream ex: ", e))
                 .subscribe();
@@ -34,8 +33,7 @@ public class AppUtils {
      * @param timeout      the timeout duration in minutes
      */
     public static void runHiddenStreamTimeout(Mono functionMono, int timeout) {
-        functionMono
-                .subscribeOn(Schedulers.boundedElastic())
+        functionMono.subscribeOn(Schedulers.boundedElastic())
                 .timeout(Duration.ofMinutes(timeout))
                 .doOnError(e -> log.error("runHiddenStream ex: ", e))
                 .subscribe();
@@ -48,8 +46,7 @@ public class AppUtils {
      * @param functionMono the Mono stream to be executed
      */
     public static void runHiddenStreamWithoutTimeout(Mono functionMono) {
-        functionMono
-                .subscribeOn(Schedulers.boundedElastic())
+        functionMono.subscribeOn(Schedulers.boundedElastic())
                 .doOnError(e -> log.error("runHiddenStream ex: ", e))
                 .subscribe();
     }

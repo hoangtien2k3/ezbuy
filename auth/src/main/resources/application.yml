@@ -2,6 +2,9 @@
 server:
   port: 8088
 logging:
+#  config: classpath:log4j2.xml
+#  pattern:
+#    console: "%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %5p %t --- [%15.15t] %c{1}.%M : %m%n"
   level:
     root: INFO
     io.r2dbc.postgresql.QUERY: DEBUG # for queries
@@ -108,6 +111,12 @@ application:
     - uri: /actuator/health
       methods:
         - GET
+    - uri: /v1/auth/generate-otp
+      methods:
+          - POST
+    - uri: /v1/auth/confirm-otp
+      methods:
+          - POST
     - uri: /v1/auth/login
       methods:
         - POST
@@ -189,7 +198,7 @@ keycloak:
   clientSecret: I77WqESHTsYdPHEHX1sAwiKhoOf9Zxsc
   realm: ezbuy-server
   serverUrl: http://localhost:8080
-  host: sme.viettel.vn
+  host:
 minio:
   bucket: sme-public
   enabled: true

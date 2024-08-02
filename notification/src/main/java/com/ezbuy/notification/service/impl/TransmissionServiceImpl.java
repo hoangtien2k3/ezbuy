@@ -180,7 +180,8 @@ public class TransmissionServiceImpl implements TransmissionService {
                                     .flatMap(categoryId -> notificationRepository
                                             .save(Notification.builder()
                                                     .id(DataUtil.safeTrim(notiId))
-                                                    .contentType(DataUtil.safeTrim(createNotificationDTO.getContentType()))
+                                                    .contentType(
+                                                            DataUtil.safeTrim(createNotificationDTO.getContentType()))
                                                     .createBy(DataUtil.safeTrim(tokenUser.getUsername()))
                                                     .updateBy(DataUtil.safeTrim(tokenUser.getUsername()))
                                                     .expectSendTime(createNotificationDTO.getExpectSendTime())
@@ -190,17 +191,21 @@ public class TransmissionServiceImpl implements TransmissionService {
                                                     .severity(DataUtil.safeTrim(createNotificationDTO.getSeverity()))
                                                     .status(1)
                                                     .build())
-                                            .switchIfEmpty(Mono.error(new BusinessException(INTERNAL_SERVER_ERROR, "category.not.found")))
+                                            .switchIfEmpty(Mono.error(
+                                                    new BusinessException(INTERNAL_SERVER_ERROR, "category.not.found")))
                                             .flatMap(data2 -> {
                                                 if (DataUtil.isNullOrEmpty(createNotificationDTO.getReceiverList())) {
-                                                    return Mono.error(new BusinessException(NOT_FOUND, Translator.toLocaleVi("no.receiver")));
+                                                    return Mono.error(new BusinessException(
+                                                            NOT_FOUND, Translator.toLocaleVi("no.receiver")));
                                                 }
 
                                                 // check invalid UUID receiver
                                                 boolean invalidReceiver =
                                                         createNotificationDTO.getReceiverList().stream()
-                                                                .anyMatch(receiver -> (!DataUtil.isUUID(DataUtil.safeTrim(receiver.getUserId()))
-                                                                        && DataUtil.isNullOrEmpty(receiver.getEmail())));
+                                                                .anyMatch(receiver -> (!DataUtil.isUUID(
+                                                                                DataUtil.safeTrim(receiver.getUserId()))
+                                                                        && DataUtil.isNullOrEmpty(
+                                                                                receiver.getEmail())));
                                                 if (invalidReceiver) {
                                                     return Mono.error(new BusinessException(
                                                             INVALID_PARAMS,
@@ -420,7 +425,7 @@ public class TransmissionServiceImpl implements TransmissionService {
         if (!DataUtil.isNullOrEmpty(receiverDataDTO.getUserId())
                 && !DataUtil.isUUID(receiverDataDTO.getUserId())
                 && (DataUtil.isNullOrEmpty(receiverDataDTO.getEmail())
-                || !ValidateUtils.validateRegex(receiverDataDTO.getEmail(), Regex.EMAIL_REGEX))) {
+                        || !ValidateUtils.validateRegex(receiverDataDTO.getEmail(), Regex.EMAIL_REGEX))) {
             throw new BusinessException(INVALID_PARAMS, Translator.toLocaleVi("receiver.string.invalid"));
         }
         if (DataUtil.safeTrim(receiverDataDTO.getEmail()).length() > 200) {

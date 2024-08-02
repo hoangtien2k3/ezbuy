@@ -104,7 +104,8 @@ public interface AuthService {
      * @param serverWebExchange the server web exchange
      * @return a Mono emitting a DataResponse indicating the result of the password reset
      */
-    Mono<DataResponse<Object>> resetPassword(ResetPasswordRequest resetPasswordRequest, ServerWebExchange serverWebExchange);
+    Mono<DataResponse<Object>> resetPassword(
+            ResetPasswordRequest resetPasswordRequest, ServerWebExchange serverWebExchange);
 
     /**
      * Changes the password based on the given request and server exchange.

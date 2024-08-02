@@ -12,6 +12,4 @@ import lombok.Data;
 @ConfigurationProperties(prefix = "client.auth", ignoreInvalidFields = true)
 @Data
 @AllArgsConstructor
-public class AuthProperties extends WebClientProperties {
-
-}
+public class AuthProperties extends WebClientProperties {}

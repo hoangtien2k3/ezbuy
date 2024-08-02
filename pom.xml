@@ -159,7 +159,7 @@
                         <importOrder>
                             <order>java,jakarta,javax,org,com,com.diffplug,com.ezbuy,</order>
                         </importOrder>
-                        <licenseHeader>
+<!--                        <licenseHeader>
                             <content><![CDATA[
 /*
  * Copyright $YEAR author - Hoàng Anh Tiến
@@ -177,7 +177,7 @@
  * limitations under the License.
  */
                             ]]></content>
-                        </licenseHeader>
+                        </licenseHeader>-->
                     </java>
                 </configuration>
                 <executions>

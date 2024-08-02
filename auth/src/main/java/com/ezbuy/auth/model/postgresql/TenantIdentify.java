@@ -77,7 +77,7 @@ public class TenantIdentify {
     @Length(max = 36, message = "identify.updateBy.over.length")
     private String updateBy;
 
-    private String requestCode; // ma chuyen ky vcontract
+    private String requestCode;
 
     @Transient
     private boolean isNew = false;

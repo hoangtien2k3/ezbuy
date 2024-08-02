@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
 
 import lombok.AllArgsConstructor;
@@ -16,10 +17,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "user_otp")
 @Builder
-public class UserOtp {
+public class UserOtp implements Persistable<String> {
     @Id
     private String id;
-
     private String type;
     private String email;
     private String otp;
@@ -34,14 +34,15 @@ public class UserOtp {
     @Transient
     private boolean newOtp;
 
-    //    @Transient
-    //    @Override
-    //    public boolean isNew() {
-    //        return this.newOtp || id == null;
-    //    }
+    @Transient
+    @Override
+    public boolean isNew() {
+        return this.newOtp || id == null;
+    }
 
     public UserOtp setAsNew() {
         this.newOtp = true;
         return this;
     }
+
 }

@@ -1,33 +1,34 @@
 package com.ezbuy.auth.service.impl;
 
-import com.ezbuy.auth.constants.ActionLogType;
-import com.ezbuy.auth.model.dto.response.SearchActionLogResponse;
-import com.ezbuy.auth.service.ActionLogService;
-import com.ezbuy.framework.utils.DataUtil;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
-
-import com.ezbuy.auth.model.dto.request.ActionLogRequest;
-import com.ezbuy.auth.model.postgresql.ActionLog;
-import com.ezbuy.auth.model.dto.PaginationDTO;
-import com.ezbuy.auth.repository.ActionLogRepositoryTemplate;
-import com.ezbuy.framework.constants.CommonErrorCode;
-import com.ezbuy.framework.constants.Constants;
-import com.ezbuy.framework.exception.BusinessException;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Service;
+
+import com.ezbuy.auth.constants.ActionLogType;
+import com.ezbuy.auth.model.dto.PaginationDTO;
+import com.ezbuy.auth.model.dto.request.ActionLogRequest;
+import com.ezbuy.auth.model.dto.response.SearchActionLogResponse;
+import com.ezbuy.auth.model.postgresql.ActionLog;
+import com.ezbuy.auth.repository.ActionLogRepositoryTemplate;
+import com.ezbuy.auth.service.ActionLogService;
+import com.ezbuy.framework.constants.CommonErrorCode;
+import com.ezbuy.framework.constants.Constants;
+import com.ezbuy.framework.exception.BusinessException;
+import com.ezbuy.framework.utils.DataUtil;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 @Service
 @Slf4j
@@ -41,8 +42,9 @@ public class ActionLogServiceImpl implements ActionLogService {
         validate(request);
         request.setPageIndex(DataUtil.safeToInt(request.getPageIndex(), 1));
         request.setPageSize(DataUtil.safeToInt(request.getPageSize(), 10));
-        return Mono.zip(actionLogRepositoryTemplate.search(request).collectList(),
-                actionLogRepositoryTemplate.count(request))
+        return Mono.zip(
+                        actionLogRepositoryTemplate.search(request).collectList(),
+                        actionLogRepositoryTemplate.count(request))
                 .flatMap(tuple -> {
                     PaginationDTO paginationDTO = PaginationDTO.builder()
                             .pageIndex(request.getPageIndex())
@@ -62,7 +64,9 @@ public class ActionLogServiceImpl implements ActionLogService {
         validate(request);
         request.setPageIndex(null);
         request.setPageSize(null);
-        return actionLogRepositoryTemplate.search(request).collectList()
+        return actionLogRepositoryTemplate
+                .search(request)
+                .collectList()
                 .flatMap(actionLogList -> Mono.fromCallable(() -> writeExcel(writeLogExcel(actionLogList))));
     }
 
@@ -75,7 +79,8 @@ public class ActionLogServiceImpl implements ActionLogService {
     }
 
     private ByteArrayResource writeExcel(Workbook workbook) {
-        try (ByteArrayOutputStream os = new ByteArrayOutputStream(); workbook) {
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream();
+                workbook) {
             workbook.write(os);
             return new ByteArrayResource(os.toByteArray()) {
                 @Override
@@ -90,9 +95,8 @@ public class ActionLogServiceImpl implements ActionLogService {
     }
 
     private Workbook writeLogExcel(List<ActionLog> actionLogList) {
-        try (InputStream templateInputStream = new ClassPathResource("template/template_action_log.xlsx")
-                .getInputStream()
-        ) {
+        try (InputStream templateInputStream =
+                new ClassPathResource("template/template_action_log.xlsx").getInputStream()) {
             Workbook workbook = new XSSFWorkbook(templateInputStream);
             Sheet sheet = workbook.getSheetAt(0);
 
@@ -126,13 +130,17 @@ public class ActionLogServiceImpl implements ActionLogService {
             style.setAlignment(HorizontalAlignment.LEFT);
             for (ActionLog actionLog : actionLogList) {
                 Row row = sheet.createRow(rowCount++);
-                writeRow(row, centerStyle, style, 0, Arrays.asList(
-                        String.valueOf(index++),
-                        actionLog.getUsername(),
-                        actionLog.getIp(),
-                        DataUtil.safeToString(ActionLogType.MAP.get(actionLog.getType())),
-                        DataUtil.formatDate(actionLog.getCreateAt(), Constants.DateTimePattern.DMY_HMS, "")
-                ));
+                writeRow(
+                        row,
+                        centerStyle,
+                        style,
+                        0,
+                        Arrays.asList(
+                                String.valueOf(index++),
+                                actionLog.getUsername(),
+                                actionLog.getIp(),
+                                DataUtil.safeToString(ActionLogType.MAP.get(actionLog.getType())),
+                                DataUtil.formatDate(actionLog.getCreateAt(), Constants.DateTimePattern.DMY_HMS, "")));
             }
 
             return workbook;

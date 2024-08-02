@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Max;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
 
 import lombok.AllArgsConstructor;
@@ -14,12 +15,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Table(name = "individual")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
-public class Individual {
+@Table(name = "individual")
+public class Individual implements Persistable<String> {
 
     @Id
     private String id;
@@ -82,18 +83,18 @@ public class Individual {
 
     private Boolean passwordChange;
 
-    @Transient
-    private boolean isNew = false;
-
-    //    @Transient
-    //    @Override
-    //    public boolean isNew() {
-    //        return this.isNew || id == null;
-    //    }
-
     private LocalDateTime probationDay;
 
     private LocalDateTime startWorkingDay;
+
+    @Transient
+    private boolean isNew = false;
+
+    @Transient
+    @Override
+    public boolean isNew() {
+        return this.isNew || id == null;
+    }
 
     public Individual(Individual individual) {
         this.id = individual.id;

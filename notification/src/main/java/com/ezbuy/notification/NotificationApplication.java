@@ -9,12 +9,13 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ImportResource;
 
-@SpringBootApplication(exclude = {
-        DataSourceAutoConfiguration.class,
-        DataSourceTransactionManagerAutoConfiguration.class,
-        HibernateJpaAutoConfiguration.class,
-        SecurityAutoConfiguration.class
-})
+@SpringBootApplication(
+        exclude = {
+            DataSourceAutoConfiguration.class,
+            DataSourceTransactionManagerAutoConfiguration.class,
+            HibernateJpaAutoConfiguration.class,
+            SecurityAutoConfiguration.class
+        })
 @ComponentScan(basePackages = {"com.ezbuy.*"})
 @ImportResource({"classpath*:applicationContext.xml"})
 // @EnableScheduling
