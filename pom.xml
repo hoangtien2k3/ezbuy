@@ -30,8 +30,9 @@
         <module>shipping</module>
         <module>system</module>
         <module>tax</module>
-        <module>notification</module>
-        <module>send-notification</module>
+        <module>noti-send</module>
+        <module>noti-model</module>
+        <module>noti-service</module>
     </modules>
 
     <properties>
@@ -92,6 +93,15 @@
             <artifactId>mapstruct-processor</artifactId>
             <version>${mapstruct.processor.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <!-- r2dbc depenedcies-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-r2dbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.r2dbc</groupId>
+            <artifactId>r2dbc-pool</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
