@@ -158,7 +158,7 @@ public final class AuthConstants {
 
     public static final class ClientName {
         public static final String HUB_SME = "web-client";
-        public static final String EZBUY_SYSTEM = "ezbuy-system";
+        public static final String EZBUY_CLIENT = "ezbuy-client";
     }
 
     public static final class Field {

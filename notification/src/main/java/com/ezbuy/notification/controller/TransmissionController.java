@@ -32,15 +32,15 @@ public class TransmissionController {
         return transmissionService.getCountNoticeResponseDTO();
     }
 
-    @PreAuthorize("hasAnyAuthority('user')")
-    @GetMapping("/noti")
-    public Mono<DataResponse<List<NotificationHeader>>> getNotificationContentListByCategoryType(
-            @Valid @RequestParam(required = false, defaultValue = THONG_BAO) String categoryType,
-            @Valid @RequestParam(required = false, defaultValue = "1") Integer pageIndex,
-            @Valid @RequestParam(required = false, defaultValue = "20") Integer pageSize,
-            @Valid @RequestParam(required = false, defaultValue = "-createAt") String sort) {
-        return transmissionService.getNotificationContentListByCategoryType(categoryType, pageIndex, pageSize, sort);
-    }
+//    @PreAuthorize("hasAnyAuthority('user')")
+//    @GetMapping("/noti")
+//    public Mono<DataResponse<List<NotificationHeader>>> getNotificationContentListByCategoryType(
+//            @Valid @RequestParam(required = false, defaultValue = THONG_BAO) String categoryType,
+//            @Valid @RequestParam(required = false, defaultValue = "1") Integer pageIndex,
+//            @Valid @RequestParam(required = false, defaultValue = "20") Integer pageSize,
+//            @Valid @RequestParam(required = false, defaultValue = "-createAt") String sort) {
+//        return transmissionService.getNotificationContentListByCategoryType(categoryType, pageIndex, pageSize, sort);
+//    }
 
     @PreAuthorize("hasAnyAuthority('user')")
     @PutMapping("/change-noti-state")

@@ -15,14 +15,11 @@ import lombok.NonNull;
 public class LoginRequest {
     @NotEmpty(message = "login.username.not.empty")
     @Length(max = 255, min = 1, message = "login.username.over.length")
+    @NonNull
     private String username;
 
     @NotEmpty(message = "login.password.not.empty")
     private String password;
 
     private String clientId;
-
-    public void setUsername(@NonNull String username) {
-        this.username = username.trim();
-    }
 }

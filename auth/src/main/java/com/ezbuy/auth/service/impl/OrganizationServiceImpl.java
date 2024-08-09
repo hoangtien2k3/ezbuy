@@ -5,10 +5,13 @@
 // import com.ezbuy.auth.model.dto.request.CreateOrganizationUnitRequest;
 // import com.ezbuy.auth.model.postgresql.Individual;
 // import com.ezbuy.auth.model.postgresql.OrganizationUnit;
+// import com.ezbuy.auth.model.postgresql.TenantIdentify;
 // import com.ezbuy.auth.service.OrganizationService;
 // import com.ezbuy.framework.model.response.DataResponse;
+// import com.ezbuy.framework.utils.DataUtil;
 // import com.nimbusds.openid.connect.sdk.assurance.evidences.Organization;
 // import org.springframework.stereotype.Service;
+// import org.springframework.transaction.annotation.Transactional;
 // import reactor.core.publisher.Mono;
 // import com.ezbuy.auth.model.dto.request.SyncRequestDTO;
 //
@@ -43,25 +46,25 @@
 //
 //    @Override
 //    public Mono<Optional<Organization>> createOrganization(CreateOrganizationRequest request, String createUser,
-// String individualId, boolean isTrustedIdentify) {
+//                                                           String individualId, boolean isTrustedIdentify) {
 //        var posIdForRep = positionsRepository.getIdByCode(AuthConstants.PositionCode.REPRESENTATIVE);
 //        var posIdForOwner = positionsRepository.getIdByCode(AuthConstants.PositionCode.OWNER);
 //        var getUnitTypeIdByCode = unitTypeRepository.getUnitTypeIdByCode(AuthConstants.UnitTypeCode.DEPARTMENT);
 //
 //        return Mono.zip(posIdForRep, posIdForOwner, getUnitTypeIdByCode)
 //                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR,
-// "position.not.exist")))
+//                        "position.not.exist")))
 //                .flatMap(posId -> {
 //                    log.info("posIdForRep :{}, posIdForOwner: {}", posId.getT1(), posId.getT2());
 //                    Organization organization = initOrg(request, createUser);
 //                    String organizationId = organization.getId();
 //
 //                    OrganizationUnit organizationUnit = initOrgUnit(request, organizationId, createUser,
-// posId.getT3());
+//                            posId.getT3());
 //                    String organizationUnitId = organizationUnit.getId();
 //
 //                    List<TenantIdentify> tenantIdentifiesForOrg = initTenants(request, organizationId, createUser,
-// isTrustedIdentify);
+//                            isTrustedIdentify);
 //
 //                    // save representative
 //                    String represensiveId = String.valueOf(UUID.randomUUID());
@@ -125,7 +128,7 @@
 //                    var saveOwner = unitPositionRepo.save(ownerUnitPos);
 //
 //                    return Mono.zip(saveOrganization, saveOrganizationUnit, saveTenantIdentifyForOrg,
-// saveRepresentative)
+//                                    saveRepresentative)
 //                            .flatMap(rs -> Mono.zip(saveIndividualUnitPosForRep, saveOwner))
 //                            .flatMap(rs1 -> Mono.just(Optional.ofNullable(organization)));
 //                });

@@ -1,16 +1,17 @@
-# application config
 server:
   port: 8088
 logging:
-#  config: classpath:log4j2.xml
-#  pattern:
-#    console: "%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %5p %t --- [%15.15t] %c{1}.%M : %m%n"
+  #  config: classpath:log4j2-prod.xml
   level:
     root: INFO
-    io.r2dbc.postgresql.QUERY: DEBUG # for queries
-    io.r2dbc.postgresql.PARAM: DEBUG # for parameters
+    org.springframework.r2dbc: DEBUG
+    io.r2dbc.postgresql.QUERY: DEBUG
+    io.r2dbc.postgresql.PARAM: DEBUG
 # spring config
 spring:
+  devtools:
+    restart:
+      enabled: true
   application:
     name: auth-service
   main:
@@ -24,42 +25,40 @@ spring:
     password: admin
   codec:
     max-in-memory-size: 100MB
-  # security
   security:
     oauth2:
       client:
         provider:
           oidc:
-            token-uri: ${app.config.keycloak.url}/realms/${app.config.keycloak.realm}/protocol/openid-connect/token
+            token-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/token
         registration:
           oidc:
-            client-id: ezbuy-system
-            client-secret: I77WqESHTsYdPHEHX1sAwiKhoOf9Zxsc
+            client-id: ${keycloak.clientId}
+            client-secret: ${keycloak.clientSecret}
             authorization-grant-type: password #client_credentials
       resourceserver:
         jwt:
-          jwk-set-uri: ${app.config.keycloak.url}/realms/${app.config.keycloak.realm}/protocol/openid-connect/certs
+          jwk-set-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/certs
       keycloak:
-        client-id: ezbuy-system
-
-# oauth2 config
-app:
-  config:
-    keycloak:
-      url: http://localhost:8080
-      realm: ezbuy-server
-
+        client-id: ${keycloak.clientId}
+#keycloak client config
+keycloak:
+  clientId: ezbuy-client
+  clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
+  realm: ezbuy-server
+  serverUrl: http://localhost:8080
+  host: localhost
 # web client config
 client:
   keycloak:
-    address: http://localhost:8080/auth/realms/ezbuy-server/protocol/openid-connect
+    address: http://localhost:8080/realms/ezbuy-server/protocol/openid-connect
     name: keycloak
     auth:
-      client-id: ezbuy-system
-      client-secret: SVJELktHwmXYSHWsJ7QbvY7tmtn7LOjP
+      client-id: ezbuy-client
+      client-secret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
   noti:
     internal-oauth: true
-    address: http://10.207.252.223/sme-noti
+    address: http://localhost:7777/v1/transmission
     name: notiServiceClient
     pool:
       max-size: 100
@@ -113,10 +112,10 @@ application:
         - GET
     - uri: /v1/auth/generate-otp
       methods:
-          - POST
+        - POST
     - uri: /v1/auth/confirm-otp
       methods:
-          - POST
+        - POST
     - uri: /v1/auth/login
       methods:
         - POST
@@ -193,12 +192,7 @@ application:
   data:
     sync-data:
       limit: 500
-keycloak:
-  clientId: ezbuy-system
-  clientSecret: I77WqESHTsYdPHEHX1sAwiKhoOf9Zxsc
-  realm: ezbuy-server
-  serverUrl: http://localhost:8080
-  host:
+# minino config server
 minio:
   bucket: sme-public
   enabled: true
@@ -208,11 +202,11 @@ minio:
   secretKey: XGEI24IIJEQZX54JRTNTLY3YEHC2LFIT
   private:
     bucket: sme-private
-syncacc:
-  username: smehub
-  password: 123456aA@
-  clientid: sme-auth-service
-  secretKey: YxzXsTW2sjHh3jBBYOmrIOzYT6DKE6vV
+#syncacc:
+#  username: smehub
+#  password: 123456aA@
+#  clientid: sme-auth-service
+#  secretKey: YxzXsTW2sjHh3jBBYOmrIOzYT6DKE6vV
 hashing-password:
   public-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4qGLPEGMdbDlYrc+Ud3w8Y2CobSLKAIfSBsX6bcV3bCxKZI8scW2gfr8ZMMXOxgQ0nXpIOQ0p0fb/hVHXMEnTu4Z5UEsF76eDfA80VPd96ujiZWyWYAeyIUelqPEZIWxM4MlBOPJDcCVDtwLKIoMbvVnXoHyjmOq93mHOoii24a2m0qt6jrvAYOvjNUijtofgjewYds/h74LfphDY/hNRq+4M6lI4RMZ4HiRn06P+GnvnwkxA3JL1bVRRqZ3gxB0VWiIj7I5likqnJfWnqn43mrMxfSdNI+6MpgR7L6djFOnjZiNP5bb6a3F17hwBeeLBTPs+akem/shlfoGYIbJOwIDAQAB
 proxy-client:

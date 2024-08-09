@@ -1,19 +1,16 @@
 server:
   port: 7777
 logging:
+#  config: classpath:log4j2-dev.xml
   level:
     root: DEBUG
+    org.springframework.r2dbc: DEBUG
+    io.r2dbc.postgresql.QUERY: DEBUG
+    io.r2dbc.postgresql.PARAM: DEBUG
 client:
-  product:
-    internal-oauth: true
-    address: http://localhost:8090/product/v1/product
-    name: product
-    pool:
-      max-size: 100
-      max-pending-acquire: 100
   auth:
     internal-oauth: true
-    address: http://171.244.139.171:8089/v1/
+    address: http://localhost:8088/v1
     name: auth
     pool:
       max-size: 100
@@ -21,47 +18,58 @@ client:
     timeout:
       read: 60000
       write: 1000
+keycloak:
+  clientId: ezbuy-client
+  clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
+  realm: ezbuy-server
+  serverUrl: http://localhost:8080
+  host: localhost
 spring:
+#  jmx:
+#    enabled: false
+#  devtools:
+#    livereload:
+#      enabled: true
+#      port: 35729
+  application:
+    name: notification-service
   main:
+#    web-application-type: reactive
     allow-bean-definition-overriding: true
+  messages:
+    basename: messages
   r2dbc:
     url: r2dbc:postgresql://localhost:5434/notification
     username: admin
     password: admin
-    pool:
-      initial-size: 50
-      max-size: 100
-      enabled: true
-      validation-query: select 1
-      max-life-time: 9223372036854775807
   security:
     oauth2:
       client:
         provider:
           oidc:
-            token-uri: ${app.config.keycloak.url}/realms/${app.config.keycloak.realm}/protocol/openid-connect/token
+            token-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/token
         registration:
           oidc:
-            client-id: sme-system
-            client-secret: 5Rj8acZcC7KVQgVmnCRI0OdpjqPIJfoQ
-            authorization-grant-type: client_credentials
+            client-id: ezbuy-client
+            client-secret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
+            authorization-grant-type: password #client_credentials
       resourceserver:
         jwt:
-          jwk-set-uri: ${app.config.keycloak.url}/realms/${app.config.keycloak.realm}/protocol/openid-connect/certs
+          jwk-set-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/certs
       keycloak:
-        client-id: web-client
+        client-id: ezbuy-client
   mail:
-    host: smtp.viettel.com.vn
-    port: 465
-    username: crawler@viettel.com.vn
-    password: Bccs@202112
+    host: smtp.gmail.com
+    port: 587
+    username: hoangtien2k3qx1@gmail.com
+    password: uvbskgpuchmgtlbp
     protocol: smtp
     properties.mail.smtp:
       auth: true
       starttls.enable: true
-      ssl.trust: smtp.viettel.com.vn
+      ssl.trust: smtp.gmail.com
       ssl.enable: true
-      tls.trust: smtp.viettel.com.vn
+      tls.trust: smtp.gmail.com
       tls.enable: true
 application:
   http-logging:
@@ -80,21 +88,8 @@ application:
     - uri: /**
       methods:
         - OPTIONS
-    #test
     - uri: /v1/transmission/create-noti
       methods:
         - POST
-
-keycloak:
-  clientId: web-client
-  clientSecret: 5Rj8acZcC7KVQgVmnCRI0OdpjqPIJfoQ
-  realm: sme-portal
-  serverUrl: http://sme-keycloak.bu-order.svc:8080/auth
-app:
-  config:
-    keycloak:
-      url: http://sme-keycloak.bu-order.svc:8080/auth
-      realm: sme-portal
-
 config:
   resendCount: 2

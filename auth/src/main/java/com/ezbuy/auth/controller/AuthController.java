@@ -3,7 +3,6 @@ package com.ezbuy.auth.controller;
 import java.util.List;
 import java.util.Optional;
 
-import com.ezbuy.auth.model.postgresql.Individual;
 import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
@@ -17,8 +16,8 @@ import com.ezbuy.auth.model.dto.request.*;
 import com.ezbuy.auth.model.dto.response.GetActionLoginReportResponse;
 import com.ezbuy.auth.model.dto.response.GetTwoWayPasswordResponse;
 import com.ezbuy.auth.model.dto.response.Permission;
+import com.ezbuy.auth.model.postgresql.Individual;
 import com.ezbuy.auth.model.postgresql.UserOtp;
-import com.ezbuy.auth.model.postgresql.UserProfile;
 import com.ezbuy.auth.service.AuthService;
 import com.ezbuy.framework.model.response.DataResponse;
 import com.ezbuy.framework.utils.DataUtil;
@@ -51,12 +50,11 @@ public class AuthController {
                 .map(rs -> ResponseEntity.ok(new DataResponse<>(SUCCESS_MESSAGE, rs)));
     }
 
-    //    @PostMapping(value = UrlPaths.Auth.GET_TOKEN_FROM_PROVIDER_CODE)
-    //    public Mono<ResponseEntity<DataResponse>> getTokenFromAuthorizationProviderCode(@Valid @RequestBody
-    // ClientLogin clientLogin, ServerWebExchange serverWebExchange) {
-    //        return authService.getToken(clientLogin, serverWebExchange)
-    //                .map(rs -> ResponseEntity.ok(new DataResponse(SUCCESS_MESSAGE, rs)));
-    //    }
+    @PostMapping(value = UrlPaths.Auth.GET_TOKEN_FROM_PROVIDER_CODE)
+    public Mono<ResponseEntity<DataResponse>> getTokenFromAuthorizationProviderCode(
+            @Valid @RequestBody ClientLogin clientLogin, ServerWebExchange serverWebExchange) {
+        return authService.getToken(clientLogin).map(rs -> ResponseEntity.ok(new DataResponse(SUCCESS_MESSAGE, rs)));
+    }
 
     @GetMapping(value = UrlPaths.Auth.GET_PERMISSION)
     public Mono<ResponseEntity<DataResponse<List<Permission>>>> getPermission(
@@ -147,7 +145,8 @@ public class AuthController {
     @PostMapping(UrlPaths.Auth.CONFIRM_OTP_FOR_CREATE_ACCOUNT)
     public Mono<ResponseEntity<DataResponse<Individual>>> confirmOtpAndCreateAccount(
             @Valid @RequestBody CreateAccount createAccount) {
-        return authService.confirmOtpAndCreateUser(createAccount)
+        return authService
+                .confirmOtpAndCreateUser(createAccount)
                 .map(rs -> ResponseEntity.ok(new DataResponse<>("success", rs)));
     }
 
@@ -167,12 +166,6 @@ public class AuthController {
                         () -> ResponseEntity.ok(new DataResponse<>(Translator.toLocaleVi("success"), null))));
     }
 
-    /**
-     * get two-way password
-     *
-     * @param username username of user
-     * @return password
-     */
     @GetMapping(UrlPaths.Auth.GET_TWO_WAY_PASSWORD)
     @PreAuthorize("hasAnyAuthority('system')")
     public Mono<ResponseEntity<DataResponse<GetTwoWayPasswordResponse>>> getTwoWayPassword(
@@ -182,12 +175,6 @@ public class AuthController {
                 .map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
     }
 
-    /**
-     * Get action login of user in HUB in one Day
-     *
-     * @param request
-     * @return LocalDate
-     */
     @GetMapping(value = UrlPaths.Auth.ACTION_LOGIN)
     public Mono<ResponseEntity<DataResponse<GetActionLoginReportResponse>>> getActionLoginReport(
             GetActionLoginReportRequest request) {
@@ -196,17 +183,18 @@ public class AuthController {
                 .map(rs -> ResponseEntity.ok(new DataResponse<>(SUCCESS_MESSAGE, rs)));
     }
 
-    //    @GetMapping(UrlPaths.Auth.BLOCK_LOGIN)
-    //    public Mono<ResponseEntity<DataResponse>> blockLoginPartnerLicense(@RequestParam(name = "organizationId",
-    // required = true) String organizationId, @RequestParam(name = "clientCode") String clientCode) {
-    //        return authService.blockLoginPartnerLicense(organizationId, clientCode)
-    //                .map(rs -> ResponseEntity.ok(new DataResponse(Translator.toLocaleVi("success"), rs)));
-    //    }
+    //        @GetMapping(UrlPaths.Auth.BLOCK_LOGIN)
+    //        public Mono<ResponseEntity<DataResponse>> blockLoginPartnerLicense(@RequestParam(name = "organizationId",
+    //     required = true) String organizationId, @RequestParam(name = "clientCode") String clientCode) {
+    //            return authService.blockLoginPartnerLicense(organizationId, clientCode)
+    //                    .map(rs -> ResponseEntity.ok(new DataResponse(Translator.toLocaleVi("success"), rs)));
+    //        }
 
     @PostMapping(UrlPaths.Auth.CONFIRM_OTP)
     public Mono<DataResponse> confirmOTP(
             @Valid @RequestBody ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange) {
-        return authService.confirmOTP(confirmOTPRequest, serverWebExchange)
+        return authService
+                .confirmOTP(confirmOTPRequest, serverWebExchange)
                 .map(success -> new DataResponse<>(DataUtil.safeToString(success.getMessage()), null));
     }
 

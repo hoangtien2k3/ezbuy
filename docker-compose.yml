@@ -49,18 +49,18 @@ services:
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
       KC_DB_USERNAME: ${POSTGRES_USER}
       KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
-
+      # KC_DB: h2
       KC_HOSTNAME: localhost
       KC_HOSTNAME_PORT: 8080
       KC_HOSTNAME_STRICT: false
       KC_HOSTNAME_STRICT_HTTPS: false
-
+      # KC_PROXY_ADDRESS_FORWARDING: true
       KC_LOG_LEVEL: info
       KC_METRICS_ENABLED: true
       KC_HEALTH_ENABLED: true
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-
+      # KC_HTTP_ENABLED: true
       KC_HTTP_PORT: 8080
       KC_HTTPS_PORT: 8443
     volumes:
@@ -108,6 +108,28 @@ services:
 #      - "traefik.http.routers.keycloak-secure.service=keycloak"
 #      - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
 #      - "traefik.docker.network=proxy"
+
+  minio:
+    image: minio/minio
+    volumes:
+      - ./minio-data:/data
+    ports:
+      - "9000:9000"
+    environment:
+      MINIO_ACCESS_KEY: "minio"
+      MINIO_SECRET_KEY: "123@123"
+    command: server /minio-data/data
+  minio-bucket:
+      image: minio/mc
+      depends_on:
+        - minio
+      entrypoint: >
+        /bin/sh -c "
+        /usr/bin/mc config host add myminio http://minio:9000 minio 123@123;
+        /usr/bin/mc mb myminio/file-storage;
+        /usr/bin/mc policy download myminio/file-storage;
+        exit 0;
+        "
 
 networks:
   ezbuy-network:

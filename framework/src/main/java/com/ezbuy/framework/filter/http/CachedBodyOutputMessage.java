@@ -22,11 +22,6 @@ public class CachedBodyOutputMessage implements ReactiveHttpOutputMessage {
 
     private boolean cached = false;
 
-    /**
-     * -- GETTER -- Return the request body, or an error stream if the body was never set or when.
-     *
-     * @return body as {@link Flux}
-     */
     @Getter
     private Flux<DataBuffer> body =
             Flux.error(new IllegalStateException("The body is not set. " + "Did handling complete with success?"));

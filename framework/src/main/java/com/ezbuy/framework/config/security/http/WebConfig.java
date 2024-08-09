@@ -58,7 +58,7 @@ public class WebConfig {
         if (!DataUtil.isNullOrEmpty(whiteListList)) {
             for (WhiteList whiteList : whiteListList) {
                 String uri = whiteList.getUri();
-                log.info("whitelist {}", uri);
+                log.info("whitelist: {}", uri);
                 List<String> methods = whiteList.getMethods();
                 if (!DataUtil.isNullOrEmpty(methods)) {
                     for (String method : methods) {

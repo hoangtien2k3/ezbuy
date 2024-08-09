@@ -46,7 +46,9 @@ public class LoggerSchedule {
             }
         }
 
-//        log.info("AsyncLog analyId {}: QueueSize: {}, addSuccess: {}, addFalse: {}, writeSuccess:{}, writeFalse:{}", analyId, records.size(), LoggerQueue.getInstance().getCountSuccess(), LoggerQueue.getInstance().getCountFalse(), numSuccess, numFalse);
+        //        log.info("AsyncLog analyId {}: QueueSize: {}, addSuccess: {}, addFalse: {}, writeSuccess:{},
+        // writeFalse:{}", analyId, records.size(), LoggerQueue.getInstance().getCountSuccess(),
+        // LoggerQueue.getInstance().getCountFalse(), numSuccess, numFalse);
         LoggerQueue.getInstance().resetCount();
     }
 
@@ -130,7 +132,7 @@ public class LoggerSchedule {
         List<Object> listArg = new ArrayList<>();
         for (Object arg : args) {
             if (arg instanceof Mono) {
-//                listArg.add(((Mono) arg).block());
+                //                listArg.add(((Mono) arg).block());
                 // skip
             } else if (arg instanceof ServerWebExchange) {
                 // skip

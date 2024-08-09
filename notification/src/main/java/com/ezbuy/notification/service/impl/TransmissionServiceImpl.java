@@ -55,7 +55,7 @@ public class TransmissionServiceImpl implements TransmissionService {
     private final NotificationRepository notificationRepository;
     private final ChannelRepository channelRepository;
     private final AuthClient authClient;
-    private final R2dbcEntityTemplate template;
+//    private final R2dbcEntityTemplate template;
 
     @Value("${config.resendCount}")
     private Integer resendCount;
@@ -222,8 +222,7 @@ public class TransmissionServiceImpl implements TransmissionService {
                                                                 .distinct()
                                                                 .map(receiver -> {
                                                                     Transmission tr = Transmission.builder()
-                                                                            .id(UUID.randomUUID()
-                                                                                    .toString())
+                                                                            .id(UUID.randomUUID().toString())
                                                                             .notificationId(notiId)
                                                                             .channelId(channelId)
                                                                             .status(1)
@@ -232,16 +231,11 @@ public class TransmissionServiceImpl implements TransmissionService {
                                                                             .updateBy(tokenUser.getUsername())
                                                                             .createBy(tokenUser.getUsername())
                                                                             .build();
-                                                                    if (DataUtil.isUUID(
-                                                                            DataUtil.safeTrim(receiver.getUserId()))) {
-                                                                        tr.setReceiver(DataUtil.safeTrim(
-                                                                                receiver.getUserId()));
-                                                                        tr.setEmail(
-                                                                                DataUtil.safeTrim(receiver.getEmail()));
-                                                                    } else if (ValidateUtils.validateRegex(
-                                                                            receiver.getEmail(), Regex.EMAIL_REGEX)) {
-                                                                        tr.setEmail(
-                                                                                DataUtil.safeTrim(receiver.getEmail()));
+                                                                    if (DataUtil.isUUID(DataUtil.safeTrim(receiver.getUserId()))) {
+                                                                        tr.setReceiver(DataUtil.safeTrim(receiver.getUserId()));
+                                                                        tr.setEmail(DataUtil.safeTrim(receiver.getEmail()));
+                                                                    } else if (ValidateUtils.validateRegex(receiver.getEmail(), Regex.EMAIL_REGEX)) {
+                                                                        tr.setEmail(DataUtil.safeTrim(receiver.getEmail()));
                                                                     }
                                                                     return tr;
                                                                 })
@@ -280,61 +274,61 @@ public class TransmissionServiceImpl implements TransmissionService {
                 .switchIfEmpty(Mono.just(new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), new ArrayList<>()))));
     }
 
-    public Mono<DataResponse<List<NotificationHeader>>> getNotificationContentListByCategoryType(
-            String categoryType, Integer pageIndex, Integer pageSize, String sort) {
-        return SecurityUtils.getCurrentUser().flatMap(user -> {
-            if (pageIndex < 1) {
-                return Mono.error(
-                        new BusinessException(INVALID_PARAMS, Translator.toLocaleVi("params.pageIndex.invalid")));
-            }
-            if (pageSize < 1) {
-                return Mono.error(
-                        new BusinessException(INVALID_PARAMS, Translator.toLocaleVi("params.pageSize.invalid")));
-            }
-            StringBuilder sortingString = new StringBuilder();
-            sortingString.append(SortingUtils.parseSorting(sort, NotificationHeader.class));
-            if (DataUtil.isNullOrEmpty(sortingString)) {
-                sortingString.append("");
-            }
-            StringBuilder query = new StringBuilder();
-            query.append(" SELECT nc.*,tr.state  \n"
-                    + " FROM notification_content nc \n"
-                    + " INNER JOIN notification n \n"
-                    + " ON n.notification_content_id = nc.id \n"
-                    + " INNER JOIN notification_category nca \n"
-                    + " ON n.category_id = nca.id \n"
-                    + " INNER JOIN transmission tr \n"
-                    + " ON tr.notification_id = n.id \n"
-                    + " INNER JOIN channel c \n"
-                    + " ON tr.channel_id = c.id \n"
-                    + " where tr.receiver = (:receiver)   \n"
-                    + " AND tr.status =1 \n"
-                    + " AND tr.state IN ('NEW','UNREAD','READ') \n"
-                    + " AND nc.status =1 \n"
-                    + " AND n.status =1 \n"
-                    + " AND nca.status =1 \n"
-                    + " AND c.status =1 \n"
-                    + " AND c.type = 'REST' \n"
-                    + " AND nca.type = (:categoryType)  \n"
-                    + " ORDER BY ");
-            query.append(sortingString);
-            query.append(" LIMIT :pageSize  \n" + " OFFSET :index;");
-            BigDecimal index = (new BigDecimal(pageIndex - 1)).multiply(new BigDecimal(pageSize));
-            return template.getDatabaseClient()
-                    .sql(String.valueOf(query))
-                    .bind("receiver", user.getId())
-                    .bind("categoryType", DataUtil.safeTrim(categoryType))
-                    .bind("pageSize", pageSize)
-                    .bind("index", index)
-                    .map(row -> build((Row) row))
-                    .all()
-                    .collectList()
-                    .flatMap(notificationContent ->
-                            Mono.just(new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), notificationContent)))
-                    .switchIfEmpty(
-                            Mono.just(new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), new ArrayList<>())));
-        });
-    }
+//    public Mono<DataResponse<List<NotificationHeader>>> getNotificationContentListByCategoryType(
+//            String categoryType, Integer pageIndex, Integer pageSize, String sort) {
+//        return SecurityUtils.getCurrentUser().flatMap(user -> {
+//            if (pageIndex < 1) {
+//                return Mono.error(
+//                        new BusinessException(INVALID_PARAMS, Translator.toLocaleVi("params.pageIndex.invalid")));
+//            }
+//            if (pageSize < 1) {
+//                return Mono.error(
+//                        new BusinessException(INVALID_PARAMS, Translator.toLocaleVi("params.pageSize.invalid")));
+//            }
+//            StringBuilder sortingString = new StringBuilder();
+//            sortingString.append(SortingUtils.parseSorting(sort, NotificationHeader.class));
+//            if (DataUtil.isNullOrEmpty(sortingString)) {
+//                sortingString.append("");
+//            }
+//            StringBuilder query = new StringBuilder();
+//            query.append(" SELECT nc.*,tr.state  \n"
+//                    + " FROM notification_content nc \n"
+//                    + " INNER JOIN notification n \n"
+//                    + " ON n.notification_content_id = nc.id \n"
+//                    + " INNER JOIN notification_category nca \n"
+//                    + " ON n.category_id = nca.id \n"
+//                    + " INNER JOIN transmission tr \n"
+//                    + " ON tr.notification_id = n.id \n"
+//                    + " INNER JOIN channel c \n"
+//                    + " ON tr.channel_id = c.id \n"
+//                    + " where tr.receiver = (:receiver)   \n"
+//                    + " AND tr.status =1 \n"
+//                    + " AND tr.state IN ('NEW','UNREAD','READ') \n"
+//                    + " AND nc.status =1 \n"
+//                    + " AND n.status =1 \n"
+//                    + " AND nca.status =1 \n"
+//                    + " AND c.status =1 \n"
+//                    + " AND c.type = 'REST' \n"
+//                    + " AND nca.type = (:categoryType)  \n"
+//                    + " ORDER BY ");
+//            query.append(sortingString);
+//            query.append(" LIMIT :pageSize  \n" + " OFFSET :index;");
+//            BigDecimal index = (new BigDecimal(pageIndex - 1)).multiply(new BigDecimal(pageSize));
+//            return template.getDatabaseClient()
+//                    .sql(String.valueOf(query))
+//                    .bind("receiver", user.getId())
+//                    .bind("categoryType", DataUtil.safeTrim(categoryType))
+//                    .bind("pageSize", pageSize)
+//                    .bind("index", index)
+//                    .map(row -> build((Row) row))
+//                    .all()
+//                    .collectList()
+//                    .flatMap(notificationContent ->
+//                            Mono.just(new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), notificationContent)))
+//                    .switchIfEmpty(
+//                            Mono.just(new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), new ArrayList<>())));
+//        });
+//    }
 
     public Mono<DataResponse<Object>> validateCreateNotificationDTO(CreateNotificationDTO createNotificationDTO) {
         if (DataUtil.isNullOrEmpty(createNotificationDTO.getSeverity())) {

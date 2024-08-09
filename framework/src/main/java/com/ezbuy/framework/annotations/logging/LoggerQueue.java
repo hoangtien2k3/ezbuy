@@ -17,8 +17,10 @@ public class LoggerQueue {
     private static LoggerQueue mMe = null;
     private ArrayBlockingQueue<LoggerDTO> myQueue = null;
     private static Object myLock = new Object();
+
     @Getter
     private int countFalse = 0;
+
     @Getter
     private int countSuccess = 0;
 

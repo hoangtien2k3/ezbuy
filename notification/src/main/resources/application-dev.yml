@@ -1,43 +1,59 @@
-server:
-  port: 7777
-oauth2:
-  keycloak:
-    client-uri: http://localhost:36355/auth/realms/sme-portal/protocol/openid-connect/token
-    client-id: web-client
-    client-secret: jzLlmUxlxLMMOpnjkNU3wMDZuCKB8GUE
-client:
-  keycloak:
-    address: http://sme-keycloak.bu-order.svc:8080/auth/realms/sme-portal/protocol/openid-connect/token
-    name: keycloak
-    auth:
-      client-id: web-client
-      client-secret: 123
-management:
-  endpoint:
-    health:
-      show-details: never
-  health:
-    elasticsearch:
-      enabled: false
+app:
+  config:
+    keycloak:
+      url: http://localhost:8080
+      realm: ezbuy-server
+logging:
+  config: classpath:log4j2-dev.xml
 spring:
+  application:
+    name: notification-service
   main:
     allow-bean-definition-overriding: true
-  application:
-    name: noti_service
-  r2dbc:
-    mariadb:
-      url: r2dbc:mariadb://admin:123456%40@10.207.222.154:9001/sme_notification
-      pool:
-        initial-size: 50
-        max-size: 100
-        enabled: true
-        validation-query: select 1
-        max-life-time: 9223372036854775807
-application:
-  white-list:
-    - uri: /v1/**
-      methods:
-        - GET
-    - uri: /v1/**
-      methods:
-        - PUT
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            token-uri: ${app.config.keycloak.url}/realms/${app.config.keycloak.realm}/protocol/openid-connect/token
+        registration:
+          oidc:
+            client-id: ezbuy-client
+            client-secret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
+            authorization-grant-type: password #client_credentials
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8080/realms/ezbuy-server/protocol/openid-connect/certs
+      keycloak:
+        client-id: web-client
+  cloud:
+    kubernetes:
+      discovery:
+        namespaces:
+          - bu-order
+      reload:
+        enabled: false
+      secrets:
+        name: sme-noti-service
+        namespace: bu-order
+        sources:
+          - name: sme-noti-service
+      config:
+        name: sme-noti-service
+        namespace: bu-order
+        sources:
+          - name: sme-noti-service
+management:
+  endpoint:
+    web:
+      exposure:
+        include: health, metrics, prometheus
+    health:
+      show-details: always
+  health:
+    redis:
+      enabled: false
+    elasticsearch:
+      enabled: false
+    mail:
+      enabled: false

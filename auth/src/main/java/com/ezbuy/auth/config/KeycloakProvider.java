@@ -26,6 +26,9 @@ import reactor.core.publisher.Mono;
 @Component
 public class KeycloakProvider {
 
+    private static final Map<String, ClientRepresentation> clientMap = new HashMap<>();
+    private volatile Keycloak keycloak = null;
+
     @Value("${keycloak.serverUrl}")
     public String serverURL;
 
@@ -37,9 +40,6 @@ public class KeycloakProvider {
 
     @Value("${keycloak.clientSecret}")
     public String clientSecret;
-
-    private static final Map<String, ClientRepresentation> clientMap = new HashMap<>();
-    private volatile Keycloak keycloak = null;
 
     // volatile and Double-Checked Locking -> Thread-Safe.
     public Keycloak getInstance() {
@@ -65,7 +65,7 @@ public class KeycloakProvider {
 
     @LocalCache(autoCache = true, maxRecord = 100, durationInMinute = 12 * 6)
     public Mono<ClientRepresentation> getClient(String clientId) {
-        var clients = getInstance().realm(realm).clients().findByClientId(clientId);
+        var clients = getRealmResource().clients().findByClientId(clientId);
         if (clients == null) {
             return Mono.empty();
         }
@@ -85,8 +85,7 @@ public class KeycloakProvider {
     @LocalCache(autoCache = true, maxRecord = 100, durationInMinute = 12 * 6)
     public Mono<ClientRepresentation> getClientWithSecret(String clientId) {
         return getClient(clientId).flatMap(clientRepresentation -> {
-            var b = getInstance()
-                    .realm(realm)
+            var b = getRealmResource()
                     .clients()
                     .get(clientRepresentation.getId())
                     .getSecret();

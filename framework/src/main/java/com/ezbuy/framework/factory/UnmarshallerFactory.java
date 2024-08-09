@@ -1,8 +1,5 @@
 package com.ezbuy.framework.factory;
 
-// import org.apache.logging.log4j.LogManager;
-// import org.apache.logging.log4j.Logger;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,8 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class UnmarshallerFactory {
-
-    //    private static final Logger log = LogManager.getLogger(UnmarshallerFactory.class);
 
     private static Map<Class, Unmarshaller> instance = new HashMap<>();
 

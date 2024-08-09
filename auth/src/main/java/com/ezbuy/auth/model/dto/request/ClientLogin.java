@@ -13,5 +13,5 @@ public class ClientLogin extends ProviderLogin {
 
     private String redirectUri;
 
-    private String organizationId; // id cong ty chon, phuc vu cho luong sso tu phia doi tac
+    private String organizationId;
 }

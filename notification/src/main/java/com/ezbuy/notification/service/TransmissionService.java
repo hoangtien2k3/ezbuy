@@ -19,6 +19,6 @@ public interface TransmissionService {
     Mono<DataResponse<Object>> changeTransmissionStateByIdAndReceiver(
             String state, String notificationContentId, String transmissionId);
 
-    Mono<DataResponse<List<NotificationHeader>>> getNotificationContentListByCategoryType(
-            String type, Integer pageIndex, Integer pageSize, String sort);
+//    Mono<DataResponse<List<NotificationHeader>>> getNotificationContentListByCategoryType(
+//            String type, Integer pageIndex, Integer pageSize, String sort);
 }

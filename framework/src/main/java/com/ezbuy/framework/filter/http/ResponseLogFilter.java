@@ -32,12 +32,6 @@ import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/**
- * @classDesc:
- * @author: hoangtien2k3
- * @createTime: 2024-07-08
- * @version: v1.2.0
- */
 @Log4j2
 @AllArgsConstructor
 @Component

@@ -13,22 +13,22 @@ CREATE TABLE user_otp
     tries     INTEGER,
     status    INTEGER,
     create_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    update_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    create_by VARCHAR   NOT NULL,
-    update_by VARCHAR   NOT NULL
+    update_at TIMESTAMP,
+    create_by VARCHAR,
+    update_by VARCHAR
 );
 
 CREATE TABLE individual
 (
     id                UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id           VARCHAR(36)  NOT NULL,
-    username          VARCHAR(50)  NOT NULL,
+    user_id           VARCHAR(36),
+    username          VARCHAR(50),
     name              VARCHAR(255),
     code              TEXT,
     image             VARCHAR(500),
     gender            VARCHAR(10),
     birthday          TIMESTAMP,
-    email             VARCHAR(200) NOT NULL,
+    email             VARCHAR(200),
     email_account     VARCHAR(200),
     phone             VARCHAR(20),
     address           VARCHAR(255),
@@ -52,12 +52,12 @@ CREATE TABLE user_credential
     user_id     VARCHAR(36),
     username    VARCHAR(50),
     hash_pwd    TEXT,
-    status      SMALLINT,
+    status      INTEGER,
     create_at   TIMESTAMP,
     create_by   VARCHAR(255),
     update_at   TIMESTAMP,
     update_by   VARCHAR(255),
-    pwd_changed SMALLINT
+    pwd_changed INTEGER
 );
 
 

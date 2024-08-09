@@ -12,4 +12,6 @@ import lombok.Data;
 @ConfigurationProperties(prefix = "client.noti", ignoreInvalidFields = true)
 @Data
 @AllArgsConstructor
-public class NotiServiceProperties extends WebClientProperties {}
+public class NotiServiceProperties extends WebClientProperties {
+
+}

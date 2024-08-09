@@ -293,13 +293,6 @@ public interface IndividualRepository extends R2dbcRepository<Individual, UUID> 
                     + " limit 1")
     Mono<String> findIndividualIdByUserId(String userId, String organizationId);
 
-    /**
-     * Get userId of Owner by idNo primary_identify of organization
-     *
-     * @param idNo
-     * @param positionCode
-     * @return
-     */
     @Query(
             value = "select user_id\n" + "from individual\n"
                     + "where id = (select individual_id\n"
@@ -314,9 +307,7 @@ public interface IndividualRepository extends R2dbcRepository<Individual, UUID> 
     @Query("select nextval(sme_user.individualCodeSeq)")
     Mono<String> getIndividualCodeSeq();
 
-    @Query(
-            value =
-                    "with query as (select iup.individual_id from sme_user.individual_unit_position iup inner join sme_user.positions p on iup.position_id = p.id\n"
+    @Query(value = "with query as (select iup.individual_id from sme_user.individual_unit_position iup inner join sme_user.positions p on iup.position_id = p.id\n"
                             + "               where  iup.organization_id = :organizationId and p.code = 'REPRESENTATIVE')\n"
                             + "            select i.*\n"
                             + "            from sme_user.individual i\n"

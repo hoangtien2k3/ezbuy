@@ -130,16 +130,16 @@ application:
       limit: 500
 
 keycloak:
-  clientId: web-client
+  clientId: ezbuy-system
   clientSecret: 5Rj8acZcC7KVQgVmnCRI0OdpjqPIJfoQ
-  realm: sme-portal
-  serverUrl: http://sme-keycloak.bu-order.svc:8080/auth
+  realm: ezbuy-server
+  serverUrl: http://localhost:8080
 
 app:
   config:
     keycloak:
-      url: http://sme-keycloak.bu-order.svc:8080/auth
-      realm: sme-portal
+      url: http://localhost:8080
+      realm: ezbuy-server
 
 # jwt token
 jwt:

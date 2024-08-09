@@ -90,6 +90,14 @@ public interface AuthService {
     Mono<UserOtp> signUp(SignupRequest signupRequest);
 
     /**
+     * Creates an account for the given organization account request.
+     *
+     * @param createOrgAccount the organization account request containing user information
+     * @return a Mono emitting the created user if the account is created successfully
+     */
+    //    Mono<Individual> createAccount(CreateOrgAccount createOrgAccount);
+
+    /**
      * Initiates the forgot password process for the given request.
      *
      * @param forgotPasswordRequest the forgot password request containing user information

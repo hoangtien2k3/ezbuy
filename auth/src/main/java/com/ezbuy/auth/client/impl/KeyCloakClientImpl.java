@@ -96,7 +96,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .getClientWithSecret(clientLogin.getClientId())
                 .flatMap(clientRepresentation -> {
                     if (DataUtil.isNullOrEmpty(clientLogin.getRedirectUri())) {
-                        clientLogin.setRedirectUri("http://sso-scontract.viettel.vn:8213/callback");
+                        clientLogin.setRedirectUri("http://sso-scontract.vn:8213/callback");
                     }
                     MultiValueMap<String, String> formParameters = new LinkedMultiValueMap<>();
                     formParameters.add(OAuth2ParameterNames.GRANT_TYPE, AuthConstants.OAuth.AUTHOR_CODE);
@@ -118,11 +118,6 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                         Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "login.client.id.not.exist")));
     }
 
-    /**
-     * Ham lay token cho dong bo theo clientId va clientSecret
-     * @param loginRequestSync
-     * @return
-     */
     @Override
     public Mono<Optional<AccessToken>> getToken(LoginRequestSync loginRequestSync) {
         MultiValueMap<String, String> formParameters = new LinkedMultiValueMap<>();
@@ -489,13 +484,6 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 });
     }
 
-    /**
-     * get AllResource by clientId
-     *
-     * @param clientId
-     * @param token
-     * @return
-     */
     public Mono<List<String>> getResourcesByClient(String clientId, String token) {
         String url = keycloakUrl + "/admin/realms/sme-portal/clients/" + clientId
                 + "/authz/resource-server/resource?deep=true&first=0&max=500";

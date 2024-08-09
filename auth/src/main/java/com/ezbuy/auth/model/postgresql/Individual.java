@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import lombok.AllArgsConstructor;
@@ -21,70 +22,93 @@ import lombok.NoArgsConstructor;
 @Builder
 @Table(name = "individual")
 public class Individual implements Persistable<String> {
-
     @Id
+    @Column("id")
     private String id;
 
+    @Column("user_id")
     @Length(max = 36, message = "individual.userId.over.length")
     private String userId;
 
+    @Column("username")
     @Length(max = 50, message = "individual.username.over.length")
     private String username;
 
+    @Column("name")
     @Length(max = 255, message = "individual.name.over.length")
     private String name;
 
+    @Column("code")
     private String code;
 
+    @Column("image")
     @Length(max = 500, message = "individual.image.over.length")
     private String image;
 
+    @Column("gender")
     @Length(max = 10, message = "individual.gender.over.length")
     private String gender;
 
+    @Column("birthday")
     private LocalDateTime birthday;
 
+    @Column("email")
     @Length(max = 200, message = "individual.email.over.length")
     private String email;
 
+    @Column("email_account")
     @Length(max = 200, message = "individual.emailAccount.over.length")
     private String emailAccount;
 
+    @Column("phone")
     @Length(max = 20, message = "individual.phone.over.length")
     private String phone;
 
+    @Column("address")
     @Length(max = 255, message = "individual.address.over.length")
     private String address;
 
+    @Column("province_code")
     @Length(max = 5, message = "individual.provinceCode.over.length")
     private String provinceCode;
 
+    @Column("district_code")
     @Length(max = 5, message = "individual.districtCode.over.length")
     private String districtCode;
 
+    @Column("precinct_code")
     @Length(max = 5, message = "individual.precinctCode.over.length")
     private String precinctCode;
 
+    @Column("status")
     @Max(value = 99, message = "individual.status.over.length")
     private Integer status;
 
+    @Column("create_at")
     private LocalDateTime createAt;
 
+    @Column("create_by")
     @Length(max = 255, message = "individual.createBy.over.length")
     private String createBy;
 
+    @Column("update_at")
     private LocalDateTime updateAt;
 
+    @Column("update_by")
     @Length(max = 255, message = "individual.updateBy.over.length")
     private String updateBy;
 
+    @Column("position_code")
     @Length(max = 20, message = "individual.posisionCode.over.length")
     private String positionCode;
 
+    @Column("password_change")
     private Boolean passwordChange;
 
+    @Column("probation_day")
     private LocalDateTime probationDay;
 
+    @Column("start_working_day")
     private LocalDateTime startWorkingDay;
 
     @Transient
