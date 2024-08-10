@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
@@ -37,7 +38,7 @@ import reactor.core.publisher.Mono;
 @Component
 @Log4j2
 @AllArgsConstructor
-// @Profile("!prod")
+@Profile("!prod")
 public class GatewayContextFilter implements WebFilter, Ordered {
     private HttpLogProperties httpLogProperties;
     private CodecConfigurer codecConfigurer;

@@ -17,21 +17,21 @@ import java.util.List;
 public class CreateNotificationDTO {
     @Size(message = "params.sender.outOfLength", max = 500)
     @NotEmpty(message = "params.sender.null")
-    private String sender;
+    private String sender; // ezbuy@gmail.com || hoangtien2k3qx1@gmail.com
     @Size(message = "params.severity.outOfLength", max = 50)
-    private String severity;
-    private NotiContentDTO notiContentDTO;
+    private String severity; // NORMAL || CRITICAL
+    private NotiContentDTO notiContentDTO; // IS NONE NULL
     @Size(message = "params.contentType.outOfLength", max = 100)
     @NotEmpty(message = "params.contentType.null")
-    private String contentType;
+    private String contentType; // text/plain || html/plain
     @Size(message = "params.categoryType.outOfLength", max = 100)
     @NotEmpty(message = "params.categoryType.null")
-    private String categoryType;
+    private String categoryType; // ANNOUNCEMENT || NEWS
     @Size(message = "params.channelType.outOfLength", max = 100)
     @NotEmpty(message = "params.channelType.null")
-    private String channelType;
-    private String templateMail;
+    private String channelType; // EMAIL || SMS || REST
+    private String templateMail; // SIGN_UP || FORGOT_PASSWORD || SIGN_UP_PASSWORD || CUSTOMER_ACTIVE_SUCCESS || CUSTOMER_REGISTER_SUCCESS || EMPLOYEE_REGISTER_SUCCESS || ACCOUNT_ACTIVE || VERIFY_ACCOUNT_SUCESS || NOTI_VERIFY_ACCOUNT
     private LocalDateTime expectSendTime;
-    private List<ReceiverDataDTO> receiverList;
-    private Boolean sendAll;
+    private List<ReceiverDataDTO> receiverList; // IS NONE NULL
+    private Boolean sendAll; // true || false || null (default is false)
 }

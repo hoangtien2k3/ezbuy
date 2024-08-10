@@ -16,7 +16,7 @@ import reactor.util.context.Context;
 public class LoggerQueue {
     private static LoggerQueue mMe = null;
     private ArrayBlockingQueue<LoggerDTO> myQueue = null;
-    private static Object myLock = new Object();
+    private static final Object myLock = new Object();
 
     @Getter
     private int countFalse = 0;

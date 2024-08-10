@@ -2,6 +2,7 @@ package com.ezbuy.framework.annotations.cache;
 
 import java.lang.reflect.Method;
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,12 +29,12 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class CacheStore {
     private static final CacheMetricsCollector CACHE_METRICS_COLLECTOR = new CacheMetricsCollector().register();
-    private static final HashMap<String, Cache> caches = new HashMap<>();
+    private static final HashMap<String, Cache<Object, Object>> caches = new HashMap<>();
     private static final Set<Method> autoLoadMethods = new HashSet<>();
-    private static String reflectionPath = "com.ezbuy";
+    private static final String reflectionPath = "com.ezbuy";
 
     @PostConstruct
-    private static void init() {
+    private void init() {
         log.info("Start initializing cache");
         Reflections reflections = new Reflections(reflectionPath, Scanners.MethodsAnnotated);
         Set<Method> methods =
@@ -41,15 +42,15 @@ public class CacheStore {
         for (Method method : methods) {
             String className = method.getDeclaringClass().getSimpleName();
             LocalCache localCache = method.getAnnotation(LocalCache.class);
-            Integer maxRecord = localCache.maxRecord();
-            Integer durationInMinute = localCache.durationInMinute();
+            int maxRecord = localCache.maxRecord();
+            int durationInMinute = localCache.durationInMinute();
             String cacheName = className + "." + method.getName();
             boolean autoLoad = localCache.autoCache();
             Cache<Object, Object> cache;
             if (autoLoad && (method.getParameterCount() == 0)) {
                 cache = Caffeine.newBuilder()
                         .scheduler(Scheduler.systemScheduler())
-                        .expireAfterWrite(Duration.ofMinutes(durationInMinute))
+                        .expireAfterWrite(Duration.of(durationInMinute, ChronoUnit.MINUTES))
                         .recordStats()
                         .maximumSize(maxRecord)
                         .removalListener(new CustomizeRemovalListener(method))
@@ -57,7 +58,7 @@ public class CacheStore {
                 autoLoadMethods.add(method);
             } else {
                 cache = Caffeine.newBuilder()
-                        .expireAfterWrite(Duration.ofMinutes(durationInMinute))
+                        .expireAfterWrite(Duration.of(durationInMinute, ChronoUnit.MINUTES))
                         .recordStats()
                         .maximumSize(maxRecord)
                         .build();
@@ -66,10 +67,6 @@ public class CacheStore {
             CACHE_METRICS_COLLECTOR.addCache(cacheName, cache);
         }
         log.info("Finish initializing {} cache", caches.size());
-    }
-
-    public static Cache getCache(String key) {
-        return caches.get(key);
     }
 
     @Async
@@ -82,5 +79,9 @@ public class CacheStore {
             }
             log.info("Finish auto load cache");
         }
+    }
+
+    public static Cache getCache(String key) {
+        return caches.get(key);
     }
 }

@@ -1,18 +1,18 @@
 package com.ezbuy.notiservice.repository.query;
 
 public interface TransmissionQuery {
-    String getCountNoticeDTO = "SELECT c.type as type, COUNT(state) AS quantity "
-            + "FROM sme_notification.transmission tr "
-            + "INNER JOIN notification n ON tr.notification_id = n.id "
-            + "INNER JOIN notification_category c on n.category_id = c.id "
-            + "INNER JOIN channel c2 on tr.channel_id = c2.id "
-            + "WHERE  "
-            + "state IN ('NEW') "
-            + "AND c2.type = 'REST' "
-            + "AND tr.receiver = :receiver "
-            + "AND tr.status = 1 "
-            + "AND n.status = 1 "
-            + "AND c2.status =1 "
+    String getCountNoticeDTO = "SELECT c.type as type, COUNT(state) AS quantity\n"
+            + "FROM sme_notification.transmission tr\n"
+            + "INNER JOIN notification n ON tr.notification_id = n.id\n"
+            + "INNER JOIN notification_category c on n.category_id = c.id\n"
+            + "INNER JOIN channel c2 on tr.channel_id = c2.id\n"
+            + "WHERE\n"
+            + "state IN ('NEW')\n"
+            + "AND c2.type = 'REST'\n"
+            + "AND tr.receiver = :receiver\n"
+            + "AND tr.status = 1\n"
+            + "AND n.status = 1\n"
+            + "AND c2.status =1\n"
             + "GROUP BY c.type;";
 
     String getAllByNotificationByCategoryType = "SELECT nc.*,tr.state \n"
@@ -42,11 +42,11 @@ public interface TransmissionQuery {
             + "SET tr.state = :state , tr.update_at= Now(), tr.update_by='system'\n"
             + "WHERE tr.receiver = :receiver\n"
             + "AND tr.notification_id = (SELECT notification.id\n"
-            + "                          from notification\n"
-            + "                          INNER JOIN notification_content c\n"
-            + "                          on notification.notification_content_id = c.id\n"
-            + "                          Where c.id = :notificationContentId\n"
-            + "                          )\n";
+            + "from notification\n"
+            + "INNER JOIN notification_content c\n"
+            + "on notification.notification_content_id = c.id\n"
+            + "Where c.id = :notificationContentId\n"
+            + ")\n";
 
     String insertTransmission =
             "INSERT INTO transmission (id, receiver, state, status, resend_count, create_at, create_by, update_at, update_by, channel_id, notification_id)\n"

@@ -2,11 +2,14 @@ package com.ezbuy.notiservice.service.impl;
 
 import com.ezbuy.framework.constants.Regex;
 import com.ezbuy.framework.exception.BusinessException;
+import com.ezbuy.framework.model.TokenUser;
 import com.ezbuy.framework.model.response.DataResponse;
 import com.ezbuy.framework.utils.*;
+import com.ezbuy.notimodel.common.ConstValue;
 import com.ezbuy.notimodel.dto.request.CreateNotificationDTO;
 import com.ezbuy.notimodel.dto.request.NotiContentDTO;
 import com.ezbuy.notimodel.dto.request.ReceiverDataDTO;
+import com.ezbuy.notimodel.dto.response.CountNoticeDTO;
 import com.ezbuy.notimodel.dto.response.CountNoticeResponseDTO;
 import com.ezbuy.notimodel.dto.response.NotificationHeader;
 import com.ezbuy.notimodel.model.Notification;
@@ -38,7 +41,7 @@ import static com.ezbuy.notimodel.common.ConstValue.Channel.CHANNEL_EMAIL;
 import static com.ezbuy.notimodel.common.ConstValue.CommonMessageNoti.INVALID_FORMAT_SPEC;
 import static com.ezbuy.notimodel.common.ConstValue.ContentTypeConstant.HTML;
 import static com.ezbuy.notimodel.common.ConstValue.ContentTypeConstant.TEXT;
-import static com.ezbuy.notimodel.common.ConstValue.NotificationConstant.THONG_BAO;
+import static com.ezbuy.notimodel.common.ConstValue.NotificationConstant.ANNOUNCEMENT;
 import static com.ezbuy.notimodel.common.ConstValue.TransmissionState.*;
 import static com.ezbuy.notimodel.common.ConstValue.NotiServerity.*;
 import static com.ezbuy.notimodel.common.ConstValue.NotificationConstant.*;
@@ -58,21 +61,42 @@ public class TransmissionServiceImpl implements TransmissionService {
     @Value("${config.resendCount}")
     private Integer resendCount;
 
+//    @Override
+//    public Mono<DataResponse> getCountNoticeResponseDTO() {
+//        return SecurityUtils.getCurrentUser()
+//                .flatMap(user -> transmissionRepository.getListCountNoticeDTO(user.getId()).collectList()
+//                        .map(listCountNoticeDTO -> {
+//                            CountNoticeResponseDTO countNoticeResponseDTO = new CountNoticeResponseDTO(0, new ArrayList<>());
+//                            if (listCountNoticeDTO.isEmpty()) {
+//                                return new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), countNoticeResponseDTO);
+//                            }
+//                            listCountNoticeDTO.forEach(
+//                                    countNoticeDTO -> countNoticeResponseDTO.setTotal(countNoticeResponseDTO.getTotal() + countNoticeDTO.getQuantity())
+//                            );
+//                            countNoticeResponseDTO.setDetail(listCountNoticeDTO);
+//                            return new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), countNoticeResponseDTO);
+//                        })
+//                );
+//    }
+
     @Override
     public Mono<DataResponse> getCountNoticeResponseDTO() {
         return SecurityUtils.getCurrentUser()
-                .flatMap(user -> transmissionRepository.getListCountNoticeDTO(user.getId()).collectList()
-                        .map(listCountNoticeDTO -> {
-                            CountNoticeResponseDTO countNoticeResponseDTO = new CountNoticeResponseDTO(0, new ArrayList<>());
-                            if (listCountNoticeDTO.isEmpty()) {
-                                return new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), countNoticeResponseDTO);
-                            }
-                            listCountNoticeDTO.forEach(
-                                    countNoticeDTO -> countNoticeResponseDTO.setTotal(countNoticeResponseDTO.getTotal() + countNoticeDTO.getQuantity())
-                            );
-                            countNoticeResponseDTO.setDetail(listCountNoticeDTO);
+                .flatMap(user -> transmissionRepository.getListCountNoticeDTO(user.getId())
+                        .collect(Collectors.toMap(
+                                CountNoticeDTO::getType,
+                                CountNoticeDTO::getQuantity,
+                                Integer::sum
+                        ))
+                        .map(totalMap -> {
+                            int total = totalMap.values().stream().mapToInt(Integer::intValue).sum();
+                            List<CountNoticeDTO> details = totalMap.entrySet().stream()
+                                    .map(entry -> new CountNoticeDTO(entry.getKey(), entry.getValue()))
+                                    .collect(Collectors.toList());
+                            CountNoticeResponseDTO countNoticeResponseDTO = new CountNoticeResponseDTO(total, details);
                             return new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), countNoticeResponseDTO);
                         })
+                        .switchIfEmpty(Mono.just(new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), new CountNoticeResponseDTO(0, new ArrayList<>())))) // Xử lý khi không có dữ liệu
                 );
     }
 
@@ -92,7 +116,7 @@ public class TransmissionServiceImpl implements TransmissionService {
                         }
                         if (DataUtil.safeTrim(state).equals(READ) || DataUtil.safeTrim(state).equals(UNREAD) || DataUtil.safeTrim(state).equals(PENDING)
                                 || DataUtil.safeTrim(state).equals(FAILED) || DataUtil.safeTrim(state).equals(NEW) || DataUtil.safeTrim(state).equals(SENT)) {
-                            return transmissionRepository.findByIdAndStatus(transmissionId, 1)
+                            return transmissionRepository.findByIdAndStatus(transmissionId, ConstValue.Status.ACTIVE)
                                     .flatMap(
                                             transmission -> {
                                                 transmission.setState(state);
@@ -130,89 +154,105 @@ public class TransmissionServiceImpl implements TransmissionService {
     @Transactional
     @Override
     public Mono<DataResponse<Object>> insertTransmission(CreateNotificationDTO createNotificationDTO) {
-
         return validateCreateNotificationDTO(createNotificationDTO)
                 .flatMap(validatedDTO -> SecurityUtils.getCurrentUser())
                 .flatMap(tokenUser -> {
                     String notiContentId = UUID.randomUUID().toString();
                     String notiId = UUID.randomUUID().toString();
                     NotiContentDTO notiContentDTO = createNotificationDTO.getNotiContentDTO();
-                    return notificationContentRepository.save(NotificationContent.builder()
-                            .id(DataUtil.safeTrim(notiContentId))
-                            .title(DataUtil.safeTrim(notiContentDTO.getTitle()))
-                            .subTitle(DataUtil.safeTrim(notiContentDTO.getSubTitle()))
-                            .imageUrl(DataUtil.safeTrim(notiContentDTO.getImageUrl()))
-                            .url(DataUtil.safeTrim(notiContentDTO.getUrl()))
-                            .createBy(tokenUser.getUsername())
-                            .updateBy(tokenUser.getUsername())
-                            .status(1)
-                            .templateMail(DataUtil.safeToString(createNotificationDTO.getTemplateMail()))
-                            .externalData(notiContentDTO.getExternalData())
-                            .build()
-                    ).flatMap(data -> notificationCategoryRepository.findCategoryIdByType(DataUtil.safeTrim(createNotificationDTO.getCategoryType()))
-                            .flatMap(categoryId -> notificationRepository.save(
-                                            Notification.builder()
-                                                    .id(DataUtil.safeTrim(notiId))
-                                                    .contentType(DataUtil.safeTrim(createNotificationDTO.getContentType()))
-                                                    .createBy(DataUtil.safeTrim(tokenUser.getUsername()))
-                                                    .updateBy(DataUtil.safeTrim(tokenUser.getUsername()))
-                                                    .expectSendTime(createNotificationDTO.getExpectSendTime())
-                                                    .categoryId(DataUtil.safeTrim(categoryId))
-                                                    .notificationContentId(DataUtil.safeTrim(notiContentId))
-                                                    .sender(DataUtil.safeTrim(createNotificationDTO.getSender()))
-                                                    .severity(DataUtil.safeTrim(createNotificationDTO.getSeverity()))
-                                                    .status(1)
-                                                    .build())
-                                    .switchIfEmpty(Mono.error(new BusinessException(INTERNAL_SERVER_ERROR, "category.not.found")))
-                                    .flatMap(data2 -> {
-                                                if (DataUtil.isNullOrEmpty(createNotificationDTO.getReceiverList())) {
-                                                    return Mono.error(new BusinessException(NOT_FOUND, Translator.toLocaleVi("no.receiver")));
-                                                }
 
-                                                // check invalid UUID receiver
-                                                boolean invalidReceiver = createNotificationDTO.getReceiverList().stream()
-                                                        .anyMatch(receiver -> (!DataUtil.isUUID(DataUtil.safeTrim(receiver.getUserId())) && DataUtil.isNullOrEmpty(receiver.getEmail())));
-                                                if (invalidReceiver) {
-                                                    return Mono.error(new BusinessException(INVALID_PARAMS, Translator.toLocaleVi("receiver.string.invalid")));
-                                                }
-                                                return channelRepository.findChannelIdByType(DataUtil.safeTrim(createNotificationDTO.getChannelType()));
-                                            }
-                                    ).switchIfEmpty(Mono.error(new BusinessException(INTERNAL_SERVER_ERROR, "params.channelId.notExist")))
-                                    .flatMap(channelId -> {
-                                        List<Transmission> transmissionList = createNotificationDTO.getReceiverList().stream().distinct()
-                                                .map(receiver -> {
-                                                            Transmission tr = Transmission.builder().id(UUID.randomUUID().toString())
-                                                                    .notificationId(notiId)
-                                                                    .channelId(channelId)
-                                                                    .status(1)
-                                                                    .state(PENDING)
-                                                                    .resendCount(0)
-                                                                    .updateBy(tokenUser.getUsername())
-                                                                    .createBy(tokenUser.getUsername())
-                                                                    .build();
-                                                            if (DataUtil.isUUID(DataUtil.safeTrim(receiver.getUserId()))) {
-                                                                tr.setReceiver(DataUtil.safeTrim(receiver.getUserId()));
-                                                                tr.setEmail(DataUtil.safeTrim(receiver.getEmail()));
-                                                            } else if (ValidateUtils.validateRegex(receiver.getEmail(), Regex.EMAIL_REGEX)) {
-                                                                tr.setEmail(DataUtil.safeTrim(receiver.getEmail()));
-                                                            }
-                                                            return tr;
-                                                        }
-                                                ).collect(Collectors.toList());
-                                        if (transmissionList.isEmpty()) {
-                                            return Mono.error(new BusinessException(INVALID_PARAMS, "no.receiver"));
-                                        }
-                                        return transmissionRepository.saveAll(transmissionList).collectList();
-
-
-                                    })
-                                    .switchIfEmpty(Mono.error(new BusinessException(INTERNAL_SERVER_ERROR, "resource.server.error")))
-                                    .flatMap(result ->
-                                            Mono.just(new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), result))))
-                    );
-
-
+                    NotificationContent notificationContent = buildNotificationContent(notiContentId, notiContentDTO, createNotificationDTO.getTemplateMail(), tokenUser);
+                    return notificationContentRepository.save(notificationContent)
+                            .flatMap(savedContent -> handleNotificationCreation(createNotificationDTO, tokenUser, notiContentId, notiId))
+                            .flatMap(notification -> handleTransmissionCreation(createNotificationDTO, tokenUser, notiId))
+                            .flatMap(transmissions -> Mono.just(DataResponse.success(transmissions)));
                 });
+    }
+
+    private NotificationContent buildNotificationContent(String notiContentId, NotiContentDTO notiContentDTO,  String templateMail, TokenUser tokenUser) {
+        return NotificationContent.builder()
+                .id(notiContentId.trim())
+                .title(DataUtil.safeTrim(notiContentDTO.getTitle()))
+                .subTitle(DataUtil.safeTrim(notiContentDTO.getSubTitle()))
+                .imageUrl(DataUtil.safeTrim(notiContentDTO.getImageUrl()))
+                .url(DataUtil.safeTrim(notiContentDTO.getUrl()))
+                .createBy(tokenUser.getUsername())
+                .updateBy(tokenUser.getUsername())
+                .status(ConstValue.Status.ACTIVE)
+                .templateMail(DataUtil.safeToString(templateMail))
+                .externalData(notiContentDTO.getExternalData())
+                .build();
+    }
+
+    private Mono<Notification> handleNotificationCreation(CreateNotificationDTO createNotificationDTO, TokenUser tokenUser, String notiContentId, String notiId) {
+        return notificationCategoryRepository.findCategoryIdByType(DataUtil.safeTrim(createNotificationDTO.getCategoryType()))
+                .switchIfEmpty(Mono.error(new BusinessException(INTERNAL_SERVER_ERROR, "category.not.found")))
+                .flatMap(categoryId -> {
+                    Notification notification = buildNotification(createNotificationDTO, tokenUser, notiContentId, notiId, categoryId);
+                    return notificationRepository.save(notification);
+                });
+    }
+
+    private Notification buildNotification(CreateNotificationDTO createNotificationDTO, TokenUser tokenUser, String notiContentId, String notiId, String categoryId) {
+        return Notification.builder()
+                .id(notiId.trim())
+                .contentType(DataUtil.safeTrim(createNotificationDTO.getContentType()))
+                .createBy(tokenUser.getUsername())
+                .updateBy(tokenUser.getUsername())
+                .expectSendTime(createNotificationDTO.getExpectSendTime())
+                .categoryId(categoryId)
+                .notificationContentId(notiContentId)
+                .sender(DataUtil.safeTrim(createNotificationDTO.getSender()))
+                .severity(DataUtil.safeTrim(createNotificationDTO.getSeverity()))
+                .status(ConstValue.Status.ACTIVE)
+                .build();
+    }
+
+    private Mono<List<Transmission>> handleTransmissionCreation(CreateNotificationDTO createNotificationDTO, TokenUser tokenUser, String notiId) {
+        if (DataUtil.isNullOrEmpty(createNotificationDTO.getReceiverList())) {
+            return Mono.error(new BusinessException(NOT_FOUND, Translator.toLocaleVi("no.receiver")));
+        }
+        boolean invalidReceiver = createNotificationDTO.getReceiverList().stream()
+                .anyMatch(receiver -> (!DataUtil.isUUID(DataUtil.safeTrim(receiver.getUserId())) && DataUtil.isNullOrEmpty(receiver.getEmail())));
+        if (invalidReceiver) {
+            return Mono.error(new BusinessException(INVALID_PARAMS, Translator.toLocaleVi("receiver.string.invalid")));
+        }
+        return channelRepository.findChannelIdByType(DataUtil.safeTrim(createNotificationDTO.getChannelType()))
+                .switchIfEmpty(Mono.error(new BusinessException(INTERNAL_SERVER_ERROR, "params.channelId.notExist")))
+                .flatMap(channelId -> {
+                    List<Transmission> transmissionList = createTransmissionList(createNotificationDTO, tokenUser, notiId, channelId);
+                    if (DataUtil.isNullOrEmpty(transmissionList)) {
+                        return Mono.error(new BusinessException(INVALID_PARAMS, "no.receiver"));
+                    }
+                    return transmissionRepository.saveAll(transmissionList).collectList();
+                });
+    }
+
+    private List<Transmission> createTransmissionList(CreateNotificationDTO createNotificationDTO, TokenUser tokenUser, String notiId, String channelId) {
+        return createNotificationDTO.getReceiverList().stream().distinct()
+                .map(receiver -> buildTransmission(receiver, tokenUser, notiId, channelId)).collect(Collectors.toList());
+    }
+
+    private Transmission buildTransmission(ReceiverDataDTO receiver, TokenUser tokenUser, String notiId, String channelId) {
+        Transmission transmission = Transmission.builder()
+                .id(UUID.randomUUID().toString())
+                .notificationId(notiId)
+                .channelId(channelId)
+                .status(ConstValue.Status.ACTIVE)
+                .state(PENDING)
+                .resendCount(0)
+                .updateBy(tokenUser.getUsername())
+                .createBy(tokenUser.getUsername())
+                .build();
+
+        if (DataUtil.isUUID(receiver.getUserId().trim())) {
+            transmission.setReceiver(receiver.getUserId().trim());
+            transmission.setEmail(DataUtil.safeTrim(receiver.getEmail()));
+        } else if (ValidateUtils.validateRegex(receiver.getEmail(), Regex.EMAIL_REGEX)) {
+            transmission.setEmail(DataUtil.safeTrim(receiver.getEmail()));
+        }
+
+        return transmission;
     }
 
     @Override
@@ -281,29 +321,30 @@ public class TransmissionServiceImpl implements TransmissionService {
                             .collectList()
                             .flatMap(notificationContent -> Mono.just(new DataResponse<>(null, SUCCESS, notificationContent)))
                             .switchIfEmpty(Mono.just(new DataResponse<>(null, SUCCESS, new ArrayList<>())));
-
                 });
-
     }
 
     public Mono<DataResponse<Object>> validateCreateNotificationDTO(CreateNotificationDTO createNotificationDTO) {
-
         if (DataUtil.isNullOrEmpty(createNotificationDTO.getSeverity())) {
             createNotificationDTO.setSeverity(NORMAL);
         }
+        // NORMAL or CRITICAL
         if (!DataUtil.safeTrim(createNotificationDTO.getSeverity()).equals(NORMAL) && !DataUtil.safeTrim(createNotificationDTO.getSeverity()).equals(CRITICAL)) {
-            return Mono.error(new BusinessException(INVALID_PARAMS, INVALID_FORMAT_SPEC, "severity"));
+            return Mono.error(new BusinessException(INVALID_PARAMS, INVALID_FORMAT_SPEC, "Severity"));
         }
-
-        if (!DataUtil.safeTrim(createNotificationDTO.getCategoryType()).equals(THONG_BAO) && !DataUtil.safeTrim(createNotificationDTO.getCategoryType()).equals(TIN_TUC)) {
+        // ANNOUNCEMENT or NEWS
+        if (!DataUtil.safeTrim(createNotificationDTO.getCategoryType()).equals(ANNOUNCEMENT) && !DataUtil.safeTrim(createNotificationDTO.getCategoryType()).equals(NEWS)) {
             return Mono.error(new BusinessException(INVALID_PARAMS, INVALID_FORMAT_SPEC, "CategoryType"));
         }
+        // text/plain or html/plain
         if (!DataUtil.safeTrim(createNotificationDTO.getContentType()).equals(TEXT) && !DataUtil.safeTrim(createNotificationDTO.getContentType()).equals(HTML)) {
             return Mono.error(new BusinessException(INVALID_PARAMS, INVALID_FORMAT_SPEC, "ContentType"));
         }
+        // SMS or EMAIL or REST
         if (!DataUtil.safeTrim(createNotificationDTO.getChannelType()).equals(CHANNEL_SMS) && !DataUtil.safeTrim(createNotificationDTO.getChannelType()).equals(CHANNEL_EMAIL) && !createNotificationDTO.getChannelType().equals(CHANNEL_REST)) {
             return Mono.error(new BusinessException(INVALID_PARAMS, INVALID_FORMAT_SPEC, "ChannelType"));
         }
+        // validate: NotiContentDTO
         notiContentDTOIsValid(createNotificationDTO.getNotiContentDTO());
         if (DataUtil.isNullOrEmpty(createNotificationDTO.getSendAll())) {
             createNotificationDTO.setSendAll(false);
@@ -314,14 +355,14 @@ public class TransmissionServiceImpl implements TransmissionService {
             createNotificationDTO.getReceiverList().forEach(this::isReceiverDataDTOValid);
         }
         if (Boolean.TRUE.equals(createNotificationDTO.getSendAll())) {
-            return authClient.getAllUserId().flatMap(
-                    list -> {
+            return authClient.getAllUserId().flatMap(list -> {
                         if (DataUtil.isNullOrEmpty(list)) {
-                            return Mono.error(new BusinessException(NOT_FOUND, Translator.toLocaleVi("no.receiver")));
+                            return Mono.error(new BusinessException(NOT_FOUND, "no.receiver"));
                         }
                         List<ReceiverDataDTO> receiverDataDTOList = createNotificationDTO.getReceiverList();
-                        receiverDataDTOList.addAll(list.stream().
-                                map(x -> new ReceiverDataDTO(x, null)).toList());
+                        receiverDataDTOList.addAll(list.stream().map(x ->
+                                new ReceiverDataDTO(x, null)
+                        ).toList());
                         createNotificationDTO.setReceiverList(receiverDataDTOList);
                         return Mono.just(new DataResponse<>(null, SUCCESS, createNotificationDTO));
                     }

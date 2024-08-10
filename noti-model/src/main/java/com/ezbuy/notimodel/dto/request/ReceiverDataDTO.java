@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class ReceiverDataDTO {
-
     private String userId;
-
     private String email;
 }

@@ -1,0 +1,214 @@
+server:
+  port: 8088
+logging:
+  #  config: classpath:log4j2-prod.xml
+  level:
+    root: INFO
+    org.springframework.r2dbc: DEBUG
+    io.r2dbc.postgresql.QUERY: DEBUG
+    io.r2dbc.postgresql.PARAM: DEBUG
+# spring config
+spring:
+#  devtools:
+#    restart:
+#      enabled: true
+  application:
+    name: auth-service
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+  messages:
+    basename: messages
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5434/auth
+    username: admin
+    password: admin
+  codec:
+    max-in-memory-size: 100MB
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            token-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/token
+        registration:
+          oidc:
+            client-id: ${keycloak.clientId}
+            client-secret: ${keycloak.clientSecret}
+            authorization-grant-type: password #client_credentials
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/certs
+      keycloak:
+        client-id: ${keycloak.clientId}
+#keycloak client config
+keycloak:
+  clientId: ezbuy-client
+  clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
+  realm: ezbuy-server
+  serverUrl: http://localhost:8080
+  host: localhost
+# web client config
+client:
+  keycloak:
+    address: http://localhost:8080/realms/ezbuy-server/protocol/openid-connect
+    name: keycloak
+    auth:
+      client-id: ezbuy-client
+      client-secret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
+  noti:
+    internal-oauth: true
+    address: http://localhost:7777/v1/transmission
+    name: notiServiceClient
+    pool:
+      max-size: 100
+      max-pending-acquire: 100
+    timeout:
+      read: 60000
+      write: 1000
+  setting:
+    internal-oauth: true
+    address: http://10.207.252.223/sme-setting/
+    #    address: http://localhost:8083/
+    name: settingClient
+  product:
+    internal-oauth: true
+    address: http://localhost:8088/
+    name: productClient
+  mySign:
+    address: https://remotesigning.viettel.vn:8773
+    name: mySignClient
+    clientId: samples_test_client
+    clientSecret: 205640fd6ea8c7d80bb91c630b52d286d21ee511
+    profileId: adss:ras:profile:001
+  sync:
+    internal-oauth: true
+    address: http://localhost:8077/
+    name: syncClient
+  ca:
+    address: http://192.168.176.210:8504/WS_CA/SDKPayment/CaServiceForSmePortal
+    username: 1ad0e3d776c05dbce60bfa1b98cd0143
+    password: 8964f27dfccd0ecd82dd17dd969a0adf
+    name: caClient
+  s-contract:
+    address: http://10.58.71.148:8091/api
+    username: 0100109106-011_auto_sme_hub
+    password: SMEHub@6688
+    name: sContractClient
+# unauthenticated endpoints config
+application:
+  http-logging:
+    request:
+      enable: true
+      header: true
+      param: true
+      body: true
+    response:
+      enable: true
+      body: true
+  whiteList:
+    - uri: /actuator/health
+      methods:
+        - GET
+    - uri: /v1/auth/generate-otp
+      methods:
+        - POST
+    - uri: /v1/auth/confirm-otp
+      methods:
+        - POST
+    - uri: /v1/auth/login
+      methods:
+        - POST
+    - uri: /v1/auth/refresh
+      methods:
+        - POST
+    - uri: /v1/auth/signup
+      methods:
+        - POST
+    - uri: /v1/auth/forgot-password
+      methods:
+        - POST
+    - uri: /v1/auth/reset-password
+      methods:
+        - POST
+    - uri: /**
+      methods:
+        - OPTIONS
+    - uri: /v1/auth/get-all
+      methods:
+        - GET
+    - uri: /v1/auth/confirm-create
+      methods:
+        - POST
+    - uri: /v1/user/contacts
+      methods:
+        - GET
+    - uri: /v1/auth/provider-code
+      methods:
+        - POST
+    - uri: /v1/auth/client-code
+      methods:
+        - POST
+    - uri: /v1/auth/logout
+      methods:
+        - POST
+    - uri: /v1/identify/trusted-idNo-organization
+    - uri: /v1/sync-data/organization
+      methods:
+        - POST
+    - uri: /v1/sync-data/individual
+      methods:
+        - POST
+    - uri: /v1/sync-data/organization_unit
+      methods:
+        - POST
+    - uri: /actuator/health
+      methods:
+        - POST
+    - uri: /v1/organization/unit/root-unit
+      methods:
+        - GET
+    - uri: /v1/organization/unit/code/**
+      methods:
+        - GET
+    - uri: /v1/individual-unit-position/**
+      methods:
+        - GET
+    - uri: /v1/organization/unit/sub/**
+      methods:
+        - GET
+    - uri: /v1/organization/organization-unit/get-business-type
+      methods:
+        - GET
+    - uri: /v1/individual/current
+      methods:
+        - GET
+    - uri: /v1/permission-policy
+      methods:
+        - GET
+    - uri: /v1/auth/receive-sign-result
+      methods:
+        - POST
+  data:
+    sync-data:
+      limit: 500
+# minino config server
+minio:
+  bucket: sme-public
+  enabled: true
+  baseUrl: http://10.207.252.76:8840
+  publicUrl: http://10.207.252.223/sme-media
+  accessKey: B5C4PW0LGTXP3YAD
+  secretKey: XGEI24IIJEQZX54JRTNTLY3YEHC2LFIT
+  private:
+    bucket: sme-private
+#syncacc:
+#  username: smehub
+#  password: 123456aA@
+#  clientid: sme-auth-service
+#  secretKey: YxzXsTW2sjHh3jBBYOmrIOzYT6DKE6vV
+hashing-password:
+  public-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4qGLPEGMdbDlYrc+Ud3w8Y2CobSLKAIfSBsX6bcV3bCxKZI8scW2gfr8ZMMXOxgQ0nXpIOQ0p0fb/hVHXMEnTu4Z5UEsF76eDfA80VPd96ujiZWyWYAeyIUelqPEZIWxM4MlBOPJDcCVDtwLKIoMbvVnXoHyjmOq93mHOoii24a2m0qt6jrvAYOvjNUijtofgjewYds/h74LfphDY/hNRq+4M6lI4RMZ4HiRn06P+GnvnwkxA3JL1bVRRqZ3gxB0VWiIj7I5likqnJfWnqn43mrMxfSdNI+6MpgR7L6djFOnjZiNP5bb6a3F17hwBeeLBTPs+akem/shlfoGYIbJOwIDAQAB
+proxy-client:
+  host: 10.207.156.52
+  port: 3128

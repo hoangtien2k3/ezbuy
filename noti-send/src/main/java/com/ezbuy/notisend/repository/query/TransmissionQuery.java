@@ -2,28 +2,28 @@ package com.ezbuy.notisend.repository.query;
 
 public interface TransmissionQuery {
     String getTransmissionsToSendMail = "SELECT tr.id," +
-            "       tr.receiver,\n" +
-            "       tr.email,\n" +
-            "       no.sender,\n" +
-            "       ch.type,\n" +
-            "       noc.title,\n" +
-            "       noc.sub_title,\n" +
-            "       noc.template_mail,\n" +
-            "       noc.external_data\n" +
+            "tr.receiver,\n" +
+            "tr.email,\n" +
+            "no.sender,\n" +
+            "ch.type,\n" +
+            "noc.title,\n" +
+            "noc.sub_title,\n" +
+            "noc.template_mail,\n" +
+            "noc.external_data\n" +
             "FROM transmission tr\n" +
-            "         INNER JOIN channel ch\n" +
-            "                    ON tr.channel_id = ch.id\n" +
-            "         INNER JOIN notification no\n" +
-            "                    ON tr.notification_id = no.id\n" +
-            "         INNER JOIN notification_content noc\n" +
-            "                    ON no.notification_content_id = noc.id\n" +
+            "INNER JOIN channel ch\n" +
+            "ON tr.channel_id = ch.id\n" +
+            "INNER JOIN notification no\n" +
+            "ON tr.notification_id = no.id\n" +
+            "INNER JOIN notification_content noc\n" +
+            "ON no.notification_content_id = noc.id\n" +
             "WHERE tr.state IN ('PENDING', 'FAILED')\n" +
-            "  AND (no.expect_send_time IS NULL OR now() > no.expect_send_time)\n" +
-            "  AND tr.resend_count <= :resendCount\n" +
-            "  AND ch.type IN ('EMAIL', 'REST')\n" +
-            "  AND tr.status = 1\n" +
-            "  AND no.status = 1\n" +
-            "  AND ch.status = 1\n" +
+            "AND (no.expect_send_time IS NULL OR now() > no.expect_send_time)\n" +
+            "AND tr.resend_count <= :resendCount\n" +
+            "AND ch.type IN ('EMAIL', 'REST')\n" +
+            "AND tr.status = 1\n" +
+            "AND no.status = 1\n" +
+            "AND ch.status = 1\n" +
             "LIMIT :limit \n " +
             "FOR UPDATE;";
 
@@ -60,12 +60,12 @@ public interface TransmissionQuery {
             "AND tr.receiver = :receiver;";
 
     String changeStateTransmissionByType = "UPDATE transmission tr\n" +
-            "            SET tr.state = :state , tr.update_at= Now(), tr.update_by='system'\n" +
-            "            WHERE tr.receiver = :receiver\n" +
-            "            AND tr.notification_id = (SELECT notification.id\n" +
-            "                                      from notification\n" +
-            "                                      INNER JOIN notification_content c\n" +
-            "                                      on notification.notification_content_id = c.id\n" +
-            "                                      Where c.id = :notificationContentId\n" +
-            "                                      )\n";
+            "SET tr.state = :state , tr.update_at= Now(), tr.update_by='system'\n" +
+            "WHERE tr.receiver = :receiver\n" +
+            "AND tr.notification_id = (SELECT notification.id\n" +
+            "from notification\n" +
+            "INNER JOIN notification_content c\n" +
+            "on notification.notification_content_id = c.id\n" +
+            "Where c.id = :notificationContentId\n" +
+            ")\n";
 }

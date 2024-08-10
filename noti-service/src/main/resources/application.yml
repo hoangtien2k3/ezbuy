@@ -1,6 +1,6 @@
 # server config
 server:
-  port: 7878
+  port: 7777
 logging:
   #  config: classpath:log4j2-prod.xml
   level:

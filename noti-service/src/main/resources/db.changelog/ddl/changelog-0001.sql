@@ -7,21 +7,21 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE channel
 (
-    id     UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id     VARCHAR(36) PRIMARY KEY,
     status INTEGER,
     type   VARCHAR(255)
 );
 
 CREATE TABLE notification_category
 (
-    id     UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id     VARCHAR(36) PRIMARY KEY,
     status INTEGER,
     type   VARCHAR(255)
 );
 
 CREATE TABLE notification_content
 (
-    id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id            VARCHAR(36) PRIMARY KEY,
     title         VARCHAR(255),
     sub_title     VARCHAR(255),
     image_url     VARCHAR(255),
@@ -31,39 +31,39 @@ CREATE TABLE notification_content
     external_data TEXT,
     create_at     TIMESTAMP,
     create_by     VARCHAR(255),
-    update_at     TIMESTAMP,
+    update_at     TIMESTAMP DEFAULT now(),
     update_by     VARCHAR(255)
 );
 
 CREATE TABLE notification
 (
-    id                      UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id                      VARCHAR(36) PRIMARY KEY,
     sender                  VARCHAR(255),
     severity                VARCHAR(255),
-    notification_content_id UUID,
+    notification_content_id VARCHAR(36),
     expect_send_time        TIMESTAMP,
     status                  INTEGER,
     content_type            VARCHAR(255),
-    category_id             UUID,
+    category_id             VARCHAR(36),
     create_at               TIMESTAMP,
     create_by               VARCHAR(255),
-    update_at               TIMESTAMP,
+    update_at               TIMESTAMP DEFAULT now(),
     update_by               VARCHAR(255)
 );
 
 CREATE TABLE transmission
 (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    notification_id UUID,
+    id              VARCHAR(36) PRIMARY KEY,
+    notification_id VARCHAR(36),
     receiver        VARCHAR(255),
     email           VARCHAR(255),
-    channel_id      UUID,
+    channel_id      VARCHAR(36),
     state           VARCHAR(255),
     status          INTEGER,
     resend_count    INTEGER,
     create_at       TIMESTAMP,
     create_by       VARCHAR(255),
-    update_at       TIMESTAMP,
+    update_at       TIMESTAMP DEFAULT now(),
     update_by       VARCHAR(255)
 );
 

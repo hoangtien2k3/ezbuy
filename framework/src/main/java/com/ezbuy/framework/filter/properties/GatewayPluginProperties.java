@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Setter
 @ToString
-@Profile("!prod")
+//@Profile("!prod")
 @Component
 public class GatewayPluginProperties implements InitializingBean {
     public static final String GATEWAY_PLUGIN_PROPERTIES_PREFIX = "spring.plugin.config";
@@ -33,10 +33,11 @@ public class GatewayPluginProperties implements InitializingBean {
     /** Enable Or Disable Log Request Detail */
     private boolean logRequest = false;
 
+    /** Enable Or Disable Log Response Detail */
+    private boolean logResponse = true;
+
     /** Hide header on log */
     private List<String> hideHeaderList = Collections.emptyList();
-
-    private boolean logResponse = true;
 
     @Override
     public void afterPropertiesSet() throws Exception {

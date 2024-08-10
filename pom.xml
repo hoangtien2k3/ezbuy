@@ -17,7 +17,8 @@
     <description>ezbuy</description>
 
     <modules>
-        <module>auth</module>
+        <module>auth-model</module>
+        <module>auth-service</module>
         <module>coupon</module>
         <module>customer</module>
         <module>data</module>

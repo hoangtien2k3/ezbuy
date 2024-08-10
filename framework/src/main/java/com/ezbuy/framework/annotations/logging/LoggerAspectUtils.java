@@ -25,7 +25,6 @@ import reactor.util.context.Context;
 
 @Component
 @RequiredArgsConstructor
-// @Slf4j
 public class LoggerAspectUtils {
 
     private static final Logger logPerf = LoggerFactory.getLogger("perfLogger");
@@ -112,7 +111,7 @@ public class LoggerAspectUtils {
                     return context;
                 })
                 .doOnError(o -> {
-                    if (detailException) log.error("", o);
+                    if (detailException) log.error(" ", o);
                     else log.error(o.toString());
 
                     if (o instanceof BusinessException) {
@@ -156,14 +155,7 @@ public class LoggerAspectUtils {
         newSpan.finish();
         long duration = System.currentTimeMillis() - start;
         if (duration < 50) return;
-        logPerf.info(new StringBuilder(name)
-                .append(" ")
-                .append(duration)
-                .append(" ")
-                .append(result)
-                .append(" M2 ") // M1: tu backend Java1, M2 tu backend Java2
-                .append(o == null ? "-" : o.toString())
-                .toString());
+        logPerf.info("{} {} {} M2 {}", name, duration, result, o == null ? "-" : o.toString());
     }
 
     private void logPerf(

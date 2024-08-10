@@ -1,0 +1,27 @@
+{
+  "sender": "EzBuy System Notification",
+  "severity": "NORMAL",
+  "notiContentDTO": {
+    "title": "Send Email Test Notice",
+    "subTitle": "Test send notification system by hoangtien2k3",
+    "imageUrl": "https://i.ibb.co/WsHF20r/logo-4.png",
+    "url": "https://example.com/send-email-details",
+    "externalData": "{\"key1\": \"value1\", \"key2\": \"value2\"}"
+  },
+  "contentType": "text/plain",
+  "categoryType": "ANNOUNCEMENT",
+  "channelType": "EMAIL",
+  "templateMail": "email_template",
+  "expectSendTime": "2024-08-10T02:00:00",
+  "receiverList": [
+    {
+      "userId": "73c0706b-2b25-4f88-8f98-b4aaceade214",
+      "email": "hoangtien2k3@gmail.com"
+    },
+    {
+      "userId": "4af0013f-80c2-42e8-bd07-0aa43633f912",
+      "email": "hoangtien2k3dev@example.com"
+    }
+  ],
+  "sendAll": false
+}
