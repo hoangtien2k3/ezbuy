@@ -72,20 +72,16 @@ public class KeyCloakClientImpl implements KeyCloakClient {
         formParameters.add(OAuth2ParameterNames.PASSWORD, loginRequest.getPassword());
         String clientId = loginRequest.getClientId();
         if (!DataUtil.isNullOrEmpty(clientId)) {
-            return keycloakProvider
-                    .getClientWithSecret(clientId)
+            return keycloakProvider.getClientWithSecret(clientId)
                     .flatMap(clientRepresentation -> {
                         formParameters.add(OAuth2ParameterNames.CLIENT_ID, clientId);
                         formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, clientRepresentation.getSecret());
                         return requestToken(formParameters);
                     })
-                    .switchIfEmpty(
-                            Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "client.id.not.valid")));
+                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "client.id.not.valid")));
         } else {
-            formParameters.add(
-                    OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().getClientId());
-            formParameters.add(
-                    OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().getClientSecret());
+            formParameters.add(OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().getClientId());
+            formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().getClientSecret());
         }
         return requestToken(formParameters);
     }
@@ -106,16 +102,13 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                     if (!DataUtil.isNullOrEmpty(redirectUrl)) {
                         formParameters.add(OAuth2ParameterNames.REDIRECT_URI, redirectUrl);
                     } else {
-                        formParameters.add(
-                                OAuth2ParameterNames.REDIRECT_URI,
-                                clientRepresentation.getRedirectUris().getFirst());
+                        formParameters.add(OAuth2ParameterNames.REDIRECT_URI, clientRepresentation.getRedirectUris().getFirst());
                     }
                     formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, clientRepresentation.getSecret());
                     formParameters.add(OAuth2ParameterNames.CLIENT_ID, clientLogin.getClientId());
                     return requestToken(formParameters);
                 })
-                .switchIfEmpty(
-                        Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "login.client.id.not.exist")));
+                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "login.client.id.not.exist")));
     }
 
     @Override

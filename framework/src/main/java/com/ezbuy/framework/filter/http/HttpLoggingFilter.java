@@ -39,7 +39,7 @@ import reactor.core.publisher.Mono;
  * <p>This filter logs the details of HTTP requests and responses, including headers,
  * query parameters, and body content. It is designed to be used with Spring WebFlux.
  *
- * @author
+ * @author: hoangtien2k3
  */
 @Component
 @Slf4j
@@ -170,10 +170,9 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
         MediaType contentType = headers.getContentType();
         long length = headers.getContentLength();
         String requestBody = null;
-        if (length > 0
-                && null != contentType
+        if (length > 0 && null != contentType
                 && (contentType.includes(MediaType.APPLICATION_JSON)
-                        || contentType.includes(MediaType.APPLICATION_JSON))
+                || contentType.includes(MediaType.APPLICATION_JSON))
                 && gatewayContext.getRequestBody() != null) {
             requestBody = TruncateUtils.truncateBody(gatewayContext.getRequestBody());
             logs.add(String.format("%s", TruncateUtils.truncate(requestBody, MAX_BYTE)));

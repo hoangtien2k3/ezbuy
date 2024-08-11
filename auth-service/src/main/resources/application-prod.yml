@@ -66,10 +66,35 @@ client:
     timeout:
       read: 60000
       write: 1000
+  setting:
+    internal-oauth: true
+    address: http://10.207.252.223/sme-setting/
+    #    address: http://localhost:8083/
+    name: settingClient
   product:
     internal-oauth: true
     address: http://localhost:8088/
     name: productClient
+  mySign:
+    address: https://remotesigning.viettel.vn:8773
+    name: mySignClient
+    clientId: samples_test_client
+    clientSecret: 205640fd6ea8c7d80bb91c630b52d286d21ee511
+    profileId: adss:ras:profile:001
+  sync:
+    internal-oauth: true
+    address: http://localhost:8077/
+    name: syncClient
+  ca:
+    address: http://192.168.176.210:8504/WS_CA/SDKPayment/CaServiceForSmePortal
+    username: 1ad0e3d776c05dbce60bfa1b98cd0143
+    password: 8964f27dfccd0ecd82dd17dd969a0adf
+    name: caClient
+  s-contract:
+    address: http://10.58.71.148:8091/api
+    username: 0100109106-011_auto_sme_hub
+    password: SMEHub@6688
+    name: sContractClient
 # unauthenticated endpoints config
 application:
   http-logging:

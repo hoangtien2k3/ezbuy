@@ -131,7 +131,7 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
         List<String> logs = new ArrayList<>();
         logRequest(exchange, logs);
         logResponse(exchange, logs);
-        reqResLog.info(String.join("|", logs));
+        reqResLog.info(String.join(" | ", logs));
     }
 
     private void logRequest(ServerWebExchange exchange, List<String> logs) {
@@ -147,7 +147,7 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
 
         var logHeader = new StringBuilder();
         headers.forEach((key, value) -> logHeader.append(String.format("{%s:%s}", key, value)));
-        if (logHeader.length() > 0) {
+        if (!logHeader.isEmpty()) {
             logs.add(String.format("%s", logHeader));
         }
 
@@ -238,7 +238,6 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
     }
 
     private String truncateBody(String s) {
-
         int b = 0;
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);

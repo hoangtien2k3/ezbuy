@@ -31,12 +31,11 @@ import java.util.Optional;
 public class AuthController {
     private final AuthService authService;
     //    private final UserService userService;
-    private static final String SUCCESS_MESSAGE = "common.success";
 
     @PostMapping(value = UrlPaths.Auth.LOGIN)
     public Mono<ResponseEntity<DataResponse<Optional<AccessToken>>>> login(
             @Valid @RequestBody LoginRequest loginRequest) {
-        return authService.getToken(loginRequest).map(rs -> ResponseEntity.ok(new DataResponse<>(SUCCESS_MESSAGE, rs)));
+        return authService.getToken(loginRequest).map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
     }
 
     @PostMapping(value = UrlPaths.Auth.GET_TOKEN_FROM_AUTHORIZATION_CODE)
@@ -44,13 +43,13 @@ public class AuthController {
             @Valid @RequestBody ProviderLogin providerLogin) {
         return authService
                 .getToken(providerLogin)
-                .map(rs -> ResponseEntity.ok(new DataResponse<>(SUCCESS_MESSAGE, rs)));
+                .map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
     }
 
     @PostMapping(value = UrlPaths.Auth.GET_TOKEN_FROM_PROVIDER_CODE)
     public Mono<ResponseEntity<DataResponse>> getTokenFromAuthorizationProviderCode(
             @Valid @RequestBody ClientLogin clientLogin, ServerWebExchange serverWebExchange) {
-        return authService.getToken(clientLogin).map(rs -> ResponseEntity.ok(new DataResponse(SUCCESS_MESSAGE, rs)));
+        return authService.getToken(clientLogin).map(rs -> ResponseEntity.ok(new DataResponse("common.success", rs)));
     }
 
     @GetMapping(value = UrlPaths.Auth.GET_PERMISSION)
@@ -58,7 +57,7 @@ public class AuthController {
             @RequestParam(name = "clientId") String clientId) {
         return authService
                 .getPermission(clientId)
-                .map(rs -> ResponseEntity.ok(new DataResponse<>(SUCCESS_MESSAGE, rs)));
+                .map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
     }
 
     @GetMapping(value = UrlPaths.Auth.GET_ORG_PERMISSION)
@@ -68,7 +67,7 @@ public class AuthController {
             @RequestParam(name = "idNo", required = false) String idNo) {
         return authService
                 .getOrgPermission(clientId, idNo, organizationId)
-                .map(rs -> ResponseEntity.ok(new DataResponse<>(SUCCESS_MESSAGE, rs)));
+                .map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
     }
 
     @PostMapping(value = UrlPaths.Auth.REFRESH_TOKEN)
@@ -76,12 +75,12 @@ public class AuthController {
             @Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
         return authService
                 .refreshToken(refreshTokenRequest)
-                .map(rs -> ResponseEntity.ok(new DataResponse<>(SUCCESS_MESSAGE, rs)));
+                .map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
     }
 
     @PostMapping(value = UrlPaths.Auth.LOGOUT)
     public Mono<ResponseEntity<DataResponse<Boolean>>> logout(@Valid @RequestBody LogoutRequest logoutRequest) {
-        return authService.logout(logoutRequest).map(rs -> ResponseEntity.ok(new DataResponse<>(SUCCESS_MESSAGE, rs)));
+        return authService.logout(logoutRequest).map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
     }
 
     @PostMapping(value = UrlPaths.Auth.SIGNUP)
@@ -91,34 +90,33 @@ public class AuthController {
                 .map(su -> new DataResponse<>(Translator.toLocaleVi("otp.success"), null));
     }
 
-    //    @PostMapping(value = UrlPaths.Auth.CREATE_ORG_ACCOUNT)
-    //    @PreAuthorize("hasAnyAuthority('system')")
-    //    public Mono<DataResponse<Individual>> createOrgAccount(@Valid @RequestBody CreateOrgAccount signupRequest) {
-    //        return authService.createAccount(signupRequest)
-    //                .map(rs -> new DataResponse<>(Translator.toLocaleVi(SUCCESS_MESSAGE), rs));
-    //    }
-    //
-    //    @GetMapping(value = UrlPaths.Auth.FIND_ORG_ACCOUNT)
-    //    @PreAuthorize("hasAnyAuthority('system')")
-    //    public Mono<DataResponse<Account>> findByIdNo(@RequestParam(name = "idNo") String idNo, @RequestParam(name =
-    // "idType") String idType) {
-    //        return userService.findUserByIdNo(idNo, idType)
-    //                .map(rs -> new DataResponse<>(Translator.toLocaleVi(SUCCESS_MESSAGE), rs))
-    //                .switchIfEmpty(Mono.just(new DataResponse<>(Translator.toLocale("account.not.exist"), null)));
-    //    }
-
-    //    @PostMapping(value = UrlPaths.Auth.ADD_SERVICE_ADMIN_ROLE)
-    //    @PreAuthorize("hasAnyAuthority('system')")
-    //    public Mono<DataResponse> addServiceAdminRole(@RequestBody AdminPermission adminPermission) {
-    //        return authService.addServiceAdminPermission(adminPermission)
-    //                .map(rs -> new DataResponse<>(Translator.toLocale("common.success"), rs));
-    //    }
+//        @PostMapping(value = UrlPaths.Auth.CREATE_ORG_ACCOUNT)
+//        @PreAuthorize("hasAnyAuthority('system')")
+//        public Mono<DataResponse<Individual>> createOrgAccount(@Valid @RequestBody CreateOrgAccount signupRequest) {
+//            return authService.createAccount(signupRequest)
+//                    .map(rs -> new DataResponse<>(Translator.toLocaleVi("common.success"), rs));
+//        }
+//
+//        @GetMapping(value = UrlPaths.Auth.FIND_ORG_ACCOUNT)
+//        @PreAuthorize("hasAnyAuthority('system')")
+//        public Mono<DataResponse<Account>> findByIdNo(@RequestParam(name = "idNo") String idNo, @RequestParam(name = "idType") String idType) {
+//            return userService.findUserByIdNo(idNo, idType)
+//                    .map(rs -> new DataResponse<>(Translator.toLocaleVi("common.success"), rs))
+//                    .switchIfEmpty(Mono.just(new DataResponse<>(Translator.toLocale("account.not.exist"), null)));
+//        }
+//
+//        @PostMapping(value = UrlPaths.Auth.ADD_SERVICE_ADMIN_ROLE)
+//        @PreAuthorize("hasAnyAuthority('system')")
+//        public Mono<DataResponse> addServiceAdminRole(@RequestBody AdminPermission adminPermission) {
+//            return authService.addServiceAdminPermission(adminPermission)
+//                    .map(rs -> new DataResponse<>(Translator.toLocale("common.success"), rs));
+//        }
 
     @PostMapping(value = UrlPaths.Auth.FORGOT_PASSWORD)
     public Mono<DataResponse<UserOtp>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest forgotPasswordRequest) {
         return authService
                 .forgotPassword(forgotPasswordRequest)
-                .map(su -> new DataResponse<>(Translator.toLocaleVi("otp.success"), null));
+                .map(su -> new DataResponse<>("otp.success", null));
     }
 
     @PostMapping(UrlPaths.Auth.CHANGE_PASSWORD)
@@ -126,7 +124,7 @@ public class AuthController {
             @Valid @RequestBody ChangePasswordRequest request, ServerWebExchange serverWebExchange) {
         return authService
                 .changePassword(request, serverWebExchange)
-                .thenReturn(new DataResponse<>(Translator.toLocaleVi("success"), null));
+                .thenReturn(DataResponse.success(null));
     }
 
     @PostMapping(UrlPaths.Auth.RESET_PASSWORD)
@@ -134,9 +132,7 @@ public class AuthController {
             @Valid @RequestBody ResetPasswordRequest resetPasswordRequest, ServerWebExchange serverWebExchange) {
         return authService
                 .resetPassword(resetPasswordRequest, serverWebExchange)
-                .map(success -> new DataResponse<>(
-                        Translator.toLocaleVi(DataUtil.safeToString(Translator.toLocaleVi(success.getMessage()))),
-                        null));
+                .map(success -> new DataResponse<>(DataUtil.safeToString(success.getMessage()), null));
     }
 
     @PostMapping(UrlPaths.Auth.CONFIRM_OTP_FOR_CREATE_ACCOUNT)
@@ -160,7 +156,7 @@ public class AuthController {
         return authService
                 .createUserTestPerformence(startIndex, numAccount)
                 .then(Mono.fromCallable(
-                        () -> ResponseEntity.ok(new DataResponse<>(Translator.toLocaleVi("success"), null))));
+                        () -> ResponseEntity.ok(new DataResponse<>("success", null))));
     }
 
     @GetMapping(UrlPaths.Auth.GET_TWO_WAY_PASSWORD)
@@ -177,7 +173,7 @@ public class AuthController {
             GetActionLoginReportRequest request) {
         return authService
                 .getActionLoginReport(request)
-                .map(rs -> ResponseEntity.ok(new DataResponse<>(SUCCESS_MESSAGE, rs)));
+                .map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
     }
 
     //        @GetMapping(UrlPaths.Auth.BLOCK_LOGIN)
@@ -206,7 +202,7 @@ public class AuthController {
     //    public Mono<ResponseEntity<DataResponse>> signBusinessAuth(@Valid @RequestBody SignBusinessAuthRequest
     // signBusinessAuthRequest) {
     //        return authService.signBusinessAuth(signBusinessAuthRequest)
-    //                .map(rs -> ResponseEntity.ok(new DataResponse(SUCCESS_MESSAGE, rs)));
+    //                .map(rs -> ResponseEntity.ok(new DataResponse("common.success", rs)));
     //    }
     //
     //    @PostMapping(UrlPaths.Auth.RECEIVE_SIGN_RESULT)
@@ -218,6 +214,6 @@ public class AuthController {
     //    public Mono<ResponseEntity<DataResponse>> viewBusinessAuthContract(@RequestParam(name = "organiztionId")
     // String organiztionId) {
     //        return authService.viewBusinessAuthContract(organiztionId).map(rs -> ResponseEntity.ok(new
-    // DataResponse(SUCCESS_MESSAGE, rs)));
+    // DataResponse("common.success", rs)));
     //    }
 }

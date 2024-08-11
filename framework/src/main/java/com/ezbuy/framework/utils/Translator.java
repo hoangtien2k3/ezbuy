@@ -33,8 +33,7 @@ public class Translator {
      * @param messageSource the message source for loading messages
      * @param localeContextResolver the locale context resolver for resolving locales
      */
-    public Translator(
-            ReloadableResourceBundleMessageSource messageSource, LocaleContextResolver localeContextResolver) {
+    public Translator(ReloadableResourceBundleMessageSource messageSource, LocaleContextResolver localeContextResolver) {
         Translator.messageSource = messageSource;
         Translator.localeContextResolver = localeContextResolver;
     }

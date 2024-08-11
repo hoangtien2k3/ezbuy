@@ -115,12 +115,11 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
                 .bodyValue(payload)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(String.class)
-                        .flatMap(errorBody ->
-                                Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody))))
+                        .flatMap(errorBody -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody))))
                 .bodyToMono(String.class)
                 .map(response -> processReturn(response, resultClass))
                 .onErrorResume(WebClientResponseException.class, e -> {
-                    log.error("Call post REST API error: ", e);
+                    log.error("call post rest api error: ", e);
                     String responseError = e.getResponseBodyAsString(StandardCharsets.UTF_8);
                     T result = DataUtil.parseStringToObject(responseError, resultClass);
                     return Mono.just(Optional.ofNullable(result));
@@ -264,7 +263,9 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
                 });
     }
 
-    /** proxy for https protocol */
+    /**
+     * proxy for https protocol
+     */
     @Override
     public WebClient proxyClient(String proxyHost, Integer proxyPort, Boolean proxyEnable) {
         ConnectionProvider connectionProvider = ConnectionProvider.builder(Constants.POOL.REST_CLIENT_POLL)
@@ -303,7 +304,9 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
                 .build();
     }
 
-    /** proxy for http protocol (dang phai su dung lib khac vi ham proxyClient khong ho tro http) */
+    /**
+     * proxy for http protocol (dang phai su dung lib khac vi ham proxyClient khong ho tro http)
+     */
     @Override
     public WebClient proxyHttpClient(String proxyHost, Integer proxyPort) {
         HttpClient httpClient = HttpClient.create()

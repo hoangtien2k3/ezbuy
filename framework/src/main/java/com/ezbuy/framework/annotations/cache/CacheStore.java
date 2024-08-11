@@ -2,13 +2,12 @@ package com.ezbuy.framework.annotations.cache;
 
 import java.lang.reflect.Method;
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import jakarta.annotation.PostConstruct;
-
+import io.prometheus.client.CollectorRegistry;
+import lombok.RequiredArgsConstructor;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -25,32 +24,40 @@ import com.ezbuy.framework.annotations.LocalCache;
 import io.prometheus.client.cache.caffeine.CacheMetricsCollector;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.PostConstruct;
+
 @Slf4j
 @Component
 public class CacheStore {
-    private static final CacheMetricsCollector CACHE_METRICS_COLLECTOR = new CacheMetricsCollector().register();
+//    private static final CacheMetricsCollector CACHE_METRICS_COLLECTOR = new CacheMetricsCollector().register();
+
+//    private static CacheMetricsCollector cacheMetricsCollector;
+//
+//    public CacheStore(CacheMetricsCollector cacheMetricsCollector) {
+//        CacheStore.cacheMetricsCollector = cacheMetricsCollector;
+//    }
+
     private static final HashMap<String, Cache<Object, Object>> caches = new HashMap<>();
     private static final Set<Method> autoLoadMethods = new HashSet<>();
     private static final String reflectionPath = "com.ezbuy";
 
     @PostConstruct
-    private void init() {
+    private static void init() {
         log.info("Start initializing cache");
         Reflections reflections = new Reflections(reflectionPath, Scanners.MethodsAnnotated);
-        Set<Method> methods =
-                reflections.get(Scanners.MethodsAnnotated.with(LocalCache.class).as(Method.class));
+        Set<Method> methods = reflections.get(Scanners.MethodsAnnotated.with(LocalCache.class).as(Method.class));
         for (Method method : methods) {
             String className = method.getDeclaringClass().getSimpleName();
             LocalCache localCache = method.getAnnotation(LocalCache.class);
-            int maxRecord = localCache.maxRecord();
-            int durationInMinute = localCache.durationInMinute();
+            Integer maxRecord = localCache.maxRecord();
+            Integer durationInMinute = localCache.durationInMinute();
             String cacheName = className + "." + method.getName();
             boolean autoLoad = localCache.autoCache();
             Cache<Object, Object> cache;
             if (autoLoad && (method.getParameterCount() == 0)) {
                 cache = Caffeine.newBuilder()
                         .scheduler(Scheduler.systemScheduler())
-                        .expireAfterWrite(Duration.of(durationInMinute, ChronoUnit.MINUTES))
+                        .expireAfterWrite(Duration.ofMinutes(durationInMinute))
                         .recordStats()
                         .maximumSize(maxRecord)
                         .removalListener(new CustomizeRemovalListener(method))
@@ -58,13 +65,14 @@ public class CacheStore {
                 autoLoadMethods.add(method);
             } else {
                 cache = Caffeine.newBuilder()
-                        .expireAfterWrite(Duration.of(durationInMinute, ChronoUnit.MINUTES))
+                        .expireAfterWrite(Duration.ofMinutes(durationInMinute))
                         .recordStats()
                         .maximumSize(maxRecord)
                         .build();
             }
             caches.put(cacheName, cache);
-            CACHE_METRICS_COLLECTOR.addCache(cacheName, cache);
+//            CACHE_METRICS_COLLECTOR.addCache(cacheName, cache);
+//            cacheMetricsCollector.addCache(cacheName, cache);
         }
         log.info("Finish initializing {} cache", caches.size());
     }
@@ -81,7 +89,7 @@ public class CacheStore {
         }
     }
 
-    public static Cache getCache(String key) {
+    public static synchronized Cache getCache(String key) {
         return caches.get(key);
     }
 }

@@ -1,8 +1,8 @@
 package com.ezbuy.authmodel.constants;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 import java.util.Arrays;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 public enum ServiceType {
     CA("7", "CA"),

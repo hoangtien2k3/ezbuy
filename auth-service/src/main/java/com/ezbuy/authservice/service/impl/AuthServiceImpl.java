@@ -126,8 +126,7 @@ public class AuthServiceImpl implements AuthService {
     //        }
     //    }
 
-    private Mono<Optional<AccessToken>> getTokenWithClientLogin(
-            ClientLogin clientLogin, ServerWebExchange serverWebExchange) {
+    private Mono<Optional<AccessToken>> getTokenWithClientLogin(ClientLogin clientLogin, ServerWebExchange serverWebExchange) {
         return keyCloakClient
                 .getToken(clientLogin)
                 .flatMap(accessToken -> {
@@ -510,9 +509,8 @@ public class AuthServiceImpl implements AuthService {
                 ReceiverDataDTO.builder().email(requestEmail).build(),
                 null);
         return otpRepository.currentTimeDB().flatMap(localDateTime -> {
-            UUID id = UUID.randomUUID();
             UserOtp otp = UserOtp.builder()
-                    .id(id.toString())
+                    .id(String.valueOf(UUID.randomUUID()))
                     .otp(otpValue)
                     .createBy(SYSTEM)
                     .updateBy(SYSTEM)
@@ -540,8 +538,7 @@ public class AuthServiceImpl implements AuthService {
         });
     }
 
-    private CreateNotificationDTO createNotificationDTO(
-            String subTitle, String title, String template, ReceiverDataDTO data, String externalData) {
+    private CreateNotificationDTO createNotificationDTO(String subTitle, String title, String template, ReceiverDataDTO data, String externalData) {
         CreateNotificationDTO createNotificationDTO = new CreateNotificationDTO();
         createNotificationDTO.setSender(SYSTEM);
         createNotificationDTO.setSeverity(AuthConstants.Notification.SEVERITY);
@@ -566,60 +563,48 @@ public class AuthServiceImpl implements AuthService {
         if (DataUtil.isNullOrEmpty(userName)) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "individual.not.found"));
         }
-        if (isExistedUsername(userName)) {
-            String otpValue = generateOtpValue();
-            List<UserRepresentation> listUser =
-                    kcProvider.getRealmResource().users().search(userName, true);
-            UserRepresentation user = listUser.getFirst();
-            String requestEmail = user.getEmail();
-            CreateNotificationDTO createNotificationDTO = createNotificationDTO(
-                    otpValue,
-                    Translator.toLocaleVi("email.title.forgot.password"),
-                    Constants.TemplateMail.FORGOT_PASSWORD,
-                    ReceiverDataDTO.builder()
-                            .userId(user.getId())
-                            .email(requestEmail)
-                            .build(),
-                    null);
-            return otpRepository
-                    .currentTimeDB()
-                    .flatMap(time -> {
-                        UUID id = UUID.randomUUID();
-                        UserOtp otpBuild = UserOtp.builder()
-                                .id(id.toString())
-                                .otp(otpValue)
-                                .createBy(SYSTEM)
-                                .updateBy(SYSTEM)
-                                .tries(0)
-                                .email(requestEmail)
-                                .expTime(time.plusMinutes(Constants.Otp.EXP_MINUTE))
-                                .type(Constants.Otp.FORGOT_PASSWORD)
-                                .build();
-                        AppUtils.runHiddenStream(
-                                otpRepository.disableOtp(requestEmail, Constants.Otp.FORGOT_PASSWORD, SYSTEM));
-                        AppUtils.runHiddenStream(generateOtpAndSave(otpBuild));
-                        return notiServiceClient
-                                .insertTransmission(createNotificationDTO)
-                                .flatMap(objects -> {
-                                    if (objects.isPresent()
-                                            && (DataUtil.isNullOrEmpty(
-                                            objects.get().getErrorCode())
-                                            && !DataUtil.isNullOrEmpty(
-                                            objects.get().getMessage()))) {
-                                        return Mono.just(otpBuild);
-                                    }
-                                    return Mono.error(new BusinessException(
-                                            CommonErrorCode.INVALID_PARAMS,
-                                            (objects.isPresent())
-                                                    ? objects.get().getMessage()
-                                                    : "params.invalid"));
-                                });
-                    })
-                    .onErrorResume(throwable -> Mono.error(
-                            new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "noti.service.error")));
-        } else {
+        if (!isExistedUsername(userName)) {
             return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "forgot.pass.email"));
         }
+        String otpValue = generateOtpValue();
+        List<UserRepresentation> listUser = kcProvider.getRealmResource().users().search(userName, true);
+        UserRepresentation user = listUser.getFirst();
+        String requestEmail = user.getEmail();
+        CreateNotificationDTO createNotificationDTO = createNotificationDTO(
+                otpValue,
+                Translator.toLocaleVi("email.title.forgot.password"),
+                Constants.TemplateMail.FORGOT_PASSWORD,
+                ReceiverDataDTO.builder()
+                        .userId(user.getId())
+                        .email(requestEmail)
+                        .build(),
+                null);
+        return otpRepository
+                .currentTimeDB()
+                .flatMap(time -> {
+                    UserOtp otpBuild = UserOtp.builder()
+                            .id(String.valueOf(UUID.randomUUID()))
+                            .otp(otpValue)
+                            .createBy(SYSTEM)
+                            .updateBy(SYSTEM)
+                            .tries(0)
+                            .email(requestEmail)
+                            .expTime(time.plusMinutes(Constants.Otp.EXP_MINUTE))
+                            .type(Constants.Otp.FORGOT_PASSWORD)
+                            .build();
+                    AppUtils.runHiddenStream(otpRepository.disableOtp(requestEmail, Constants.Otp.FORGOT_PASSWORD, SYSTEM));
+                    AppUtils.runHiddenStream(generateOtpAndSave(otpBuild));
+                    return notiServiceClient
+                            .insertTransmission(createNotificationDTO)
+                            .flatMap(objects -> {
+                                if (objects.isPresent() && ErrorCode.ResponseErrorCode.ERROR_CODE_SUCCESS.equals(objects.get().getErrorCode())) {
+                                    return Mono.just(otpBuild);
+                                }
+                                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, (objects.isPresent())
+                                        ? objects.get().getMessage() : "params.invalid"));
+                            });
+                })
+                .onErrorResume(throwable -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "noti.service.error")));
     }
 
     private Mono<UserOtp> generateOtpAndSave(UserOtp otp) {
@@ -745,10 +730,8 @@ public class AuthServiceImpl implements AuthService {
                             .getUserCredentialByUserName(requestEmail, Constants.STATUS.ACTIVE)
                             .collectList()
                             .flatMap(userCredentials -> {
-                                String hashedPasswordHubSme =
-                                        cipherManager.encrypt(resetPasswordRequest.getPassword(), publicKey);
+                                String hashedPasswordHubSme = cipherManager.encrypt(resetPasswordRequest.getPassword(), publicKey);
                                 UserCredential userCredential = new UserCredential();
-
                                 if (userCredentials.isEmpty()) {
                                     userCredential.setId(String.valueOf(UUID.randomUUID()));
                                     userCredential.setUserId(user.getId());
@@ -770,7 +753,6 @@ public class AuthServiceImpl implements AuthService {
                             });
                     var saveDisableOtp = AppUtils.insertData(
                             otpRepository.disableOtp(user.getEmail(), Constants.Otp.FORGOT_PASSWORD, SYSTEM));
-
                     return Mono.zip(saveUserCredential, saveDisableOtp)
                             .switchIfEmpty(Mono.error(new BusinessException(
                                     CommonErrorCode.INTERNAL_SERVER_ERROR, "update.user-credential-or-user-otp.error")))
@@ -837,8 +819,7 @@ public class AuthServiceImpl implements AuthService {
                                     CommonErrorCode.BAD_REQUEST,
                                     Translator.toLocaleVi("change-pass.old-password.invalid")));
                     // zip mono
-                    return Mono.zip(updateIndividual, getTokenInfo, updateCredential)
-                            .map(Tuple2::getT2);
+                    return Mono.zip(updateIndividual, getTokenInfo, updateCredential).map(Tuple2::getT2);
                 })
                 .flatMap(tokenUser -> {
                     CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
@@ -987,10 +968,8 @@ public class AuthServiceImpl implements AuthService {
         }
         return actionLogRepository
                 .countLoginInOneDay(request.getDateReport(), ActionLogType.LOGIN)
-                .switchIfEmpty(
-                        Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "action-log.login.not.found")))
-                .flatMap(rs -> Mono.just(
-                        GetActionLoginReportResponse.builder().loginCount(rs).build()));
+                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "action-log.login.not.found")))
+                .flatMap(rs -> Mono.just(GetActionLoginReportResponse.builder().loginCount(rs).build()));
     }
 
     @Override
@@ -1011,8 +990,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Mono<DataResponse<String>> generateOtp(
-            ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange) {
+    public Mono<DataResponse<String>> generateOtp(ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange) {
         String email = DataUtil.safeTrim(confirmOTPRequest.getEmail());
         String type = DataUtil.safeTrim(confirmOTPRequest.getType());
         String otpValue = generateOtpValue();

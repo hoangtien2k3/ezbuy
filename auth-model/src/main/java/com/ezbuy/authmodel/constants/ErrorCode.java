@@ -25,4 +25,9 @@ public final class ErrorCode {
         public static final String DELETE_ERROR = "group.DELETE_ERROR";
         public static final String DELETE_NOT_EMPTY_GROUP = "group.delete_not_empty";
     }
+
+    public static final class ResponseErrorCode {
+        public static final String ERROR_CODE_SUCCESS = "0";
+        public static final String ERROR_CODE_FALSE = "-1";
+    }
 }

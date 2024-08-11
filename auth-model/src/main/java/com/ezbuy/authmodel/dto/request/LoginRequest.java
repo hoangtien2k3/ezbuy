@@ -1,11 +1,13 @@
 package com.ezbuy.authmodel.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
+
+import org.hibernate.validator.constraints.Length;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.hibernate.validator.constraints.Length;
 
 @Data
 @AllArgsConstructor

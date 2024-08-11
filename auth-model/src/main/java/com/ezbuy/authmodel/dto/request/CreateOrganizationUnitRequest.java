@@ -2,6 +2,7 @@ package com.ezbuy.authmodel.dto.request;
 
 import com.ezbuy.authmodel.dto.BusinessRegisInforDto;
 import com.ezbuy.authmodel.dto.PresentativeDto;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

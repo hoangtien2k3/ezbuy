@@ -1,12 +1,13 @@
 package com.ezbuy.authmodel.dto.response;
 
+import java.util.List;
+
 import com.ezbuy.authmodel.model.Individual;
 import com.ezbuy.authmodel.model.TenantIdentify;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @AllArgsConstructor

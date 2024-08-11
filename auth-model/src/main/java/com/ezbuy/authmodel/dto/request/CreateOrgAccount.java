@@ -1,17 +1,20 @@
 package com.ezbuy.authmodel.dto.request;
 
-import com.ezbuy.authmodel.model.TenantIdentify;
-import com.ezbuy.authmodel.dto.response.IndividualDTO;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Length;
+
+import com.ezbuy.authmodel.dto.response.IndividualDTO;
+import com.ezbuy.authmodel.model.TenantIdentify;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @AllArgsConstructor

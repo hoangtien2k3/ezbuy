@@ -19,12 +19,7 @@ public class CustomizeRemovalListener implements RemovalListener {
     @Override
     public void onRemoval(@Nullable Object key, @Nullable Object value, @NonNull RemovalCause removalCause) {
         if (removalCause.wasEvicted()) {
-            log.info("Cache "
-                    + method.getDeclaringClass().getSimpleName()
-                    + "."
-                    + method.getName()
-                    + " was evicted because "
-                    + removalCause);
+            log.info("Cache " + method.getDeclaringClass().getSimpleName() + "." + method.getName() + " was evicted because " + removalCause);
             CacheUtils.invokeMethod(method);
         }
     }

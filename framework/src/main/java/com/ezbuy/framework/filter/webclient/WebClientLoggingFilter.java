@@ -20,7 +20,7 @@ public class WebClientLoggingFilter implements ExchangeFilterFunction {
 
     @Override
     public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
-        log.info("Start Call API: {} {}", request.method(), request.url());
+        log.info("Start Call API - Method: {} {}", request.method(), request.url());
         if (request.headers().getContentLength() > 0) {
             log.info("body ", request.body());
         }

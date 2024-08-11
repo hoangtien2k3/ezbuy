@@ -1,13 +1,15 @@
 package com.ezbuy.authmodel.dto.request;
 
+import java.time.LocalDateTime;
+
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotEmpty;
+
+import org.hibernate.validator.constraints.Length;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
-
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor

@@ -52,22 +52,19 @@ public class WebConfig {
                                 authorize.pathMatchers(convertedMethod, uri).permitAll());
                     }
                 } else {
-                    http.authorizeExchange(authorize ->
-                            authorize.pathMatchers(uri).permitAll());
+                    http.authorizeExchange(
+                            authorize -> authorize.pathMatchers(uri).permitAll());
                 }
             }
         }
 
         http.cors(corsSpec -> corsSpec.configurationSource(corsConfigurationSource()))
                 .authorizeExchange(authorize -> authorize.anyExchange().authenticated())
-                .oauth2ResourceServer(oauth2 ->
-                        oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)));
+                .oauth2ResourceServer(
+                        oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)));
 
-        http.headers(headers ->
-                headers.frameOptions(frameOptions ->
-                        frameOptions.mode(XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN)
-                )
-        );
+        http.headers(headers -> headers.frameOptions(
+                frameOptions -> frameOptions.mode(XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN)));
 
         return http.build();
     }

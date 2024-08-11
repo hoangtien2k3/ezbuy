@@ -13,7 +13,7 @@ public final class AuthConstants {
     public static final class Notification {
         public static final String SEVERITY = "NORMAL";
         public static final String CONTENT_TYPE = "text/plain";
-        public static final String CATEGORY_TYPE = "THONG_BAO";
+        public static final String CATEGORY_TYPE = "ANNOUNCEMENT"; // THONG_BAO
         public static final String CHANNEL_TYPE = "EMAIL";
     }
 

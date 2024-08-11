@@ -1,16 +1,18 @@
 package com.ezbuy.authmodel.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.validation.constraints.Max;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Table(name = "tenant_identify")
 @NoArgsConstructor

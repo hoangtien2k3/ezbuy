@@ -3,12 +3,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.ezbuy.ecommerce</groupId>
+		<groupId>com.ezbuy.platform</groupId>
 		<artifactId>ezbuy</artifactId>
 		<version>${revision}</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<groupId>com.ezbuy.ecommerce</groupId>
 	<artifactId>tax</artifactId>
 	<version>${revision}</version>
 	<name>tax</name>
