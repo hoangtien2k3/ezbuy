@@ -2,8 +2,10 @@ package com.ezbuy.authmodel.model;
 
 import java.time.LocalDateTime;
 
+import com.ezbuy.authmodel.model.base.EntityBase;
 import jakarta.validation.constraints.Max;
 
+import lombok.experimental.SuperBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
@@ -12,16 +14,15 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Builder
+@SuperBuilder
 @Table(name = "individual")
-public class Individual implements Persistable<String> {
+public class Individual extends EntityBase implements Persistable<String> {
     @Id
     @Column("id")
     private String id;
@@ -84,20 +85,6 @@ public class Individual implements Persistable<String> {
     @Max(value = 99, message = "individual.status.over.length")
     private Integer status;
 
-    @Column("create_at")
-    private LocalDateTime createAt;
-
-    @Column("create_by")
-    @Length(max = 255, message = "individual.createBy.over.length")
-    private String createBy;
-
-    @Column("update_at")
-    private LocalDateTime updateAt;
-
-    @Column("update_by")
-    @Length(max = 255, message = "individual.updateBy.over.length")
-    private String updateBy;
-
     @Column("position_code")
     @Length(max = 20, message = "individual.posisionCode.over.length")
     private String positionCode;
@@ -137,10 +124,10 @@ public class Individual implements Persistable<String> {
         this.districtCode = individual.districtCode;
         this.precinctCode = individual.precinctCode;
         this.status = individual.status;
-        this.createAt = individual.createAt;
-        this.createBy = individual.createBy;
-        this.updateAt = individual.updateAt;
-        this.updateBy = individual.updateBy;
+        this.setCreateAt(individual.getCreateAt());
+        this.setCreateBy(individual.getCreateBy());
+        this.setUpdateAt(individual.getUpdateAt());
+        this.setUpdateBy(individual.getUpdateBy());
         this.positionCode = individual.positionCode;
         this.passwordChange = individual.passwordChange;
         this.isNew = individual.isNew;

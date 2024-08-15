@@ -5,7 +5,7 @@ import com.ezbuy.authmodel.dto.request.ActionLogRequest;
 import com.ezbuy.authmodel.dto.response.SearchActionLogResponse;
 import com.ezbuy.authmodel.model.ActionLog;
 import com.ezbuy.authservice.constants.ActionLogType;
-import com.ezbuy.authservice.repository.ActionLogRepositoryTemplate;
+import com.ezbuy.authservice.repotemplate.ActionLogRepositoryTemplate;
 import com.ezbuy.authservice.service.ActionLogService;
 import com.ezbuy.framework.constants.CommonErrorCode;
 import com.ezbuy.framework.constants.Constants;
@@ -40,8 +40,7 @@ public class ActionLogServiceImpl implements ActionLogService {
         validate(request);
         request.setPageIndex(DataUtil.safeToInt(request.getPageIndex(), 1));
         request.setPageSize(DataUtil.safeToInt(request.getPageSize(), 10));
-        return Mono.zip(
-                        actionLogRepositoryTemplate.search(request).collectList(),
+        return Mono.zip(actionLogRepositoryTemplate.search(request).collectList(),
                         actionLogRepositoryTemplate.count(request))
                 .flatMap(tuple -> {
                     PaginationDTO paginationDTO = PaginationDTO.builder()
@@ -77,8 +76,7 @@ public class ActionLogServiceImpl implements ActionLogService {
     }
 
     private ByteArrayResource writeExcel(Workbook workbook) {
-        try (ByteArrayOutputStream os = new ByteArrayOutputStream();
-                workbook) {
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream(); workbook) {
             workbook.write(os);
             return new ByteArrayResource(os.toByteArray()) {
                 @Override
@@ -93,8 +91,7 @@ public class ActionLogServiceImpl implements ActionLogService {
     }
 
     private Workbook writeLogExcel(List<ActionLog> actionLogList) {
-        try (InputStream templateInputStream =
-                new ClassPathResource("template/template_action_log.xlsx").getInputStream()) {
+        try (InputStream templateInputStream = new ClassPathResource("template/template_action_log.xlsx").getInputStream()) {
             Workbook workbook = new XSSFWorkbook(templateInputStream);
             Sheet sheet = workbook.getSheetAt(0);
 
@@ -128,19 +125,14 @@ public class ActionLogServiceImpl implements ActionLogService {
             style.setAlignment(HorizontalAlignment.LEFT);
             for (ActionLog actionLog : actionLogList) {
                 Row row = sheet.createRow(rowCount++);
-                writeRow(
-                        row,
-                        centerStyle,
-                        style,
-                        0,
-                        Arrays.asList(
-                                String.valueOf(index++),
-                                actionLog.getUsername(),
-                                actionLog.getIp(),
-                                DataUtil.safeToString(ActionLogType.MAP.get(actionLog.getType())),
-                                DataUtil.formatDate(actionLog.getCreateAt(), Constants.DateTimePattern.DMY_HMS, "")));
+                writeRow(row, centerStyle, style, 0, Arrays.asList(
+                        String.valueOf(index++),
+                        actionLog.getUsername(),
+                        actionLog.getIp(),
+                        DataUtil.safeToString(ActionLogType.MAP.get(actionLog.getType())),
+                        DataUtil.formatDate(actionLog.getCreateAt(), Constants.DateTimePattern.DMY_HMS, ""))
+                );
             }
-
             return workbook;
         } catch (Exception e) {
             log.error(e.getMessage(), e);

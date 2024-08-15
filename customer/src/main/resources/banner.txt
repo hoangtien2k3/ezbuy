@@ -6,5 +6,5 @@
     ╚██████╗╚██████╔╝███████║   ██║   ╚██████╔╝██║ ╚═╝ ██║███████╗██║  ██║
      ╚═════╝ ╚═════╝ ╚══════╝   ╚═╝    ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝
 
-    :: Spring Boot ::                   * ${spring-boot.version}
-    :: EzBuy Customer-Service ::        * Platform
+    :: Spring Boot ::             * ${spring-boot.version}
+    :: Customer-Service ::        * Platform

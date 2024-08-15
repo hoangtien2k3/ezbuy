@@ -61,24 +61,6 @@ public class TransmissionServiceImpl implements TransmissionService {
     @Value("${config.resendCount}")
     private Integer resendCount;
 
-//    @Override
-//    public Mono<DataResponse> getCountNoticeResponseDTO() {
-//        return SecurityUtils.getCurrentUser()
-//                .flatMap(user -> transmissionRepository.getListCountNoticeDTO(user.getId()).collectList()
-//                        .map(listCountNoticeDTO -> {
-//                            CountNoticeResponseDTO countNoticeResponseDTO = new CountNoticeResponseDTO(0, new ArrayList<>());
-//                            if (listCountNoticeDTO.isEmpty()) {
-//                                return new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), countNoticeResponseDTO);
-//                            }
-//                            listCountNoticeDTO.forEach(
-//                                    countNoticeDTO -> countNoticeResponseDTO.setTotal(countNoticeResponseDTO.getTotal() + countNoticeDTO.getQuantity())
-//                            );
-//                            countNoticeResponseDTO.setDetail(listCountNoticeDTO);
-//                            return new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), countNoticeResponseDTO);
-//                        })
-//                );
-//    }
-
     @Override
     public Mono<DataResponse> getCountNoticeResponseDTO() {
         return SecurityUtils.getCurrentUser()
@@ -96,7 +78,7 @@ public class TransmissionServiceImpl implements TransmissionService {
                             CountNoticeResponseDTO countNoticeResponseDTO = new CountNoticeResponseDTO(total, details);
                             return new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), countNoticeResponseDTO);
                         })
-                        .switchIfEmpty(Mono.just(new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), new CountNoticeResponseDTO(0, new ArrayList<>())))) // Xử lý khi không có dữ liệu
+                        .switchIfEmpty(Mono.just(new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), new CountNoticeResponseDTO(0, new ArrayList<>()))))
                 );
     }
 

@@ -1,7 +1,7 @@
 package com.ezbuy.authmodel.model;
 
-import java.time.LocalDateTime;
-
+import com.ezbuy.authmodel.model.base.EntityBase;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
@@ -9,7 +9,6 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,8 +16,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "user_credential")
-@Builder
-public class UserCredential implements Persistable<String> {
+@SuperBuilder
+public class UserCredential extends EntityBase implements Persistable<String> {
     @Id
     @Column("id")
     private String id;
@@ -34,18 +33,6 @@ public class UserCredential implements Persistable<String> {
 
     @Column("status")
     private Integer status;
-
-    @Column("create_at")
-    private LocalDateTime createAt;
-
-    @Column("create_by")
-    private String createBy;
-
-    @Column("update_at")
-    private LocalDateTime updateAt;
-
-    @Column("update_by")
-    private String updateBy;
 
     @Column("pwd_changed")
     private Integer pwdChanged;
@@ -65,10 +52,10 @@ public class UserCredential implements Persistable<String> {
         this.username = userCredential.username;
         this.hashPwd = userCredential.hashPwd;
         this.status = userCredential.status;
-        this.createAt = userCredential.createAt;
-        this.createBy = userCredential.createBy;
-        this.updateAt = userCredential.updateAt;
-        this.updateBy = userCredential.updateBy;
+        this.setCreateAt(userCredential.getCreateAt());
+        this.setCreateBy(userCredential.getCreateBy());
+        this.setUpdateAt(userCredential.getUpdateAt());
+        this.setUpdateBy(userCredential.getUpdateBy());
         this.pwdChanged = userCredential.pwdChanged;
         this.isNew = userCredential.isNew;
     }

@@ -6,5 +6,5 @@
     ██║  ██║╚██████╔╝   ██║   ██║  ██║         ███████║███████╗██║  ██║ ╚████╔╝ ██║╚██████╗███████╗
     ╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝         ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝ ╚═════╝╚══════╝
 
-    :: Spring Boot ::                         * ${spring-boot.version}
-    :: EzBuy Authentication-Service ::        * Platform
+    :: Spring Boot ::                   * ${spring-boot.version}
+    :: Authentication-Service ::        * Platform

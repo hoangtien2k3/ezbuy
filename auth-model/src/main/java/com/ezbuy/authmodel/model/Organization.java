@@ -2,10 +2,12 @@ package com.ezbuy.authmodel.model;
 
 import java.time.LocalDateTime;
 
+import com.ezbuy.authmodel.model.base.EntityBase;
+import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,42 +15,30 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Builder
-public class Organization {
-
+@SuperBuilder
+public class Organization extends EntityBase {
+    @Id
     private String id;
-
     private String name;
-
     private String image;
-
     private String businessType;
-
     private LocalDateTime foundingDate;
-
     private String email;
-
     private String phone;
-
     private String provinceCode;
-
     private String districtCode;
-
     private String precinctCode;
-
     private String streetBlock;
-
     private Integer state;
-
     private Integer status;
 
-    private LocalDateTime createAt;
-
-    private String createBy;
-
-    private LocalDateTime updateAt;
-
-    private String updateBy;
+//    private LocalDateTime createAt;
+//
+//    private String createBy;
+//
+//    private LocalDateTime updateAt;
+//
+//    private String updateBy;
 
     private String orgType; // loai khach hang
 
@@ -68,10 +58,10 @@ public class Organization {
         this.streetBlock = organization.getStreetBlock();
         this.state = organization.getState();
         this.status = organization.getStatus();
-        this.createAt = organization.getCreateAt();
-        this.createBy = organization.getCreateBy();
-        this.updateAt = organization.getUpdateAt();
-        this.updateBy = organization.getUpdateBy();
+        this.setCreateAt(organization.getCreateAt());
+        this.setCreateBy(organization.getCreateBy());
+        this.setUpdateAt(organization.getUpdateAt());
+        this.setUpdateBy(organization.getUpdateBy());
         this.orgType = organization.getOrgType();
         this.taxDepartment = organization.getTaxDepartment();
     }

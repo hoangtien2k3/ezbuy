@@ -2,15 +2,17 @@ package com.ezbuy.authmodel.model;
 
 import java.time.LocalDateTime;
 
+import com.ezbuy.authmodel.model.base.EntityBase;
 import jakarta.validation.constraints.Max;
 
+import lombok.experimental.SuperBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -18,8 +20,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Builder
-public class TenantIdentify {
+@SuperBuilder
+public class TenantIdentify extends EntityBase implements Persistable<String> {
 
     @Id
     private String id;
@@ -67,24 +69,14 @@ public class TenantIdentify {
     @Length(max = 36, message = "identify.tenantId.over.length")
     private String transactionId;
 
-    private LocalDateTime createAt;
-
-    @Length(max = 36, message = "identify.createBy.over.length")
-    private String createBy;
-
-    private LocalDateTime updateAt;
-
-    @Length(max = 36, message = "identify.updateBy.over.length")
-    private String updateBy;
-
     private String requestCode;
 
     @Transient
     private boolean isNew = false;
 
-    //    @Transient
-    //    @Override
-    //    public boolean isNew() {
-    //        return this.isNew || id == null;
-    //    }
+    @Transient
+    @Override
+    public boolean isNew() {
+        return this.isNew || id == null;
+    }
 }

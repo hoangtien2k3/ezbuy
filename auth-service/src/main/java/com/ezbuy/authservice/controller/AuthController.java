@@ -87,7 +87,7 @@ public class AuthController {
     public Mono<DataResponse<UserOtp>> signup(@Valid @RequestBody SignupRequest signupRequest) {
         return authService
                 .signUp(signupRequest)
-                .map(su -> new DataResponse<>(Translator.toLocaleVi("otp.success"), null));
+                .map(su -> new DataResponse<>("otp.success", null));
     }
 
 //        @PostMapping(value = UrlPaths.Auth.CREATE_ORG_ACCOUNT)

@@ -77,8 +77,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                         formParameters.add(OAuth2ParameterNames.CLIENT_ID, clientId);
                         formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, clientRepresentation.getSecret());
                         return requestToken(formParameters);
-                    })
-                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "client.id.not.valid")));
+                    }).switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "client.id.not.valid")));
         } else {
             formParameters.add(OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().getClientId());
             formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().getClientSecret());
@@ -182,26 +181,22 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .uri("/token")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(BodyInserters.fromFormData(formParameters))
-                .header("Authorization", "Bearer " + token)
-                .header("Host", hostKeycloak)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .header(HttpHeaders.HOST, hostKeycloak)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
                         .flatMap(errorBody -> Mono.error(
                                 new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .bodyToFlux(Map.class)
-                .map(responseMap -> {
-                    if (responseMap != null) {
-                        Permission permission = new Permission();
-                        permission.setRsId((String) responseMap.get("rsid"));
-                        permission.setRsName((String) responseMap.get("rsname"));
-                        return permission;
-                    }
-                    return null;
+                .mapNotNull(responseMap -> {
+                    if (responseMap == null) return null;
+                    Permission permission = new Permission();
+                    permission.setRsId((String) responseMap.get("rsid"));
+                    permission.setRsName((String) responseMap.get("rsname"));
+                    return permission;
                 })
                 .collectList()
-                .doOnError(err -> {
-                    log.error("Keycloak get token error", err);
-                });
+                .doOnError(err -> log.error("Keycloak get token error", err));
     }
 
     private Mono<Optional<AccessToken>> requestToken(MultiValueMap<String, String> formParameters) {
@@ -227,17 +222,16 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {})
-                .map(result -> {
-                    return result.stream()
-                            .map(record -> {
-                                ClientResource res = new ClientResource();
-                                res.setId((String) record.get("_id"));
-                                res.setName((String) record.get("name"));
-                                return res;
-                            })
-                            .collect(Collectors.toList());
-                });
+                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {
+                })
+                .map(result -> result.stream()
+                        .map(record -> {
+                            ClientResource res = new ClientResource();
+                            res.setId((String) record.get("_id"));
+                            res.setName((String) record.get("name"));
+                            return res;
+                        })
+                        .collect(Collectors.toList()));
     }
 
     @Override
@@ -248,7 +242,8 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<GroupPolicyRepresentation>>() {})
+                .bodyToMono(new ParameterizedTypeReference<List<GroupPolicyRepresentation>>() {
+                })
                 .onErrorReturn(new ArrayList<GroupPolicyRepresentation>());
     }
 
@@ -260,7 +255,8 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<RolePolicyRepresentation>>() {})
+                .bodyToMono(new ParameterizedTypeReference<List<RolePolicyRepresentation>>() {
+                })
                 .onErrorReturn(new ArrayList<RolePolicyRepresentation>());
     }
 
@@ -308,7 +304,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .uri(url)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(request))
-                .header("Authorization", "Bearer " + token)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
                         .flatMap(errorBody -> Mono.error(
@@ -335,15 +331,13 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .uri(url)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(roleUserKeycloakRequests))
-                .header("Authorization", "Bearer " + token)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
                         .flatMap(errorBody -> Mono.error(
                                 new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .toEntity(Object.class)
-                .flatMap(response -> {
-                    return Mono.just(true);
-                })
+                .flatMap(response -> Mono.just(true))
                 .doOnError(err -> {
                     log.error("Keycloak create role user error", err);
                 });
@@ -357,15 +351,13 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .uri(url)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(request))
-                .header("Authorization", "Bearer " + token)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
                         .flatMap(errorBody -> Mono.error(
                                 new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .toEntity(Object.class)
-                .flatMap(response -> {
-                    return Mono.just(true);
-                })
+                .flatMap(response -> Mono.just(true))
                 .doOnError(err -> {
                     log.error("Keycloak update user error", err);
                 });
@@ -377,15 +369,13 @@ public class KeyCloakClientImpl implements KeyCloakClient {
 
         return keycloak.delete()
                 .uri(url)
-                .header("Authorization", "Bearer " + token)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
                         .flatMap(errorBody -> Mono.error(
                                 new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .toEntity(Object.class)
-                .flatMap(response -> {
-                    return Mono.just(true);
-                })
+                .flatMap(response -> Mono.just(true))
                 .doOnError(err -> {
                     log.error("Keycloak Remove group to user error", err);
                 });
@@ -397,15 +387,13 @@ public class KeyCloakClientImpl implements KeyCloakClient {
 
         return keycloak.put()
                 .uri(url)
-                .header("Authorization", "Bearer " + token)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
                         .flatMap(errorBody -> Mono.error(
                                 new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .toEntity(Object.class)
-                .flatMap(response -> {
-                    return Mono.just(true);
-                })
+                .flatMap(response -> Mono.just(true))
                 .doOnError(err -> {
                     log.error("Keycloak Add group to user error", err);
                 });
@@ -422,15 +410,13 @@ public class KeyCloakClientImpl implements KeyCloakClient {
         return keycloak.method(HttpMethod.DELETE)
                 .uri(url)
                 .body(BodyInserters.fromValue(roleUserKeycloakRequests))
-                .header("Authorization", "Bearer " + token)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
                         .flatMap(errorBody -> Mono.error(
                                 new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .toEntity(Object.class)
-                .flatMap(response -> {
-                    return Mono.just(true);
-                })
+                .flatMap(response -> Mono.just(true))
                 .doOnError(err -> {
                     log.error("Keycloak Remove role user error", err);
                 });
@@ -450,7 +436,8 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .bodyToMono(String.class)
                 .map(response -> {
                     Gson gson = new Gson();
-                    Type listType = new TypeToken<List<RoleDTO>>() {}.getType();
+                    Type listType = new TypeToken<List<RoleDTO>>() {
+                    }.getType();
                     log.info("response when login {}", response);
                     List<RoleDTO> roleDTOS = gson.fromJson(response, listType);
                     return roleDTOS;
@@ -466,7 +453,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
 
         return keycloak.get()
                 .uri(url)
-                .header("Authorization", "Bearer " + token)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
                         .flatMap(errorBody -> Mono.error(
@@ -484,7 +471,8 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {})
+                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {
+                })
                 .doOnError(err -> {
                     log.error("Error when get all resource ", err);
                 })

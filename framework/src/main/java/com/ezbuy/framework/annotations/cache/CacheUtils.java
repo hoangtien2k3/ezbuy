@@ -16,12 +16,13 @@ public class CacheUtils {
 
     public static void invokeMethod(Method method) {
         try {
-            Class<?> declaringClass = method.getDeclaringClass();
-            Object bean = ApplicationContextProvider.getApplicationContext().getBean(declaringClass);
-            Mono<Object> rs = (Mono<Object>) method.invoke(bean);
+            Class declaringClass = method.getDeclaringClass();
+            Object t = ApplicationContextProvider.getApplicationContext().getBean(declaringClass);
+            Mono<Object> rs = (Mono<Object>) method.invoke(t);
             rs.subscribe();
         } catch (Exception exception) {
-            log.error("Error when autoload cache " + method.getDeclaringClass().getSimpleName() + "." + method.getName(), exception.getMessage(), exception);
+            log.error("Error when autoload cache " + method.getDeclaringClass().getSimpleName() + "." + method.getName()
+                    , exception.getMessage(), exception);
         }
     }
 

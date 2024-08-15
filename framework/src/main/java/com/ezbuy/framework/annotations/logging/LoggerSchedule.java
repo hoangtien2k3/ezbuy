@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.ezbuy.framework.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
@@ -42,35 +43,26 @@ public class LoggerSchedule {
                 numSuccess++;
             } catch (Exception e) {
                 numFalse++;
-                log.error("Error while handle record queue: {}", e.getMessage());
+                log.error("Error while handle record queue: ", e.getMessage());
             }
         }
-
-        //        log.info("AsyncLog analyId {}: QueueSize: {}, addSuccess: {}, addFalse: {}, writeSuccess:{},
-        // writeFalse:{}", analyId, records.size(), LoggerQueue.getInstance().getCountSuccess(),
-        // LoggerQueue.getInstance().getCountFalse(), numSuccess, numFalse);
+//        log.info("AsyncLog analyId {}: QueueSize: {}, addSuccess: {}, addFalse: {}, writeSuccess:{}, writeFalse:{}",
+//                analyId, records.size(), LoggerQueue.getInstance().getCountSuccess(), LoggerQueue.getInstance().getCountFalse(), numSuccess, numFalse);
         LoggerQueue.getInstance().resetCount();
     }
 
     private void process(LoggerDTO record) {
         if (record != null) {
-            String traceId =
-                    !DataUtil.isNullOrEmpty(record.getNewSpan().context().traceIdString())
-                            ? record.getNewSpan().context().traceIdString()
-                            : "";
+            String traceId = !DataUtil.isNullOrEmpty(record.getNewSpan().context().traceIdString()) ? record.getNewSpan().context().traceIdString() : "";
             String ipAddress = null;
             String requestId = null;
             if (record.getContextRef().get() != null) {
                 if (record.getContextRef().get().hasKey(ServerWebExchange.class)) {
-                    ServerWebExchange serverWebExchange =
-                            record.getContextRef().get().get(ServerWebExchange.class);
+                    ServerWebExchange serverWebExchange = record.getContextRef().get().get(ServerWebExchange.class);
                     ServerHttpRequest request = serverWebExchange.getRequest();
                     ipAddress = RequestUtils.getIpAddress(request);
 
-                    serverWebExchange.getRequest();
-                    serverWebExchange.getRequest().getHeaders();
-                    if (!DataUtil.isNullOrEmpty(
-                            serverWebExchange.getRequest().getHeaders().getFirst("Request-Id"))) {
+                    if (serverWebExchange.getRequest() != null && serverWebExchange.getRequest().getHeaders() != null && !DataUtil.isNullOrEmpty(serverWebExchange.getRequest().getHeaders().getFirst("Request-Id"))) {
                         requestId = serverWebExchange.getRequest().getHeaders().getFirst("Request-Id");
                     }
                 }
@@ -82,6 +74,7 @@ public class LoggerSchedule {
                     inputs = ObjectMapperFactory.getInstance().writeValueAsString(getAgrs(record.getArgs()));
                 }
             } catch (Exception ex) {
+                log.error("Error while handle record queue: ", ex.getMessage());
             }
 
             String resStr = null;
@@ -97,6 +90,7 @@ public class LoggerSchedule {
                     }
                 }
             } catch (Exception ex) {
+                log.error("Error while handle record queue: ", ex.getMessage());
             }
             try {
                 inputs = TruncateUtils.truncate(inputs, MAX_BYTE);
@@ -104,20 +98,8 @@ public class LoggerSchedule {
             } catch (Exception ex) {
                 log.error("Truncate input/output error ", ex);
             }
-            logInfo(new LogField(
-                    traceId,
-                    requestId,
-                    record.getService(),
-                    record.getEndTime() - record.getStartTime(),
-                    record.getLogType(),
-                    record.getActionType(),
-                    record.getStartTime(),
-                    record.getEndTime(),
-                    ipAddress,
-                    record.getTitle(),
-                    inputs,
-                    resStr,
-                    record.getResult()));
+            logInfo(new LogField(traceId, requestId, record.getService(), record.getEndTime() - record.getStartTime(), record.getLogType(),
+                    record.getActionType(), record.getStartTime(), record.getEndTime(), ipAddress, record.getTitle(), inputs, resStr, record.getResult()));
         }
     }
 
@@ -125,19 +107,20 @@ public class LoggerSchedule {
         try {
             logPerf.info(ObjectMapperFactory.getInstance().writeValueAsString(logField));
         } catch (Exception ex) {
+            log.error("Error while handle record queue: ", ex.getMessage());
         }
     }
 
     private List<Object> getAgrs(Object[] args) {
         List<Object> listArg = new ArrayList<>();
-        for (Object arg : args) {
-            if (arg instanceof Mono) {
-                //                listArg.add(((Mono) arg).block());
-                // skip
-            } else if (arg instanceof ServerWebExchange) {
-                // skip
+        for (int i = 0; i < args.length; i++) {
+            if (args[i] instanceof Mono) {
+//                listArg.add(((Mono) args[i]).block());
+//                skip
+            } else if (args[i] instanceof ServerWebExchange) {
+                //skip
             } else {
-                listArg.add(arg);
+                listArg.add(args[i]);
             }
         }
         return listArg;

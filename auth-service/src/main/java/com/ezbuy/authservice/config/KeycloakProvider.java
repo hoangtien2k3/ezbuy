@@ -83,11 +83,11 @@ public class KeycloakProvider {
     @LocalCache(autoCache = true, maxRecord = 100, durationInMinute = 12 * 6)
     public Mono<ClientRepresentation> getClientWithSecret(String clientId) {
         return getClient(clientId).flatMap(clientRepresentation -> {
-            var b = getRealmResource()
+            var result = getRealmResource()
                     .clients()
                     .get(clientRepresentation.getId())
                     .getSecret();
-            clientRepresentation.setSecret(b.getValue());
+            clientRepresentation.setSecret(result.getValue());
             return Mono.just(clientRepresentation);
         });
     }

@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class ActionLogRequest {
-
     private String username;
     private String ip;
     private String type;

@@ -28,18 +28,18 @@ public class CacheAspect {
     public Object aroundAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
         Object[] args = joinPoint.getArgs();
         Object key = SimpleKeyGenerator.generateKey(args);
-        String name = ClassUtils.getUserClass(joinPoint.getTarget().getClass()).getSimpleName() + "."
-                + joinPoint.getSignature().getName();
+        String name = ClassUtils.getUserClass(joinPoint.getTarget().getClass()).getSimpleName() + "." + joinPoint.getSignature().getName();
         Cache cache = CacheStore.getCache(name);
 
         return CacheMono.lookup(k -> Mono.justOrEmpty(cache.getIfPresent(key)).map(Signal::next), key)
                 .onCacheMissResume((Mono<Object>) joinPoint.proceed(args))
                 .andWriteWith((k, sig) -> Mono.fromRunnable(() -> {
-                    if (sig != null && sig.get() != null) {
-                        if (!(sig.get() instanceof Optional && ((Optional) sig.get()).isEmpty())) {
-                            cache.put(k, sig.get());
+                            if (sig != null && sig.get() != null) {
+                                if (!(sig.get() instanceof Optional && ((Optional) sig.get()).isEmpty())) {
+                                    cache.put(k, sig.get());
+                                }
+                            }
                         }
-                    }
-                }));
+                ));
     }
 }

@@ -1,8 +1,8 @@
-package com.ezbuy.authservice.repository.impl;
+package com.ezbuy.authservice.repotemplate.impl;
 
 import com.ezbuy.authmodel.dto.request.ActionLogRequest;
 import com.ezbuy.authmodel.model.ActionLog;
-import com.ezbuy.authservice.repository.ActionLogRepositoryTemplate;
+import com.ezbuy.authservice.repotemplate.ActionLogRepositoryTemplate;
 import com.ezbuy.framework.repository.BaseTemplateRepository;
 import com.ezbuy.framework.utils.DataUtil;
 import com.ezbuy.framework.utils.SQLUtils;
@@ -38,8 +38,7 @@ public class ActionLogRepositoryTemplateImpl extends BaseTemplateRepository impl
         if (!DataUtil.isNullOrEmpty(request.getPageSize())) {
             query.append(" LIMIT :pageSize  \n" + "OFFSET :index ");
             params.put("pageSize", request.getPageSize());
-            BigDecimal index =
-                    (new BigDecimal(request.getPageIndex() - 1)).multiply(new BigDecimal(request.getPageSize()));
+            BigDecimal index = (new BigDecimal(request.getPageIndex() - 1)).multiply(new BigDecimal(request.getPageSize()));
             params.put("index", index);
         }
         return listQuery(query.toString(), params, ActionLog.class);
@@ -57,19 +56,17 @@ public class ActionLogRepositoryTemplateImpl extends BaseTemplateRepository impl
         builder.append("select * from action_log where 1=1 ");
         if (!DataUtil.isNullOrEmpty(request.getUsername())) {
             builder.append(" and username LIKE CONCAT('%',:username, '%') ");
-            params.put(
-                    "username",
-                    SQLUtils.replaceSpecialDigit(request.getUsername().trim()));
+            params.put("username", SQLUtils.replaceSpecialDigit(request.getUsername().trim()));
         }
         if (!DataUtil.isNullOrEmpty(request.getIp())) {
             builder.append(" and ip LIKE CONCAT('%',:ip, '%') ");
             params.put("ip", SQLUtils.replaceSpecialDigit(request.getIp().trim()));
         }
         if (!DataUtil.isNullOrEmpty(request.getType())) {
-            builder.append(" and type LIKE CONCAT('%',:type, '%') ");
+            builder.append(" and type LIKE CONCAT('%', :type, '%') ");
             params.put("type", SQLUtils.replaceSpecialDigit(request.getType().trim()));
         }
-        builder.append(" and (create_at BETWEEN  :fromDate AND  :toDate)  \n");
+        builder.append(" and (create_at BETWEEN :fromDate AND  :toDate)  \n");
         params.put("fromDate", getFromDate(request.getFromDate()));
         params.put("toDate", getToDate(request.getToDate()));
     }

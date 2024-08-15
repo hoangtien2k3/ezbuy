@@ -2,6 +2,8 @@ package com.ezbuy.authmodel.model;
 
 import java.time.LocalDateTime;
 
+import com.ezbuy.authmodel.model.base.EntityBase;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
@@ -9,7 +11,6 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,8 +18,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "user_otp")
-@Builder
-public class UserOtp implements Persistable<String> {
+@SuperBuilder
+public class UserOtp extends EntityBase implements Persistable<String> {
     @Id
     @Column("id")
     private String id;
@@ -40,18 +41,6 @@ public class UserOtp implements Persistable<String> {
 
     @Column("status")
     private Integer status;
-
-    @Column("create_at")
-    private LocalDateTime createAt;
-
-    @Column("update_at")
-    private LocalDateTime updateAt;
-
-    @Column("create_by")
-    private String createBy;
-
-    @Column("update_by")
-    private String updateBy;
 
     @Transient
     private boolean newOtp;

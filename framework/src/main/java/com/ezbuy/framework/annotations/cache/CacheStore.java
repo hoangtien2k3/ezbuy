@@ -29,14 +29,8 @@ import javax.annotation.PostConstruct;
 @Slf4j
 @Component
 public class CacheStore {
-//    private static final CacheMetricsCollector CACHE_METRICS_COLLECTOR = new CacheMetricsCollector().register();
 
-//    private static CacheMetricsCollector cacheMetricsCollector;
-//
-//    public CacheStore(CacheMetricsCollector cacheMetricsCollector) {
-//        CacheStore.cacheMetricsCollector = cacheMetricsCollector;
-//    }
-
+    // private static final CacheMetricsCollector CACHE_METRICS_COLLECTOR = new CacheMetricsCollector().register();
     private static final HashMap<String, Cache<Object, Object>> caches = new HashMap<>();
     private static final Set<Method> autoLoadMethods = new HashSet<>();
     private static final String reflectionPath = "com.ezbuy";
@@ -71,10 +65,13 @@ public class CacheStore {
                         .build();
             }
             caches.put(cacheName, cache);
-//            CACHE_METRICS_COLLECTOR.addCache(cacheName, cache);
-//            cacheMetricsCollector.addCache(cacheName, cache);
+            // CACHE_METRICS_COLLECTOR.addCache(cacheName, cache);
         }
         log.info("Finish initializing {} cache", caches.size());
+    }
+
+    public static Cache getCache(String key) {
+        return caches.get(key);
     }
 
     @Async
@@ -87,9 +84,5 @@ public class CacheStore {
             }
             log.info("Finish auto load cache");
         }
-    }
-
-    public static synchronized Cache getCache(String key) {
-        return caches.get(key);
     }
 }

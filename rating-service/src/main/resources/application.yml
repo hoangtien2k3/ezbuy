@@ -1,0 +1,82 @@
+# server config
+server:
+  port: 8950
+logging:
+  #  config: classpath:log4j2-prod.xml
+  level:
+    root: INFO
+    org.springframework.r2dbc: DEBUG
+    io.r2dbc.postgresql.QUERY: DEBUG
+    io.r2dbc.postgresql.PARAM: DEBUG
+    io.r2dbc.postgresql.CONNECTION: DEBUG
+# spring config
+spring:
+  application:
+    name: rating-service
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+  messages:
+    basename: messages
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5434/rating
+    username: admin
+    password: admin
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            token-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/token
+        registration:
+          oidc:
+            client-id: ${keycloak.clientId}
+            client-secret: ${keycloak.clientSecret}
+            authorization-grant-type: ${keycloak.grantType} #password || #client_credentials
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/certs
+      keycloak:
+        client-id: ${keycloak.clientId}
+
+#keycloak client config
+keycloak:
+  clientId: ezbuy-client
+  clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
+  realm: ezbuy-server
+  serverUrl: http://localhost:8080
+  grantType: password  #client_credentials
+  host: localhost
+
+# web client config
+#client:
+#  product:
+#    address: http://sme-product-service.bu-order.svc:8080/
+#    name: productClient
+#  setting:
+#    address: http://sme-setting-service.bu-order.svc:8080/
+#    name: settingClient
+#  payment:
+#    address: http://10.207.252.76.8126/
+#    name: paymentClient
+#  cart:
+#    address: http://sme-cart-service.bu-order.svc:8080/
+#    name: cartClient
+#  order:
+#    address: http://10.207.252.104:8918/services/order/OrderSmePortalService
+#    username: ${BCCS_ORDER_USERNAME}
+#    password: ${BCCS_ORDER_PASSWORD}
+#    name: orderClient
+#    pool:
+#      max-size: 100
+#      max-pending-acquire: 100
+#    timeout:
+#      read: 60000
+#      write: 1000
+# unauthenticated endpoints config
+#application:
+#  whiteList:
+#    - uri: /actuator/health
+#      methods:
+#        - GET
+

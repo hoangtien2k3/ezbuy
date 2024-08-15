@@ -1,4 +1,4 @@
-package com.ezbuy.authservice.repository;
+package com.ezbuy.authservice.repotemplate;
 
 import com.ezbuy.authmodel.dto.request.ActionLogRequest;
 import com.ezbuy.authmodel.model.ActionLog;

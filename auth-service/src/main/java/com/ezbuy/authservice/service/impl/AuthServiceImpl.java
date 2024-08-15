@@ -61,6 +61,7 @@ import reactor.util.function.Tuple2;
 
 import java.security.SecureRandom;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -495,8 +496,7 @@ public class AuthServiceImpl implements AuthService {
     public Mono<UserOtp> signUp(SignupRequest signupRequest) {
         String requestEmail = DataUtil.safeTrim(signupRequest.getEmail());
         if (!ValidateUtils.validateRegex(requestEmail, Regex.EMAIL_REGEX)) {
-            return Mono.error(
-                    new BusinessException(CommonErrorCode.INVALID_PARAMS, AuthConstants.Message.EMAIL_INVALID));
+            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, AuthConstants.Message.EMAIL_INVALID));
         }
         if (isExistedEmail(requestEmail)) {
             return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "signup.email.exist"));
@@ -525,8 +525,8 @@ public class AuthServiceImpl implements AuthService {
                     .insertTransmission(createNotificationDTO)
                     .flatMap(objects -> {
                         if (objects.isPresent()
-                                && (DataUtil.isNullOrEmpty(objects.get().getErrorCode())
-                                && !DataUtil.isNullOrEmpty(objects.get().getMessage()))) {
+                                && ErrorCode.ResponseErrorCode.ERROR_CODE_SUCCESS.equals(objects.get().getErrorCode())
+                                && !DataUtil.isNullOrEmpty(objects.get().getMessage())) {
                             return Mono.just(otp);
                         }
                         return Mono.error(new BusinessException(
@@ -571,16 +571,10 @@ public class AuthServiceImpl implements AuthService {
         UserRepresentation user = listUser.getFirst();
         String requestEmail = user.getEmail();
         CreateNotificationDTO createNotificationDTO = createNotificationDTO(
-                otpValue,
-                Translator.toLocaleVi("email.title.forgot.password"),
-                Constants.TemplateMail.FORGOT_PASSWORD,
-                ReceiverDataDTO.builder()
-                        .userId(user.getId())
-                        .email(requestEmail)
-                        .build(),
+                otpValue, Translator.toLocaleVi("email.title.forgot.password"),
+                Constants.TemplateMail.FORGOT_PASSWORD, ReceiverDataDTO.builder().userId(user.getId()).email(requestEmail).build(),
                 null);
-        return otpRepository
-                .currentTimeDB()
+        return otpRepository.currentTimeDB()
                 .flatMap(time -> {
                     UserOtp otpBuild = UserOtp.builder()
                             .id(String.valueOf(UUID.randomUUID()))
@@ -588,6 +582,7 @@ public class AuthServiceImpl implements AuthService {
                             .createBy(SYSTEM)
                             .updateBy(SYSTEM)
                             .tries(0)
+                            .status(Constants.Activation.ACTIVE)
                             .email(requestEmail)
                             .expTime(time.plusMinutes(Constants.Otp.EXP_MINUTE))
                             .type(Constants.Otp.FORGOT_PASSWORD)
@@ -597,7 +592,9 @@ public class AuthServiceImpl implements AuthService {
                     return notiServiceClient
                             .insertTransmission(createNotificationDTO)
                             .flatMap(objects -> {
-                                if (objects.isPresent() && ErrorCode.ResponseErrorCode.ERROR_CODE_SUCCESS.equals(objects.get().getErrorCode())) {
+                                if (objects.isPresent()
+                                        && ErrorCode.ResponseErrorCode.ERROR_CODE_SUCCESS.equals(objects.get().getErrorCode())
+                                        && !DataUtil.isNullOrEmpty(objects.get().getMessage())) {
                                     return Mono.just(otpBuild);
                                 }
                                 return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, (objects.isPresent())
@@ -925,7 +922,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public Mono<Void> createUserTestPerformence(int startIndex, int numAccount) {
         for (int i = 0; i < numAccount; i++) {
-            String email = "hoangtien2k3" + startIndex + "@gmail.com";
+            String email = "hoangtien2k3qx1" + startIndex + "@gmail.com";
             String password = "tienha@!@#";
             createUserInKeyCloak(email, password, email, EMPTY);
             startIndex++;
@@ -957,6 +954,7 @@ public class AuthServiceImpl implements AuthService {
         log.setUserId(userId);
         log.setUsername(username);
         log.setType(type);
+        log.setCreateAt(LocalDateTime.now());
         log.setIp(RequestUtils.getIpAddress(request));
         return actionLogRepository.save(log).map(rs -> true);
     }
