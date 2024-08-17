@@ -64,8 +64,8 @@ services:
       KC_HTTP_PORT: 8080
       KC_HTTPS_PORT: 8443
     volumes:
-#      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
-      - ./keycloak/themes/ezbuy/theme:/opt/keycloak/themes
+#      - ./docker/keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
+      - ./docker/keycloak/themes/ezbuy/theme:/opt/keycloak/themes
     networks:
       - ezbuy-network
 
