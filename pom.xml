@@ -27,13 +27,16 @@
         <module>payment</module>
         <module>product</module>
         <module>report</module>
-        <module>setting</module>
         <module>shipping</module>
         <module>system</module>
         <module>tax</module>
         <module>noti-send</module>
         <module>noti-model</module>
         <module>noti-service</module>
+        <module>rating-model</module>
+        <module>rating-service</module>
+        <module>setting-model</module>
+        <module>setting-service</module>
     </modules>
 
     <properties>

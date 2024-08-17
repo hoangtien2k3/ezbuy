@@ -1,0 +1,96 @@
+# server config
+server:
+  port: 8081
+# spring config
+spring:
+  application:
+    name: auth-service
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+  messages:
+    basename: messages
+  codec:
+    max-in-memory-size: 20MB
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5434/setting
+    username: admin
+    password: admin
+  data:
+    elasticsearch:
+      repositories:
+        enabled: false
+  elasticsearch:
+    uris: http://10.207.252.76:8703
+    webclient:
+      max-in-memory-size: 10MB
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            token-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/token
+        registration:
+          oidc:
+            client-id: ${keycloak.clientId}
+            client-secret: ${keycloak.clientSecret}
+            authorization-grant-type: ${keycloak.grantType} #password || #client_credentials
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/certs
+      keycloak:
+        client-id: ${keycloak.clientId}
+# web client config
+client:
+  keycloak:
+    address: http://localhost:8080/realms/ezbuy-server/protocol/openid-connect
+    name: keycloak
+    auth:
+      client-id: ezbuy-client
+      client-secret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
+# unauthenticated endpoints config
+application:
+  http-logging:
+    request:
+      enable: true
+      header: true
+      param: true
+      body: true
+    response:
+      enable: true
+      body: true
+  whiteList:
+    - uri: /actuator/health
+      methods:
+        - GET
+    - uri: /v1/page
+      methods:
+        - GET
+    - uri: /v1/telecom-services
+      methods:
+        - GET
+    - uri: /v1/market-section
+      methods:
+        - GET
+    - uri: /v1/option-set/**
+      methods:
+        - GET
+
+#keycloak client config
+keycloak:
+  clientId: ezbuy-client
+  clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
+  realm: ezbuy-server
+  serverUrl: http://localhost:8080
+  grantType: password
+  host: localhost
+# minio server config
+minio:
+  bucket: sme-public
+  enabled: true
+  baseUrl: http://10.207.252.76:8840
+  publicUrl: http://10.207.252.223/sme-media
+  accessKey: B5C4PW0LGTXP3YAD
+  secretKey: XGEI24IIJEQZX54JRTNTLY3YEHC2LFIT
+  private:
+    bucket: sme-private

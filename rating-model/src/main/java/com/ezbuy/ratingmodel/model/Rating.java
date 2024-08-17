@@ -2,7 +2,6 @@ package com.ezbuy.ratingmodel.model;
 
 import com.ezbuy.ratingmodel.model.base.EntityBase;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;

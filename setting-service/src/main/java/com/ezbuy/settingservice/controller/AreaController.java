@@ -1,0 +1,30 @@
+package com.ezbuy.settingservice.controller;
+
+import com.ezbuy.framework.model.response.DataResponse;
+import com.ezbuy.settingmodel.constants.UrlPaths;
+import com.ezbuy.settingmodel.dto.AreaDTO;
+import com.ezbuy.settingservice.service.AreaService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping(value = UrlPaths.Area.PREFIX)
+public class AreaController {
+    private final AreaService areaService;
+
+    @GetMapping()
+    public Mono<DataResponse<List<AreaDTO>>> getArea(String parentCode) {
+        return this.areaService.getArea(parentCode);
+    }
+
+    @GetMapping("/get-area-name")
+    public Mono<DataResponse<AreaDTO>> getAreaName(String province, String district, String precinct) {
+        return this.areaService.getArea(province, district, precinct);
+    }
+}
