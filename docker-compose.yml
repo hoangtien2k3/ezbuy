@@ -37,7 +37,7 @@ services:
 
   # keycloak:
   keycloak:
-    image: quay.io/keycloak/keycloak:25.0.2
+    image: keycloak/keycloak:25.0.2
     container_name: keycloak
     command: start-dev
     depends_on:
@@ -109,32 +109,87 @@ services:
 #      - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
 #      - "traefik.docker.network=proxy"
 
+  # minio
   minio:
-    image: minio/minio
-    volumes:
-      - ./minio-data:/data
+    image: minio/minio:RELEASE.2024-08-03T04-33-23Z
+    container_name: minio
+    env_file: .env
+    restart: always
     ports:
-      - "9000:9000"
+      - "${MINIO_PORT_1}:9000"
+      - "${MINIO_PORT_2}:9001"
     environment:
-      MINIO_ACCESS_KEY: "minio"
-      MINIO_SECRET_KEY: "123@123"
-    command: server /minio-data/data
-  minio-bucket:
-      image: minio/mc
-      depends_on:
-        - minio
-      entrypoint: >
-        /bin/sh -c "
-        /usr/bin/mc config host add myminio http://minio:9000 minio 123@123;
-        /usr/bin/mc mb myminio/file-storage;
-        /usr/bin/mc policy download myminio/file-storage;
-        exit 0;
-        "
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - ./docker/minio/data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - ezbuy-network
+
+  # swagger-ui
+  swagger-ui:
+    image: swaggerapi/swagger-ui:v4.16.0
+    environment:
+      - BASE_URL=/swagger-ui
+      - URLS
+      - OAUTH_CLIENT_ID=swagger-ui
+      - OAUTH_USE_PKCE=true
+    networks:
+      - ezbuy-network
+
+  # zookeeper
+  zookeeper:
+    image: debezium/zookeeper:2.2
+    restart: always
+    ports:
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
+    networks:
+      - ezbuy-network
+
+  # kafka
+  kafka:
+    image: confluentinc/cp-kafka:7.0.9
+    hostname: ${KAFKA_SERVICE_HOST}
+    depends_on:
+      - zookeeper
+    ports:
+      - ${KAFKA_SERVICE_PORT}:${KAFKA_SERVICE_PORT}
+      - 29092:29092
+    environment:
+      - KAFKA_BROKER_ID
+      - KAFKA_ZOOKEEPER_CONNECT
+      - KAFKA_ADVERTISED_LISTENERS
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+      - KAFKA_INTER_BROKER_LISTENER_NAME
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
+    networks:
+      - ezbuy-network
+
+  # kafka-connect
+  kafka-connect:
+    image: debezium/connect:2.2
+    restart: always
+    ports:
+      - 8083:8083
+      - 5005:5005
+    depends_on:
+      - kafka
+    environment:
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - GROUP_ID=1
+      - CONFIG_STORAGE_TOPIC=kafka_connect_configs
+      - OFFSET_STORAGE_TOPIC=kafka_connect_offsets
+    networks:
+      - ezbuy-network
 
 networks:
   ezbuy-network:
     driver: bridge
     name: ezbuy-network
+    external: true
 #  proxy:
 #    external: true
 #  keycloak:

@@ -86,7 +86,7 @@ public class UploadImagesImpl implements UploadImagesService {
                         }
                         return updateImage(fileDTO, tokenUser, parent);
                     }).map(this::mapToDto);
-        }).collectList().map(res -> new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), res));
+        }).collectList().map(res -> new DataResponse<>("success", res));
     }
 
     /**
@@ -208,7 +208,7 @@ public class UploadImagesImpl implements UploadImagesService {
         }).flatMap(uploadImages -> minioUtils.makeFolder(minioUtils.getMinioProperties().getBucket(), uploadImages.getPath()).thenReturn(uploadImages)
         ).map(result -> {
             UploadImagesDTO dto = mapToDto(result);
-            return new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), dto);
+            return new DataResponse<>("success", dto);
         });
 
         String folderName = DataUtil.safeToString(request.getName()).trim();
@@ -227,7 +227,7 @@ public class UploadImagesImpl implements UploadImagesService {
         return Flux.fromIterable(request.getImages())
                 .flatMap(this::updateImage)
                 .collectList()
-                .map(uploadDTOS -> new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), uploadDTOS));
+                .map(uploadDTOS -> new DataResponse<>("success", uploadDTOS));
     }
 
     @Override
@@ -275,7 +275,7 @@ public class UploadImagesImpl implements UploadImagesService {
                                 uploadImagesRepository.save(child)
                         );
                     }).collectList());
-        }).thenReturn(new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), null));
+        }).thenReturn(new DataResponse<>("success", null));
     }
 
     @Override
@@ -306,7 +306,7 @@ public class UploadImagesImpl implements UploadImagesService {
 
             if (uploadImages.getName().equals(request.getNewName().trim())) {
                 return Mono.just(
-                        new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), mapToDto(uploadImages))
+                        new DataResponse<>("success", mapToDto(uploadImages))
                 );
             }
 
@@ -325,7 +325,7 @@ public class UploadImagesImpl implements UploadImagesService {
                     .flatMap(saved -> {
                         UploadImagesDTO dto = mapToDto(saved);
                         return updatePathFolderItem(saved).thenReturn(
-                                new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), dto)
+                                new DataResponse<>("success", dto)
                         );
                     });
         });
@@ -430,7 +430,7 @@ public class UploadImagesImpl implements UploadImagesService {
                             .totalRecords(totalRecords).build())
                     .build();
             return Mono.just(response);
-        }).map(res -> new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), res));
+        }).map(res -> new DataResponse<>("success", res));
     }
 
     @Override
@@ -443,7 +443,7 @@ public class UploadImagesImpl implements UploadImagesService {
                     return uploadImagesRepository.save(uploadImages);
                 })
                 .map(this::mapToDto)
-                .map(dto -> new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), dto));
+                .map(dto -> new DataResponse<>("success", dto));
     }
 
     @Override
@@ -458,7 +458,7 @@ public class UploadImagesImpl implements UploadImagesService {
                             .doOnNext(dto::setChildren)
                             .thenReturn(dto);
                 })
-                .map(dto -> new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), dto));
+                .map(dto -> new DataResponse<>("success", dto));
     }
 
     @Override
@@ -466,7 +466,7 @@ public class UploadImagesImpl implements UploadImagesService {
         return uploadImagesRepository.findAllFolder()
                 .map(this::mapToDto)
                 .collectList()
-                .map(folders -> new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), folders));
+                .map(folders -> new DataResponse<>("success", folders));
     }
 
     private UploadImagesDTO mapToDto(UploadImages uploadImage) {
