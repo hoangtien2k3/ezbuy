@@ -34,7 +34,3 @@ build/
 
 ### MacOS ###
 .DS_Store
-
-### Elasticsearch ###
-/docker/elasticsearch/_state/
-/docker/elasticsearch/indices/
