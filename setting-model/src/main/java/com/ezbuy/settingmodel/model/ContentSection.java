@@ -26,9 +26,4 @@ public class ContentSection extends EntityBase {
     private String name;
     private Long displayOrder;
     private String path;
-//    private Integer status;
-//    private String createBy;
-//    private LocalDateTime createAt;
-//    private String updateBy;
-//    private LocalDateTime updateAt;
 }

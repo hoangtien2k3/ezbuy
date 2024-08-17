@@ -23,9 +23,4 @@ public class NewsInfo extends EntityBase {
     private String summary; //tom tat noi dung
     private String navigatorUrl; //anh dai dien
     private String state; //trang thai nghiep vu
-//    private Integer status; //trang thai: 1 - hieu luc, 0 - khong hieu luc
-//    private String createBy;
-//    private LocalDateTime createAt;
-//    private String updateBy;
-//    private LocalDateTime updateAt;
 }

@@ -29,11 +29,6 @@ public class Telecom extends EntityBase implements Persistable<String> {
     private String groupId;
     private String deployOrderCode;
     private String bccsAlias;//alias dich vu ben he thong BCCS_PRODUCT
-//    private Integer status;
-//    private String createBy;
-//    private String updateBy;
-//    private LocalDateTime createAt;
-//    private LocalDateTime updateAt;
 
     @Transient
     private boolean isNew = false;

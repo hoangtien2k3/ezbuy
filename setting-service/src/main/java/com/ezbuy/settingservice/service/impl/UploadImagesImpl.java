@@ -46,47 +46,45 @@ public class UploadImagesImpl implements UploadImagesService {
 
     @Override
     public Mono<DataResponse<List<UploadImagesDTO>>> uploadFile(UploadImageRequest request) {
-        //validate du lieu dau vao
+        //validate input
         if (DataUtil.isNullOrEmpty(request.getImages())) {
             return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "params.invalid.code"));
         }
-
+        // Check for duplicate image names
         Set<String> counter = new HashSet<>();
-        if (!DataUtil.isNullOrEmpty(request.getImages())) {
-            request.getImages().forEach(fileDTO -> {
-                if (counter.contains(fileDTO.getName())) {
-                    throw new BusinessException(CommonErrorCode.BAD_REQUEST, Translator.toLocaleVi("upload.image.existed", fileDTO.getName()));
-                }
-                counter.add(fileDTO.getName());
-            });
+        for (var fileDTO : request.getImages()) {
+            if (!counter.add(fileDTO.getName())) {
+                return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, Translator.toLocaleVi("upload.image.existed", fileDTO.getName())));
+            }
         }
-
+        // Load parent info
         Mono<UploadImages> parentInfoMono;
         if (DataUtil.isNullOrEmpty(request.getParentId())) {
             parentInfoMono = Mono.just(new UploadImages());
         } else {
-            Throwable error = new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.root.folder.notfound");
             parentInfoMono = uploadImagesRepository
                     .findById(request.getParentId())
-                    .switchIfEmpty(Mono.error(error));
+                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.root.folder.notfound")));
         }
+        return Mono.zip(SecurityUtils.getCurrentUser(), parentInfoMono)
+                .flatMapMany(zip -> {
+                    TokenUser tokenUser = zip.getT1();
+                    UploadImages parent = zip.getT2();
+                    if (DataUtil.isNullOrEmpty(request.getParentId())) {
+                        parent.setId(UUID.randomUUID().toString());
+                    }
+                    parent.setUpdateAt(LocalDateTime.now());
+                    parent.setUpdateBy(tokenUser.getUsername());
+                    uploadImagesRepository.save(parent).subscribe();
 
-        return Mono.zip(SecurityUtils.getCurrentUser(), parentInfoMono).flatMapMany(zip -> {
-            TokenUser tokenUser = zip.getT1();
-            UploadImages parent = zip.getT2();
-
-            parent.setUpdateAt(LocalDateTime.now());
-            parent.setUpdateBy(tokenUser.getUsername());
-            uploadImagesRepository.save(parent).subscribe();
-
-            return Flux.fromIterable(request.getImages())
-                    .flatMap(fileDTO -> {
-                        if (DataUtil.isNullOrEmpty(fileDTO.getId())) {
-                            return createImage(fileDTO, tokenUser, parent);
-                        }
-                        return updateImage(fileDTO, tokenUser, parent);
-                    }).map(this::mapToDto);
-        }).collectList().map(res -> new DataResponse<>("success", res));
+                    return Flux.fromIterable(request.getImages())
+                            .flatMap(fileDTO -> {
+                                if (DataUtil.isNullOrEmpty(fileDTO.getId())) {
+                                    return createImage(fileDTO, tokenUser, parent);
+                                }
+                                return updateImage(fileDTO, tokenUser, parent);
+                            }).map(this::mapToDto);
+                }).collectList().map(res -> new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), res));
     }
 
     /**

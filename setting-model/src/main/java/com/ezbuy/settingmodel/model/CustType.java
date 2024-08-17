@@ -19,9 +19,4 @@ public class CustType extends EntityBase {
     private Integer tax;
     private String plan;
     private String description;
-//    private String status;
-//    private String createBy;
-//    private LocalDateTime createAt;
-//    private String updateBy;
-//    private LocalDateTime updateAt;
 }

@@ -19,9 +19,4 @@ public class GroupNews extends EntityBase {
     private String name; //ten nhom tin tuc
     private String code; //ma nhom tin tuc
     private Integer displayOrder; //thu tu sap xep
-//    private Integer status; //trang thai: 1 - hieu luc, 0 - khong hieu luc
-//    private String createBy;
-//    private LocalDateTime createAt;
-//    private String updateBy;
-//    private LocalDateTime updateAt;
 }

@@ -75,7 +75,6 @@ application:
     - uri: /v1/option-set/**
       methods:
         - GET
-
 #keycloak client config
 keycloak:
   clientId: ezbuy-client
@@ -86,11 +85,11 @@ keycloak:
   host: localhost
 # minio server config
 minio:
-  bucket: sme-public
+  bucket: ezbuy-buckets
   enabled: true
-  baseUrl: http://10.207.252.76:8840
-  publicUrl: http://10.207.252.223/sme-media
-  accessKey: B5C4PW0LGTXP3YAD
-  secretKey: XGEI24IIJEQZX54JRTNTLY3YEHC2LFIT
+  baseUrl: http://localhost:9001
+  publicUrl: http://localhost:90901/ezbuy-media
+  accessKey: K0bu0TvI92eluH9J3Ko3
+  secretKey: zs7ZY6bacGwqerqXJvVofNWGyvZt6Fqxx1h4BQlK
   private:
-    bucket: sme-private
+    bucket: ezbuy-private

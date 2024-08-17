@@ -18,9 +18,4 @@ public class NewsContent extends EntityBase {
     private String id;
     private String content; //noi dung
     private String newsInfoId; //id thong tin tin tuc
-//    private Integer status; //trang thai: 1 - hieu luc, 0 - khong hieu luc
-//    private String createBy;
-//    private LocalDateTime createAt;
-//    private String updateBy;
-//    private LocalDateTime updateAt;
 }

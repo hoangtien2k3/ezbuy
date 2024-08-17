@@ -22,11 +22,6 @@ public class OptionSetValue extends EntityBase implements Persistable<String> {
     private String code; // ma chi tiet cau hinh nhom
     private String value; //gia tri chi tiet cau hinh nhom
     private String description; //mo ta chi tiet cau hinh nhom
-//    private Integer status;//trang thai
-//    private String createBy; //nguoi tao
-//    private LocalDateTime createAt; //thoi gian tao
-//    private String updateBy; //nguoi cap nhat
-//    private LocalDateTime updateAt; //thoi gian cap nhat
 
     @Transient
     private boolean isNew = false;

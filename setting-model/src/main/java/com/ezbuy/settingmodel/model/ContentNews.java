@@ -22,11 +22,6 @@ public class ContentNews extends EntityBase implements Persistable<String> {
     private String title;
     private String content;
     private String path;
-//    private Integer status;
-//    private String createBy;
-//    private String updateBy;
-//    private LocalDateTime createAt;
-//    private LocalDateTime updateAt;
 
     @Transient
     private boolean newRecord;

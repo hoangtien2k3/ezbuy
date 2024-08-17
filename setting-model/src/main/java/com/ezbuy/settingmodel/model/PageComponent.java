@@ -17,9 +17,4 @@ public class PageComponent extends EntityBase {
     private String id;
     private String pageId;
     private String componentId;
-//    private Integer status;
-//    private String createBy;
-//    private String updateBy;
-//    private LocalDateTime createAt;
-//    private LocalDateTime updateAt;
 }

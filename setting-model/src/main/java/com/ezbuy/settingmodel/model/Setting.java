@@ -20,11 +20,6 @@ public class Setting extends EntityBase implements Persistable<String>{
     private String code;
     private String value;
     private String description;
-//    private Integer status;
-//    private String createBy;
-//    private String updateBy;
-//    private LocalDateTime createAt;
-//    private LocalDateTime updateAt;
 
     @Transient
     private boolean isNew = false;

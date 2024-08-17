@@ -35,11 +35,6 @@ public class ContentDisplay extends EntityBase implements Persistable<String> {
     private String name;
     private String description;
     private String screenUrl;
-//    private Integer status;
-//    private String createBy;
-//    private String updateBy;
-//    private LocalDateTime createAt;
-//    private LocalDateTime updateAt;
 
     @Transient
     private boolean insert;

@@ -1,7 +1,8 @@
 version: '3.9'
 
 services:
-  # postgresql:
+  ###########################
+  #postgresql:
   postgres:
     image: postgres:16.3
     container_name: postgres
@@ -21,7 +22,9 @@ services:
     networks:
       - ezbuy-network
 
-  # pgadmin:
+
+  ###########################
+  #pgadmin:
   pgadmin:
     image: dpage/pgadmin4:8.8
     container_name: pgadmin
@@ -35,11 +38,14 @@ services:
     networks:
       - ezbuy-network
 
-  # keycloak:
+
+  ###########################
+  #keycloak:
   keycloak:
     image: keycloak/keycloak:25.0.2
     container_name: keycloak
     command: start-dev
+    restart: always
     depends_on:
       - postgres
     ports:
@@ -109,15 +115,16 @@ services:
 #      - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
 #      - "traefik.docker.network=proxy"
 
-  # minio
+
+  ###########################
+  #minio
   minio:
     image: minio/minio:RELEASE.2024-08-03T04-33-23Z
     container_name: minio
     env_file: .env
     restart: always
     ports:
-      - "${MINIO_PORT_1}:9000"
-      - "${MINIO_PORT_2}:9001"
+      - "${MINIO_PORT}:9001"
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
@@ -127,7 +134,9 @@ services:
     networks:
       - ezbuy-network
 
-  # swagger-ui
+
+  ###########################
+  #swagger-ui
   swagger-ui:
     image: swaggerapi/swagger-ui:v4.16.0
     environment:
@@ -138,7 +147,9 @@ services:
     networks:
       - ezbuy-network
 
-  # zookeeper
+
+  ###########################
+  #zookeeper
   zookeeper:
     image: debezium/zookeeper:2.2
     restart: always
@@ -149,7 +160,9 @@ services:
     networks:
       - ezbuy-network
 
-  # kafka
+
+  ###########################
+  #kafka
   kafka:
     image: confluentinc/cp-kafka:7.0.9
     hostname: ${KAFKA_SERVICE_HOST}
@@ -168,7 +181,9 @@ services:
     networks:
       - ezbuy-network
 
-  # kafka-connect
+
+  ###########################
+  #kafka-connect
   kafka-connect:
     image: debezium/connect:2.2
     restart: always
@@ -185,6 +200,104 @@ services:
     networks:
       - ezbuy-network
 
+
+  ###########################
+  #setup
+  #elasticsearch
+  #logstash
+  #kibana
+  ###########################
+  setup:
+    profiles:
+      - setup
+    build:
+      context: ./docker/setup/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    container_name: setup
+    init: true
+    volumes:
+      - ./docker/setup/entrypoint.sh:/entrypoint.sh:rw,Z
+      - ./docker/setup/lib.sh:/lib.sh:rw,Z
+      - ./docker/setup/roles:/roles:rw,Z
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+      METRICBEAT_INTERNAL_PASSWORD: ${METRICBEAT_INTERNAL_PASSWORD:-}
+      FILEBEAT_INTERNAL_PASSWORD: ${FILEBEAT_INTERNAL_PASSWORD:-}
+      HEARTBEAT_INTERNAL_PASSWORD: ${HEARTBEAT_INTERNAL_PASSWORD:-}
+      MONITORING_INTERNAL_PASSWORD: ${MONITORING_INTERNAL_PASSWORD:-}
+      BEATS_SYSTEM_PASSWORD: ${BEATS_SYSTEM_PASSWORD:-}
+    networks:
+      - ezbuy-network
+    depends_on:
+      - elasticsearch
+  #elasticsearch
+  elasticsearch:
+    build:
+      context: ./docker/elasticsearch/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    container_name: elasticsearch
+    volumes:
+      - ./docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:rw,Z
+      - ./docker/elasticsearch:/usr/share/elasticsearch/data:Z
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      node.name: elasticsearch
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      discovery.type: single-node
+    networks:
+      - ezbuy-network
+    restart: unless-stopped
+  #logstash
+  logstash:
+    build:
+      context: ./docker/logstash/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    container_name: logstash
+    volumes:
+      - ./docker/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:rw,Z
+      - ./docker/logstash/pipeline:/usr/share/logstash/pipeline:rw,Z
+    ports:
+      - 5044:5044
+      - 50000:50000/tcp
+      - 50000:50000/udp
+      - 9600:9600
+    environment:
+      LS_JAVA_OPTS: -Xms256m -Xmx256m
+      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
+    networks:
+      - ezbuy-network
+    depends_on:
+      - elasticsearch
+    restart: unless-stopped
+  #kibana
+  kibana:
+    build:
+      context: ./docker/kibana/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    container_name: kibana
+    volumes:
+      - ./docker/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:rw,Z
+    ports:
+      - 5601:5601
+    environment:
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+    networks:
+      - ezbuy-network
+    depends_on:
+      - elasticsearch
+    restart: unless-stopped
+
+
+# networks:
 networks:
   ezbuy-network:
     driver: bridge
@@ -194,6 +307,7 @@ networks:
 #    external: true
 #  keycloak:
 
+# volumes:
 volumes:
   postgres:
     driver: local

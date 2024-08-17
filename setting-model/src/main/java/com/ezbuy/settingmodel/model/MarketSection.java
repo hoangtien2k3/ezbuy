@@ -23,11 +23,6 @@ public class MarketSection extends EntityBase implements Persistable<String> {
     private String description;
     private Long displayOrder;
     private String data;
-//    private Integer status;
-//    private String createBy;
-//    private LocalDateTime createAt;
-//    private String updateBy;
-//    private LocalDateTime updateAt;
 
     @Transient
     private boolean isNew = false;

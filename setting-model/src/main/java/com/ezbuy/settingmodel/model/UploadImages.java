@@ -22,11 +22,6 @@ public class UploadImages extends EntityBase implements Persistable<String> {
     private Integer type;
     private String path;
     private String parentId;
-//    private Integer status;
-//    private LocalDateTime createAt;
-//    private String createBy;
-//    private LocalDateTime updateAt;
-//    private String updateBy;
 
     @Transient
     private boolean isNew;

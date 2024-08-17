@@ -84,7 +84,7 @@ public class MinioUtils {
 
     private void makeBucketSync(String bucketName) {
         try {
-            log.info("Start making bucket with name " + bucketName);
+            log.info("Start making bucket with name {}", bucketName);
             minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
             log.info("Make bucket successfully");
         } catch (Exception e) {
@@ -98,12 +98,13 @@ public class MinioUtils {
 
     /**
      * make folder sync
+     *
      * @param bucketName bucket name
      * @param folderName folder name
      */
     private void makeFolderSync(String bucketName, String folderName) {
         try {
-            log.info("Start making folder with name " + folderName);
+            log.info("Start making folder with name {}", folderName);
             minioClient.putObject(PutObjectArgs.builder()
                     .bucket(bucketName)
                     .object(folderName + "/")
@@ -160,7 +161,7 @@ public class MinioUtils {
         return filename;
     }
 
-    private void uploadSync(byte[] data,String bucketName, String fileName, String filePath, String contentType) {
+    private void uploadSync(byte[] data, String bucketName, String fileName, String filePath, String contentType) {
         try {
             log.info("Start uploading {} ", fileName);
             minioClient.putObject(PutObjectArgs.builder()
@@ -232,13 +233,14 @@ public class MinioUtils {
 
     private void downloadFileSync(String bucketName, String objectName, String fileName) {
         try {
-            log.info("Start downloading object " + objectName);
+            log.info("Start downloading object {}", objectName);
             minioClient.downloadObject(DownloadObjectArgs.builder().bucket(bucketName).object(objectName).filename(fileName).build());
             log.info("Download file successfully");
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
     }
+
     public Mono<Void> downloadFile(String bucketName, String objectName, String fileName) {
         return Mono.fromRunnable(() -> downloadFileSync(bucketName, objectName, fileName));
     }
@@ -253,7 +255,7 @@ public class MinioUtils {
 
     private ObjectWriteResponse copyObjectSync(String bucketName, String objectName) {
         try {
-            log.info("Start downloading object " + objectName);
+            log.info("Start downloading object {}", objectName);
             ObjectWriteResponse o = minioClient.copyObject(CopyObjectArgs.builder().bucket(bucketName).object(objectName).build());
             log.info("Download file successfully");
             return o;
@@ -262,6 +264,7 @@ public class MinioUtils {
             throw new RuntimeException(e);
         }
     }
+
     public Mono<ObjectWriteResponse> copyObject(String bucketName, String objectName) {
         return Mono.fromCallable(() -> copyObjectSync(bucketName, objectName))
                 .subscribeOn(Schedulers.boundedElastic());
@@ -286,9 +289,7 @@ public class MinioUtils {
     }
 
     public Mono<ObjectWriteResponse> copyObject(String bucketName, String sourceObject, String destinationObject) {
-        return Mono.fromCallable(() -> {
-            return copyObjectSync(bucketName, sourceObject, destinationObject);
-        }).subscribeOn(Schedulers.boundedElastic());
+        return Mono.fromCallable(() -> copyObjectSync(bucketName, sourceObject, destinationObject)).subscribeOn(Schedulers.boundedElastic());
     }
 
     public Mono<String> getObjectUrl(String bucketName, String objectName) {
@@ -307,7 +308,7 @@ public class MinioUtils {
             try (InputStream in = new FileInputStream(filePath)) {
                 byte[] imageBuffer = new byte[in.available()];
                 in.read(imageBuffer);
-                log.info("Start updating file with object name" + objectName);
+                log.info("Start updating file with object name{}", objectName);
                 minioClient.putObject(
                         PutObjectArgs.builder().bucket(bucketName).object(objectName).stream(new ByteArrayInputStream(imageBuffer), imageBuffer.length, -1).contentType(contentType).build());
                 log.info("Update file successfully ");
@@ -324,22 +325,15 @@ public class MinioUtils {
 
 
     public String handleObjectName(String contentType, String objectName, String folderName) {
-        if (contentType.equals(IMAGE_PNG_CONTENT_TYPE)) {
-            objectName = IMAGE_FOLDER + objectName + PNG_END;
-        } else if (contentType.equals(IMAGE_JPEG_CONTENT_TYPE)) {
-            objectName = IMAGE_FOLDER + objectName + JPEG_END;
-        } else if (contentType.equals(PDF_CONTENT_TYPE)) {
-            objectName = PDF_FOLDER + objectName + PDF_END;
-        } else if (contentType.equals(XLSX_CONTENT_TYPE)) {
-            objectName = EXCEL_FOLDER + objectName + EXCEL_END;
-        } else if (contentType.equals(DOCX_CONTENT_TYPE)) {
-            objectName = WORD_FOLDER + objectName + WORD_END;
-        } else if (contentType.equals(TEXT_CONTENT_TYPE)) {
-            objectName = TEXT_FOLDER + objectName + TEXT_END;
-        } else if (contentType.equals(VIDEO_CONTENT_TYPE)) {
-            objectName = VIDEO_FOLDER + objectName + VIDEO_END;
-        } else {
-            objectName = objectName;
+        switch (contentType) {
+            case IMAGE_PNG_CONTENT_TYPE -> objectName = IMAGE_FOLDER + objectName + PNG_END;
+            case IMAGE_JPEG_CONTENT_TYPE -> objectName = IMAGE_FOLDER + objectName + JPEG_END;
+            case PDF_CONTENT_TYPE -> objectName = PDF_FOLDER + objectName + PDF_END;
+            case XLSX_CONTENT_TYPE -> objectName = EXCEL_FOLDER + objectName + EXCEL_END;
+            case DOCX_CONTENT_TYPE -> objectName = WORD_FOLDER + objectName + WORD_END;
+            case TEXT_CONTENT_TYPE -> objectName = TEXT_FOLDER + objectName + TEXT_END;
+            case VIDEO_CONTENT_TYPE -> objectName = VIDEO_FOLDER + objectName + VIDEO_END;
+            default -> objectName = objectName;
         }
         if (folderName != null && !folderName.isEmpty()) {
             objectName = folderName + "/" + objectName;
@@ -349,7 +343,7 @@ public class MinioUtils {
 
     private String getPrivateObjectUrlSync(String bucketName, String objectName) {
         try {
-            log.info("Start get private object url with bucket name " + bucketName + "and object name = " + objectName);
+            log.info("Start get private object url with bucket name {} and object name = {}", bucketName, objectName);
             return this.minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder().method(Method.GET).bucket(bucketName).object(objectName).build());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -363,9 +357,9 @@ public class MinioUtils {
 
     private void removeObjectSync(String bucketName, String objectName) {
         try {
-            log.info("Start remove object with bucket name = " + bucketName + " and object name = " + objectName);
+            log.info("Start remove object with bucket name = {} and object name = {}", bucketName, objectName);
             this.minioClient.removeObject(RemoveObjectArgs.builder().bucket(bucketName).object(objectName).build());
-            log.info("Finish remove object with bucket name = " + bucketName + " and object name = " + objectName);
+            log.info("Finish remove object with bucket name = {} and object name = {}", bucketName, objectName);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);
@@ -436,7 +430,7 @@ public class MinioUtils {
 
     private void uploadFileSync(String filePath, byte[] file, String bucket) {
         try {
-            log.info("Start uploadFile{} ",  filePath);
+            log.info("Start uploadFile{} ", filePath);
             minioClient.putObject(
                     PutObjectArgs.builder().bucket(bucket).object(filePath).stream(new ByteArrayInputStream(file), file.length, -1).build());
             log.info(UPLOAD_SUCCESS_LOG);
@@ -457,7 +451,7 @@ public class MinioUtils {
             try {
                 byte[] buffer = new byte[inputStream.available()];
                 inputStream.read(buffer);
-                log.info("Start uploading object " + object);
+                log.info("Start uploading object {}", object);
                 minioClient.putObject(
                         PutObjectArgs.builder().bucket(bucketName).object(object).stream(new ByteArrayInputStream(buffer), buffer.length, -1).contentType(contentType).build());
                 log.info("Upload file successfully");
@@ -516,7 +510,7 @@ public class MinioUtils {
                             .build());
             log.info(UPLOAD_SUCCESS_LOG);
             return object;
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
             return null;
         }
@@ -540,12 +534,16 @@ public class MinioUtils {
         try {
             boolean isExist = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
             if (!isExist) {
-                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).objectLock(objectLock).build());
+                minioClient.makeBucket(MakeBucketArgs.builder()
+                        .bucket(bucketName)
+                        .objectLock(objectLock)
+                        .build());
             }
         } catch (Exception e) {
             log.error("CreateBucketIfNotExist error", e);
         }
     }
+
     public static String getObjectNameFromUrl(String folderContent, String url) {
         String fileName = url.substring(url.lastIndexOf("/") + 1);
         return folderContent + fileName;
@@ -565,7 +563,9 @@ public class MinioUtils {
     public Mono<String> uploadFileReturnObject(InputStream inputStream, String bucketName, String contentType) {
         String objectName = UUID.randomUUID().toString().replace("-", "");
         String object = handleObjectName(contentType, objectName, null);
-        return validateBucketExisted(bucketName).then(Mono.fromRunnable(() -> uploadFileSync(inputStream, bucketName, object, contentType))).then(Mono.just(object));
+        return validateBucketExisted(bucketName)
+                .then(Mono.fromRunnable(() -> uploadFileSync(inputStream, bucketName, object, contentType)))
+                .then(Mono.just(object));
     }
 
     public String getUrlOfObject(String bucketName, String objectName) {
@@ -573,6 +573,6 @@ public class MinioUtils {
     }
 
     public InputStream getObject(String bucketName, String objectName) throws ServerException, InvalidBucketNameException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-        return minioClient.getObject((GetObjectArgs)((GetObjectArgs.Builder)((GetObjectArgs.Builder)GetObjectArgs.builder().bucket(bucketName)).object(objectName)).build());
+        return minioClient.getObject(GetObjectArgs.builder().bucket(bucketName).object(objectName).build());
     }
 }

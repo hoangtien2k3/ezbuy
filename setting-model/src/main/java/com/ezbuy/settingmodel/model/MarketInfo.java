@@ -22,9 +22,4 @@ public class MarketInfo extends EntityBase {
     private String navigatorUrl;
     private Integer marketOrder;
     private String marketImageUrl;
-//    private String createBy;
-//    private String updateBy;
-//    private LocalDateTime createAt;
-//    private LocalDateTime updateAt;
-//    private Integer status;
 }

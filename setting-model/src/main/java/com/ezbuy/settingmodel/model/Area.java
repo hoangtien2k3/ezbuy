@@ -22,9 +22,4 @@ public class Area extends EntityBase {
     private String fullName;
     private String name;
     private String center;
-//    private Integer status;
-//    private String createBy;
-//    private String updateBy;
-//    private LocalDateTime createAt;
-//    private LocalDateTime updateAt;
 }

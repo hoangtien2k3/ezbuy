@@ -20,11 +20,6 @@ public class Page extends EntityBase implements Persistable<String> {
     private String code;
     private String title;
     private String logoUrl;
-//    private Integer status;
-//    private String createBy;
-//    private String updateBy;
-//    private LocalDateTime createAt;
-//    private LocalDateTime updateAt;
 
     @Transient
     private boolean insert;

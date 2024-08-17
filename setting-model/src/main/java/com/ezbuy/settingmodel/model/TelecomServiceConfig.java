@@ -18,9 +18,4 @@ public class TelecomServiceConfig extends EntityBase {
     private String id;
     private String config;
     private String telecomServiceId;
-//    private Integer status;
-//    private String createBy;
-//    private String updateBy;
-//    private LocalDateTime createAt;
-//    private LocalDateTime updateAt;
 }
