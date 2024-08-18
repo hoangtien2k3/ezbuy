@@ -69,7 +69,7 @@ services:
     volumes:
 #      - ./docker/keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
       - ./docker/keycloak/themes/ezbuy/theme:/opt/keycloak/themes
-      - keycloak_data:/opt/keycloak/data
+      - keycloak:/opt/keycloak/data
     networks:
       - ezbuy-network
 
@@ -128,7 +128,7 @@ services:
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     volumes:
 #      - ./docker/minio/data:/data:ro
-      - minio_data:/data:rw
+      - minio:/data:rw
     command: [ "server", "--address", ":9000", "--console-address", ":9001", "/data" ]
     healthcheck:
       test: [ "CMD", "curl", "--fail", "http://localhost:9000/minio/health/live" ]
@@ -141,7 +141,8 @@ services:
 
   #swagger-ui
   swagger-ui:
-    image: swaggerapi/swagger-ui:v4.16.0
+    image: swaggerapi/swagger-ui:${SWAGGER_VERSION}
+    container_name: swagger-ui
     environment:
       - BASE_URL=/swagger-ui
       - URLS
@@ -153,8 +154,9 @@ services:
 
   #zookeeper
   zookeeper:
-    image: debezium/zookeeper:2.2
+    image: debezium/zookeeper:${ZOOKEEPER_VERSION}
     restart: always
+    container_name: zookeeper
     ports:
       - "2181:2181"
       - "2888:2888"
@@ -165,10 +167,11 @@ services:
 
   #kafka
   kafka:
-    image: confluentinc/cp-kafka:7.7.0
+    image: confluentinc/cp-kafka:${KAFKA_VERSION}
     hostname: ${KAFKA_SERVICE_HOST}
     depends_on:
       - zookeeper
+    container_name: kafka
     ports:
       - ${KAFKA_SERVICE_PORT}:${KAFKA_SERVICE_PORT}
       - "29092:29092"
@@ -185,8 +188,9 @@ services:
 
   #kafka-connect
   kafka-connect:
-    image: debezium/connect:2.2
+    image: debezium/connect:${KAFKA_CONNECT_VERSION}
     restart: always
+    container_name: kafka-connect
     ports:
       - "8083:8083"
       - "5005:5005"
@@ -229,10 +233,11 @@ services:
       HEARTBEAT_INTERNAL_PASSWORD: ${HEARTBEAT_INTERNAL_PASSWORD:-}
       MONITORING_INTERNAL_PASSWORD: ${MONITORING_INTERNAL_PASSWORD:-}
       BEATS_SYSTEM_PASSWORD: ${BEATS_SYSTEM_PASSWORD:-}
-    networks:
-      - ezbuy-network
     depends_on:
       - elasticsearch
+    networks:
+      - ezbuy-network
+
   #elasticsearch
   elasticsearch:
     build:
@@ -242,7 +247,7 @@ services:
     container_name: elasticsearch
     volumes:
       - ./docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
-      - elasticsearch_data:/usr/share/elasticsearch/data:Z
+      - elasticsearch:/usr/share/elasticsearch/data:Z
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -251,9 +256,10 @@ services:
       ES_JAVA_OPTS: -Xms512m -Xmx512m
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
       discovery.type: single-node
+    restart: unless-stopped
     networks:
       - ezbuy-network
-    restart: unless-stopped
+
   #logstash
   logstash:
     build:
@@ -272,11 +278,12 @@ services:
     environment:
       LS_JAVA_OPTS: -Xms256m -Xmx256m
       LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
-    networks:
-      - ezbuy-network
     depends_on:
       - elasticsearch
     restart: unless-stopped
+    networks:
+      - ezbuy-network
+
   #kibana
   kibana:
     build:
@@ -290,21 +297,22 @@ services:
       - "5601:5601"
     environment:
       KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
-    networks:
-      - ezbuy-network
     depends_on:
       - elasticsearch
     restart: unless-stopped
-
+    networks:
+      - ezbuy-network
 
   #memos
   memos:
     image: neosmemo/memos:stable
     container_name: memos
     volumes:
-      - ./docker/memos/:/var/opt/memos
+      - memos:/var/opt/memos
     ports:
       - "5230:5230"
+    networks:
+      - ezbuy-network
 
 
 # networks:
@@ -321,7 +329,8 @@ networks:
 volumes:
   postgres:
   pgadmin:
-  keycloak_data:
-  minio_data:
-  elasticsearch_data:
+  keycloak:
+  minio:
+  memos:
+  elasticsearch:
 
