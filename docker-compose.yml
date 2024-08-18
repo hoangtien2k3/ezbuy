@@ -122,15 +122,23 @@ services:
     image: minio/minio:${MINIO_VERSION}
     container_name: minio
     env_file: .env
-    restart: always
+    restart: unless-stopped
     ports:
-      - "${MINIO_PORT}:9001"
+      - "9000:9000" #Buckets
+      - "9001:9001" #Console
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+#    volumes:
+#      - ./docker/minio/data:/data
     volumes:
-      - ./docker/minio/data:/data
-    command: server /data --console-address ":9001"
+      - ./minio-data:/data:rw
+    command: [ "server", "--address", ":9000", "--console-address", ":9001", "/data" ]
+    healthcheck:
+      test: [ "CMD", "curl", "--fail", "http://localhost:9000/minio/health/live" ]
+      interval: 60s
+      timeout: 10s
+      retries: 3
     networks:
       - ezbuy-network
 
@@ -154,9 +162,9 @@ services:
     image: debezium/zookeeper:2.2
     restart: always
     ports:
-      - 2181:2181
-      - 2888:2888
-      - 3888:3888
+      - "2181:2181"
+      - "2888:2888"
+      - "3888:3888"
     networks:
       - ezbuy-network
 
@@ -170,7 +178,7 @@ services:
       - zookeeper
     ports:
       - ${KAFKA_SERVICE_PORT}:${KAFKA_SERVICE_PORT}
-      - 29092:29092
+      - "29092:29092"
     environment:
       - KAFKA_BROKER_ID
       - KAFKA_ZOOKEEPER_CONNECT
@@ -188,8 +196,8 @@ services:
     image: debezium/connect:2.2
     restart: always
     ports:
-      - 8083:8083
-      - 5005:5005
+      - "8083:8083"
+      - "5005:5005"
     depends_on:
       - kafka
     environment:
@@ -244,8 +252,8 @@ services:
       - ./docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
 #      - ./docker/elasticsearch:/usr/share/elasticsearch/data:Z
     ports:
-      - 9200:9200
-      - 9300:9300
+      - "9200:9200"
+      - "9300:9300"
     environment:
       node.name: elasticsearch
       ES_JAVA_OPTS: -Xms512m -Xmx512m
@@ -265,10 +273,10 @@ services:
       - ./docker/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
       - ./docker/logstash/pipeline:/usr/share/logstash/pipeline:ro,Z
     ports:
-      - 5044:5044
-      - 50000:50000/tcp
-      - 50000:50000/udp
-      - 9600:9600
+      - "5044:5044"
+      - "50000:50000/tcp"
+      - "50000:50000/udp"
+      - "9600:9600"
     environment:
       LS_JAVA_OPTS: -Xms256m -Xmx256m
       LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
@@ -287,7 +295,7 @@ services:
     volumes:
       - ./docker/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
     ports:
-      - 5601:5601
+      - "5601:5601"
     environment:
       KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
     networks:
@@ -295,6 +303,17 @@ services:
     depends_on:
       - elasticsearch
     restart: unless-stopped
+
+
+  ###########################
+  #memos
+  memos:
+    image: neosmemo/memos:stable
+    container_name: memos
+    volumes:
+      - ./docker/memos/:/var/opt/memos
+    ports:
+      - 5230:5230
 
 
 # networks:
