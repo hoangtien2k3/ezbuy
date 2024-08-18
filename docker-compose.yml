@@ -242,7 +242,7 @@ services:
     container_name: elasticsearch
     volumes:
       - ./docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
-      - ./docker/elasticsearch:/usr/share/elasticsearch/data:Z
+#      - ./docker/elasticsearch:/usr/share/elasticsearch/data:Z
     ports:
       - 9200:9200
       - 9300:9300
