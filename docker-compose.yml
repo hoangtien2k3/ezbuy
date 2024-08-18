@@ -1,7 +1,6 @@
 version: '3.9'
 
 services:
-  ###########################
   #postgresql:
   postgres:
     image: postgres:${POSTGRES_VERSION}
@@ -23,7 +22,6 @@ services:
       - ezbuy-network
 
 
-  ###########################
   #pgadmin:
   pgadmin:
     image: dpage/pgadmin4:${PGADMIN_VERSION}
@@ -39,7 +37,6 @@ services:
       - ezbuy-network
 
 
-  ###########################
   #keycloak:
   keycloak:
     image: keycloak/keycloak:${KEYCLOAK_VERSION}
@@ -72,6 +69,7 @@ services:
     volumes:
 #      - ./docker/keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
       - ./docker/keycloak/themes/ezbuy/theme:/opt/keycloak/themes
+      - keycloak_data:/opt/keycloak/data
     networks:
       - ezbuy-network
 
@@ -116,7 +114,6 @@ services:
 #      - "traefik.docker.network=proxy"
 
 
-  ###########################
   #minio
   minio:
     image: minio/minio:${MINIO_VERSION}
@@ -129,10 +126,9 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-#    volumes:
-#      - ./docker/minio/data:/data
     volumes:
-      - ./minio-data:/data:rw
+#      - ./docker/minio/data:/data:ro
+      - minio_data:/data:rw
     command: [ "server", "--address", ":9000", "--console-address", ":9001", "/data" ]
     healthcheck:
       test: [ "CMD", "curl", "--fail", "http://localhost:9000/minio/health/live" ]
@@ -143,7 +139,6 @@ services:
       - ezbuy-network
 
 
-  ###########################
   #swagger-ui
   swagger-ui:
     image: swaggerapi/swagger-ui:v4.16.0
@@ -156,7 +151,6 @@ services:
       - ezbuy-network
 
 
-  ###########################
   #zookeeper
   zookeeper:
     image: debezium/zookeeper:2.2
@@ -169,10 +163,9 @@ services:
       - ezbuy-network
 
 
-  ###########################
   #kafka
   kafka:
-    image: confluentinc/cp-kafka:7.0.9
+    image: confluentinc/cp-kafka:7.7.0
     hostname: ${KAFKA_SERVICE_HOST}
     depends_on:
       - zookeeper
@@ -190,7 +183,6 @@ services:
       - ezbuy-network
 
 
-  ###########################
   #kafka-connect
   kafka-connect:
     image: debezium/connect:2.2
@@ -250,7 +242,7 @@ services:
     container_name: elasticsearch
     volumes:
       - ./docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
-#      - ./docker/elasticsearch:/usr/share/elasticsearch/data:Z
+      - elasticsearch_data:/usr/share/elasticsearch/data:Z
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -305,7 +297,6 @@ services:
     restart: unless-stopped
 
 
-  ###########################
   #memos
   memos:
     image: neosmemo/memos:stable
@@ -313,7 +304,7 @@ services:
     volumes:
       - ./docker/memos/:/var/opt/memos
     ports:
-      - 5230:5230
+      - "5230:5230"
 
 
 # networks:
@@ -329,6 +320,8 @@ networks:
 # volumes:
 volumes:
   postgres:
-    driver: local
   pgadmin:
-    driver: local
+  keycloak_data:
+  minio_data:
+  elasticsearch_data:
+
