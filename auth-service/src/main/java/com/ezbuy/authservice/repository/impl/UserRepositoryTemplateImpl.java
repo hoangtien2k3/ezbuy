@@ -1,23 +1,36 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.authservice.repository.impl;
 
 import com.ezbuy.authmodel.dto.UserProfileDTO;
 import com.ezbuy.authmodel.dto.request.QueryUserRequest;
 import com.ezbuy.authmodel.model.UserProfile;
 import com.ezbuy.authservice.repository.UserRepositoryTemplate;
-import com.ezbuy.framework.repository.BaseTemplateRepository;
-import com.ezbuy.framework.utils.DataUtil;
-import com.ezbuy.framework.utils.SQLUtils;
-import com.ezbuy.framework.utils.SortingUtils;
+import io.hoangtien2k3.commons.repository.BaseTemplateRepository;
+import io.hoangtien2k3.commons.utils.DataUtil;
+import io.hoangtien2k3.commons.utils.SQLUtils;
+import io.hoangtien2k3.commons.utils.SortingUtils;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Repository
 public class UserRepositoryTemplateImpl extends BaseTemplateRepository implements UserRepositoryTemplate {
-
 
     @Override
     public Flux<UserProfileDTO> queryUserProfile(QueryUserRequest request) {
@@ -30,8 +43,10 @@ public class UserRepositoryTemplateImpl extends BaseTemplateRepository implement
         Integer pageSize = request.getPageSize();
 
         if (pageIndex != null && pageSize != null) {
-            builder.append("limit ").append((pageIndex - 1) * pageSize)
-                    .append(", ").append(pageSize);
+            builder.append("limit ")
+                    .append((pageIndex - 1) * pageSize)
+                    .append(", ")
+                    .append(pageSize);
         }
 
         return listQuery(builder.toString(), params, UserProfileDTO.class);
@@ -65,7 +80,9 @@ public class UserRepositoryTemplateImpl extends BaseTemplateRepository implement
 
         if (!DataUtil.isNullOrEmpty(request.getCompanyName())) {
             builder.append("and company_name like concat('%', :companyName, '%') \n");
-            params.put("companyName", SQLUtils.replaceSpecialDigit(request.getCompanyName().trim()));
+            params.put(
+                    "companyName",
+                    SQLUtils.replaceSpecialDigit(request.getCompanyName().trim()));
         }
 
         if (!DataUtil.isNullOrEmpty(request.getPhoneNumber())) {
@@ -75,7 +92,8 @@ public class UserRepositoryTemplateImpl extends BaseTemplateRepository implement
 
         if (!DataUtil.isNullOrEmpty(request.getTaxCode())) {
             builder.append("and tax_code like concat('%', :taxCode, '%') \n");
-            params.put("taxCode", SQLUtils.replaceSpecialDigit(request.getTaxCode().trim()));
+            params.put(
+                    "taxCode", SQLUtils.replaceSpecialDigit(request.getTaxCode().trim()));
         }
 
         if (!DataUtil.isNullOrEmpty(request.getProvinceCode())) {
@@ -101,5 +119,4 @@ public class UserRepositoryTemplateImpl extends BaseTemplateRepository implement
             builder.append(" create_at DESC \n");
         }
     }
-
 }

@@ -1,61 +1,84 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.settingservice.service;
 
-import com.ezbuy.framework.model.response.DataResponse;
 import com.ezbuy.settingmodel.model.Setting;
 import com.ezbuy.settingmodel.request.CreateSettingRequest;
 import com.ezbuy.settingmodel.request.SearchSettingRequest;
 import com.ezbuy.settingmodel.response.SearchSettingResponse;
-import reactor.core.publisher.Mono;
-
+import io.hoangtien2k3.commons.model.response.DataResponse;
 import java.util.List;
+import reactor.core.publisher.Mono;
 
 public interface SettingService {
 
     Mono<String> findByCode(String code);
 
     /**
-     * Author: AnhTN
-     * Ham nay dung de tim kiem cac cai dat theo param truyen vao
-     * @param request (code(ma), status(trang thai), fromDate(tu ngay), toDate(den ngay))
+     * Author: AnhTN Ham nay dung de tim kiem cac cai dat theo param truyen vao
+     *
+     * @param request
+     *            (code(ma), status(trang thai), fromDate(tu ngay), toDate(den
+     *            ngay))
      * @return list setting, va phan trang
      */
     Mono<SearchSettingResponse> searchSetting(SearchSettingRequest request);
 
     /**
-     * Author: AnhTN
-     * Ham nay dung de tra ve tat ca ban ghi cai dat
-     * @return list setting  database
+     * Author: AnhTN Ham nay dung de tra ve tat ca ban ghi cai dat
+     *
+     * @return list setting database
      */
     Mono<List<Setting>> getAllSetting();
 
     /**
-     * Author: AnhTn
-     * ham nay dung de lay danh sach cac cai dat co hieu luc
+     * Author: AnhTn ham nay dung de lay danh sach cac cai dat co hieu luc
+     *
      * @return list cac cai dat dang co hieu luc
      */
     Mono<List<Setting>> getAllActiveSetting();
 
     /**
-     * Author: AnhTN
-     * ham nay dung de tao ra mot ban ghi cai dat moi
-     * @param request (code(ma), value(gia tri), description(chi tiet), status(trang thai))
+     * Author: AnhTN ham nay dung de tao ra mot ban ghi cai dat moi
+     *
+     * @param request
+     *            (code(ma), value(gia tri), description(chi tiet), status(trang
+     *            thai))
      * @return mot ban ghi cai dat moi
      */
     Mono<DataResponse<Setting>> createSetting(CreateSettingRequest request);
 
     /**
-     * Author: AnhTN
-     * ham nay dung de cap nhat ra mot ban ghi cai dat dua tren id cua cai dat do
-     * @param id (id cua cai dat muon cap nhat)
-     * @param request (code(ma), value(gia tri), description(chi tiet), status(trang thai))
+     * Author: AnhTN ham nay dung de cap nhat ra mot ban ghi cai dat dua tren id cua
+     * cai dat do
+     *
+     * @param id
+     *            (id cua cai dat muon cap nhat)
+     * @param request
+     *            (code(ma), value(gia tri), description(chi tiet), status(trang
+     *            thai))
      * @return ban ghi cai dat da sua theo dung thong tin truyen vao
      */
     Mono<DataResponse<Setting>> updateSetting(String id, CreateSettingRequest request);
 
     /**
-     * Author AnhTN
-     * ham nay dung de update cai dat thanh khong hieu luc
-     * @param id (id cua cai dat muon update)
+     * Author AnhTN ham nay dung de update cai dat thanh khong hieu luc
+     *
+     * @param id
+     *            (id cua cai dat muon update)
      * @return cai dat voi trang thai = "khong hieu luc"
      */
     Mono<DataResponse<Setting>> deleteSetting(String id);

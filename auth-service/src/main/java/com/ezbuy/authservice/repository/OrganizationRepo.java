@@ -1,11 +1,25 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.authservice.repository;
 
 import com.ezbuy.authmodel.model.Organization;
+import java.time.LocalDateTime;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Mono;
-
-import java.time.LocalDateTime;
 
 public interface OrganizationRepo extends R2dbcRepository<Organization, String> {
 
@@ -17,8 +31,7 @@ public interface OrganizationRepo extends R2dbcRepository<Organization, String> 
                     + "set name=:name, province_code=:provinceCode, district_code=:districtCode, precinct_code=:precinctCode,\n"
                     + "    phone=:phone, founding_date=:foundingDate, business_type=:businessType, image=:image,\n"
                     + "    street_block=:streetBlock, email=:email, state= IF(:state is null, state, :state),\n"
-                    + "    create_at=NOW(), create_by=:emailToken, org_type=:orgType \n"
-                    + "where id=:id")
+                    + "    create_at=NOW(), create_by=:emailToken, org_type=:orgType \n" + "where id=:id")
     Mono<Boolean> updateOrganizationById(
             String id,
             String name,
@@ -46,8 +59,7 @@ public interface OrganizationRepo extends R2dbcRepository<Organization, String> 
     @Query(
             value = "select id from organization\n" + "where id in ( \n"
                     + "    select tenant_id from tenant_identify where type =:type\n"
-                    + "    and status = 1 and trust_status = 1 and id_no =:idNo\n"
-                    + ");")
+                    + "    and status = 1 and trust_status = 1 and id_no =:idNo\n" + ");")
     Mono<String> findOrganizationByIdentify(String type, String idNo);
 
     @Query(
@@ -59,7 +71,6 @@ public interface OrganizationRepo extends R2dbcRepository<Organization, String> 
 
     @Query(
             value = "update organization\n" + "set  founding_date=:foundingDate, \n"
-                    + "    create_at=NOW(), create_by=:emailToken \n"
-                    + "where id=:id")
+                    + "    create_at=NOW(), create_by=:emailToken \n" + "where id=:id")
     Mono<Boolean> updateFoundingDateById(String id, LocalDateTime foundingDate, String emailToken);
 }

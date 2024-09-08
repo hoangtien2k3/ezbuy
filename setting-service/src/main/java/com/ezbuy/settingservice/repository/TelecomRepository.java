@@ -1,20 +1,32 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.settingservice.repository;
 
 import com.ezbuy.settingmodel.model.Telecom;
 import com.ezbuy.settingmodel.response.ClientTelecom;
-import org.springframework.data.r2dbc.repository.Modifying;
 import com.ezbuy.settingmodel.response.TelecomClient;
+import java.util.List;
+import org.springframework.data.r2dbc.repository.Modifying;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-
 public interface TelecomRepository extends R2dbcRepository<Telecom, String> {
-    @Query("Select * from telecom_service ts " +
-            "where ts.status = 1 " +
-            "and (:ids is null or ts.id in (:ids))")
+    @Query("Select * from telecom_service ts " + "where ts.status = 1 " + "and (:ids is null or ts.id in (:ids))")
     Flux<Telecom> getAll(List<String> ids);
 
     @Query("SELECT ts.* FROM telecom_service ts WHERE ts.id = :id")
@@ -24,7 +36,9 @@ public interface TelecomRepository extends R2dbcRepository<Telecom, String> {
     Flux<Telecom> getNonFilterTelecom();
 
     @Modifying
-    @Query(value = "update telecom_service set status=:status, update_by=:user, update_at=CURRENT_TIMESTAMP() where id=:id")
+    @Query(
+            value =
+                    "update telecom_service set status=:status, update_by=:user, update_at=CURRENT_TIMESTAMP() where id=:id")
     Mono<Telecom> updateStatus(String id, Integer status, String user);
 
     @Modifying
@@ -38,7 +52,8 @@ public interface TelecomRepository extends R2dbcRepository<Telecom, String> {
 
     // neu serviceAlias null thi van truy van nhu luong cu
     // bo sung ham truy van theo alias
-    @Query("SELECT ts.* FROM telecom_service ts WHERE ts.origin_id = :originId and (ts.service_alias =:serviceAlias or :serviceAlias is null)")
+    @Query(
+            "SELECT ts.* FROM telecom_service ts WHERE ts.origin_id = :originId and (ts.service_alias =:serviceAlias or :serviceAlias is null)")
     Flux<Telecom> getAllByOriginId(String originId, String serviceAlias);
 
     // bo sung ham truy van theo alias
@@ -48,19 +63,19 @@ public interface TelecomRepository extends R2dbcRepository<Telecom, String> {
     @Query("select * from telecom_service where status = 1 ORDER BY name")
     Flux<Telecom> getAllTelecomServiceActive();
 
-    @Query("select admin_role,client_id,service_alias,service_alias as alias from telecom_service where status =1 and origin_id =:originId")
+    @Query(
+            "select admin_role,client_id,service_alias,service_alias as alias from telecom_service where status =1 and origin_id =:originId")
     Mono<TelecomClient> findClientInfoByOriginId(String originId);
 
     // Ham lay roleAdmin va clientId cua dich vu theo serviceAlias
-    @Query("select admin_role,client_id,service_alias from telecom_service where status =1 and service_alias =:serviceAlias")
+    @Query(
+            "select admin_role,client_id,service_alias from telecom_service where status =1 and service_alias =:serviceAlias")
     Mono<TelecomClient> findClientInfoByServiceAlias(String serviceAlias);
 
     @Query("select * from telecom_service")
     Flux<Telecom> getAllTelecomService();
 
-    @Query("Select * from telecom_service ts " +
-            "where ts.status = 1 " +
-            "and ts.origin_id in (:lstOriginId)")
+    @Query("Select * from telecom_service ts " + "where ts.status = 1 " + "and ts.origin_id in (:lstOriginId)")
     Flux<Telecom> findTelecomByLstOriginId(List<String> lstOriginId);
 
     @Query("select service_alias from telecom_service where status =1 and client_code =:clientCode")

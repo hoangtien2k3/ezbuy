@@ -1,3 +1,18 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.authmodel.constants;
 
 import java.util.HashMap;
@@ -33,8 +48,8 @@ public final class AuthConstants {
         public static final String REDIRECT_URI = "http://10.207.252.223/callback";
         public static final String AUTHORIZATION = "Authorization";
         public static final String BEARER = "Bearer ";
-        public static final String CLIENT_CREDENTIALS =
-                "client_credentials"; // grant_type de lay token by clientId va clientSecret
+        public static final String CLIENT_CREDENTIALS = "client_credentials"; // grant_type de lay token by clientId va
+        // clientSecret
     }
 
     public static final class MySign {
@@ -194,8 +209,8 @@ public final class AuthConstants {
     }
 
     public interface ALIAS_RULE {
-        List<String> ALIAS_NOT_SYNC_POLICY_FIRST =
-                List.of("SINVOICE", "VCONTRACT", "SCONTRACT"); // lstAlias not sync policy for first
+        List<String> ALIAS_NOT_SYNC_POLICY_FIRST = List.of("SINVOICE", "VCONTRACT", "SCONTRACT"); // lstAlias not sync
+        // policy for first
     }
 
     public interface OPTION_SET {

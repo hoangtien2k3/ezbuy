@@ -1,17 +1,22 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.customer.service.impl;
 
-import static com.ezbuy.framework.constants.CommonErrorCode.*;
-import static com.ezbuy.framework.constants.Regex.*;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+import static io.hoangtien2k3.commons.constants.CommonErrorCode.*;
+import static io.hoangtien2k3.commons.constants.Regex.*;
 
 import com.ezbuy.customer.client.NotiServiceClient;
 import com.ezbuy.customer.constants.Const;
@@ -32,16 +37,23 @@ import com.ezbuy.customer.repository.CustomerRepository;
 import com.ezbuy.customer.repository.ShopUserRepository;
 import com.ezbuy.customer.service.CustomerService;
 import com.ezbuy.customer.service.TokenService;
-import com.ezbuy.framework.constants.CommonErrorCode;
-import com.ezbuy.framework.exception.BusinessException;
-import com.ezbuy.framework.model.response.DataResponse;
-import com.ezbuy.framework.utils.AppUtils;
-import com.ezbuy.framework.utils.DataUtil;
-import com.ezbuy.framework.utils.PasswordGenerator;
-import com.ezbuy.framework.utils.Translator;
-
+import io.hoangtien2k3.commons.constants.CommonErrorCode;
+import io.hoangtien2k3.commons.exception.BusinessException;
+import io.hoangtien2k3.commons.model.response.DataResponse;
+import io.hoangtien2k3.commons.utils.AppUtils;
+import io.hoangtien2k3.commons.utils.DataUtil;
+import io.hoangtien2k3.commons.utils.PasswordGenerator;
+import io.hoangtien2k3.commons.utils.Translator;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 @Slf4j

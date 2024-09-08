@@ -1,15 +1,29 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.authservice.repository;
 
 import com.ezbuy.authmodel.dto.response.IndividualDTO;
 import com.ezbuy.authmodel.model.Individual;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.data.r2dbc.repository.Modifying;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 public interface IndividualRepository extends R2dbcRepository<Individual, String> {
 
@@ -20,10 +34,8 @@ public interface IndividualRepository extends R2dbcRepository<Individual, String
             value = "select *\n" + "from individual\n"
                     + "         inner join individual_unit_position iup on individual.id = iup.individual_id\n"
                     + "         inner join positions p on iup.position_id = p.id\n"
-                    + "where iup.organization_id = :organizationId\n"
-                    + "  and iup.status = :unitStatus\n"
-                    + "  and p.status = :positionStatus\n"
-                    + "  and p.is_system = :isSystem\n"
+                    + "where iup.organization_id = :organizationId\n" + "  and iup.status = :unitStatus\n"
+                    + "  and p.status = :positionStatus\n" + "  and p.is_system = :isSystem\n"
                     + "  and p.code = :code\n"
                     + "  and iup.organization_unit_id = (select id\n"
                     + "                                  from organization_unit ou\n"
@@ -42,8 +54,7 @@ public interface IndividualRepository extends R2dbcRepository<Individual, String
     @Query(
             value = "select iup.individual_id from individual_unit_position iup \n"
                     + "join individual i on i.id = iup.individual_id\n"
-                    + "where i.user_id=:userId and iup.organization_id=:organizationId\n"
-                    + "limit 1")
+                    + "where i.user_id=:userId and iup.organization_id=:organizationId\n" + "limit 1")
     Mono<String> findIndividualIdByUserIdAndOrganizationId(String userId, String organizationId);
 
     @Query(
@@ -76,11 +87,8 @@ public interface IndividualRepository extends R2dbcRepository<Individual, String
 
     @Query(
             value = "select i.id, i.username, i.name, i.email from individual i "
-                    + " join individual_unit_position iup on iup.individual_id = i.id "
-                    + " and i.email = :email"
-                    + " and iup.organization_id = :organizationId"
-                    + " and i.status = 1 "
-                    + " group by i.id ")
+                    + " join individual_unit_position iup on iup.individual_id = i.id " + " and i.email = :email"
+                    + " and iup.organization_id = :organizationId" + " and i.status = 1 " + " group by i.id ")
     Mono<Individual> findIndividualIdByEmail(String email, String organizationId);
 
     @Query(
@@ -109,22 +117,13 @@ public interface IndividualRepository extends R2dbcRepository<Individual, String
     Flux<IndividualDTO> findRepresentativeByUnitIds(List<String> organizationUnitIds, String positionCode);
 
     @Query(
-            value = "update\n" + "   individual\n"
-                    + " set\n"
-                    + "   name = :name,\n"
-                    + "   phone =:phone,\n"
-                    + "   address =:address ,\n"
-                    + "   province_code =:province,\n"
+            value = "update\n" + "   individual\n" + " set\n" + "   name = :name,\n" + "   phone =:phone,\n"
+                    + "   address =:address ,\n" + "   province_code =:province,\n"
                     + "   district_code =:districtCode ,\n"
-                    + "   precinct_code =:precinctCode ,\n"
-                    + "   position_code =:positionCode ,\n"
+                    + "   precinct_code =:precinctCode ,\n" + "   position_code =:positionCode ,\n"
                     + "   email =:email,\n"
-                    + "   gender =:gender ,\n"
-                    + "   birthday =:birthday,\n"
-                    + "   update_at = now(),\n"
-                    + "   update_by =:updateBy "
-                    + " where\n"
-                    + "   id =:id")
+                    + "   gender =:gender ,\n" + "   birthday =:birthday,\n" + "   update_at = now(),\n"
+                    + "   update_by =:updateBy " + " where\n" + "   id =:id")
     Mono<Long> updateIndividualById(
             String id,
             String name,
@@ -141,33 +140,22 @@ public interface IndividualRepository extends R2dbcRepository<Individual, String
 
     @Query(
             "select i.* from individual i " + " join individual_unit_position iup on i.id = iup.individual_id "
-                    + " join positions p on p.id = iup.position_id "
-                    + " where "
-                    + "  p.code = :code and p.is_system = 1 and p.status = 1"
-                    + "  and i.status = :state "
+                    + " join positions p on p.id = iup.position_id " + " where "
+                    + "  p.code = :code and p.is_system = 1 and p.status = 1" + "  and i.status = :state "
                     + "  and iup.state = :state and iup.organization_id = :organizationId and iup.organization_unit_id = :organizationUnitId ")
     Mono<Individual> getIndividualInfoByPositionCode(
             String code, Integer state, String organizationUnitId, String organizationId);
 
     @Query("select count(*) from individual i " + "join individual_unit_position iup on i.id = iup.individual_id "
-            + "  where "
-            + "   i.status = :state and i.user_id is not null "
+            + "  where " + "   i.status = :state and i.user_id is not null "
             + "   and iup.state = :state and iup.organization_id = :organizationId and iup.organization_unit_id = :organizationUnitId "
-            + "   and iup.position_id not in ( "
-            + " select "
-            + "   id"
-            + " from "
-            + "   positions p2 "
-            + " where "
-            + "   code IN ('LEADER', 'REPRESENTATIVE') "
-            + "   and is_system = 1 "
-            + "   and status = 1)")
+            + "   and iup.position_id not in ( " + " select " + "   id" + " from " + "   positions p2 " + " where "
+            + "   code IN ('LEADER', 'REPRESENTATIVE') " + "   and is_system = 1 " + "   and status = 1)")
     Mono<Long> countIndividual(Integer state, String organizationUnitId, String organizationId);
 
     @Query(
             "select i.* from individual i " + " join individual_unit_position iup on i.id = iup.individual_id "
-                    + " join positions p on p.id = iup.position_id "
-                    + " where "
+                    + " join positions p on p.id = iup.position_id " + " where "
                     + "  p.code = :code and p.is_system = 1 and p.status = 1"
                     + "  and i.status = :state and i.user_id is not null "
                     + "  and iup.state = :state and iup.organization_id = :organizationId and iup.organization_unit_id = :organizationUnitId ")
@@ -187,47 +175,30 @@ public interface IndividualRepository extends R2dbcRepository<Individual, String
     Mono<Individual> findIdByCode(String code);
 
     @Query(
-            value = "select i.username,i.id\n"
-                    + "from individual i\n"
+            value = "select i.username,i.id\n" + "from individual i\n"
                     + "INNER join individual_unit_position iup ON i.id = iup.individual_id\n"
-                    + "INNER join organization_unit ou ON iup.organization_unit_id = ou.id\n"
-                    + "where i.status=1\n"
-                    + "and iup.status=1\n"
-                    + "and lower(i.username)=lower(:username)\n"
-                    + "and iup.organization_id=:organizationId\n"
-                    + "and ou.code=:code;")
+                    + "INNER join organization_unit ou ON iup.organization_unit_id = ou.id\n" + "where i.status=1\n"
+                    + "and iup.status=1\n" + "and lower(i.username)=lower(:username)\n"
+                    + "and iup.organization_id=:organizationId\n" + "and ou.code=:code;")
     Mono<Individual> findIdByUsernameWithOrganizationId(String username, String organizationId, String code);
 
     @Modifying
     @Query(
-            value = "update\n" + "   individual\n"
-                    + "set\n"
-                    + "   status =-1, \n"
-                    + "   update_at = now(),\n"
-                    + "   update_by =:updateBy "
-                    + "where\n"
-                    + "   id =:id")
+            value = "update\n" + "   individual\n" + "set\n" + "   status =-1, \n" + "   update_at = now(),\n"
+                    + "   update_by =:updateBy " + "where\n" + "   id =:id")
     Mono<Integer> deleteIndividualById(String id, String updateBy);
 
     @Query(value = "SELECT max(code) FROM individual WHERE code REGEXP '^[0-9]+$' and length(code) = :length")
     Mono<String> findMaxIndividualCode(int length);
 
     @Query(
-            value = "update\n" + "   individual\n"
-                    + "set\n"
-                    + "   status = :status,\n"
-                    + "   email =:email,\n"
-                    + "   phone =:phone,\n"
-                    + "   name =:name ,\n"
-                    + "   gender =:gender ,\n"
+            value = "update\n" + "   individual\n" + "set\n" + "   status = :status,\n" + "   email =:email,\n"
+                    + "   phone =:phone,\n" + "   name =:name ,\n" + "   gender =:gender ,\n"
                     + "   birthday =:birthday,\n"
-                    + "   address =:address ,\n"
-                    + "   probation_day =:probationDay, \n"
-                    + "   start_working_day =:startWorkingDay, \n"
-                    + "   update_at = now(),\n"
+                    + "   address =:address ,\n" + "   probation_day =:probationDay, \n"
+                    + "   start_working_day =:startWorkingDay, \n" + "   update_at = now(),\n"
                     + "   update_by =:updateBy \n"
-                    + " where\n"
-                    + "   id =:id")
+                    + " where\n" + "   id =:id")
     Mono<Long> updateIndividualById(
             String id,
             Integer status,
@@ -242,23 +213,13 @@ public interface IndividualRepository extends R2dbcRepository<Individual, String
             String updateBy);
 
     @Query(
-            value = "update\n" + "   individual\n"
-                    + "set\n"
-                    + "   user_id = :userId, \n"
-                    + "   update_at = now(),\n"
-                    + "   update_by =:updateBy \n"
-                    + " where\n"
-                    + "   id =:id")
+            value = "update\n" + "   individual\n" + "set\n" + "   user_id = :userId, \n" + "   update_at = now(),\n"
+                    + "   update_by =:updateBy \n" + " where\n" + "   id =:id")
     Mono<Integer> updateUserId(String id, String userId, String updateBy);
 
     @Query(
-            value = "update\n" + "   individual\n"
-                    + "set\n"
-                    + "   image = :image, \n"
-                    + "   update_at = now(),\n"
-                    + "   update_by =:updateBy \n"
-                    + " where\n"
-                    + "   id =:id")
+            value = "update\n" + "   individual\n" + "set\n" + "   image = :image, \n" + "   update_at = now(),\n"
+                    + "   update_by =:updateBy \n" + " where\n" + "   id =:id")
     Mono<Integer> updateImage(String id, String image, String updateBy);
 
     @Query(value = "select user_id\n" + "from individual\n" + "where individual.id =:individualId")
@@ -282,21 +243,16 @@ public interface IndividualRepository extends R2dbcRepository<Individual, String
                     + "        from individual_unit_position iup "
                     + "                 join individual i on i.id = iup.individual_id "
                     + "        where i.user_id = :userId "
-                    + "          and iup.organization_id = :organizationId "
-                    + "        limit 1 "
-                    + "       ) a "
-                    + " union all "
-                    + " (select id as individual_id from sme_user.individual where user_id = :userId) "
+                    + "          and iup.organization_id = :organizationId " + "        limit 1 " + "       ) a "
+                    + " union all " + " (select id as individual_id from sme_user.individual where user_id = :userId) "
                     + " limit 1")
     Mono<String> findIndividualIdByUserId(String userId, String organizationId);
 
     @Query(
-            value = "select user_id\n" + "from individual\n"
-                    + "where id = (select individual_id\n"
+            value = "select user_id\n" + "from individual\n" + "where id = (select individual_id\n"
                     + "            from individual_unit_position iup\n"
                     + "                     join positions p on iup.position_id = p.id\n"
-                    + "            where p.code = :positionCode\n"
-                    + "              and iup.organization_id =\n"
+                    + "            where p.code = :positionCode\n" + "              and iup.organization_id =\n"
                     + "                  (select tenant_id from tenant_identify ti where ti.id =:tenantId)\n"
                     + "            limit 1)")
     Mono<String> getUserIdOfOwnerByIdNo(String tenantId, String positionCode);
@@ -304,10 +260,11 @@ public interface IndividualRepository extends R2dbcRepository<Individual, String
     @Query("select nextval(sme_user.individualCodeSeq)")
     Mono<String> getIndividualCodeSeq();
 
-    @Query(value = "with query as (select iup.individual_id from sme_user.individual_unit_position iup inner join sme_user.positions p on iup.position_id = p.id\n"
+    @Query(
+            value =
+                    "with query as (select iup.individual_id from sme_user.individual_unit_position iup inner join sme_user.positions p on iup.position_id = p.id\n"
                             + "               where  iup.organization_id = :organizationId and p.code = 'REPRESENTATIVE')\n"
-                            + "            select i.*\n"
-                            + "            from sme_user.individual i\n"
+                            + "            select i.*\n" + "            from sme_user.individual i\n"
                             + "            where i.id = (select * from query)")
     Mono<Individual> findRepresentativeByOrganizationId(String organizationId);
 }

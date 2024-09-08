@@ -1,3 +1,18 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.authmodel.constants;
 
 public class UrlPaths {
@@ -29,8 +44,8 @@ public class UrlPaths {
         String GET_CONTRACT = "/contract";
         String RECEIVE_SIGN_RESULT = "/receive-sign-result"; // API lay ket qua chuyen ky tu vcontract
         String GET_INDIVIDUAL_BY_USERNAME = "/username";
-        String VIEW_BUSINESS_AUTH_CONTRACT =
-                "/view-business-auth-contract"; // API lay file xac minh doanh nghiep da ky dang base64 tu vcontract de
+        String VIEW_BUSINESS_AUTH_CONTRACT = "/view-business-auth-contract"; // API lay file xac minh doanh nghiep da ky
+        // dang base64 tu vcontract de
         // view len giao dien Hub
 
         String BLOCK_LOGIN = "/block-partner-license-key-login";
@@ -88,8 +103,8 @@ public class UrlPaths {
         String GET_ROOT_UNIT = "/unit/root-unit"; // api lay don vi goc
         String GET_UNIT_BY_CODE = "/unit/code/{organizationId}/{code}"; // api lay don vi theo ma code
         String GET_UNIT_SUB_BY_PARENT_ID = "/unit/sub"; // api lay don vi con
-        String GET_UNIT_BY_USER_ID_AND_ORGANIZATION_ID =
-                "/unit/user-organization"; // api lay danh sach don vi theo user va to chuc
+        String GET_UNIT_BY_USER_ID_AND_ORGANIZATION_ID = "/unit/user-organization"; // api lay danh sach don vi theo
+        // user va to chuc
         String GET_USER_UNIT = "/user-units"; // api lay danh sach don vi theo user
     }
 
@@ -125,20 +140,20 @@ public class UrlPaths {
         String GET_ID_NO_ORGANIZATION = "idNo-organization";
         String LST_TRUSTED_IDNO_ORGANIZATION = "lst-trusted-idNo-organization";
         String GET_INFO_TENANT_IDENTIFY = "info-tenant-identify"; // lay thong tin giay to theo loai giay to
-        String FIND_BY_TENANT_ID_AND_TYPE =
-                "find-by-tenant-id-and-type"; // lay thong tin giay to theo loai giay to va id
-        String IDENTIFY_BY_TYPE_TENANT_ID_TRUST_STATUS =
-                "/type-tenant-trust-status"; // lay danh sach tenant identify theo dieu kien truyen vao
+        String FIND_BY_TENANT_ID_AND_TYPE = "find-by-tenant-id-and-type"; // lay thong tin giay to theo loai giay to va
+        // id
+        String IDENTIFY_BY_TYPE_TENANT_ID_TRUST_STATUS = "/type-tenant-trust-status"; // lay danh sach tenant identify
+        // theo dieu kien truyen vao
         String UPDATE_ORG_TRUST_STATUS = "/org-trust-status"; // ham cap nhat trang thai xac minh doanh nghiep
         String GET_CTS_LIST_CA = "/cts-list-ca"; // lay danh sach chung thu so
         String UPDATE_ORG_TRUST_STATUS_BY_TENANT_ID = "/org-trust-status/tenant-id";
         String UPDATE_BUSINESS_AUTH_TENANT = "update/business-auth-tenant"; // lay thong tin giay to theo loai giay to
         String GET_INFO_TENANT_IDENTIFY_BY_TYPE = "tenant-identify/type"; // lay thong tin giay to theo loai giay to
 
-        String UPDATE_ORG_TRUST_STATUS_NOT_SIGN =
-                "/org-trust-status/not-sign"; // ham cap nhat trang thai xac thuc doanh nghiep sau khi tao don cts
-        String GET_INFO_TENANT_IDENTIFY_INPROGRESS =
-                "info-tenant-identify/in-progress"; // lay thong tin giay to dang xac thuc
+        String UPDATE_ORG_TRUST_STATUS_NOT_SIGN = "/org-trust-status/not-sign"; // ham cap nhat trang thai xac thuc
+        // doanh nghiep sau khi tao don cts
+        String GET_INFO_TENANT_IDENTIFY_INPROGRESS = "info-tenant-identify/in-progress"; // lay thong tin giay to dang
+        // xac thuc
     }
 
     public interface SyncData {

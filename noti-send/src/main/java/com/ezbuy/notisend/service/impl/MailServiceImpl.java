@@ -1,11 +1,31 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.notisend.service.impl;
 
-import com.ezbuy.framework.utils.DataUtil;
+import static com.ezbuy.notisend.constants.CommonConstants.TemplateMail.*;
+
 import com.ezbuy.notimodel.dto.EmailResultDTO;
 import com.ezbuy.notimodel.dto.TransmissionNotiDTO;
 import com.ezbuy.notisend.constants.CommonConstants;
 import com.ezbuy.notisend.service.MailService;
+import io.hoangtien2k3.commons.utils.DataUtil;
 import jakarta.mail.internet.MimeMessage;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +38,6 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.ezbuy.framework.constants.Constants.TemplateMail.*;
-
 @Service
 @RequiredArgsConstructor
 public class MailServiceImpl implements MailService {
@@ -31,6 +45,7 @@ public class MailServiceImpl implements MailService {
     private static final Logger logger = LoggerFactory.getLogger(MailServiceImpl.class);
     private final SpringTemplateEngine templateEngine;
     private final JavaMailSender javaMailSender;
+
     @Value("${spring.mail.username}")
     private String sender;
 
@@ -73,8 +88,7 @@ public class MailServiceImpl implements MailService {
 
             String templateMail = DataUtil.safeToString(
                     CommonConstants.TEMPLATE_MAIL_MAP.get(DataUtil.safeToString(transmissionNoti.getTemplateMail())),
-                    "mail/TransmissionOtpMailSignUp.html"
-            );
+                    "mail/TransmissionOtpMailSignUp.html");
 
             return templateEngine.process(templateMail, context);
         } catch (Exception ex) {
@@ -88,7 +102,9 @@ public class MailServiceImpl implements MailService {
             Context context = new Context();
             context.setVariable("USERNAME", transmissionNoti.getSubTitle());
 
-            String templateMail = DataUtil.safeToString(CommonConstants.TEMPLATE_MAIL_MAP.get(DataUtil.safeToString(transmissionNoti.getTemplateMail())), CommonConstants.TEMP_ACTIVE_ACCOUNT_CUSTOMER);
+            String templateMail = DataUtil.safeToString(
+                    CommonConstants.TEMPLATE_MAIL_MAP.get(DataUtil.safeToString(transmissionNoti.getTemplateMail())),
+                    CommonConstants.TEMP_ACTIVE_ACCOUNT_CUSTOMER);
 
             return templateEngine.process(templateMail, context);
         } catch (Exception ex) {
@@ -105,7 +121,9 @@ public class MailServiceImpl implements MailService {
             context.setVariable("USERNAME", userInfo[0]);
             context.setVariable("PASSWORD", userInfo[1]);
 
-            String templateMail = DataUtil.safeToString(CommonConstants.TEMPLATE_MAIL_MAP.get(DataUtil.safeToString(transmissionNoti.getTemplateMail())), CommonConstants.TEMP_ACCOUNT_CUSTOMER_INFO);
+            String templateMail = DataUtil.safeToString(
+                    CommonConstants.TEMPLATE_MAIL_MAP.get(DataUtil.safeToString(transmissionNoti.getTemplateMail())),
+                    CommonConstants.TEMP_ACCOUNT_CUSTOMER_INFO);
             return templateEngine.process(templateMail, context);
         } catch (Exception ex) {
             logger.error("renderOtpMailContent error: ", ex);
@@ -121,8 +139,7 @@ public class MailServiceImpl implements MailService {
 
             String templateMail = DataUtil.safeToString(
                     CommonConstants.TEMPLATE_MAIL_MAP.get(DataUtil.safeToString(transmissionNoti.getTemplateMail())),
-                    "mail/register_account_success.html"
-            );
+                    "mail/register_account_success.html");
 
             return templateEngine.process(templateMail, context);
         } catch (Exception ex) {
@@ -140,8 +157,7 @@ public class MailServiceImpl implements MailService {
 
             String templateMail = DataUtil.safeToString(
                     CommonConstants.TEMPLATE_MAIL_MAP.get(DataUtil.safeToString(transmissionNoti.getTemplateMail())),
-                    "mail/register_account_success.html"
-            );
+                    "mail/register_account_success.html");
 
             return templateEngine.process(templateMail, context);
         } catch (Exception ex) {
@@ -157,7 +173,8 @@ public class MailServiceImpl implements MailService {
                         return false;
                     }
                     MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-                    MimeMessageHelper message = new MimeMessageHelper(mimeMessage, false, StandardCharsets.UTF_8.name());
+                    MimeMessageHelper message =
+                            new MimeMessageHelper(mimeMessage, false, StandardCharsets.UTF_8.name());
                     message.setTo(receiver);
                     message.setFrom(sender);
                     message.setSubject(subject);
@@ -165,7 +182,8 @@ public class MailServiceImpl implements MailService {
                     javaMailSender.send(mimeMessage);
                     logger.info("Sent email to User '{}'", receiver);
                     return true;
-                }).onErrorResume(throwable -> {
+                })
+                .onErrorResume(throwable -> {
                     logger.info("throwable: ", throwable);
                     return Mono.just(false);
                 })
@@ -177,7 +195,9 @@ public class MailServiceImpl implements MailService {
             Context context = new Context();
             context.setVariable("SUBTITLE", transmissionNoti.getSubTitle());
 
-            String templateMail = DataUtil.safeToString(CommonConstants.TEMPLATE_MAIL_MAP.get(DataUtil.safeToString(transmissionNoti.getTemplateMail())), CommonConstants.TEMP_VERIFY_ACCOUNT_SUCESS);
+            String templateMail = DataUtil.safeToString(
+                    CommonConstants.TEMPLATE_MAIL_MAP.get(DataUtil.safeToString(transmissionNoti.getTemplateMail())),
+                    CommonConstants.TEMP_VERIFY_ACCOUNT_SUCESS);
 
             return templateEngine.process(templateMail, context);
         } catch (Exception ex) {
@@ -191,7 +211,9 @@ public class MailServiceImpl implements MailService {
             Context context = new Context();
             context.setVariable("SUBTITLE", transmissionNoti.getSubTitle());
 
-            String templateMail = DataUtil.safeToString(CommonConstants.TEMPLATE_MAIL_MAP.get(DataUtil.safeToString(transmissionNoti.getTemplateMail())), CommonConstants.TEMP_NOTI_VERIFY_ACCOUNT);
+            String templateMail = DataUtil.safeToString(
+                    CommonConstants.TEMPLATE_MAIL_MAP.get(DataUtil.safeToString(transmissionNoti.getTemplateMail())),
+                    CommonConstants.TEMP_NOTI_VERIFY_ACCOUNT);
 
             return templateEngine.process(templateMail, context);
         } catch (Exception ex) {
@@ -199,5 +221,4 @@ public class MailServiceImpl implements MailService {
             return "";
         }
     }
-
 }

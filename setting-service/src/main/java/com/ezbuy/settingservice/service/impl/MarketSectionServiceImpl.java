@@ -1,38 +1,52 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.settingservice.service.impl;
 
-import com.ezbuy.framework.constants.CommonErrorCode;
-import com.ezbuy.framework.exception.BusinessException;
-import com.ezbuy.framework.model.TokenUser;
-import com.ezbuy.framework.model.response.DataResponse;
-import com.ezbuy.framework.utils.DataUtil;
-import com.ezbuy.framework.utils.MinioUtils;
-import com.ezbuy.framework.utils.SecurityUtils;
 import com.ezbuy.settingmodel.dto.*;
 import com.ezbuy.settingmodel.model.MarketSection;
-import com.ezbuy.framework.constants.Constants;
+import com.ezbuy.settingmodel.model.ServiceMedia;
+import com.ezbuy.settingmodel.request.CreateMarketSectionRequest;
+import com.ezbuy.settingmodel.request.MarketSectionSearchRequest;
+import com.ezbuy.settingmodel.response.MarketSectionSearchResponse;
 import com.ezbuy.settingservice.constant.SettingConstant;
 import com.ezbuy.settingservice.repository.MarketSectionRepository;
 import com.ezbuy.settingservice.repository.ServiceMediaRepository;
 import com.ezbuy.settingservice.repositoryTemplate.MarketSectionRepositoryTemplate;
 import com.ezbuy.settingservice.service.MarketSectionService;
+import io.hoangtien2k3.commons.constants.CommonErrorCode;
+import io.hoangtien2k3.commons.constants.Constants;
+import io.hoangtien2k3.commons.exception.BusinessException;
+import io.hoangtien2k3.commons.model.TokenUser;
+import io.hoangtien2k3.commons.model.response.DataResponse;
+import io.hoangtien2k3.commons.utils.DataUtil;
+import io.hoangtien2k3.commons.utils.MinioUtils;
+import io.hoangtien2k3.commons.utils.SecurityUtils;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import com.ezbuy.settingmodel.model.ServiceMedia;
-import com.ezbuy.settingmodel.request.CreateMarketSectionRequest;
-import com.ezbuy.settingmodel.request.MarketSectionSearchRequest;
-import com.ezbuy.settingmodel.response.MarketSectionSearchResponse;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Base64;
-import org.springframework.beans.BeanUtils;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
-
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -68,7 +82,7 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
 
     @Override
     public Mono<MarketSectionSearchResponse> searchMarketSection(MarketSectionSearchRequest request) {
-        //validate request
+        // validate request
         int pageIndex = validatePageIndex(request.getPageIndex());
         request.setPageIndex(pageIndex);
         int pageSize = validatePageSize(request.getPageSize(), 10);
@@ -100,7 +114,8 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
     @Override
     @Transactional
     public Mono<MarketSectionDTO> findMarketSectionById(String id) {
-        return marketSectionRepository.findMarketSectionById(id, null)
+        return marketSectionRepository
+                .findMarketSectionById(id, null)
                 .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "data.not.found")))
                 .map(marketSection -> {
                     MarketSectionDTO dto = new MarketSectionDTO();
@@ -145,65 +160,77 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
     }
 
     public Mono<Boolean> validateExistCode(String code, Boolean isInsert, String id) {
-        return marketSectionRepository.getByCode(code).defaultIfEmpty(new MarketSection())
+        return marketSectionRepository
+                .getByCode(code)
+                .defaultIfEmpty(new MarketSection())
                 .flatMap(marketSectionByCode -> {
-            if ((isInsert && marketSectionByCode.getCode() != null) ||
-                    (!isInsert && marketSectionByCode.getCode() != null &&
-                            !DataUtil.safeEqual(marketSectionByCode.getId(), id))) {
-                return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "market.section.validate.code.is.exist"));
-            }
-            return Mono.just(true);
-        });
-
+                    if ((isInsert && marketSectionByCode.getCode() != null)
+                            || (!isInsert
+                                    && marketSectionByCode.getCode() != null
+                                    && !DataUtil.safeEqual(marketSectionByCode.getId(), id))) {
+                        return Mono.error(new BusinessException(
+                                CommonErrorCode.NOT_FOUND, "market.section.validate.code.is.exist"));
+                    }
+                    return Mono.just(true);
+                });
     }
 
     @Override
     @Transactional
     public Mono<DataResponse<MarketSection>> createMarketSection(CreateMarketSectionRequest request) {
-        //validate input
+        // validate input
         validateInput(request);
         String code = DataUtil.safeTrim(request.getCode());
         Long displayOrder = request.getDisplayOrder();
         return Mono.zip(
-                SecurityUtils.getCurrentUser() //get info user
-                        .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
-                validateExistCode(code, true, null)).flatMap(userValidate -> { //validate trung thong tin code hoac display order
-            String type = request.getType();
-            String data = request.getData();
+                        SecurityUtils.getCurrentUser() // get info user
+                                .switchIfEmpty(
+                                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
+                        validateExistCode(code, true, null))
+                .flatMap(
+                        userValidate -> { // validate trung thong tin code hoac
+                            // display order
+                            String type = request.getType();
+                            String data = request.getData();
 
-            return doUploadMedia(type, data, userValidate.getT1());
-        }).flatMap(data -> {
-            String marketSectionId = UUID.randomUUID().toString();
-            LocalDateTime now = LocalDateTime.now();
-            MarketSection marketSection = MarketSection.builder()
-                    .id(marketSectionId)
-                    .code(code)
-                    .name(DataUtil.safeTrim(request.getName()))
-                    .type(DataUtil.safeTrim(request.getType()))
-                    .description(DataUtil.safeTrim(request.getDescription()))
-                    .displayOrder(displayOrder)
-                    .data(data.getT2())
-                    .status(request.getStatus())
-                    .createAt(now)
-                    .createBy(data.getT1().getUsername())
-                    .updateAt(now)
-                    .updateBy(data.getT1().getUsername())
-                    .isNew(true)
-                    .build();
-            return marketSectionRepository.save(marketSection)
-                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "market.section.insert.failed")))
-                    .flatMap(x -> Mono.just(new DataResponse<>("success", null)));
-        });
+                            return doUploadMedia(type, data, userValidate.getT1());
+                        })
+                .flatMap(data -> {
+                    String marketSectionId = UUID.randomUUID().toString();
+                    LocalDateTime now = LocalDateTime.now();
+                    MarketSection marketSection = MarketSection.builder()
+                            .id(marketSectionId)
+                            .code(code)
+                            .name(DataUtil.safeTrim(request.getName()))
+                            .type(DataUtil.safeTrim(request.getType()))
+                            .description(DataUtil.safeTrim(request.getDescription()))
+                            .displayOrder(displayOrder)
+                            .data(data.getT2())
+                            .status(request.getStatus())
+                            .createAt(now)
+                            .createBy(data.getT1().getUsername())
+                            .updateAt(now)
+                            .updateBy(data.getT1().getUsername())
+                            .isNew(true)
+                            .build();
+                    return marketSectionRepository
+                            .save(marketSection)
+                            .switchIfEmpty(Mono.error(new BusinessException(
+                                    CommonErrorCode.INTERNAL_SERVER_ERROR, "market.section.insert.failed")))
+                            .flatMap(x -> Mono.just(new DataResponse<>("success", null)));
+                });
     }
 
     private Mono<Tuple2<TokenUser, String>> doUploadMedia(String type, String data, TokenUser user) {
         if (DataUtil.safeEqual(type, "HEADER_INFO")) {
             HeaderInfoDTO headerInfo = DataUtil.parseStringToObject(data, HeaderInfoDTO.class);
             if (headerInfo == null || DataUtil.isNullOrEmpty(headerInfo.getIconUrl())) {
-                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.section.error.header.info.icon.url.empty"));
+                return Mono.error(new BusinessException(
+                        CommonErrorCode.INVALID_PARAMS, "market.section.error.header.info.icon.url.empty"));
             }
             return uploadMedia(headerInfo.getIconUrl(), Constants.MINIO_BUCKET_MARKET_SECTION.MARKET_SECTION)
-                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "market.section.error.insert.market.section.fail")))
+                    .switchIfEmpty(Mono.error(new BusinessException(
+                            CommonErrorCode.INTERNAL_SERVER_ERROR, "market.section.error.insert.market.section.fail")))
                     .flatMap(url -> {
                         headerInfo.setIconUrl(url.getUrl());
                         // insert service media
@@ -228,7 +255,8 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
         if (DataUtil.safeEqual(type, "SLIDE")) {
             SlideDTO slideDTO = DataUtil.parseStringToObject(data, SlideDTO.class);
             if (slideDTO == null || DataUtil.isNullOrEmpty(slideDTO.getMedias())) {
-                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.section.error.slide.media.empty"));
+                return Mono.error(new BusinessException(
+                        CommonErrorCode.INVALID_PARAMS, "market.section.error.slide.media.empty"));
             }
             // create param list for change promotion
             List<Mono<MediaDTO>> mediaList = slideDTO.getMedias().stream()
@@ -241,9 +269,7 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
                 return Tuples.of(user, DataUtil.parseObjectToString(slideDTO));
             });
         }
-        return Mono.zip(
-                Mono.just(user),
-                Mono.just(data));
+        return Mono.zip(Mono.just(user), Mono.just(data));
     }
 
     private Mono<MediaDTO> uploadMediaForSlide(MediaDTO mediaDTO, String createUser, String updateUser) {
@@ -251,7 +277,8 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.section.error.slide.media.empty");
         }
         return uploadMedia(mediaDTO.getUrl(), Constants.MINIO_BUCKET_MARKET_SECTION.MARKET_SECTION)
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "market.section.error.insert.market.section.fail")))
+                .switchIfEmpty(Mono.error(new BusinessException(
+                        CommonErrorCode.INTERNAL_SERVER_ERROR, "market.section.error.insert.market.section.fail")))
                 .flatMap(url -> {
                     // insert service media
                     LocalDateTime now = LocalDateTime.now();
@@ -276,7 +303,8 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
     /**
      * save medias (image, video)
      *
-     * @param data data base64
+     * @param data
+     *            data base64
      * @return image dataImage
      */
     private Mono<UploadMediaDTO> uploadMedia(String data, String bucketName) {
@@ -296,35 +324,44 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
         String path = UUID.randomUUID() + "_." + extend;
         byte[] bytes = Base64.decodeBase64(base64Data);
 
-        String returnUrl = minioUtils.getMinioProperties().getPublicUrl() +
-                "/" + bucketName +
-                "/" + path;
-        return minioUtils.uploadFile(bytes, bucketName, path)
-                .thenReturn(new UploadMediaDTO(returnUrl, extend));
+        String returnUrl = minioUtils.getMinioProperties().getPublicUrl() + "/" + bucketName + "/" + path;
+        return minioUtils.uploadFile(bytes, bucketName, path).thenReturn(new UploadMediaDTO(returnUrl, extend));
     }
 
     @Override
     @Transactional
     public Mono<DataResponse<MarketSection>> editMarketSection(String id, CreateMarketSectionRequest request) {
-        //validate input
+        // validate input
         validateInput(request);
         String code = DataUtil.safeTrim(request.getCode());
         Long displayOrder = request.getDisplayOrder();
         return Mono.zip(
-                SecurityUtils.getCurrentUser() //get info user
-//                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
-                        .switchIfEmpty(Mono.just(new TokenUser())),
-
-                validateExistCode(code, false, id)).flatMap(userValidate -> { //validate trung thong tin code hoac display order
-            String type = request.getType();
-            String data = request.getData();
-            return doUploadMedia(type, data, userValidate.getT1());
-        }).flatMap(data -> marketSectionRepository.editMarketSection(id, DataUtil.safeTrim(request.getType()),
-                code, DataUtil.safeTrim(request.getName()), DataUtil.safeTrim(request.getDescription()),
-                displayOrder, data.getT2(), request.getStatus(), data.getT1().getUsername())
-                .defaultIfEmpty(new MarketSection())
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "market.section.update.failed")))
-                .flatMap(x -> Mono.just(new DataResponse<>("success", null))));
+                        SecurityUtils.getCurrentUser() // get info user
+                                // .switchIfEmpty(Mono.error(new
+                                // BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
+                                .switchIfEmpty(Mono.just(new TokenUser())),
+                        validateExistCode(code, false, id))
+                .flatMap(
+                        userValidate -> { // validate trung thong tin code hoac display order
+                            String type = request.getType();
+                            String data = request.getData();
+                            return doUploadMedia(type, data, userValidate.getT1());
+                        })
+                .flatMap(data -> marketSectionRepository
+                        .editMarketSection(
+                                id,
+                                DataUtil.safeTrim(request.getType()),
+                                code,
+                                DataUtil.safeTrim(request.getName()),
+                                DataUtil.safeTrim(request.getDescription()),
+                                displayOrder,
+                                data.getT2(),
+                                request.getStatus(),
+                                data.getT1().getUsername())
+                        .defaultIfEmpty(new MarketSection())
+                        .switchIfEmpty(Mono.error(new BusinessException(
+                                CommonErrorCode.INTERNAL_SERVER_ERROR, "market.section.update.failed")))
+                        .flatMap(x -> Mono.just(new DataResponse<>("success", null))));
     }
 
     @Override
@@ -334,14 +371,27 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
         if (DataUtil.isNullOrEmpty(marketSectionId)) {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.section.validate.id.null");
         }
-        return Mono.zip(SecurityUtils.getCurrentUser() //lay thong tin user
-//                        .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
-                .switchIfEmpty(Mono.just(new TokenUser())),
-
-        marketSectionRepository.findMarketSectionById(marketSectionId, Constants.Activation.ACTIVE.toString()) //lay thong tin marketSection theo id
-                        .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "market.section.validate.find.by.id.null"))))
-                .flatMap(tuple -> marketSectionRepository.updateStatus(marketSectionId, Constants.Activation.INACTIVE, tuple.getT1().getUsername())
-                        .defaultIfEmpty(new MarketSection()).flatMap(response -> Mono.just(new DataResponse<>("success", null))));
+        return Mono.zip(
+                        SecurityUtils.getCurrentUser() // lay thong tin user
+                                // .switchIfEmpty(Mono.error(new
+                                // BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
+                                .switchIfEmpty(Mono.just(new TokenUser())),
+                        marketSectionRepository
+                                .findMarketSectionById(marketSectionId, Constants.Activation.ACTIVE.toString()) // lay
+                                // thong
+                                // tin
+                                // marketSection
+                                // theo
+                                // id
+                                .switchIfEmpty(Mono.error(new BusinessException(
+                                        CommonErrorCode.NOT_FOUND, "market.section.validate.find.by.id.null"))))
+                .flatMap(tuple -> marketSectionRepository
+                        .updateStatus(
+                                marketSectionId,
+                                Constants.Activation.INACTIVE,
+                                tuple.getT1().getUsername())
+                        .defaultIfEmpty(new MarketSection())
+                        .flatMap(response -> Mono.just(new DataResponse<>("success", null))));
     }
 
     @Override
@@ -349,6 +399,7 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
         Flux<MarketSection> marketSections = marketSectionRepository.getAllActiveMarketSections();
         return marketSections.collectList().map(result -> result);
     }
+
     @Override
     public Mono<List<MarketSection>> getAllActiveMarketSectionsRT() {
         Flux<MarketSection> marketSections = marketSectionRepository.getAllActiveMarketSectionsByTypeRichText();
@@ -363,7 +414,8 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
 
     @Override
     public Mono<MarketSection> findByContentSectionId(String id) {
-        return marketSectionRepository.findMarketSectionByContentSectionId(id)
+        return marketSectionRepository
+                .findMarketSectionByContentSectionId(id)
                 .switchIfEmpty(Mono.just(new MarketSection()))
                 .map(marketSection -> marketSection);
     }

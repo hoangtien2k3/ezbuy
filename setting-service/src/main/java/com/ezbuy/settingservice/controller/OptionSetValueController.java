@@ -1,6 +1,20 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.settingservice.controller;
 
-import com.ezbuy.framework.model.response.DataResponse;
 import com.ezbuy.settingmodel.constants.UrlPaths;
 import com.ezbuy.settingmodel.dto.OptionSetValueDTO;
 import com.ezbuy.settingmodel.dto.request.SearchOptionSetValueRequest;
@@ -8,13 +22,13 @@ import com.ezbuy.settingmodel.model.OptionSetValue;
 import com.ezbuy.settingmodel.request.CreateOptionSetValueRequest;
 import com.ezbuy.settingmodel.response.SearchOptionSetValueResponse;
 import com.ezbuy.settingservice.service.OptionSetValueService;
+import io.hoangtien2k3.commons.model.response.DataResponse;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -25,13 +39,15 @@ public class OptionSetValueController {
 
     @GetMapping(UrlPaths.OptionSetValue.GET_OPTION_SET_VALUE_BY_OPTION_SET_CODE)
     public Mono<DataResponse<List<OptionSetValueDTO>>> getAllActiveDataPolicyConfigByOptionSetCode(String code) {
-        return optionSetValueService.getAllActiveDataPolicyConfigByOptionSetCode(code)
+        return optionSetValueService
+                .getAllActiveDataPolicyConfigByOptionSetCode(code)
                 .map(result -> new DataResponse<>("success", result));
     }
 
     @GetMapping(UrlPaths.OptionSetValue.GET_OPTION_SET_VALUE_BY_CODE)
     public Mono<DataResponse<List<OptionSetValue>>> getAllActiveOptionSetValueByOptionSetCode(String code) {
-        return optionSetValueService.getAllActiveOptionSetValueByOptionSetCode(code)
+        return optionSetValueService
+                .getAllActiveOptionSetValueByOptionSetCode(code)
                 .map(result -> new DataResponse<>("success", result));
     }
 
@@ -41,18 +57,23 @@ public class OptionSetValueController {
     }
 
     @PutMapping(value = UrlPaths.OptionSetValue.UPDATE)
-    public Mono<DataResponse<OptionSetValue>> editOptionSetValue(@PathVariable String id, @Valid @RequestBody CreateOptionSetValueRequest request) {
+    public Mono<DataResponse<OptionSetValue>> editOptionSetValue(
+            @PathVariable String id, @Valid @RequestBody CreateOptionSetValueRequest request) {
         return optionSetValueService.editOptionSetValue(id, request);
     }
 
     @GetMapping
-    public Mono<SearchOptionSetValueResponse> findOptionSetValueByOptionSetId(@ModelAttribute SearchOptionSetValueRequest request) {
+    public Mono<SearchOptionSetValueResponse> findOptionSetValueByOptionSetId(
+            @ModelAttribute SearchOptionSetValueRequest request) {
         return optionSetValueService.findOptionSetValueByOptionSetId(request);
     }
 
     @GetMapping(UrlPaths.OptionSetValue.GET_ACROYNM_BY_LIST_ALISAS)
-    public Mono<DataResponse<List<OptionSetValue>>> getLstAcronymByAliases( @RequestParam(value = "code") String code, @RequestParam(value = "serviceAliases") List<String> serviceAliases) {
-        return optionSetValueService.getLstAcronymByAliases(code, serviceAliases)
+    public Mono<DataResponse<List<OptionSetValue>>> getLstAcronymByAliases(
+            @RequestParam(value = "code") String code,
+            @RequestParam(value = "serviceAliases") List<String> serviceAliases) {
+        return optionSetValueService
+                .getLstAcronymByAliases(code, serviceAliases)
                 .map(result -> new DataResponse<>("success", result));
     }
 }

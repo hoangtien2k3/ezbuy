@@ -1,14 +1,20 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.settingservice.service.impl;
 
-import com.ezbuy.framework.constants.CommonErrorCode;
-import com.ezbuy.framework.constants.Constants;
-import com.ezbuy.framework.exception.BusinessException;
-import com.ezbuy.framework.model.TokenUser;
-import com.ezbuy.framework.model.response.DataResponse;
-import com.ezbuy.framework.utils.DataUtil;
-import com.ezbuy.framework.utils.MinioUtils;
-import com.ezbuy.framework.utils.SecurityUtils;
-import com.ezbuy.framework.utils.Translator;
 import com.ezbuy.settingmodel.dto.MarketInfoDTO;
 import com.ezbuy.settingmodel.dto.PaginationDTO;
 import com.ezbuy.settingmodel.model.MarketInfo;
@@ -19,6 +25,18 @@ import com.ezbuy.settingservice.repository.MarketInfoRepository;
 import com.ezbuy.settingservice.repositoryTemplate.MarketInfoRepositoryTemplate;
 import com.ezbuy.settingservice.service.MarketInfoService;
 import com.ezbuy.settingservice.service.TelecomService;
+import io.hoangtien2k3.commons.constants.CommonErrorCode;
+import io.hoangtien2k3.commons.constants.Constants;
+import io.hoangtien2k3.commons.exception.BusinessException;
+import io.hoangtien2k3.commons.model.TokenUser;
+import io.hoangtien2k3.commons.model.response.DataResponse;
+import io.hoangtien2k3.commons.utils.DataUtil;
+import io.hoangtien2k3.commons.utils.MinioUtils;
+import io.hoangtien2k3.commons.utils.SecurityUtils;
+import io.hoangtien2k3.commons.utils.Translator;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
@@ -27,17 +45,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class MarketInfoServiceImpl implements MarketInfoService {
 
-    //    private final FileService fileService;
-//    @Autowired
+    // private final FileService fileService;
+    // @Autowired
     private final MinioUtils minioUtils;
     private final MarketInfoRepository marketInfoRepository;
     private final MarketInfoRepositoryTemplate marketInfoRepositoryTemplate;
@@ -57,39 +71,48 @@ public class MarketInfoServiceImpl implements MarketInfoService {
         request.setPageIndex(pageIndex);
         request.setPageSize(pageSize);
         return Mono.zip(
-                marketInfoRepositoryTemplate.queryList(request).collectList(),
-                marketInfoRepositoryTemplate.count(request)
-        ).flatMap(zip -> {
-            List<MarketInfoDTO> content = zip.getT1();
-            for (MarketInfoDTO item : content) {
-                item.setBase64(addPrefixImageBase64(minioUtils.getBase64FromUrl(Constants.MINIO_BUCKET_MARKET_INFO.URL_IMAGE, item.getMarketImageUrl()), item.getMarketImageUrl()));
-            }
-            Long totalRecords = zip.getT2();
+                        marketInfoRepositoryTemplate.queryList(request).collectList(),
+                        marketInfoRepositoryTemplate.count(request))
+                .flatMap(zip -> {
+                    List<MarketInfoDTO> content = zip.getT1();
+                    for (MarketInfoDTO item : content) {
+                        item.setBase64(addPrefixImageBase64(
+                                minioUtils.getBase64FromUrl(
+                                        Constants.MINIO_BUCKET_MARKET_INFO.URL_IMAGE, item.getMarketImageUrl()),
+                                item.getMarketImageUrl()));
+                    }
+                    Long totalRecords = zip.getT2();
 
-            SearchMarketInfoResponse response = SearchMarketInfoResponse.builder()
-                    .content(content)
-                    .pagination(PaginationDTO.builder()
-                            .pageIndex(request.getPageIndex())
-                            .pageSize(request.getPageSize())
-                            .totalRecords(totalRecords).build())
-                    .build();
-            return Mono.just(response);
-        }).map(res -> new DataResponse<>("success", res));
-
+                    SearchMarketInfoResponse response = SearchMarketInfoResponse.builder()
+                            .content(content)
+                            .pagination(PaginationDTO.builder()
+                                    .pageIndex(request.getPageIndex())
+                                    .pageSize(request.getPageSize())
+                                    .totalRecords(totalRecords)
+                                    .build())
+                            .build();
+                    return Mono.just(response);
+                })
+                .map(res -> new DataResponse<>("success", res));
     }
 
     @Override
     @Transactional
     public Mono<DataResponse<List<MarketInfo>>> getAllMarketInfo() {
-        return marketInfoRepository.findAllMarketInfo().collectList()
+        return marketInfoRepository
+                .findAllMarketInfo()
+                .collectList()
                 .map(marketInfoDTOS -> new DataResponse<>(Translator.toLocale("Success"), marketInfoDTOS));
     }
 
-    // TODO: 25/07/2023 lay thong tin ra, convert tu dia chi anh sang base64 de hien thi o man hinh chi tiet or viet them function de load anh tu path ra web de hien thi
+    // TODO: 25/07/2023 lay thong tin ra, convert tu dia chi anh sang base64 de hien
+    // thi o man hinh chi tiet or viet
+    // them function de load anh tu path ra web de hien thi
     @Override
     @Transactional
     public Mono<DataResponse<MarketInfo>> getMarketInfo(String id) {
-        return marketInfoRepository.getById(id)
+        return marketInfoRepository
+                .getById(id)
                 .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "market.info.not.found")))
                 .map(marketInfoDTO -> new DataResponse<>(Translator.toLocale("Success"), marketInfoDTO));
     }
@@ -101,15 +124,21 @@ public class MarketInfoServiceImpl implements MarketInfoService {
         Integer marketOrder = request.getMarketOrder();
         return Mono.zip(
                         SecurityUtils.getCurrentUser()
-                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "market.info.not.found"))),
+                                .switchIfEmpty(Mono.error(
+                                        new BusinessException(CommonErrorCode.NOT_FOUND, "market.info.not.found"))),
                         validateDuplicateMarketOrder(marketOrder),
-                        validateDuplicateServiceId(request.getServiceId(), request.getServiceAlias()), // bo sung them serviceAlias (khi serviceAlias null khong anh huong den luong cu)
+                        validateDuplicateServiceId(request.getServiceId(), request.getServiceAlias()), // bo sung them
+                        // serviceAlias (khi
+                        // serviceAlias null
+                        // khong
+                        // anh huong den luong cu)
                         uploadImage(request.getImage()))
                 .flatMap(zip -> {
                     String imageLink = zip.getT4();
                     TokenUser tokenUser = zip.getT1();
                     String marketInfoId = UUID.randomUUID().toString();
-                    MarketInfo marketInfo = MarketInfo.builder().id(marketInfoId)
+                    MarketInfo marketInfo = MarketInfo.builder()
+                            .id(marketInfoId)
                             .serviceId(request.getServiceId())
                             .title(request.getTitle())
                             .navigatorUrl(request.getNavigatorUrl())
@@ -121,7 +150,8 @@ public class MarketInfoServiceImpl implements MarketInfoService {
                             .createAt(now)
                             .build();
                     marketInfo.setId(marketInfoId);
-                    return marketInfoRepository.save(marketInfo)
+                    return marketInfoRepository
+                            .save(marketInfo)
                             .onErrorReturn(new MarketInfo())
                             .flatMap(result -> Mono.just(new DataResponse<>("success", result)));
                 });
@@ -134,33 +164,52 @@ public class MarketInfoServiceImpl implements MarketInfoService {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.info.id.not.empty");
         }
         return Mono.zip(
-                SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "market.info.not.found"))),
-                uploadImage(request.getImage()),
-                marketInfoRepository.getById(id)
-        ).flatMap(zip -> {
-            TokenUser tokenUser = zip.getT1();
-            String imageUrl = zip.getT2();
-            MarketInfo marketInfo = zip.getT3();
-            String marketInfoAlias = marketInfo.getServiceAlias(); // alias cua marketInfo PYCXXX/LuongToanTrinhScontract
-            Mono<Boolean> checkExistMarketOrder = Mono.just(true);
-            Mono<Boolean> checkExistServiceId = Mono.just(true);
-            if (!DataUtil.safeEqual(request.getMarketOrder(), marketInfo.getMarketOrder())) {
-                checkExistMarketOrder = validateDuplicateMarketOrder(request.getMarketOrder());
-            }
-            if (!DataUtil.safeEqual(request.getServiceId(), marketInfo.getServiceId())) {
-                checkExistServiceId = validateDuplicateServiceId(request.getServiceId(), request.getServiceAlias()); // bo sung them serviceAlias ko anh huong den luong cu neu serviceAlias null
-            }
+                        SecurityUtils.getCurrentUser()
+                                .switchIfEmpty(Mono.error(
+                                        new BusinessException(CommonErrorCode.NOT_FOUND, "market.info.not.found"))),
+                        uploadImage(request.getImage()),
+                        marketInfoRepository.getById(id))
+                .flatMap(zip -> {
+                    TokenUser tokenUser = zip.getT1();
+                    String imageUrl = zip.getT2();
+                    MarketInfo marketInfo = zip.getT3();
+                    String marketInfoAlias = marketInfo.getServiceAlias(); // alias cua marketInfo
+                    // PYCXXX/LuongToanTrinhScontract
+                    Mono<Boolean> checkExistMarketOrder = Mono.just(true);
+                    Mono<Boolean> checkExistServiceId = Mono.just(true);
+                    if (!DataUtil.safeEqual(request.getMarketOrder(), marketInfo.getMarketOrder())) {
+                        checkExistMarketOrder = validateDuplicateMarketOrder(request.getMarketOrder());
+                    }
+                    if (!DataUtil.safeEqual(request.getServiceId(), marketInfo.getServiceId())) {
+                        checkExistServiceId = validateDuplicateServiceId(
+                                request.getServiceId(),
+                                request.getServiceAlias()); // bo sung them serviceAlias ko anh huong den luong cu neu
+                        // serviceAlias null
+                    }
 
-            // neu serviceAlias trong request khac null thi gan marketInfoAlias trong co so du lieu vao serviceAlias
-            if (!DataUtil.isNullOrEmpty(request.getServiceAlias())) {
-                marketInfoAlias = request.getServiceAlias();
-            }
+                    // neu serviceAlias trong request khac null thi gan marketInfoAlias trong co so
+                    // du lieu vao
+                    // serviceAlias
+                    if (!DataUtil.isNullOrEmpty(request.getServiceAlias())) {
+                        marketInfoAlias = request.getServiceAlias();
+                    }
 
-            Mono<MarketInfo> updateMarketInfoMono = marketInfoRepository.updateMarketInfo(request.getServiceId(), request.getTitle(),
-                    request.getNavigatorUrl(), request.getMarketOrder(), imageUrl,
-                    request.getStatus(), tokenUser.getUsername(), id, marketInfoAlias).defaultIfEmpty(new MarketInfo());
-            return Mono.zip(checkExistServiceId, checkExistMarketOrder, updateMarketInfoMono).flatMap(response -> Mono.just(new DataResponse<>("success", null)));
-        }).map(rs -> new DataResponse<>("success", null));
+                    Mono<MarketInfo> updateMarketInfoMono = marketInfoRepository
+                            .updateMarketInfo(
+                                    request.getServiceId(),
+                                    request.getTitle(),
+                                    request.getNavigatorUrl(),
+                                    request.getMarketOrder(),
+                                    imageUrl,
+                                    request.getStatus(),
+                                    tokenUser.getUsername(),
+                                    id,
+                                    marketInfoAlias)
+                            .defaultIfEmpty(new MarketInfo());
+                    return Mono.zip(checkExistServiceId, checkExistMarketOrder, updateMarketInfoMono)
+                            .flatMap(response -> Mono.just(new DataResponse<>("success", null)));
+                })
+                .map(rs -> new DataResponse<>("success", null));
     }
 
     @Override
@@ -169,10 +218,14 @@ public class MarketInfoServiceImpl implements MarketInfoService {
     }
 
     private Mono<Boolean> validateDuplicateMarketOrder(Integer marketOrder) {
-        return marketInfoRepository.findByMarketOrder(marketOrder).defaultIfEmpty(new MarketInfo())
+        return marketInfoRepository
+                .findByMarketOrder(marketOrder)
+                .defaultIfEmpty(new MarketInfo())
                 .flatMap(marketInfo -> {
                     if (marketInfo.getId() != null) {
-                        return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, Translator.toLocaleVi("market.info.telecom.market.order.existed", marketOrder)));
+                        return Mono.error(new BusinessException(
+                                CommonErrorCode.BAD_REQUEST,
+                                Translator.toLocaleVi("market.info.telecom.market.order.existed", marketOrder)));
                     }
                     return Mono.just(true);
                 });
@@ -185,40 +238,53 @@ public class MarketInfoServiceImpl implements MarketInfoService {
         }
     }
 
-
     private Mono<Boolean> validateDuplicateServiceId(String telecomServiceId, String serviceAlias) {
         // bo sung tim kiem theo serviceAlias
         // neu serviceAlias null thi van truy van theo telecomServiceId binh thuong
-        return marketInfoRepository.findByServiceId(telecomServiceId, serviceAlias)
+        return marketInfoRepository
+                .findByServiceId(telecomServiceId, serviceAlias)
                 .collectList()
                 .flatMap(marketInfoDTOS -> {
                     if (!marketInfoDTOS.isEmpty()) {
                         // bo sung tim kiem theo serviceAlias
-                        return telecomService.getByOriginId(telecomServiceId, serviceAlias).switchIfEmpty(
-                                        Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, Translator.toLocaleVi("market.info.telecom.service.id")))).
-                                flatMap(result -> {
+                        return telecomService
+                                .getByOriginId(telecomServiceId, serviceAlias)
+                                .switchIfEmpty(Mono.error(new BusinessException(
+                                        CommonErrorCode.BAD_REQUEST,
+                                        Translator.toLocaleVi("market.info.telecom.service.id"))))
+                                .flatMap(result -> {
                                     // fix bug khi result co data null
                                     String resultFinal = serviceAlias;
                                     if (!DataUtil.isNullOrEmpty(result.getData())) {
-                                        resultFinal = result.getData().getFirst().getName();
+                                        resultFinal =
+                                                result.getData().getFirst().getName();
                                     }
-                                    return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, Translator.toLocaleVi("market.info.telecom.service.id.existed", resultFinal)));
+                                    return Mono.error(new BusinessException(
+                                            CommonErrorCode.BAD_REQUEST,
+                                            Translator.toLocaleVi(
+                                                    "market.info.telecom.service.id.existed", resultFinal)));
                                 });
-
                     }
                     return Mono.just(true);
                 });
     }
 
     private Mono<Boolean> validateDuplicateServiceAlias(String serviceAlias) {
-        return marketInfoRepository.findByServiceAlias(serviceAlias)
+        return marketInfoRepository
+                .findByServiceAlias(serviceAlias)
                 .collectList()
                 .flatMap(marketInfoDTOS -> {
                     if (!marketInfoDTOS.isEmpty()) {
-                        return telecomService.getByServiceAlias(serviceAlias).switchIfEmpty(
-                                        Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, Translator.toLocaleVi("market.info.telecom.service.id")))).
-                                flatMap(result -> Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, Translator.toLocaleVi("market.info.telecom.service.id.existed", result.getData().getFirst().getName()))));
-
+                        return telecomService
+                                .getByServiceAlias(serviceAlias)
+                                .switchIfEmpty(Mono.error(new BusinessException(
+                                        CommonErrorCode.BAD_REQUEST,
+                                        Translator.toLocaleVi("market.info.telecom.service.id"))))
+                                .flatMap(result -> Mono.error(new BusinessException(
+                                        CommonErrorCode.BAD_REQUEST,
+                                        Translator.toLocaleVi(
+                                                "market.info.telecom.service.id.existed",
+                                                result.getData().getFirst().getName()))));
                     }
                     return Mono.just(true);
                 });
@@ -227,7 +293,8 @@ public class MarketInfoServiceImpl implements MarketInfoService {
     /**
      * save news content image
      *
-     * @param dataImage image dataImage base64
+     * @param dataImage
+     *            image dataImage base64
      * @return image dataImage
      */
     private Mono<String> uploadImage(String dataImage) {
@@ -239,34 +306,40 @@ public class MarketInfoServiceImpl implements MarketInfoService {
 
         String extend = base64Head.split("/")[1].split(";")[0];
         String path = UUID.randomUUID() + "_." + extend;
-//        byte[] bytes = Base64.getDecoder().decode(base64Data);
+        // byte[] bytes = Base64.getDecoder().decode(base64Data);
         byte[] bytes = Base64.decodeBase64(base64Data);
 
-        String returnUrl = minioUtils.getMinioProperties().getPublicUrl() +
-                "/" + Constants.MINIO_BUCKET_MARKET_INFO.URL_IMAGE +
-                "/" + path;
-        return minioUtils.uploadFile(bytes, Constants.MINIO_BUCKET_MARKET_INFO.URL_IMAGE, path)
+        String returnUrl = minioUtils.getMinioProperties().getPublicUrl() + "/"
+                + Constants.MINIO_BUCKET_MARKET_INFO.URL_IMAGE + "/" + path;
+        return minioUtils
+                .uploadFile(bytes, Constants.MINIO_BUCKET_MARKET_INFO.URL_IMAGE, path)
                 .thenReturn(returnUrl);
     }
 
     private String addPrefixImageBase64(String base64, String url) {
-        //anh cua mbccs can phai format lai data
+        // anh cua mbccs can phai format lai data
         String[] lstUrl = url.split("\\/");
         String nameImage = lstUrl[lstUrl.length - 1];
-        String extension = FilenameUtils.getExtension(nameImage);//lay duoi cua anh
-        return DataUtil.isNullOrEmpty(extension) ? Constants.NULL_IMAGE_SRC : "data:image/" + extension.trim() + ";base64," + base64;//chuyen sang dang;
+        String extension = FilenameUtils.getExtension(nameImage); // lay duoi cua anh
+        return DataUtil.isNullOrEmpty(extension)
+                ? Constants.NULL_IMAGE_SRC
+                : "data:image/" + extension.trim() + ";base64," + base64; // chuyen sang dang;
     }
 
     @Override
     public Mono<DataResponse<List<MarketInfo>>> getMarketInfoByServiceId(List<String> lstServiceId) {
-        return marketInfoRepository.getByServiceId(lstServiceId).collectList()
+        return marketInfoRepository
+                .getByServiceId(lstServiceId)
+                .collectList()
                 .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "market.info.not.found")))
                 .map(marketInfoDTO -> new DataResponse<>(Translator.toLocale("Success"), marketInfoDTO));
     }
 
     @Override
     public Mono<DataResponse<List<MarketInfo>>> getMarketInfoByServiceIdV2(List<String> lstAlias) {
-        return marketInfoRepository.getByServiceAlias(lstAlias).collectList()
+        return marketInfoRepository
+                .getByServiceAlias(lstAlias)
+                .collectList()
                 .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "market.info.not.found")))
                 .map(marketInfoDTO -> new DataResponse<>(Translator.toLocale("Success"), marketInfoDTO));
     }

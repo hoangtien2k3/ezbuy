@@ -1,6 +1,6 @@
 CREATE TABLE area
 (
-    area_code    VARCHAR(50) PRIMARY KEY,
+    area_code    VARCHAR(36) PRIMARY KEY,
     parent_code  VARCHAR(50),
     province     VARCHAR(100),
     district     VARCHAR(100),
@@ -18,7 +18,7 @@ CREATE TABLE area
 
 CREATE TABLE content_display
 (
-    id                 VARCHAR(50) PRIMARY KEY,
+    id                 VARCHAR(36) PRIMARY KEY,
     page_id            VARCHAR(50),
     type               VARCHAR(50),
     content            TEXT,
@@ -45,7 +45,7 @@ CREATE TABLE content_display
 
 CREATE TABLE content_news
 (
-    id          VARCHAR(50) PRIMARY KEY,
+    id          VARCHAR(36) PRIMARY KEY,
     source_type VARCHAR(50),
     news_type   INTEGER,
     image       VARCHAR(255),
@@ -61,7 +61,7 @@ CREATE TABLE content_news
 
 CREATE TABLE content_section
 (
-    id            VARCHAR(50) PRIMARY KEY,
+    id            VARCHAR(36) PRIMARY KEY,
     parent_id     VARCHAR(50),
     section_id    VARCHAR(50),
     type          VARCHAR(50),
@@ -80,7 +80,7 @@ CREATE TABLE content_section
 
 CREATE TABLE cust_type
 (
-    cust_type   VARCHAR(50) PRIMARY KEY,
+    cust_type   VARCHAR(36) PRIMARY KEY,
     name        VARCHAR(255),
     group_type  VARCHAR(50),
     tax         INTEGER,
@@ -95,7 +95,7 @@ CREATE TABLE cust_type
 
 CREATE TABLE group_news
 (
-    id            VARCHAR(50) PRIMARY KEY,
+    id            VARCHAR(36) PRIMARY KEY,
     name          VARCHAR(255),
     code          VARCHAR(50),
     display_order INTEGER,
@@ -108,7 +108,7 @@ CREATE TABLE group_news
 
 CREATE TABLE market_info
 (
-    id               VARCHAR(50) PRIMARY KEY,
+    id               VARCHAR(36) PRIMARY KEY,
     service_id       VARCHAR(50),
     service_alias    VARCHAR(100),
     title            VARCHAR(255),
@@ -124,7 +124,7 @@ CREATE TABLE market_info
 
 CREATE TABLE market_page
 (
-    id            VARCHAR(50) PRIMARY KEY,
+    id            VARCHAR(36) PRIMARY KEY,
     service_id    VARCHAR(50),
     service_alias VARCHAR(100),
     name_service  VARCHAR(255),
@@ -140,7 +140,7 @@ CREATE TABLE market_page
 
 CREATE TABLE market_section
 (
-    id            VARCHAR(50) PRIMARY KEY,
+    id            VARCHAR(36) PRIMARY KEY,
     type          VARCHAR(50),
     code          VARCHAR(50),
     name          VARCHAR(255),
@@ -156,7 +156,7 @@ CREATE TABLE market_section
 
 CREATE TABLE news_info
 (
-    id            VARCHAR(50) PRIMARY KEY,
+    id            VARCHAR(36) PRIMARY KEY,
     title         VARCHAR(255),
     code          VARCHAR(50),
     display_order INTEGER,
@@ -173,7 +173,7 @@ CREATE TABLE news_info
 
 CREATE TABLE news
 (
-    id          VARCHAR(50) PRIMARY KEY,
+    id          VARCHAR(36) PRIMARY KEY,
     title       VARCHAR(500),
     content     TEXT,
     path        VARCHAR(255),
@@ -184,7 +184,7 @@ CREATE TABLE news
 
 CREATE TABLE news_content
 (
-    id           VARCHAR(50) PRIMARY KEY,
+    id           VARCHAR(36) PRIMARY KEY,
     content      TEXT,
     news_info_id VARCHAR(50),
     status       INTEGER,
@@ -196,7 +196,7 @@ CREATE TABLE news_content
 
 CREATE TABLE option_set
 (
-    id          VARCHAR(50) PRIMARY KEY,
+    id          VARCHAR(36) PRIMARY KEY,
     code        VARCHAR(50),
     description TEXT,
     status      INTEGER,
@@ -208,7 +208,7 @@ CREATE TABLE option_set
 
 CREATE TABLE option_set_value
 (
-    id            VARCHAR(50) PRIMARY KEY,
+    id            VARCHAR(36) PRIMARY KEY,
     option_set_id VARCHAR(50),
     code          VARCHAR(50),
     value         VARCHAR(255),
@@ -222,7 +222,7 @@ CREATE TABLE option_set_value
 
 CREATE TABLE page
 (
-    id        VARCHAR(50) PRIMARY KEY,
+    id        VARCHAR(36) PRIMARY KEY,
     code      VARCHAR(50),
     status    INTEGER,
     title     VARCHAR(255),
@@ -235,7 +235,7 @@ CREATE TABLE page
 
 CREATE TABLE page_component
 (
-    id           VARCHAR(50) PRIMARY KEY,
+    id           VARCHAR(36) PRIMARY KEY,
     page_id      VARCHAR(50),
     component_id VARCHAR(50),
     status       INTEGER,
@@ -247,7 +247,7 @@ CREATE TABLE page_component
 
 CREATE TABLE service_media
 (
-    id           VARCHAR(50) PRIMARY KEY,
+    id           VARCHAR(36) PRIMARY KEY,
     service_id   VARCHAR(50),
     type         VARCHAR(50),
     url          VARCHAR(255),
@@ -261,7 +261,7 @@ CREATE TABLE service_media
 
 CREATE TABLE setting
 (
-    id          VARCHAR(50) PRIMARY KEY,
+    id          VARCHAR(36) PRIMARY KEY,
     code        VARCHAR(50),
     value       VARCHAR(255),
     description TEXT,
@@ -274,7 +274,7 @@ CREATE TABLE setting
 
 CREATE TABLE telecom_service
 (
-    id                VARCHAR(50) PRIMARY KEY,
+    id                VARCHAR(36) PRIMARY KEY,
     name              VARCHAR(255),
     service_alias     VARCHAR(100),
     description       TEXT,
@@ -293,7 +293,7 @@ CREATE TABLE telecom_service
 
 CREATE TABLE telecom_service_config
 (
-    id                 VARCHAR(50) PRIMARY KEY,
+    id                 VARCHAR(36) PRIMARY KEY,
     config             TEXT,
     telecom_service_id VARCHAR(50),
     status             INTEGER,
@@ -305,7 +305,7 @@ CREATE TABLE telecom_service_config
 
 CREATE TABLE upload_images
 (
-    id        VARCHAR(50) PRIMARY KEY,
+    id        VARCHAR(36) PRIMARY KEY,
     name      VARCHAR(255),
     type      INTEGER,
     path      VARCHAR(255),

@@ -1,23 +1,38 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.settingservice.repositoryTemplate;
 
-import com.ezbuy.framework.repository.BaseTemplateRepository;
-import com.ezbuy.framework.utils.DataUtil;
-import com.ezbuy.framework.utils.SQLUtils;
-import com.ezbuy.framework.utils.SortingUtils;
 import com.ezbuy.settingmodel.dto.OptionSetValueDTO;
 import com.ezbuy.settingmodel.dto.request.SearchOptionSetValueRequest;
+import io.hoangtien2k3.commons.repository.BaseTemplateRepository;
+import io.hoangtien2k3.commons.utils.DataUtil;
+import io.hoangtien2k3.commons.utils.SQLUtils;
+import io.hoangtien2k3.commons.utils.SortingUtils;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-
 @Repository
 @RequiredArgsConstructor
-public class OptionSetValueRepositoryTemplateImpl extends BaseTemplateRepository implements OptionSetValueRepositoryTemplate {
+public class OptionSetValueRepositoryTemplateImpl extends BaseTemplateRepository
+        implements OptionSetValueRepositoryTemplate {
 
     @Override
     public Flux<OptionSetValueDTO> findOptionSetValue(SearchOptionSetValueRequest request) {
@@ -30,9 +45,7 @@ public class OptionSetValueRepositoryTemplateImpl extends BaseTemplateRepository
         } else {
             sorting = SortingUtils.parseSorting(request.getSort(), OptionSetValueDTO.class);
         }
-        query.append(" ORDER BY ").append(sorting).append(" \n")
-                .append(" LIMIT :pageSize  \n" +
-                        " OFFSET :index ");
+        query.append(" ORDER BY ").append(sorting).append(" \n").append(" LIMIT :pageSize  \n" + " OFFSET :index ");
         params.put("pageSize", request.getPageSize());
         BigDecimal index = (new BigDecimal(request.getPageIndex() - 1)).multiply(new BigDecimal(request.getPageSize()));
         params.put("index", index);
@@ -40,8 +53,10 @@ public class OptionSetValueRepositoryTemplateImpl extends BaseTemplateRepository
         return listQuery(query.toString(), params, OptionSetValueDTO.class);
     }
 
-    private void buildQueryOptionSetValue(StringBuilder builder, Map<String, Object> params, SearchOptionSetValueRequest request) {
-        builder.append("select id, option_set_id, code, value, description, status, create_by, create_at, update_by, update_at from option_set_value where 1=1 ");
+    private void buildQueryOptionSetValue(
+            StringBuilder builder, Map<String, Object> params, SearchOptionSetValueRequest request) {
+        builder.append(
+                "select id, option_set_id, code, value, description, status, create_by, create_at, update_by, update_at from option_set_value where 1=1 ");
         if (!DataUtil.isNullOrEmpty(request.getOptionSetId())) {
             builder.append(" and option_set_id = :optionSetId ");
             params.put("optionSetId", SQLUtils.replaceSpecialDigit(request.getOptionSetId()));

@@ -1,28 +1,42 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.settingservice.repositoryTemplate;
 
-import com.ezbuy.framework.repository.BaseTemplateRepository;
-import com.ezbuy.framework.utils.DataUtil;
-import com.ezbuy.framework.utils.SQLUtils;
-import com.ezbuy.framework.utils.SortingUtils;
 import com.ezbuy.settingmodel.dto.GroupNewsDTO;
 import com.ezbuy.settingmodel.dto.NewsDetailDTO;
 import com.ezbuy.settingmodel.dto.NewsInfoDTO;
 import com.ezbuy.settingmodel.dto.RelateNewsDTO;
 import com.ezbuy.settingmodel.dto.request.SearchNewsInfoRequest;
+import io.hoangtien2k3.commons.repository.BaseTemplateRepository;
+import io.hoangtien2k3.commons.utils.DataUtil;
+import io.hoangtien2k3.commons.utils.SQLUtils;
+import io.hoangtien2k3.commons.utils.SortingUtils;
 import io.r2dbc.spi.Row;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
-import org.springframework.r2dbc.core.DatabaseClient;
-import org.springframework.stereotype.Repository;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
+import org.springframework.r2dbc.core.DatabaseClient;
+import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Repository
 @RequiredArgsConstructor
@@ -47,8 +61,7 @@ public class NewsInfoRepositoryTemplateImpl extends BaseTemplateRepository imple
         } else {
             query.append(" \n");
         }
-        query.append(" LIMIT :pageSize  \n" +
-                "OFFSET :index ");
+        query.append(" LIMIT :pageSize  \n" + "OFFSET :index ");
         params.put("pageSize", request.getPageSize());
         BigDecimal index = (new BigDecimal(request.getPageIndex() - 1)).multiply(new BigDecimal(request.getPageSize()));
         params.put("index", index);
@@ -58,17 +71,17 @@ public class NewsInfoRepositoryTemplateImpl extends BaseTemplateRepository imple
 
     private void buildQueryNewsInfo(StringBuilder builder, Map<String, Object> params, SearchNewsInfoRequest request) {
         if (request.getIsWeb() != null && request.getIsWeb()) {
-            builder.append("select ni.id, ni.title, ni.code, ni.display_order, ni.status, ni.summary, ni.state, ni.group_news_id, " +
-                    "ni.create_by, ni.create_at, ni.update_by, ni.update_at, ni.navigator_url, " +
-                    "gn.name as group_news_name, gn.code as group_news_code, gn.display_order as group_news_order " +
-                    "from news_info ni " +
-                    "left join group_news gn on ni.group_news_id = gn.id " +
-                    "where gn.status = 1 ");
+            builder.append(
+                    "select ni.id, ni.title, ni.code, ni.display_order, ni.status, ni.summary, ni.state, ni.group_news_id, "
+                            + "ni.create_by, ni.create_at, ni.update_by, ni.update_at, ni.navigator_url, "
+                            + "gn.name as group_news_name, gn.code as group_news_code, gn.display_order as group_news_order "
+                            + "from news_info ni " + "left join group_news gn on ni.group_news_id = gn.id "
+                            + "where gn.status = 1 ");
         } else {
-            builder.append("select ni.id, ni.title, ni.code, ni.display_order, ni.status, ni.summary, ni.state, ni.group_news_id, " +
-                    "ni.create_by, ni.create_at, ni.update_by, ni.update_at, ni.navigator_url, gn.name as group_news_name, gn.code as group_news_code from news_info ni " +
-                    "left join group_news gn on ni.group_news_id = gn.id " +
-                    "where 1=1 ");
+            builder.append(
+                    "select ni.id, ni.title, ni.code, ni.display_order, ni.status, ni.summary, ni.state, ni.group_news_id, "
+                            + "ni.create_by, ni.create_at, ni.update_by, ni.update_at, ni.navigator_url, gn.name as group_news_name, gn.code as group_news_code from news_info ni "
+                            + "left join group_news gn on ni.group_news_id = gn.id " + "where 1=1 ");
         }
         if (!DataUtil.isNullOrEmpty(request.getId())) {
             builder.append(" and ni.id = :id ");
@@ -88,7 +101,8 @@ public class NewsInfoRepositoryTemplateImpl extends BaseTemplateRepository imple
         }
         if (!DataUtil.isNullOrEmpty(request.getSummary())) {
             builder.append(" and ni.summary LIKE CONCAT('%',:summary, '%') ");
-            params.put("summary", SQLUtils.replaceSpecialDigit(request.getSummary().trim()));
+            params.put(
+                    "summary", SQLUtils.replaceSpecialDigit(request.getSummary().trim()));
         }
         if (!DataUtil.isNullOrEmpty(request.getState())) {
             builder.append(" and ni.state LIKE CONCAT('%',:state, '%') ");
@@ -104,7 +118,9 @@ public class NewsInfoRepositoryTemplateImpl extends BaseTemplateRepository imple
     }
 
     private LocalDateTime getFromDate(LocalDate fromDate) {
-        return fromDate == null ? LocalDateTime.from(LocalDate.now().atStartOfDay().minusDays(30)) : fromDate.atTime(0, 0, 0);
+        return fromDate == null
+                ? LocalDateTime.from(LocalDate.now().atStartOfDay().minusDays(30))
+                : fromDate.atTime(0, 0, 0);
     }
 
     private LocalDateTime getToDate(LocalDate toDate) {
@@ -122,18 +138,14 @@ public class NewsInfoRepositoryTemplateImpl extends BaseTemplateRepository imple
     @Override
     public Flux<NewsDetailDTO> getNewsDetailByNewsInfoId(String id) {
         StringBuilder query = new StringBuilder();
-        query.append(
-            "select ni.title, gn.id, gn.name, ni.create_at as createAt, nc.content " +
-            "from news_info ni " +
-            "left join group_news gn on ni.group_news_id = gn.id and gn.status = 1 " +
-            "left join news_content nc on nc.news_info_id = ni.id and nc.status = 1 " +
-            "where ni.status = 1 " +
-            "and ni.id = :id");
-        DatabaseClient.GenericExecuteSpec genericExecuteSpec = template.getDatabaseClient().sql(query.toString());
+        query.append("select ni.title, gn.id, gn.name, ni.create_at as createAt, nc.content " + "from news_info ni "
+                + "left join group_news gn on ni.group_news_id = gn.id and gn.status = 1 "
+                + "left join news_content nc on nc.news_info_id = ni.id and nc.status = 1 " + "where ni.status = 1 "
+                + "and ni.id = :id");
+        DatabaseClient.GenericExecuteSpec genericExecuteSpec =
+                template.getDatabaseClient().sql(query.toString());
         genericExecuteSpec = genericExecuteSpec.bind("id", id);
-        return genericExecuteSpec
-                .map((a, b) -> build(a))
-                .all();
+        return genericExecuteSpec.map((a, b) -> build(a)).all();
     }
 
     private NewsDetailDTO build(Row row) {
@@ -150,17 +162,15 @@ public class NewsInfoRepositoryTemplateImpl extends BaseTemplateRepository imple
     public Flux<RelateNewsDTO> getRelateNewsByGroupNewsId(String id) {
         StringBuilder query = new StringBuilder();
         query.append(
-            "select ni.id, ni.navigator_url as navigatorUrl, gn.name, ni.create_at as createAt, ni.title, ni.summary " +
-            "from news_info ni " +
-            "left join group_news gn on ni.group_news_id = gn.id and gn.status = 1 " +
-            "where ni.status = 1 and ni.group_news_id = :id " +
-            "order by ni.create_at desc " +
-            "limit 3");
-        DatabaseClient.GenericExecuteSpec genericExecuteSpec = template.getDatabaseClient().sql(query.toString());
+                "select ni.id, ni.navigator_url as navigatorUrl, gn.name, ni.create_at as createAt, ni.title, ni.summary "
+                        + "from news_info ni "
+                        + "left join group_news gn on ni.group_news_id = gn.id and gn.status = 1 "
+                        + "where ni.status = 1 and ni.group_news_id = :id " + "order by ni.create_at desc "
+                        + "limit 3");
+        DatabaseClient.GenericExecuteSpec genericExecuteSpec =
+                template.getDatabaseClient().sql(query.toString());
         genericExecuteSpec = genericExecuteSpec.bind("id", id);
-        return genericExecuteSpec
-                .map( (row, metadata) -> buildRelateNews(row))
-                .all();
+        return genericExecuteSpec.map((row, metadata) -> buildRelateNews(row)).all();
     }
 
     private RelateNewsDTO buildRelateNews(Row row) {

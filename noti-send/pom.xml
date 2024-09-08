@@ -24,9 +24,14 @@
         <!-- internal dependencies-->
         <dependency>
             <groupId>com.ezbuy.platform</groupId>
-            <artifactId>framework</artifactId>
+            <artifactId>fw-commons</artifactId>
             <version>${revision}</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.github.hoangtien2k3</groupId>-->
+<!--            <artifactId>fw-commons</artifactId>-->
+<!--            <version>1.1.1</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.ezbuy.platform</groupId>
             <artifactId>noti-model</artifactId>

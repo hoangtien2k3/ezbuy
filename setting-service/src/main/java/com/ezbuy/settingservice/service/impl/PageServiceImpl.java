@@ -1,16 +1,20 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.settingservice.service.impl;
 
-import com.ezbuy.framework.annotations.LocalCache;
-import com.ezbuy.framework.constants.CommonErrorCode;
-import com.ezbuy.framework.exception.BusinessException;
-import com.ezbuy.framework.factory.ModelMapperFactory;
-import com.ezbuy.framework.factory.ObjectMapperFactory;
-import com.ezbuy.framework.model.TokenUser;
-import com.ezbuy.framework.model.response.DataResponse;
-import com.ezbuy.framework.utils.DataUtil;
-import com.ezbuy.framework.utils.MinioUtils;
-import com.ezbuy.framework.utils.SecurityUtils;
-import com.ezbuy.framework.utils.Translator;
 import com.ezbuy.settingmodel.dto.ContentDisplayDTO;
 import com.ezbuy.settingmodel.dto.PageDTO;
 import com.ezbuy.settingmodel.dto.PaginationDTO;
@@ -30,6 +34,20 @@ import com.ezbuy.settingservice.repository.PageRepository;
 import com.ezbuy.settingservice.repositoryTemplate.ContentDisplayRepositoryTemplate;
 import com.ezbuy.settingservice.repositoryTemplate.PageRepositoryTemplate;
 import com.ezbuy.settingservice.service.PageService;
+import io.hoangtien2k3.commons.aop.cache.Cache2L;
+import io.hoangtien2k3.commons.constants.CommonErrorCode;
+import io.hoangtien2k3.commons.exception.BusinessException;
+import io.hoangtien2k3.commons.factory.ModelMapperFactory;
+import io.hoangtien2k3.commons.factory.ObjectMapperFactory;
+import io.hoangtien2k3.commons.model.TokenUser;
+import io.hoangtien2k3.commons.model.response.DataResponse;
+import io.hoangtien2k3.commons.utils.DataUtil;
+import io.hoangtien2k3.commons.utils.MinioUtils;
+import io.hoangtien2k3.commons.utils.SecurityUtils;
+import io.hoangtien2k3.commons.utils.Translator;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
@@ -40,10 +58,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -61,60 +75,65 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
     private String bucket;
 
     @Override
-    @LocalCache(autoCache = true, maxRecord = 10000)
+    @Cache2L(autoCache = true, maxRecord = 10000)
     public Mono<DataResponse<PageDTO>> getPage(String code) {
         String safeTrim = DataUtil.safeTrim(code);
         if (DataUtil.isNullOrEmpty(safeTrim)) {
             return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "params.invalid.code"));
         }
-        return this.pageRepository.getPageByPageLink(code.trim()).collectList()
-                .flatMap(pages -> {
-                            if (DataUtil.isNullOrEmpty(pages)) {
-                                return Mono.just(new DataResponse<>(Translator.toLocaleVi("success"), null));
+        return this.pageRepository.getPageByPageLink(code.trim()).collectList().flatMap(pages -> {
+            if (DataUtil.isNullOrEmpty(pages)) {
+                return Mono.just(new DataResponse<>(Translator.toLocaleVi("success"), null));
+            }
+            return this.contentDisplayRepository
+                    .getContentDisplayByPage(pages.getFirst().getId())
+                    .collectList()
+                    .flatMap(contentDisplays -> {
+                        List<ContentDisplayDTO> contentDisplayDTOList = new ArrayList<>();
+                        contentDisplays.forEach(contentDisplay -> {
+                            if (contentDisplay.getParentId() == null) {
+                                contentDisplayDTOList.add(contentDisplayDTO(contentDisplay, contentDisplays));
                             }
-                            return this.contentDisplayRepository.getContentDisplayByPage(pages.getFirst().getId())
-                                    .collectList().flatMap(contentDisplays -> {
-                                        List<ContentDisplayDTO> contentDisplayDTOList = new ArrayList<>();
-                                        contentDisplays.forEach(contentDisplay -> {
-                                            if (contentDisplay.getParentId() == null) {
-                                                contentDisplayDTOList.add(contentDisplayDTO(contentDisplay, contentDisplays));
-                                            }
-                                        });
-                                        PageDTO pageDTO = PageDTO.builder()
-                                                .id(pages.getFirst().getId())
-                                                .title(pages.getFirst().getTitle())
-                                                .code(pages.getFirst().getCode())
-                                                .logoUrl(pages.getFirst().getLogoUrl())
-                                                .status(pages.getFirst().getStatus())
-                                                .createAt(pages.getFirst().getCreateAt())
-                                                .createBy(pages.getFirst().getCreateBy())
-                                                .updateBy(pages.getFirst().getUpdateBy())
-                                                .updateAt(pages.getFirst().getUpdateAt())
-                                                .contentDisplayList(contentDisplayDTOList).title(pages.getFirst().getTitle())
-                                                .build();
-                                        return Mono.just(new DataResponse<>(Translator.toLocaleVi("success"), pageDTO));
-                                    });
-                        }
-                );
-
+                        });
+                        PageDTO pageDTO = PageDTO.builder()
+                                .id(pages.getFirst().getId())
+                                .title(pages.getFirst().getTitle())
+                                .code(pages.getFirst().getCode())
+                                .logoUrl(pages.getFirst().getLogoUrl())
+                                .status(pages.getFirst().getStatus())
+                                .createAt(pages.getFirst().getCreateAt())
+                                .createBy(pages.getFirst().getCreateBy())
+                                .updateBy(pages.getFirst().getUpdateBy())
+                                .updateAt(pages.getFirst().getUpdateAt())
+                                .contentDisplayList(contentDisplayDTOList)
+                                .title(pages.getFirst().getTitle())
+                                .build();
+                        return Mono.just(new DataResponse<>(Translator.toLocaleVi("success"), pageDTO));
+                    });
+        });
     }
 
     @Override
     public Mono<SearchingPageResponse> searchPages(SearchingPageRequest request) {
-        //validate request
+        // validate request
         int pageIndex = validatePageIndex(request.getPageIndex());
         request.setPageIndex(pageIndex);
         int pageSize = validatePageSize(request.getPageSize(), 10);
         request.setPageSize(pageSize);
-//        if ((Objects.isNull(request.getFromDate()) && Objects.nonNull(request.getToDate()))
-//                || (Objects.nonNull(request.getFromDate()) && Objects.isNull(request.getToDate()))) {
-//            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.date.request.invalid");
-//        }
-//        if (!Objects.isNull(request.getFromDate()) && !Objects.isNull(request.getToDate())) {
-//            if (request.getFromDate().isAfter(request.getToDate())) {
-//                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.from-date.larger.to-date");
-//            }
-//        }
+        // if ((Objects.isNull(request.getFromDate()) &&
+        // Objects.nonNull(request.getToDate()))
+        // || (Objects.nonNull(request.getFromDate()) &&
+        // Objects.isNull(request.getToDate()))) {
+        // throw new BusinessException(CommonErrorCode.INVALID_PARAMS,
+        // "params.date.request.invalid");
+        // }
+        // if (!Objects.isNull(request.getFromDate()) &&
+        // !Objects.isNull(request.getToDate())) {
+        // if (request.getFromDate().isAfter(request.getToDate())) {
+        // throw new BusinessException(CommonErrorCode.INVALID_PARAMS,
+        // "params.from-date.larger.to-date");
+        // }
+        // }
 
         Flux<Page> pages = pageRepositoryTemplate.queryPages(request);
         Mono<Long> countMono = pageRepositoryTemplate.countPages(request);
@@ -135,7 +154,8 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
     @Override
     public Mono<PageDTO> getDetailPage(String pageId) {
         Mono<Page> pageMono = pageRepository.findById(pageId);
-        Mono<PageDTO> pageDTOMono = pageMono.map(p -> ModelMapperFactory.getInstance().map(p, PageDTO.class))
+        Mono<PageDTO> pageDTOMono = pageMono.map(
+                        p -> ModelMapperFactory.getInstance().map(p, PageDTO.class))
                 .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "page.not.found")));
 
         Mono<List<ContentDisplayDTO>> listMono = contentDisplayRepositoryTemplate.getAllByPageId(pageId);
@@ -173,14 +193,17 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
                             .build();
                     return validateRequest(null, request)
                             .then(pageRepository.save(page))
-                            .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "page.insert.failed")))
-                            .flatMap(p -> saveContentDisplay(request.getComponents(), tokenUser.getUsername(), now, pageId))
+                            .switchIfEmpty(Mono.error(
+                                    new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "page.insert.failed")))
+                            .flatMap(p ->
+                                    saveContentDisplay(request.getComponents(), tokenUser.getUsername(), now, pageId))
                             .thenReturn(new DataResponse<>("cuccess", page));
                 });
     }
 
-    private Mono<Void>validateDuplicateTitle(String title, String id) {
-        return pageRepository.findByTitle(DataUtil.safeTrim(title))
+    private Mono<Void> validateDuplicateTitle(String title, String id) {
+        return pageRepository
+                .findByTitle(DataUtil.safeTrim(title))
                 .doOnNext(page -> System.out.println("duplicate title " + page))
                 .any(page -> !Objects.equals(page.getId(), id))
                 .flatMap(aBoolean -> {
@@ -192,7 +215,8 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
     }
 
     private Mono<Void> validateDuplicateCode(String code, String id) {
-        return pageRepository.findByCode(DataUtil.safeTrim(code))
+        return pageRepository
+                .findByCode(DataUtil.safeTrim(code))
                 .any(page -> !Objects.equals(page.getId(), id))
                 .flatMap(match -> {
                     if (match) {
@@ -226,8 +250,10 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
                         }
                         uploadResourceToMinio(content.getContentDisplayDTOList());
                         return Mono.just(Boolean.TRUE);
-                    }).collectList().map(result ->Boolean.TRUE);
-        }else {
+                    })
+                    .collectList()
+                    .map(result -> Boolean.TRUE);
+        } else {
             return Mono.just(Boolean.TRUE);
         }
     }
@@ -239,16 +265,19 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
                     if (!Base64.isBase64(content.getImageBase64())) {
                         throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "");
                     }
-                    String filePath = SettingConstant.MINIO_FOLDER.BACKGROUND_FOLDER + SettingConstant.FILE_SEPARATOR + UUID.randomUUID() + "-" + FilenameUtils.getName(content.getImage());
+                    String filePath = SettingConstant.MINIO_FOLDER.BACKGROUND_FOLDER + SettingConstant.FILE_SEPARATOR
+                            + UUID.randomUUID() + "-" + FilenameUtils.getName(content.getImage());
                     content.setImage(filePath);
                     content.setIsUploadImage(true);
                 }
 
-                if (!DataUtil.isNullOrEmpty(content.getBackgroundImage()) && !DataUtil.isNullOrEmpty(content.getBackgroundBase64())) {
+                if (!DataUtil.isNullOrEmpty(content.getBackgroundImage())
+                        && !DataUtil.isNullOrEmpty(content.getBackgroundBase64())) {
                     if (!Base64.isBase64(content.getBackgroundBase64())) {
                         throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "");
                     }
-                    String filePath = SettingConstant.MINIO_FOLDER.BACKGROUND_FOLDER + SettingConstant.FILE_SEPARATOR + UUID.randomUUID() + "-" + FilenameUtils.getName(content.getBackgroundImage());
+                    String filePath = SettingConstant.MINIO_FOLDER.BACKGROUND_FOLDER + SettingConstant.FILE_SEPARATOR
+                            + UUID.randomUUID() + "-" + FilenameUtils.getName(content.getBackgroundImage());
                     content.setBackgroundImage(filePath);
                     content.setIsUploadBackground(true);
                 }
@@ -256,7 +285,8 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
                     if (!Base64.isBase64(content.getIconBase64())) {
                         throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "");
                     }
-                    String filePath = SettingConstant.MINIO_FOLDER.ICON_FOLDER + SettingConstant.FILE_SEPARATOR + UUID.randomUUID() + "-" + FilenameUtils.getName(content.getIcon());
+                    String filePath = SettingConstant.MINIO_FOLDER.ICON_FOLDER + SettingConstant.FILE_SEPARATOR
+                            + UUID.randomUUID() + "-" + FilenameUtils.getName(content.getIcon());
                     content.setIcon(filePath);
                     content.setIsUploadIcon(true);
                 }
@@ -280,10 +310,12 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
         LocalDateTime now = LocalDateTime.now();
         return SecurityUtils.getCurrentUser()
                 .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null")))
-                .flatMap(tokenUser -> pageRepository.findById(request.getId())
+                .flatMap(tokenUser -> pageRepository
+                        .findById(request.getId())
                         .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "page.not.found")))
                         .flatMap(page -> validateRequest(page.getId(), request).thenReturn(page))
-                        .flatMap(page -> deleteOldDetails(page, tokenUser.getId()).thenReturn(page))
+                        .flatMap(page ->
+                                deleteOldDetails(page, tokenUser.getId()).thenReturn(page))
                         .doOnNext(page -> {
                             page.setCode(DataUtil.safeTrim(request.getCode()));
                             page.setTitle(DataUtil.safeTrim(request.getTitle()));
@@ -291,25 +323,29 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
                             page.setUpdateBy(tokenUser.getUsername());
                         })
                         .flatMap(pageRepository::save)
-                        .flatMap(page -> saveContentDisplay(request.getComponents(), tokenUser.getUsername(), now, page.getId()))
-                        .thenReturn(new DataResponse<>("cuccess", null))
-                );
+                        .flatMap(page ->
+                                saveContentDisplay(request.getComponents(), tokenUser.getUsername(), now, page.getId()))
+                        .thenReturn(new DataResponse<>("cuccess", null)));
     }
 
     private Mono<Boolean> deleteOldDetails(Page page, String userId) {
-        return contentDisplayRepository.getContentDisplayByPage(page.getId())
+        return contentDisplayRepository
+                .getContentDisplayByPage(page.getId())
                 .collectList()
                 .flatMapMany(contentDisplayRepository::deleteAll)
                 .then(Mono.just(Boolean.TRUE));
     }
 
-    private Mono<List<ContentDisplay>> saveContentDisplay(List<ContentDisplayRequest> cd, String username, LocalDateTime now, String pageId) {
+    private Mono<List<ContentDisplay>> saveContentDisplay(
+            List<ContentDisplayRequest> cd, String username, LocalDateTime now, String pageId) {
         List<ContentDisplay> contentDisplays = initContentDisplay(cd, username, now, null, pageId);
         if (!DataUtil.isNullOrEmpty(contentDisplays)) {
             return uploadResources(contentDisplays)
                     .thenMany(contentDisplayRepository.saveAll(contentDisplays))
                     .collectList()
-                    .map(res -> res.stream().filter(p -> Objects.isNull(p.getParentId())).collect(Collectors.toList()));
+                    .map(res -> res.stream()
+                            .filter(p -> Objects.isNull(p.getParentId()))
+                            .collect(Collectors.toList()));
         }
         return Mono.empty();
     }
@@ -330,11 +366,12 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
         // upload icon
         if (!DataUtil.isNullOrEmpty(contentDisplay.getIcon())) {
             if (Base64.isBase64(contentDisplay.getIcon())) {
-                var iconPublisher = minioUtils.uploadFile(
-                        Base64.decodeBase64(contentDisplay.getIcon()),
-                        minioUtils.getMinioProperties().getBucket(),
-                        UUID.randomUUID().toString()
-                ).map(minioUtils::getObjectUrl)
+                var iconPublisher = minioUtils
+                        .uploadFile(
+                                Base64.decodeBase64(contentDisplay.getIcon()),
+                                minioUtils.getMinioProperties().getBucket(),
+                                UUID.randomUUID().toString())
+                        .map(minioUtils::getObjectUrl)
                         .doOnNext(contentDisplay::setIcon);
                 publishers.add(iconPublisher);
             }
@@ -343,11 +380,13 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
         // upload image
         if (!DataUtil.isNullOrEmpty(contentDisplay.getImage())) {
             if (Base64.isBase64(contentDisplay.getImage())) {
-                var imagePublisher = minioUtils.uploadFile(
-                        Base64.decodeBase64(contentDisplay.getImage()),
-                        minioUtils.getMinioProperties().getBucket(),
-                        UUID.randomUUID().toString()
-                ).map(minioUtils::getObjectUrl).doOnNext(contentDisplay::setImage);
+                var imagePublisher = minioUtils
+                        .uploadFile(
+                                Base64.decodeBase64(contentDisplay.getImage()),
+                                minioUtils.getMinioProperties().getBucket(),
+                                UUID.randomUUID().toString())
+                        .map(minioUtils::getObjectUrl)
+                        .doOnNext(contentDisplay::setImage);
                 publishers.add(imagePublisher);
             }
         }
@@ -355,17 +394,18 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
         // upload background
         if (!DataUtil.isNullOrEmpty(contentDisplay.getBackgroundImage())) {
             if (Base64.isBase64(contentDisplay.getBackgroundImage())) {
-                var bgPublisher = minioUtils.uploadFile(
-                        Base64.decodeBase64(contentDisplay.getBackgroundImage()),
-                        minioUtils.getMinioProperties().getBucket(),
-                        UUID.randomUUID().toString()
-                ).map(minioUtils::getObjectUrl).doOnNext(contentDisplay::setBackgroundImage);
+                var bgPublisher = minioUtils
+                        .uploadFile(
+                                Base64.decodeBase64(contentDisplay.getBackgroundImage()),
+                                minioUtils.getMinioProperties().getBucket(),
+                                UUID.randomUUID().toString())
+                        .map(minioUtils::getObjectUrl)
+                        .doOnNext(contentDisplay::setBackgroundImage);
                 publishers.add(bgPublisher);
             }
         }
 
-        return Mono.zip(publishers, result -> result)
-                .thenReturn(true);
+        return Mono.zip(publishers, result -> result).thenReturn(true);
     }
 
     private String getNormalizeBase64(String input) {
@@ -376,11 +416,13 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
         return input;
     }
 
-    private List<ContentDisplay> initContentDisplay(List<ContentDisplayRequest> cd, String userId, LocalDateTime now, String parentId, String pageId) {
+    private List<ContentDisplay> initContentDisplay(
+            List<ContentDisplayRequest> cd, String userId, LocalDateTime now, String parentId, String pageId) {
         List<ContentDisplay> contentDisplays = new ArrayList<>();
         if (!DataUtil.isNullOrEmpty(cd)) {
             for (ContentDisplayRequest content : cd) {
-                ContentDisplay contentDisplay = ObjectMapperFactory.getInstance().convertValue(content, ContentDisplay.class);
+                ContentDisplay contentDisplay =
+                        ObjectMapperFactory.getInstance().convertValue(content, ContentDisplay.class);
                 String id = UUID.randomUUID().toString();
                 contentDisplay.setId(id);
                 contentDisplay.setCreateAt(now);
@@ -416,8 +458,9 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
                 .parentId(display.getParentId())
                 .status(display.getStatus())
                 .createAt(display.getCreateAt())
-                .createBy(display.getCreateBy()).
-                updateAt(display.getUpdateAt()).updateBy(display.getUpdateBy())
+                .createBy(display.getCreateBy())
+                .updateAt(display.getUpdateAt())
+                .updateBy(display.getUpdateBy())
                 .contentDisplayDTOList(new ArrayList<>())
                 .build();
         contentDisplays.forEach(contentDisplay -> {
@@ -434,13 +477,17 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
         if (DataUtil.isNullOrEmpty(request.getPolicyCode()) || DataUtil.isNullOrEmpty(request.getPolicyCode())) {
             return Mono.just(new DataResponse<>(null, "cuccess", null));
         }
-        return optionSetValueRepository.findByOptionSetCodeAndOptionValueCode(SettingConstant.OptionSetCode.POLICY_CODE, request.getPolicyCode() + "_" + request.getServiceId()).flatMap(optionSetValue -> {
-            String policyUrl = null;
-            if (optionSetValue != null) {
-                policyUrl = optionSetValue.getValue();
-            }
-            return Mono.just(new DataResponse<>(null, "success", policyUrl));
-        });
+        return optionSetValueRepository
+                .findByOptionSetCodeAndOptionValueCode(
+                        SettingConstant.OptionSetCode.POLICY_CODE,
+                        request.getPolicyCode() + "_" + request.getServiceId())
+                .flatMap(optionSetValue -> {
+                    String policyUrl = null;
+                    if (optionSetValue != null) {
+                        policyUrl = optionSetValue.getValue();
+                    }
+                    return Mono.just(new DataResponse<>(null, "success", policyUrl));
+                });
     }
 
     @Override
@@ -448,28 +495,35 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
         String pageId = DataUtil.safeTrim(request.getPageId());
         Integer status = request.getStatus();
         return Mono.zip(
-                SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
-                pageRepository.findById(pageId).switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "page.not.found")))
-        ).flatMap(zip -> {
-            Page page = zip.getT2();
-            TokenUser tokenUser = zip.getT1();
+                        SecurityUtils.getCurrentUser()
+                                .switchIfEmpty(
+                                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
+                        pageRepository
+                                .findById(pageId)
+                                .switchIfEmpty(
+                                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "page.not.found"))))
+                .flatMap(zip -> {
+                    Page page = zip.getT2();
+                    TokenUser tokenUser = zip.getT1();
 
-            if (page.getStatus().equals(status)) {
-                if (status.equals(SettingConstant.PAGE_STATUS.LOCK)) {
-                    return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "page.status.locked"));
-                } else {
-                    return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "page.status.unlocked"));
-                }
-            }
+                    if (page.getStatus().equals(status)) {
+                        if (status.equals(SettingConstant.PAGE_STATUS.LOCK)) {
+                            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "page.status.locked"));
+                        } else {
+                            return Mono.error(
+                                    new BusinessException(CommonErrorCode.BAD_REQUEST, "page.status.unlocked"));
+                        }
+                    }
 
-            page.setUpdateBy(tokenUser.getUsername());
-            page.setUpdateAt(LocalDateTime.now());
-            page.setStatus(status);
-            return pageRepository.save(page);
-        }).map(page -> {
-            PageDTO dto = new PageDTO();
-            BeanUtils.copyProperties(page, dto);
-            return new DataResponse<>("success", dto);
-        });
+                    page.setUpdateBy(tokenUser.getUsername());
+                    page.setUpdateAt(LocalDateTime.now());
+                    page.setStatus(status);
+                    return pageRepository.save(page);
+                })
+                .map(page -> {
+                    PageDTO dto = new PageDTO();
+                    BeanUtils.copyProperties(page, dto);
+                    return new DataResponse<>("success", dto);
+                });
     }
 }

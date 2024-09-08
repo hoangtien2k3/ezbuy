@@ -1,12 +1,31 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.settingservice.repositoryTemplate;
 
-import com.ezbuy.framework.utils.DataUtil;
-import com.ezbuy.framework.utils.SortingUtils;
-import com.ezbuy.settingmodel.dto.ContentSectionDetailDTO;
 import com.ezbuy.settingmodel.dto.ContentSectionDTO;
+import com.ezbuy.settingmodel.dto.ContentSectionDetailDTO;
 import com.ezbuy.settingmodel.model.ContentSection;
 import com.ezbuy.settingmodel.request.SearchContentSectionRequest;
+import io.hoangtien2k3.commons.utils.DataUtil;
+import io.hoangtien2k3.commons.utils.SortingUtils;
 import io.r2dbc.spi.Row;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.r2dbc.core.DatabaseClient;
@@ -14,14 +33,10 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-
 @Repository
 @RequiredArgsConstructor
-public class ContentSectionRepositoryTemplateImpl extends BaseRepositoryTemplate implements ContentSectionRepositoryTemplate {
+public class ContentSectionRepositoryTemplateImpl extends BaseRepositoryTemplate
+        implements ContentSectionRepositoryTemplate {
 
     private final R2dbcEntityTemplate template;
 
@@ -66,7 +81,12 @@ public class ContentSectionRepositoryTemplateImpl extends BaseRepositoryTemplate
                 .sectionId(DataUtil.safeToString(row.get("section_id")))
                 .type(DataUtil.safeToString(row.get("type")))
                 .refId(DataUtil.safeToString(row.get("ref_id")))
-                .refAlias(DataUtil.safeToString(row.get("ref_alias"))) // mapping refAlias de tra ve PYCXXX/LuongToanTrinhScontract
+                .refAlias(DataUtil.safeToString(row.get("ref_alias"))) // mapping
+                // refAlias
+                // de
+                // tra
+                // ve
+                // PYCXXX/LuongToanTrinhScontract
                 .refType(DataUtil.safeToString(row.get("ref_type")))
                 .name(DataUtil.safeToString(row.get("name")))
                 .order(DataUtil.safeToLong(row.get("display_order")))
@@ -77,7 +97,8 @@ public class ContentSectionRepositoryTemplateImpl extends BaseRepositoryTemplate
     }
 
     private void buildQueryGetDetail(StringBuilder builder, Map<String, Object> params, String id) {
-        builder.append("select cs.id,cs.section_id,cs.name,cs.type,cs.ref_id,cs.ref_type,cs.status,cs.display_order, ms.name as market_section_name, cs.parent_id, cs.ref_alias ");
+        builder.append(
+                "select cs.id,cs.section_id,cs.name,cs.type,cs.ref_id,cs.ref_type,cs.status,cs.display_order, ms.name as market_section_name, cs.parent_id, cs.ref_alias ");
         builder.append("from content_section cs \n");
         builder.append("left join market_section ms on ms.id = cs.section_id where cs.status = 1 and cs.id =:id  \n");
         params.put("id", id);
@@ -112,5 +133,4 @@ public class ContentSectionRepositoryTemplateImpl extends BaseRepositoryTemplate
     private LocalDateTime getToDate(LocalDate toDate) {
         return toDate.atTime(23, 59, 59);
     }
-
 }

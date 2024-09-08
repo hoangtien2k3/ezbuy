@@ -1,12 +1,30 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.settingservice.repositoryTemplate;
 
-import com.ezbuy.framework.utils.DataUtil;
-import com.ezbuy.framework.utils.SQLUtils;
-import com.ezbuy.framework.utils.SortingUtils;
 import com.ezbuy.settingmodel.dto.MarketInfoDTO;
 import com.ezbuy.settingmodel.model.MarketInfo;
 import com.ezbuy.settingmodel.request.SearchMarketInfoRequest;
+import io.hoangtien2k3.commons.utils.DataUtil;
+import io.hoangtien2k3.commons.utils.SQLUtils;
+import io.hoangtien2k3.commons.utils.SortingUtils;
 import io.r2dbc.spi.Row;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
@@ -14,10 +32,6 @@ import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -38,7 +52,7 @@ public class MarketInfoRepositoryTemplateImpl implements MarketInfoRepositoryTem
         for (String key : params.keySet()) {
             exeSpec = exeSpec.bind(key, params.get(key));
         }
-        return exeSpec.map((a, b)-> convertRow(a)).all();
+        return exeSpec.map((a, b) -> convertRow(a)).all();
     }
 
     @Override
@@ -72,7 +86,9 @@ public class MarketInfoRepositoryTemplateImpl implements MarketInfoRepositoryTem
 
         if (!DataUtil.isNullOrEmpty(request.getTitle())) {
             builder.append("and lower(mi.title) like concat('%', :title, '%') \n");
-            params.put("title", SQLUtils.replaceSpecialDigit(request.getTitle().trim().toLowerCase()));
+            params.put(
+                    "title",
+                    SQLUtils.replaceSpecialDigit(request.getTitle().trim().toLowerCase()));
         }
 
         if (!DataUtil.isNullOrEmpty(request.getServiceId())) {

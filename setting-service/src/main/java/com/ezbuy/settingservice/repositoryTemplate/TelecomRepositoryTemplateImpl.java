@@ -1,14 +1,33 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.settingservice.repositoryTemplate;
 
-import com.ezbuy.framework.repository.BaseTemplateRepository;
-import com.ezbuy.framework.utils.DataUtil;
-import com.ezbuy.framework.utils.SQLUtils;
-import com.ezbuy.framework.utils.SortingUtils;
 import com.ezbuy.settingmodel.dto.TelecomDTO;
 import com.ezbuy.settingmodel.model.Telecom;
 import com.ezbuy.settingmodel.request.PageTelecomRequest;
 import com.ezbuy.settingmodel.request.TelecomSearchingRequest;
+import io.hoangtien2k3.commons.repository.BaseTemplateRepository;
+import io.hoangtien2k3.commons.utils.DataUtil;
+import io.hoangtien2k3.commons.utils.SQLUtils;
+import io.hoangtien2k3.commons.utils.SortingUtils;
 import io.r2dbc.spi.Row;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
@@ -16,11 +35,6 @@ import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -41,7 +55,8 @@ public class TelecomRepositoryTemplateImpl extends BaseTemplateRepository implem
         if (!DataUtil.isNullOrEmpty(origins)) {
             sb.append("and origin_id in (:origins)");
         }
-        DatabaseClient.GenericExecuteSpec genericExecuteSpec = template.getDatabaseClient().sql(sb.toString());
+        DatabaseClient.GenericExecuteSpec genericExecuteSpec =
+                template.getDatabaseClient().sql(sb.toString());
         if (!DataUtil.isNullOrEmpty(ids)) {
             genericExecuteSpec = genericExecuteSpec.bind("ids", ids);
         }
@@ -51,9 +66,7 @@ public class TelecomRepositoryTemplateImpl extends BaseTemplateRepository implem
         if (!DataUtil.isNullOrEmpty(origins)) {
             genericExecuteSpec = genericExecuteSpec.bind("origins", origins);
         }
-        return genericExecuteSpec
-                .map((a, b) -> build(a))
-                .all();
+        return genericExecuteSpec.map((a, b) -> build(a)).all();
     }
 
     @Override
@@ -67,9 +80,7 @@ public class TelecomRepositoryTemplateImpl extends BaseTemplateRepository implem
         Map<String, Object> params = new HashMap<>();
         StringBuilder query = new StringBuilder();
         buildQueryTelecomServices(query, params, request);
-        query.append("ORDER BY ").append(sorting).append(" \n")
-                .append(" LIMIT :pageSize  \n" +
-                        "OFFSET :index ");
+        query.append("ORDER BY ").append(sorting).append(" \n").append(" LIMIT :pageSize  \n" + "OFFSET :index ");
         params.put("pageSize", request.getPageSize());
         BigDecimal index = (new BigDecimal(request.getPageIndex() - 1)).multiply(new BigDecimal(request.getPageSize()));
         params.put("index", index);
@@ -86,7 +97,8 @@ public class TelecomRepositoryTemplateImpl extends BaseTemplateRepository implem
         return countQuery(builder.toString(), params);
     }
 
-    private void buildQueryTelecomServices(StringBuilder builder, Map<String, Object> params, TelecomSearchingRequest request) {
+    private void buildQueryTelecomServices(
+            StringBuilder builder, Map<String, Object> params, TelecomSearchingRequest request) {
         builder.append("select * \n")
                 .append("from sme_setting.telecom_service u \n")
                 .append("where 1=1 and u.is_filter = 1 \n");
@@ -95,7 +107,6 @@ public class TelecomRepositoryTemplateImpl extends BaseTemplateRepository implem
             params.put("name", SQLUtils.replaceSpecialDigit(request.getName()));
         }
     }
-
 
     @Override
     public Flux<TelecomDTO> getAllByRequest(PageTelecomRequest request) {
@@ -128,15 +139,15 @@ public class TelecomRepositoryTemplateImpl extends BaseTemplateRepository implem
     private void buildListQuery(PageTelecomRequest request, StringBuilder sb, Map<String, Object> params) {
         sb.append("select * from telecom_service where 1 = 1 ");
 
-        if(request.getServiceTypeId() != null){
+        if (request.getServiceTypeId() != null) {
             sb.append(" AND origin_id = :originId  ");
             params.put("originId", request.getServiceTypeId());
         }
-        if(!DataUtil.isNullOrEmpty(request.getServiceName())){
+        if (!DataUtil.isNullOrEmpty(request.getServiceName())) {
             sb.append(" AND name like concat('%', :name, '%') ");
             params.put("name", replaceSpecialDigit(request.getServiceName()));
         }
-        if(request.getStatus() != null){
+        if (request.getStatus() != null) {
             sb.append(" AND status like :status ");
             params.put("status", request.getStatus());
         }
@@ -153,7 +164,6 @@ public class TelecomRepositoryTemplateImpl extends BaseTemplateRepository implem
         } else {
             sb.append(" service_alias, `name` \n");
         }
-
     }
 
     private TelecomDTO build(Row row) {
@@ -174,8 +184,10 @@ public class TelecomRepositoryTemplateImpl extends BaseTemplateRepository implem
     @Override
     public Flux<String> getServiceTypes() {
         String query = "select distinct service_alias from telecom_service order by service_alias";
-        return template.getDatabaseClient().sql(query)
-                .fetch().all()
+        return template.getDatabaseClient()
+                .sql(query)
+                .fetch()
+                .all()
                 .map(raw -> raw.get("service_alias"))
                 .cast(String.class);
     }
@@ -184,7 +196,6 @@ public class TelecomRepositoryTemplateImpl extends BaseTemplateRepository implem
         if (DataUtil.isNullOrEmpty(input)) {
             return "";
         }
-        return input.replace("%", "\\%")
-                .replace("_", "\\_");
+        return input.replace("%", "\\%").replace("_", "\\_");
     }
 }

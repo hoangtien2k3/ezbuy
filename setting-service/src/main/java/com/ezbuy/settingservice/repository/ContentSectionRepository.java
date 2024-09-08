@@ -1,12 +1,26 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.settingservice.repository;
 
 import com.ezbuy.settingmodel.model.ContentSection;
+import java.util.List;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 public interface ContentSectionRepository extends R2dbcRepository<ContentSection, String> {
     @Query(value = "select * from content_section where id = :id")
@@ -19,10 +33,12 @@ public interface ContentSectionRepository extends R2dbcRepository<ContentSection
 
     Flux<ContentSection> findBySectionId(String sectionId);
 
-    @Query(value = "update content_section set parent_id = :parentId," +
-            " section_id= :sectionId, name = :name,display_order=:displayOrder ," +
-            " status = :status, update_by = :user, update_at = CURRENT_TIMESTAMP() where id = :id")
-    Mono<ContentSection> updateCS(String sectionId, String parentId, String name, Integer status, Long displayOrder, String user, String id);
+    @Query(
+            value = "update content_section set parent_id = :parentId,"
+                    + " section_id= :sectionId, name = :name,display_order=:displayOrder ,"
+                    + " status = :status, update_by = :user, update_at = CURRENT_TIMESTAMP() where id = :id")
+    Mono<ContentSection> updateCS(
+            String sectionId, String parentId, String name, Integer status, Long displayOrder, String user, String id);
 
     @Query(value = "select * from content_section where name = :name")
     Mono<ContentSection> findByName(String name);
@@ -40,28 +56,22 @@ public interface ContentSectionRepository extends R2dbcRepository<ContentSection
     @Query(value = "select * from content_section where section_id in (:lstSectionId) and status = 1 ")
     Flux<ContentSection> getBySectionId(List<String> lstSectionId);
 
-    @Query(value = "select * from content_section\n" +
-            "where status = 1 " +
-            "  and type = :type " +
-            "  and ref_id = :refId " +
-            "  and ref_type = :refType")
+    @Query(
+            value = "select * from content_section\n" + "where status = 1 " + "  and type = :type "
+                    + "  and ref_id = :refId " + "  and ref_type = :refType")
     Flux<ContentSection> findAllActiveByTypeAndRefIdAndRefTypeAndStatus(String type, String refId, String refType);
 
-    @Query(value = "select * from content_section\n" +
-            "where status = 1 " +
-            "  and type = :type " +
-            "  and ref_alias = :refAlias " +
-            "  and ref_type = :refType")
+    @Query(
+            value = "select * from content_section\n" + "where status = 1 " + "  and type = :type "
+                    + "  and ref_alias = :refAlias " + "  and ref_type = :refType")
     Flux<ContentSection> findAllActiveByTypeAndRefIdAndRefTypeAndStatusV2(String type, String refAlias, String refType);
 
-    @Query(value = "select * from content_section\n" +
-            "where status = 1 " +
-            "  and type = :type " +
-            "  and ref_type = :refType")
+    @Query(
+            value = "select * from content_section\n" + "where status = 1 " + "  and type = :type "
+                    + "  and ref_type = :refType")
     Flux<ContentSection> findAllActiveByTypeAndRefTypeAndStatus(String type, String refType);
 
-    @Query(value = "update content_section set " +
-            " status = :status, update_at = CURRENT_TIMESTAMP() where id = :id")
+    @Query(value = "update content_section set " + " status = :status, update_at = CURRENT_TIMESTAMP() where id = :id")
     Mono<Boolean> updateStatus(Integer status, String id);
 
     @Query("select * from content_section where id = :id and status = 1")
