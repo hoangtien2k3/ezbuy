@@ -1,17 +1,35 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.settingservice.repositoryTemplate;
 
-import com.ezbuy.framework.utils.DataUtil;
-import com.ezbuy.framework.utils.SQLUtils;
-import com.ezbuy.framework.utils.SortingUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ezbuy.settingmodel.dto.ContentNewsDTO;
 import com.ezbuy.settingmodel.dto.PaginationDTO;
 import com.ezbuy.settingmodel.dto.request.QueryNewsRequest;
 import com.ezbuy.settingmodel.dto.response.QueryNewsResponse;
 import com.ezbuy.settingmodel.model.ContentNews;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.hoangtien2k3.commons.utils.DataUtil;
+import io.hoangtien2k3.commons.utils.SQLUtils;
+import io.hoangtien2k3.commons.utils.SortingUtils;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
@@ -20,17 +38,14 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 @Slf4j
 @Repository
 public class NewsContentRepositoryTemplateImpl implements NewsContentRepositoryTemplate {
 
     @Autowired
     private R2dbcEntityTemplate r2dbcEntityTemplate;
-    private ObjectMapper objectMapper;
+
+    private final ObjectMapper objectMapper;
 
     public NewsContentRepositoryTemplateImpl() {
         objectMapper = JsonMapper.builder()
@@ -45,22 +60,33 @@ public class NewsContentRepositoryTemplateImpl implements NewsContentRepositoryT
         Map<String, Object> params = new HashMap<>();
         buildQuery(request, query, params);
         return Mono.zip(
-                queryList(query.toString(), params, request.getPageIndex(), request.getPageSize(), ContentNewsDTO.class)
-                .collectList()
-                .defaultIfEmpty(new ArrayList<>()),
-                queryCount(query.toString(), params)
-        ).map(zip -> {
-            QueryNewsResponse response = new QueryNewsResponse();
-            response.setContent(zip.getT1());
-            response.setPagination(new PaginationDTO(request.getPageIndex(), request.getPageSize(), zip.getT2()));
-            return response;
-        });
+                        queryList(
+                                        query.toString(),
+                                        params,
+                                        request.getPageIndex(),
+                                        request.getPageSize(),
+                                        ContentNewsDTO.class)
+                                .collectList()
+                                .defaultIfEmpty(new ArrayList<>()),
+                        queryCount(query.toString(), params))
+                .map(zip -> {
+                    QueryNewsResponse response = new QueryNewsResponse();
+                    response.setContent(zip.getT1());
+                    response.setPagination(
+                            new PaginationDTO(request.getPageIndex(), request.getPageSize(), zip.getT2()));
+                    return response;
+                });
     }
 
-    private <T> Flux<T> queryList(String query, Map<String, Object> params, Integer pageIndex, Integer pageSize, Class<T> type) {
+    private <T> Flux<T> queryList(
+            String query, Map<String, Object> params, Integer pageIndex, Integer pageSize, Class<T> type) {
         StringBuilder builder = new StringBuilder(query)
-            .append(" limit ").append((pageIndex - 1) * pageSize).append(",").append(pageSize);
-        DatabaseClient.GenericExecuteSpec spec = r2dbcEntityTemplate.getDatabaseClient().sql(builder.toString());
+                .append(" limit ")
+                .append((pageIndex - 1) * pageSize)
+                .append(",")
+                .append(pageSize);
+        DatabaseClient.GenericExecuteSpec spec =
+                r2dbcEntityTemplate.getDatabaseClient().sql(builder.toString());
         if (!DataUtil.isNullOrEmpty(params)) {
             for (String param : params.keySet()) {
                 spec = spec.bind(param, params.get(param));
@@ -70,23 +96,21 @@ public class NewsContentRepositoryTemplateImpl implements NewsContentRepositoryT
     }
 
     private Mono<Long> queryCount(String query, Map<String, Object> params) {
-        StringBuilder countBuilder = new StringBuilder();
-        countBuilder.append("select count(*) as count from (").append(query).append(") as common_count_alias");
-
-        DatabaseClient.GenericExecuteSpec spec = r2dbcEntityTemplate.getDatabaseClient().sql(countBuilder.toString());
+        DatabaseClient.GenericExecuteSpec spec =
+                r2dbcEntityTemplate.getDatabaseClient().sql("select count(*) as count from (" + query + ") as common_count_alias");
         if (!DataUtil.isNullOrEmpty(params)) {
             for (String param : params.keySet()) {
                 spec = spec.bind(param, params.get(param));
             }
         }
-
-        return spec.fetch().first().map(raw -> raw.get("count"))
-                .cast(Long.class);
+        return spec.fetch().first().map(raw -> raw.get("count")).cast(Long.class);
     }
 
     /**
      * build query string from query request
-     * @param request request params
+     *
+     * @param request
+     *            request params
      * @return
      */
     private void buildQuery(QueryNewsRequest request, StringBuilder builder, Map<String, Object> params) {
@@ -105,7 +129,9 @@ public class NewsContentRepositoryTemplateImpl implements NewsContentRepositoryT
 
         if (!DataUtil.isNullOrEmpty(request.getName())) {
             builder.append("and lower(nc.title) like concat('%', :name,'%') \n");
-            params.put("name", SQLUtils.replaceSpecialDigit(request.getName().trim().toLowerCase()));
+            params.put(
+                    "name",
+                    SQLUtils.replaceSpecialDigit(request.getName().trim().toLowerCase()));
         }
 
         if (!DataUtil.isNullOrEmpty(request.getSourceType())) {
@@ -134,5 +160,4 @@ public class NewsContentRepositoryTemplateImpl implements NewsContentRepositoryT
 
         log.info(builder.toString());
     }
-
 }

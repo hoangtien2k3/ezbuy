@@ -1,13 +1,20 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.settingservice.service.impl;
 
-import com.ezbuy.framework.constants.CommonErrorCode;
-import com.ezbuy.framework.constants.Constants;
-import com.ezbuy.framework.exception.BusinessException;
-import com.ezbuy.framework.factory.ObjectMapperFactory;
-import com.ezbuy.framework.model.response.DataResponse;
-import com.ezbuy.framework.utils.DataUtil;
-import com.ezbuy.framework.utils.SecurityUtils;
-import com.ezbuy.framework.utils.Translator;
 import com.ezbuy.settingmodel.dto.ContentSectionDTO;
 import com.ezbuy.settingmodel.dto.ContentSectionDetailDTO;
 import com.ezbuy.settingmodel.dto.PaginationDTO;
@@ -22,15 +29,22 @@ import com.ezbuy.settingservice.repositoryTemplate.ContentSectionRepositoryTempl
 import com.ezbuy.settingservice.service.ContentSectionService;
 import com.ezbuy.settingservice.service.MarketSectionService;
 import com.ezbuy.settingservice.service.TelecomService;
+import io.hoangtien2k3.commons.constants.CommonErrorCode;
+import io.hoangtien2k3.commons.constants.Constants;
+import io.hoangtien2k3.commons.exception.BusinessException;
+import io.hoangtien2k3.commons.factory.ObjectMapperFactory;
+import io.hoangtien2k3.commons.model.response.DataResponse;
+import io.hoangtien2k3.commons.utils.DataUtil;
+import io.hoangtien2k3.commons.utils.SecurityUtils;
+import io.hoangtien2k3.commons.utils.Translator;
+import java.time.LocalDateTime;
+import java.util.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.time.LocalDateTime;
-import java.util.*;
 
 @Slf4j
 @Service
@@ -73,13 +87,17 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
     @Override
     @Transactional
     public Mono<ContentSectionDetailDTO> getContentSectionDetail(String id) {
-        return contentSectionRepositoryTemplate.getDetailContentSection(id).collectList().flatMap(contentSectionList -> {
-            if (DataUtil.isNullOrEmpty(contentSectionList)) {
-                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "content.section.null"));
-            } else {
-                return Mono.just(contentSectionList.getFirst());
-            }
-        });
+        return contentSectionRepositoryTemplate
+                .getDetailContentSection(id)
+                .collectList()
+                .flatMap(contentSectionList -> {
+                    if (DataUtil.isNullOrEmpty(contentSectionList)) {
+                        return Mono.error(
+                                new BusinessException(CommonErrorCode.INVALID_PARAMS, "content.section.null"));
+                    } else {
+                        return Mono.just(contentSectionList.getFirst());
+                    }
+                });
     }
 
     @Override
@@ -91,7 +109,11 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
     @Override
     @Transactional
     public Mono<DataResponse<ContentSection>> getCS(String id) {
-        return contentSectionRepository.getById(id).switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content.section.not.found"))).map(marketPage -> new DataResponse<>(Translator.toLocale("Success"), marketPage));
+        return contentSectionRepository
+                .getById(id)
+                .switchIfEmpty(
+                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content.section.not.found")))
+                .map(marketPage -> new DataResponse<>(Translator.toLocale("Success"), marketPage));
     }
 
     @Override
@@ -101,41 +123,54 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
         String parentId = DataUtil.isNullOrEmpty(request.getParentId()) ? null : request.getParentId();
         Long order = DataUtil.isNullOrEmpty(request.getDisplayOrder()) ? null : request.getDisplayOrder();
         String contentSectionId = UUID.randomUUID().toString();
-        return validateContentSection(request, true).flatMap(validate -> SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content.section.not.found"))).flatMap(tokenUser -> {
-            ContentSection contentSection = ContentSection.builder()
-                    .id(contentSectionId)
-                    .parentId(parentId)
-                    .sectionId(request.getSectionId())
-                    .type(request.getType())
-                    .refId(request.getRefId())
-                    .refType(request.getRefType())
-                    .name(DataUtil.safeTrim(request.getName()))
-                    .status(request.getStatus())
-                    .displayOrder(order)
-                    .path(null)
-                    .createBy(tokenUser.getUsername())
-                    .createAt(now)
-                    .updateBy(tokenUser.getUsername())
-                    .updateAt(now)
-                    .refAlias(request.getRefAlias()) // add alias to insert PYCXXX/LuongToanTrinhScontract
-                    .build();
-            return contentSectionRepository.save(contentSection).doOnError(throwable -> {
-                log.error(throwable.getMessage());
-                throw new BusinessException(CommonErrorCode.BAD_REQUEST, "Create.content.Section.error");
-            }).flatMap(result -> Mono.just(new DataResponse<>("success", result)));
-
-        }));
+        return validateContentSection(request, true).flatMap(validate -> SecurityUtils.getCurrentUser()
+                .switchIfEmpty(
+                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content.section.not.found")))
+                .flatMap(tokenUser -> {
+                    ContentSection contentSection = ContentSection.builder()
+                            .id(contentSectionId)
+                            .parentId(parentId)
+                            .sectionId(request.getSectionId())
+                            .type(request.getType())
+                            .refId(request.getRefId())
+                            .refType(request.getRefType())
+                            .name(DataUtil.safeTrim(request.getName()))
+                            .status(request.getStatus())
+                            .displayOrder(order)
+                            .path(null)
+                            .createBy(tokenUser.getUsername())
+                            .createAt(now)
+                            .updateBy(tokenUser.getUsername())
+                            .updateAt(now)
+                            .refAlias(request.getRefAlias()) // add alias to insert
+                            // PYCXXX/LuongToanTrinhScontract
+                            .build();
+                    return contentSectionRepository
+                            .save(contentSection)
+                            .doOnError(throwable -> {
+                                log.error(throwable.getMessage());
+                                throw new BusinessException(
+                                        CommonErrorCode.BAD_REQUEST, "Create.content.Section.error");
+                            })
+                            .flatMap(result -> Mono.just(new DataResponse<>("success", result)));
+                }));
     }
 
     @Override
     public Mono<Boolean> delete(String id) {
-        return contentSectionRepository.getById(DataUtil.safeTrim(id)).switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "Content.Section.notfound"))).flatMap(contentSection -> {
-            contentSection.setStatus(Constants.STATUS.INACTIVE);
-            return contentSectionRepository.updateStatus(Constants.STATUS.INACTIVE, contentSection.getId());
-        }).doOnError(throwable -> {
-            log.error(throwable.getMessage());
-            throw new BusinessException(CommonErrorCode.BAD_REQUEST, "Content.Section.notfound");
-        }).switchIfEmpty(Mono.just(Boolean.TRUE));
+        return contentSectionRepository
+                .getById(DataUtil.safeTrim(id))
+                .switchIfEmpty(
+                        Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "Content.Section.notfound")))
+                .flatMap(contentSection -> {
+                    contentSection.setStatus(Constants.STATUS.INACTIVE);
+                    return contentSectionRepository.updateStatus(Constants.STATUS.INACTIVE, contentSection.getId());
+                })
+                .doOnError(throwable -> {
+                    log.error(throwable.getMessage());
+                    throw new BusinessException(CommonErrorCode.BAD_REQUEST, "Content.Section.notfound");
+                })
+                .switchIfEmpty(Mono.just(Boolean.TRUE));
     }
 
     @Override
@@ -143,39 +178,65 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
     public Mono<DataResponse<ContentSection>> updateCS(ContentSectionRequest request) {
         String id = request.getId();
         String parentId = DataUtil.isNullOrEmpty(request.getParentId()) ? null : request.getParentId();
-        return validateContentSection(request, false).flatMap(validate -> SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content.section.not.found"))).flatMap(tokenUser -> contentSectionRepository.updateCS(request.getSectionId(), parentId, request.getName(), request.getStatus(), request.getDisplayOrder(), tokenUser.getUsername(), id).defaultIfEmpty(new ContentSection()).map(updatedContentSection -> new DataResponse<>("success", updatedContentSection))));
+        return validateContentSection(request, false).flatMap(validate -> SecurityUtils.getCurrentUser()
+                .switchIfEmpty(
+                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content.section.not.found")))
+                .flatMap(tokenUser -> contentSectionRepository
+                        .updateCS(
+                                request.getSectionId(),
+                                parentId,
+                                request.getName(),
+                                request.getStatus(),
+                                request.getDisplayOrder(),
+                                tokenUser.getUsername(),
+                                id)
+                        .defaultIfEmpty(new ContentSection())
+                        .map(updatedContentSection -> new DataResponse<>("success", updatedContentSection))));
     }
 
     private Mono<Boolean> validateContentSection(ContentSectionRequest contentSectionRequest, boolean isInsert) {
         if (DataUtil.isNullOrEmpty(contentSectionRequest.getSectionId())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "content.section.section.id.not.empty"));
+            return Mono.error(
+                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "content.section.section.id.not.empty"));
         }
         if (DataUtil.isNullOrEmpty(contentSectionRequest.getName())) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "content.section.name.not.empty"));
         }
         if (DataUtil.isNullOrEmpty(contentSectionRequest.getStatus())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "content.section.status.not.empty"));
+            return Mono.error(
+                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "content.section.status.not.empty"));
         }
         if (contentSectionRequest.getDisplayOrder() == null) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "content.section.display.order.not.empty"));
+            return Mono.error(
+                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "content.section.display.order.not.empty"));
         }
         if (!DataUtil.isNullOrEmpty(contentSectionRequest.getParentId())) {
-            return contentSectionRepository.getActiveById(contentSectionRequest.getParentId())
-                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "content.section.parent.id.empty.or.inactive")))
-                    .flatMap(data -> contentSectionRepository.getAllActiveContentSectionsByParentId(contentSectionRequest.getParentId()).collectList().flatMap(contentSectionList -> {
-                        if (DataUtil.isNullOrEmpty(contentSectionList)) {
-                            return Mono.just(true);
-                        }
-                        ContentSection contentSection = ObjectMapperFactory.getInstance().convertValue(contentSectionRequest, ContentSection.class);
-                        if (!isInsert) {
-                            contentSectionList.removeIf(cs -> DataUtil.safeEqual(cs.getId(), contentSection.getId()));
-                        }
-                        boolean displayOrderExists = contentSectionList.stream().anyMatch(cs -> Objects.equals(cs.getDisplayOrder(), contentSection.getDisplayOrder()));
-                        if (displayOrderExists) {
-                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "content.section.display.order.exist"));
-                        }
-                        return Mono.just(true);
-                    }));
+            return contentSectionRepository
+                    .getActiveById(contentSectionRequest.getParentId())
+                    .switchIfEmpty(Mono.error(new BusinessException(
+                            CommonErrorCode.INVALID_PARAMS, "content.section.parent.id.empty.or.inactive")))
+                    .flatMap(data -> contentSectionRepository
+                            .getAllActiveContentSectionsByParentId(contentSectionRequest.getParentId())
+                            .collectList()
+                            .flatMap(contentSectionList -> {
+                                if (DataUtil.isNullOrEmpty(contentSectionList)) {
+                                    return Mono.just(true);
+                                }
+                                ContentSection contentSection = ObjectMapperFactory.getInstance()
+                                        .convertValue(contentSectionRequest, ContentSection.class);
+                                if (!isInsert) {
+                                    contentSectionList.removeIf(
+                                            cs -> DataUtil.safeEqual(cs.getId(), contentSection.getId()));
+                                }
+                                boolean displayOrderExists = contentSectionList.stream()
+                                        .anyMatch(cs ->
+                                                Objects.equals(cs.getDisplayOrder(), contentSection.getDisplayOrder()));
+                                if (displayOrderExists) {
+                                    return Mono.error(new BusinessException(
+                                            CommonErrorCode.INVALID_PARAMS, "content.section.display.order.exist"));
+                                }
+                                return Mono.just(true);
+                            }));
         }
         return Mono.just(true);
     }
@@ -186,17 +247,32 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
     }
 
     public Mono<DataResponse<List<ContentSection>>> getCSByServiceId(List<String> lstServiceId) {
-        return contentSectionRepository.getByServiceId(lstServiceId).collectList().switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content.section.not.found"))).map(contentSection -> new DataResponse<>(Translator.toLocale("Success"), contentSection));
+        return contentSectionRepository
+                .getByServiceId(lstServiceId)
+                .collectList()
+                .switchIfEmpty(
+                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content.section.not.found")))
+                .map(contentSection -> new DataResponse<>(Translator.toLocale("Success"), contentSection));
     }
 
     // ham lay danh sach cau hinh huong dan va tai nguyen
     @Override
     public Mono<DataResponse<List<ContentSection>>> getCSByServiceIdV2(List<String> lstAlias) {
-        return contentSectionRepository.getByAlias(lstAlias).collectList().switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content.section.not.found"))).map(contentSection -> new DataResponse<>(Translator.toLocale("Success"), contentSection));
+        return contentSectionRepository
+                .getByAlias(lstAlias)
+                .collectList()
+                .switchIfEmpty(
+                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content.section.not.found")))
+                .map(contentSection -> new DataResponse<>(Translator.toLocale("Success"), contentSection));
     }
 
     public Mono<DataResponse<List<ContentSection>>> getCSBySectionId(List<String> lstSectionId) {
-        return contentSectionRepository.getBySectionId(lstSectionId).collectList().switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content.section.not.found"))).map(contentSection -> new DataResponse<>(Translator.toLocale("Success"), contentSection));
+        return contentSectionRepository
+                .getBySectionId(lstSectionId)
+                .collectList()
+                .switchIfEmpty(
+                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content.section.not.found")))
+                .map(contentSection -> new DataResponse<>(Translator.toLocale("Success"), contentSection));
     }
 
     private Mono<List<TreeDataDTO>> mapGetAllData(List<ContentSection> contentSectionList) {
@@ -228,13 +304,25 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
             return Mono.just(new ArrayList<>());
         }
 
-        // uu tien refAlias prior to refId (truy van theo alias truoc roi moi den refId theo luong cu)
+        // uu tien refAlias prior to refId (truy van theo alias truoc roi moi den refId
+        // theo luong cu)
         if (!DataUtil.isNullOrEmpty(request.getRefAlias()) && !"null".equals(request.getRefAlias())) {
-            return contentSectionRepository.findAllActiveByTypeAndRefIdAndRefTypeAndStatusV2(request.getType(), request.getRefAlias(), request.getRefType()).collectList().flatMap(this::mapGetAllData);
+            return contentSectionRepository
+                    .findAllActiveByTypeAndRefIdAndRefTypeAndStatusV2(
+                            request.getType(), request.getRefAlias(), request.getRefType())
+                    .collectList()
+                    .flatMap(this::mapGetAllData);
         } else if (!DataUtil.isNullOrEmpty(request.getRefId()) && !"null".equals(request.getRefId())) {
-            return contentSectionRepository.findAllActiveByTypeAndRefIdAndRefTypeAndStatus(request.getType(), request.getRefId(), request.getRefType()).collectList().flatMap(this::mapGetAllData);
+            return contentSectionRepository
+                    .findAllActiveByTypeAndRefIdAndRefTypeAndStatus(
+                            request.getType(), request.getRefId(), request.getRefType())
+                    .collectList()
+                    .flatMap(this::mapGetAllData);
         } else {
-            return contentSectionRepository.findAllActiveByTypeAndRefTypeAndStatus(request.getType(), request.getRefType()).collectList().flatMap(this::mapGetAllData);
+            return contentSectionRepository
+                    .findAllActiveByTypeAndRefTypeAndStatus(request.getType(), request.getRefType())
+                    .collectList()
+                    .flatMap(this::mapGetAllData);
         }
     }
 

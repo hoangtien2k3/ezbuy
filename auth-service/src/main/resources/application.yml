@@ -7,24 +7,34 @@ logging:
     org.springframework.r2dbc: DEBUG
     io.r2dbc.postgresql.QUERY: DEBUG
     io.r2dbc.postgresql.PARAM: DEBUG
+
 dotenv:
   enabled: true
   active: true
+
 # spring config
 spring:
   application:
     name: auth-service
+
   main:
     web-application-type: reactive
     allow-bean-definition-overriding: true
+
   messages:
     basename: messages
+
   r2dbc:
     url: r2dbc:postgresql://localhost:5434/auth
     username: admin
     password: admin
+    pool:
+      max-size: 10
+      initial-size: 5
+
   codec:
     max-in-memory-size: 100MB
+
   security:
     oauth2:
       client:
@@ -41,6 +51,14 @@ spring:
           jwk-set-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/certs
       keycloak:
         client-id: ${keycloak.clientId}
+
+  plugin:
+    config:
+      readRequestData: true
+      readResponseData: true
+      logRequest: true
+      logResponse: true
+
 # web client config
 client:
   keycloak:
@@ -49,6 +67,7 @@ client:
     auth:
       client-id: ezbuy-client
       client-secret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
+
   noti:
     internal-oauth: true
     address: http://localhost:7777/v1/transmission
@@ -59,6 +78,7 @@ client:
     timeout:
       read: 60000
       write: 1000
+
   product:
     internal-oauth: true
     address: http://localhost:8088/
@@ -160,6 +180,7 @@ application:
   data:
     sync-data:
       limit: 500
+
 #keycloak client config
 keycloak:
   clientId: ezbuy-client
@@ -168,23 +189,37 @@ keycloak:
   serverUrl: http://localhost:8080
   grantType: password
   host: localhost
-# minino config server
+
+# minio server config
 minio:
-  bucket: sme-public
+  bucket: ezbuy-bucket
   enabled: true
-  baseUrl: http://10.207.252.76:8840
-  publicUrl: http://10.207.252.223/sme-media
-  accessKey: B5C4PW0LGTXP3YAD
-  secretKey: XGEI24IIJEQZX54JRTNTLY3YEHC2LFIT
+  baseUrl: http://localhost:9000
+  publicUrl: http://localhost:9000/ezbuy-bucket
+  accessKey: 4DoaZ0KdzpXdDlVK104t
+  secretKey: nuRiQUIJNVygMOHhmtR4LT1etAa7F8PQOsRGP5oj
   private:
-    bucket: sme-private
+    bucket: ezbuy-private
+
 #syncacc:
 #  username: smehub
 #  password: 123456aA@
 #  clientid: sme-auth-service
 #  secretKey: YxzXsTW2sjHh3jBBYOmrIOzYT6DKE6vV
+
 hashing-password:
   public-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4qGLPEGMdbDlYrc+Ud3w8Y2CobSLKAIfSBsX6bcV3bCxKZI8scW2gfr8ZMMXOxgQ0nXpIOQ0p0fb/hVHXMEnTu4Z5UEsF76eDfA80VPd96ujiZWyWYAeyIUelqPEZIWxM4MlBOPJDcCVDtwLKIoMbvVnXoHyjmOq93mHOoii24a2m0qt6jrvAYOvjNUijtofgjewYds/h74LfphDY/hNRq+4M6lI4RMZ4HiRn06P+GnvnwkxA3JL1bVRRqZ3gxB0VWiIj7I5likqnJfWnqn43mrMxfSdNI+6MpgR7L6djFOnjZiNP5bb6a3F17hwBeeLBTPs+akem/shlfoGYIbJOwIDAQAB
+
 proxy-client:
   host: 10.207.156.52
   port: 3128
+
+#cache2l config
+cache2l:
+  reflectionPath: io.hoangtien2k3
+  enable-global-cache: true
+  redis:
+    externalMode: true
+    externalCluster: 10.207.59.4:8001,10.207.59.4:8002,10.207.60.5:8003,10.207.60.6:8004
+    username: redis
+    password: Redis@2021

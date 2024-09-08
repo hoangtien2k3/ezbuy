@@ -1,3 +1,18 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.settingmodel.constants;
 
 public class UrlPaths {
@@ -30,7 +45,7 @@ public class UrlPaths {
         String GET_SERVICE_CONFIG = "/service-config";
         String GET_SERVICE_CONFIG_V2 = "/service-config/alias";
         String GET_ALL_TELECOM_SERVICE = "/all";
-        String GET_TELECOM_BY_LIST_ORIGIN_ID = "/list-origin-id"; //ham lay danh sach telecom theo list telecomServiceId
+        String GET_TELECOM_BY_LIST_ORIGIN_ID = "/list-origin-id"; // ham lay danh sach telecom theo list
 
         String GET_AlIAS_BY_CLIENT_CODE = "/alias/client-code";
     }
@@ -70,7 +85,8 @@ public class UrlPaths {
         String LIST = Constants.LIST_NEW;
         String ALL_ACTIVE = "/all_active";
         String LIST_BY_SERVICE = "/list-by-service";
-        String LIST_BY_SERVICE_V2 = "/list-by-service/alias"; // Ham lay danh sach cau hinh market_info theo danh sach alias cua dich vu
+        String LIST_BY_SERVICE_V2 = "/list-by-service/alias"; // Ham lay danh sach cau hinh market_info theo danh sach
+        // alias cua dich vu
     }
 
     public interface MarketPage {
@@ -79,7 +95,7 @@ public class UrlPaths {
         String ALL_ACTIVE = Constants.ALL_ACTIVE_NEW;
         String LIST_BY_SERVICE = "/service";
         String LIST_BY_SERVICE_V2 = "/service/alias"; // Lay danh sach cau hinh trang theo list alias
-        String GET_ALL_MP= Constants.LIST_NEW;
+        String GET_ALL_MP = Constants.LIST_NEW;
     }
 
     public interface MarketSection {
@@ -95,7 +111,7 @@ public class UrlPaths {
         String ALL = "/all";
 
         String FIND_BY_CONTENT_SECTION_ID = "content-section-id/{id}";
-        String ALL_ACTIVE_RT ="/all-active-rt";
+        String ALL_ACTIVE_RT = "/all-active-rt";
     }
 
     public interface GlobalSearch {
@@ -109,16 +125,18 @@ public class UrlPaths {
         String PREFIX = "/v1/cust-type";
         String GET_ALL_ACTIVE = Constants.ALL_ACTIVE_NEW;
     }
+
     public interface ContentSection {
         String PREFIX = "v1/content-section";
         String DETAILS = "/detail/{id}";
         String ALL_ACTIVE = Constants.ALL_ACTIVE_NEW;
         String LIST_BY_SERVICE = "/service";
-        String LIST_BY_SERVICE_V2 = "/service-alias"; // Ham lay cau hinh huong dan va tai nguyen theo danh sach Alias (content_section)
+        String LIST_BY_SERVICE_V2 = "/service-alias"; // Ham lay cau hinh huong dan va tai nguyen theo danh sach Alias
+        // (content_section)
         String LiST_BY_SECTION = "/section";
-        String GET_ALL_SA= Constants.LIST_NEW;
+        String GET_ALL_SA = Constants.LIST_NEW;
         String SEARCH = Constants.SEARCH_NEW;
-        String DELETE="/delete/{id}";
+        String DELETE = "/delete/{id}";
         String ALIAS = "/alias";
     }
 
@@ -140,7 +158,7 @@ public class UrlPaths {
         String PREFIX = "/v1/setting";
         String FIND_BY_CODE = "/{code}";
         String DETAILS = "/detail/{id}";
-        String GET_ALL= Constants.LIST_NEW;
+        String GET_ALL = Constants.LIST_NEW;
         String ALL_ACTIVE = Constants.ALL_ACTIVE_NEW;
         String EDIT = "/edit/{id}";
 
@@ -152,10 +170,10 @@ public class UrlPaths {
 
     public interface OptionSet {
         String PREFIX = "/v1/option-set";
-        String FIND_BY_OPTION_SET_CODE = Constants.LIST_NEW; //lay danh sach option_set_value theo optionSetCode
-        String FIND_BY_CODE = ""; //lay ra option_set_value theo optionSetCode va optionSetValueCode
-        String UPDATE = Constants.ID; //cap nhat option_set theo id
-        String ALL = "/all"; //lay ra tat ca option_set
+        String FIND_BY_OPTION_SET_CODE = Constants.LIST_NEW; // lay danh sach option_set_value theo optionSetCode
+        String FIND_BY_CODE = ""; // lay ra option_set_value theo optionSetCode va optionSetValueCode
+        String UPDATE = Constants.ID; // cap nhat option_set theo id
+        String ALL = "/all"; // lay ra tat ca option_set
     }
 
     public interface OptionSetValue {
@@ -164,6 +182,6 @@ public class UrlPaths {
         String GET_OPTION_SET_VALUE_BY_CODE = "/code";
         String GET_ACROYNM_BY_LIST_ALISAS = "/acronym";
 
-        String UPDATE = Constants.ID; //cap nhat option_set_value theo id
+        String UPDATE = Constants.ID; // cap nhat option_set_value theo id
     }
 }

@@ -1,16 +1,26 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.settingservice.repositoryTemplate;
 
-import com.ezbuy.framework.repository.BaseTemplateRepository;
-import com.ezbuy.framework.utils.DataUtil;
-import com.ezbuy.framework.utils.SQLUtils;
-import com.ezbuy.framework.utils.SortingUtils;
 import com.ezbuy.settingmodel.model.Page;
 import com.ezbuy.settingmodel.request.SearchingPageRequest;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
+import io.hoangtien2k3.commons.repository.BaseTemplateRepository;
+import io.hoangtien2k3.commons.utils.DataUtil;
+import io.hoangtien2k3.commons.utils.SQLUtils;
+import io.hoangtien2k3.commons.utils.SortingUtils;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,6 +28,10 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Repository
 @RequiredArgsConstructor
@@ -34,9 +48,7 @@ public class PageRepositoryTemplateImpl extends BaseTemplateRepository implement
         Map<String, Object> params = new HashMap<>();
         StringBuilder query = new StringBuilder();
         buildQueryPages(query, params, request);
-        query.append("ORDER BY ").append(sorting).append(" \n")
-                .append(" LIMIT :pageSize  \n" +
-                        "OFFSET :index ");
+        query.append("ORDER BY ").append(sorting).append(" \n").append(" LIMIT :pageSize  \n" + "OFFSET :index ");
         params.put("pageSize", request.getPageSize());
         BigDecimal index = (new BigDecimal(request.getPageIndex() - 1)).multiply(new BigDecimal(request.getPageSize()));
         params.put("index", index);
@@ -54,9 +66,7 @@ public class PageRepositoryTemplateImpl extends BaseTemplateRepository implement
     }
 
     private void buildQueryPages(StringBuilder builder, Map<String, Object> params, SearchingPageRequest request) {
-        builder.append("select * \n")
-                .append("from sme_setting.page u \n")
-                .append("where 1=1 \n");
+        builder.append("select * \n").append("from sme_setting.page u \n").append("where 1=1 \n");
         if (!DataUtil.isNullOrEmpty(request.getTitle())) {
             builder.append("and u.title like CONCAT('%',:title, '%') \n");
             params.put("title", SQLUtils.replaceSpecialDigit(request.getTitle()));
@@ -73,7 +83,7 @@ public class PageRepositoryTemplateImpl extends BaseTemplateRepository implement
             builder.append("and u.update_at >= :fromDate \n");
             params.put("fromDate", getFromDate(request.getFromDate()));
         }
-        if (!DataUtil.isNullOrEmpty(request.getToDate())){
+        if (!DataUtil.isNullOrEmpty(request.getToDate())) {
             builder.append("and u.update_at <= :toDate \n");
             params.put("toDate", getToDate(request.getToDate()));
         }

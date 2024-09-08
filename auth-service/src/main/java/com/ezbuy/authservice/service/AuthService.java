@@ -1,3 +1,18 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.authservice.service;
 
 import com.ezbuy.authmodel.dto.AccessToken;
@@ -7,64 +22,77 @@ import com.ezbuy.authmodel.dto.response.GetTwoWayPasswordResponse;
 import com.ezbuy.authmodel.dto.response.Permission;
 import com.ezbuy.authmodel.model.Individual;
 import com.ezbuy.authmodel.model.UserOtp;
-import com.ezbuy.framework.model.response.DataResponse;
+import io.hoangtien2k3.commons.model.response.DataResponse;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Optional;
-
 /**
- * Provides authentication services including login, logout, token management, and user management.
+ * Provides authentication services including login, logout, token management,
+ * and user management.
  */
 public interface AuthService {
 
     /**
      * Retrieves an access token for the given login request.
      *
-     * @param loginRequest the login request containing user credentials
-     * @return a Mono emitting an Optional containing the access token if authentication is successful
+     * @param loginRequest
+     *            the login request containing user credentials
+     * @return a Mono emitting an Optional containing the access token if
+     *         authentication is successful
      */
     Mono<Optional<AccessToken>> getToken(LoginRequest loginRequest);
 
     /**
      * Retrieves an access token for the given provider login request.
      *
-     * @param providerLogin the provider login request containing provider credentials
-     * @return a Mono emitting an Optional containing the access token if authentication is successful
+     * @param providerLogin
+     *            the provider login request containing provider credentials
+     * @return a Mono emitting an Optional containing the access token if
+     *         authentication is successful
      */
     Mono<Optional<AccessToken>> getToken(ProviderLogin providerLogin);
 
     /**
      * Refreshes the access token using the given refresh token request.
      *
-     * @param refreshTokenRequest the refresh token request containing the refresh token
-     * @return a Mono emitting an Optional containing the new access token if the refresh is successful
+     * @param refreshTokenRequest
+     *            the refresh token request containing the refresh token
+     * @return a Mono emitting an Optional containing the new access token if the
+     *         refresh is successful
      */
     Mono<Optional<AccessToken>> refreshToken(RefreshTokenRequest refreshTokenRequest);
 
     /**
      * Logs out the user based on the given logout request.
      *
-     * @param logoutRequest the logout request containing user information
-     * @return a Mono emitting a Boolean indicating whether the logout was successful
+     * @param logoutRequest
+     *            the logout request containing user information
+     * @return a Mono emitting a Boolean indicating whether the logout was
+     *         successful
      */
     Mono<Boolean> logout(LogoutRequest logoutRequest);
 
     /**
      * Retrieves permissions for the given client ID.
      *
-     * @param clientId the client ID for which to retrieve permissions
+     * @param clientId
+     *            the client ID for which to retrieve permissions
      * @return a Mono emitting a list of permissions for the client
      */
     Mono<List<Permission>> getPermission(String clientId);
 
     /**
-     * Retrieves organizational permissions for the given client ID, ID number, and organization ID.
+     * Retrieves organizational permissions for the given client ID, ID number, and
+     * organization ID.
      *
-     * @param clientId the client ID for which to retrieve permissions
-     * @param idNo the ID number of the user
-     * @param orgId the organization ID
+     * @param clientId
+     *            the client ID for which to retrieve permissions
+     * @param idNo
+     *            the ID number of the user
+     * @param orgId
+     *            the organization ID
      * @return a Mono emitting a list of organizational permissions for the client
      */
     Mono<List<Permission>> getOrgPermission(String clientId, String idNo, String orgId);
@@ -72,9 +100,12 @@ public interface AuthService {
     /**
      * Retrieves permissions for the given client ID, organization ID, and user ID.
      *
-     * @param clientId the client ID for which to retrieve permissions
-     * @param orgId the organization ID
-     * @param userId the user ID
+     * @param clientId
+     *            the client ID for which to retrieve permissions
+     * @param orgId
+     *            the organization ID
+     * @param userId
+     *            the user ID
      * @return a Mono emitting a list of permissions for the client
      */
     Mono<List<Permission>> getPermission(String clientId, String orgId, String userId);
@@ -82,7 +113,8 @@ public interface AuthService {
     /**
      * Signs up a new user with the given signup request.
      *
-     * @param signupRequest the signup request containing user information
+     * @param signupRequest
+     *            the signup request containing user information
      * @return a Mono emitting the user OTP if the signup is successful
      */
     Mono<UserOtp> signUp(SignupRequest signupRequest);
@@ -90,15 +122,18 @@ public interface AuthService {
     /**
      * Creates an account for the given organization account request.
      *
-     * @param createOrgAccount the organization account request containing user information
-     * @return a Mono emitting the created user if the account is created successfully
+     * @param createOrgAccount
+     *            the organization account request containing user information
+     * @return a Mono emitting the created user if the account is created
+     *         successfully
      */
-    //    Mono<Individual> createAccount(CreateOrgAccount createOrgAccount);
+    // Mono<Individual> createAccount(CreateOrgAccount createOrgAccount);
 
     /**
      * Initiates the forgot password process for the given request.
      *
-     * @param forgotPasswordRequest the forgot password request containing user information
+     * @param forgotPasswordRequest
+     *            the forgot password request containing user information
      * @return a Mono emitting the user OTP if the process is initiated successfully
      */
     Mono<UserOtp> forgotPassword(ForgotPasswordRequest forgotPasswordRequest);
@@ -106,9 +141,12 @@ public interface AuthService {
     /**
      * Resets the password based on the given request and server exchange.
      *
-     * @param resetPasswordRequest the reset password request containing new password information
-     * @param serverWebExchange the server web exchange
-     * @return a Mono emitting a DataResponse indicating the result of the password reset
+     * @param resetPasswordRequest
+     *            the reset password request containing new password information
+     * @param serverWebExchange
+     *            the server web exchange
+     * @return a Mono emitting a DataResponse indicating the result of the password
+     *         reset
      */
     Mono<DataResponse<Object>> resetPassword(
             ResetPasswordRequest resetPasswordRequest, ServerWebExchange serverWebExchange);
@@ -116,16 +154,20 @@ public interface AuthService {
     /**
      * Changes the password based on the given request and server exchange.
      *
-     * @param request the change password request containing new password information
-     * @param serverWebExchange the server web exchange
+     * @param request
+     *            the change password request containing new password information
+     * @param serverWebExchange
+     *            the server web exchange
      * @return a Mono indicating when the password change is complete
      */
     Mono<Void> changePassword(ChangePasswordRequest request, ServerWebExchange serverWebExchange);
 
     /**
-     * Confirms the OTP and creates a new user based on the given account information.
+     * Confirms the OTP and creates a new user based on the given account
+     * information.
      *
-     * @param createAccount the account information for the new user
+     * @param createAccount
+     *            the account information for the new user
      * @return a Mono emitting the created user if the OTP is confirmed successfully
      */
     Mono<Individual> confirmOtpAndCreateUser(CreateAccount createAccount);
@@ -138,10 +180,13 @@ public interface AuthService {
     Mono<List<String>> getAllUserId();
 
     /**
-     * Creates test performance users starting from the given index and number of accounts.
+     * Creates test performance users starting from the given index and number of
+     * accounts.
      *
-     * @param startIndex the starting index for creating test users
-     * @param numAccount the number of test users to create
+     * @param startIndex
+     *            the starting index for creating test users
+     * @param numAccount
+     *            the number of test users to create
      * @return a Mono indicating when the test user creation is complete
      */
     Mono<Void> createUserTestPerformence(int startIndex, int numAccount);
@@ -149,7 +194,8 @@ public interface AuthService {
     /**
      * Retrieves the two-way password for the given request.
      *
-     * @param request the request containing user information
+     * @param request
+     *            the request containing user information
      * @return a Mono emitting the two-way password response
      */
     Mono<GetTwoWayPasswordResponse> getTwoWayPassword(String request);
@@ -157,7 +203,8 @@ public interface AuthService {
     /**
      * Retrieves the action login report based on the given request.
      *
-     * @param request the action login report request containing search parameters
+     * @param request
+     *            the action login report request containing search parameters
      * @return a Mono emitting the action login report response
      */
     Mono<GetActionLoginReportResponse> getActionLoginReport(GetActionLoginReportRequest request);
@@ -165,17 +212,22 @@ public interface AuthService {
     /**
      * Confirms the OTP based on the given request and server exchange.
      *
-     * @param confirmOTPRequest the confirm OTP request containing OTP information
-     * @param serverWebExchange the server web exchange
-     * @return a Mono emitting a DataResponse indicating the result of the OTP confirmation
+     * @param confirmOTPRequest
+     *            the confirm OTP request containing OTP information
+     * @param serverWebExchange
+     *            the server web exchange
+     * @return a Mono emitting a DataResponse indicating the result of the OTP
+     *         confirmation
      */
     Mono<DataResponse> confirmOTP(ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange);
 
     /**
      * Generates an OTP based on the given request and server exchange.
      *
-     * @param confirmOTPRequest the confirm OTP request containing user information
-     * @param serverWebExchange the server web exchange
+     * @param confirmOTPRequest
+     *            the confirm OTP request containing user information
+     * @param serverWebExchange
+     *            the server web exchange
      * @return a Mono emitting a DataResponse containing the generated OTP
      */
     Mono<DataResponse<String>> generateOtp(ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange);

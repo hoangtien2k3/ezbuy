@@ -1,6 +1,23 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.authservice.config;
 
-import com.ezbuy.framework.annotations.LocalCache;
+import io.hoangtien2k3.commons.aop.cache.Cache2L;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +30,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 @Getter
@@ -39,6 +53,9 @@ public class KeycloakProvider {
     @Value("${keycloak.clientSecret}")
     public String clientSecret;
 
+    @Value("${keycloak.host}")
+    private String hostKeycloak;
+
     // volatile and Double-Checked Locking -> Thread-Safe.
     public Keycloak getInstance() {
         if (keycloak == null) {
@@ -61,7 +78,7 @@ public class KeycloakProvider {
         return getInstance().realm(realm);
     }
 
-    @LocalCache(autoCache = true, maxRecord = 100, durationInMinute = 12 * 6)
+    @Cache2L(autoCache = true, maxRecord = 100, durationInMinute = 12 * 6)
     public Mono<ClientRepresentation> getClient(String clientId) {
         var clients = getRealmResource().clients().findByClientId(clientId);
         if (clients == null) {
@@ -75,12 +92,12 @@ public class KeycloakProvider {
         return Mono.empty();
     }
 
-    @LocalCache(maxRecord = 100, durationInMinute = 60 * 24)
+    @Cache2L(maxRecord = 100, durationInMinute = 60 * 24)
     public Mono<String> getKCIdFromClientId(String clientId) {
         return getClient(clientId).flatMap(rs -> Mono.just(rs.getId()));
     }
 
-    @LocalCache(autoCache = true, maxRecord = 100, durationInMinute = 12 * 6)
+    @Cache2L(autoCache = true, maxRecord = 100, durationInMinute = 12 * 6)
     public Mono<ClientRepresentation> getClientWithSecret(String clientId) {
         return getClient(clientId).flatMap(clientRepresentation -> {
             var result = getRealmResource()

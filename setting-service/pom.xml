@@ -38,7 +38,7 @@
         <!-- internal dependencies-->
         <dependency>
             <groupId>com.ezbuy.platform</groupId>
-            <artifactId>framework</artifactId>
+            <artifactId>fw-commons</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
@@ -54,11 +54,6 @@
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>1.18.1</version>
-        </dependency>
-        <dependency>
-            <groupId>io.minio</groupId>
-            <artifactId>minio</artifactId>
-            <version>7.1.0</version>
         </dependency>
     </dependencies>
 

@@ -26,6 +26,7 @@ services:
   pgadmin:
     image: dpage/pgadmin4:${PGADMIN_VERSION}
     container_name: pgadmin
+    restart: unless-stopped
     ports:
       - "${PGADMIN_LISTEN_PORT}:80"
     volumes:
@@ -143,6 +144,7 @@ services:
   swagger-ui:
     image: swaggerapi/swagger-ui:${SWAGGER_VERSION}
     container_name: swagger-ui
+    restart: unless-stopped
     environment:
       - BASE_URL=/swagger-ui
       - URLS
@@ -172,6 +174,7 @@ services:
     depends_on:
       - zookeeper
     container_name: kafka
+    restart: unless-stopped
     ports:
       - ${KAFKA_SERVICE_PORT}:${KAFKA_SERVICE_PORT}
       - "29092:29092"
@@ -315,6 +318,42 @@ services:
       - ezbuy-network
 
 
+  #redis
+  redis:
+    image: redis:${REDIS_VERSION}
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/data
+    environment:
+      - REDIS_PASSWORD
+      - REDIS_PORT
+      - REDIS_DATABASES
+    healthcheck:
+      test: [ "CMD", "sh", "-c", "redis-cli -a $${REDIS_PASSWORD} ping" ]
+      interval: 10s
+      retries: 3
+      start_period: 30s
+      timeout: 5s
+    networks:
+      - ezbuy-network
+
+
+  #redis_insight
+  redis_insight:
+    image: redislabs/redisinsight:latest
+    container_name: redis_insight
+    restart: always
+    ports:
+      - "8001:8001"
+    volumes:
+      - redis_insight:/db
+    networks:
+      - ezbuy-network
+
+
 # networks:
 networks:
   ezbuy-network:
@@ -333,4 +372,6 @@ volumes:
   minio:
   memos:
   elasticsearch:
+  redis:
+  redis_insight:
 

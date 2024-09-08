@@ -1,18 +1,33 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.settingservice.service;
 
-import com.ezbuy.framework.model.response.DataResponse;
-import com.ezbuy.settingmodel.model.MarketSection;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 import com.ezbuy.settingmodel.dto.MarketSectionDTO;
+import com.ezbuy.settingmodel.model.MarketSection;
 import com.ezbuy.settingmodel.request.CreateMarketSectionRequest;
 import com.ezbuy.settingmodel.request.MarketSectionSearchRequest;
 import com.ezbuy.settingmodel.response.MarketSectionSearchResponse;
-
+import io.hoangtien2k3.commons.model.response.DataResponse;
 import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface MarketSectionService {
     Flux<MarketSection> getMarketSection(String pageCode, String serviceId);
+
     Flux<MarketSection> getMarketSectionV2(String pageCode, String serviceAlias);
 
     Mono<MarketSection> findById(String sectionId);
@@ -30,8 +45,8 @@ public interface MarketSectionService {
     Mono<List<MarketSection>> getAllActiveMarketSections();
 
     Mono<List<MarketSection>> getAllMarketSections();
+
     Mono<List<MarketSection>> getAllActiveMarketSectionsRT();
 
     Mono<MarketSection> findByContentSectionId(String id);
-
 }

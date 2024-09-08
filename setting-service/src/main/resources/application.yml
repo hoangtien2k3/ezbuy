@@ -21,9 +21,7 @@ spring:
       repositories:
         enabled: false
   elasticsearch:
-    uris: http://10.207.252.76:8703
-    webclient:
-      max-in-memory-size: 10MB
+    uris: http://localhost:9200
   security:
     oauth2:
       client:
@@ -85,11 +83,11 @@ keycloak:
   host: localhost
 # minio server config
 minio:
-  bucket: ezbuy-buckets
+  bucket: ezbuy-bucket
   enabled: true
-  baseUrl: http://localhost:9001
-  publicUrl: http://localhost:90901/ezbuy-media
-  accessKey: K0bu0TvI92eluH9J3Ko3
-  secretKey: zs7ZY6bacGwqerqXJvVofNWGyvZt6Fqxx1h4BQlK
+  baseUrl: http://localhost:9000
+  publicUrl: http://localhost:9000/ezbuy-bucket
+  accessKey: 4DoaZ0KdzpXdDlVK104t
+  secretKey: nuRiQUIJNVygMOHhmtR4LT1etAa7F8PQOsRGP5oj
   private:
     bucket: ezbuy-private

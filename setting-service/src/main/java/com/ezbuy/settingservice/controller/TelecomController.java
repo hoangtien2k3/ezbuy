@@ -1,8 +1,20 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.settingservice.controller;
 
-import com.ezbuy.framework.constants.MessageConstant;
-import com.ezbuy.framework.model.response.DataResponse;
-import com.ezbuy.framework.utils.Translator;
 import com.ezbuy.settingmodel.constants.UrlPaths;
 import com.ezbuy.settingmodel.dto.TelecomDTO;
 import com.ezbuy.settingmodel.dto.TelecomServiceConfigDTO;
@@ -13,14 +25,16 @@ import com.ezbuy.settingmodel.request.StatusLockingRequest;
 import com.ezbuy.settingmodel.request.TelecomSearchingRequest;
 import com.ezbuy.settingmodel.response.*;
 import com.ezbuy.settingservice.service.TelecomService;
+import io.hoangtien2k3.commons.constants.MessageConstant;
+import io.hoangtien2k3.commons.model.response.DataResponse;
+import io.hoangtien2k3.commons.utils.Translator;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -34,50 +48,52 @@ public class TelecomController {
             @RequestParam(required = false) List<String> ids,
             @RequestParam(required = false) List<String> aliases,
             @RequestParam(required = false) List<String> origins) {
-        return this.telecomService.getTelecomService(ids, aliases, origins);
+        return telecomService.getTelecomService(ids, aliases, origins);
     }
 
     @GetMapping(UrlPaths.Telecom.ORIGIN_FILTER_V2)
     public Mono<DataResponse<List<Telecom>>> getTelecomByOriginV2(@RequestParam String serviceAlias) {
-        return this.telecomService.getByServiceAlias(serviceAlias);
+        return telecomService.getByServiceAlias(serviceAlias);
     }
 
     @GetMapping(UrlPaths.Telecom.ORIGIN_FILTER)
-    public Mono<DataResponse<List<Telecom>>> getTelecomByOrigin(@RequestParam String originId, @RequestParam(required = false) String serviceAlias) {
-        return this.telecomService.getByOriginId(originId, serviceAlias);
+    public Mono<DataResponse<List<Telecom>>> getTelecomByOrigin(
+            @RequestParam String originId, @RequestParam(required = false) String serviceAlias) {
+        return telecomService.getByOriginId(originId, serviceAlias);
     }
 
     @GetMapping(UrlPaths.Telecom.LIST)
-    public Mono<ResponseEntity<DataResponse<TelecomPagingResponse>>> getTelecomService(@ModelAttribute TelecomSearchingRequest request) {
-        return this.telecomService.searchTelecomService(request)
+    public Mono<ResponseEntity<DataResponse<TelecomPagingResponse>>> getTelecomService(
+            @ModelAttribute TelecomSearchingRequest request) {
+        return telecomService
+                .searchTelecomService(request)
                 .map(rs -> ResponseEntity.ok(new DataResponse<>("success", rs)));
     }
 
     @GetMapping(UrlPaths.Telecom.NON_INIT_FILTER)
     public Mono<DataResponse<List<Telecom>>> getNonFilterTelecom() {
-        return this.telecomService.getNonFilterTelecom()
-                .map(rs -> new DataResponse<>("success", rs));
+        return telecomService.getNonFilterTelecom().map(rs -> new DataResponse<>("success", rs));
     }
 
     @GetMapping(UrlPaths.Telecom.LOCK_UNLOCK)
     public Mono<ResponseEntity<DataResponse>> updateStatus(@ModelAttribute StatusLockingRequest params) {
-        return this.telecomService.updateStatus(params)
-                .map(rs -> ResponseEntity.ok(new DataResponse<>("success", null)));
+        return telecomService.updateStatus(params).map(rs -> ResponseEntity.ok(new DataResponse<>("success", null)));
     }
 
     @GetMapping(UrlPaths.Telecom.INIT_FILTER)
     public Mono<DataResponse> initFilter(@RequestParam("originId") String originId) {
-        return this.telecomService.initFilter(originId);
+        return telecomService.initFilter(originId);
     }
 
     @GetMapping(UrlPaths.Telecom.INIT_FILTER_V2)
-    public Mono<DataResponse> initFilterV2(@RequestParam(value = "serviceAlias", required = false) String serviceAlias) {
-        return this.telecomService.initFilterV2(serviceAlias);
+    public Mono<DataResponse> initFilterV2(
+            @RequestParam(value = "serviceAlias", required = false) String serviceAlias) {
+        return telecomService.initFilterV2(serviceAlias);
     }
 
     @GetMapping(value = UrlPaths.Telecom.LIST_REQUEST)
     public Mono<DataResponse<PageResponse>> getPageTelecomService(PageTelecomRequest request) {
-        return this.telecomService.getPageTelecomService(request);
+        return telecomService.getPageTelecomService(request);
     }
 
     @GetMapping(UrlPaths.Telecom.SERVICE_TYPES)
@@ -87,19 +103,20 @@ public class TelecomController {
 
     @GetMapping(UrlPaths.Telecom.GET_ALL_ACTIVE)
     public Mono<DataResponse<List<TelecomResponse>>> getAllTelecomServiceActive() {
-        return this.telecomService.getAllTelecomServiceActive()
-                .map(rs -> new DataResponse<>("success", rs));
+        return telecomService.getAllTelecomServiceActive().map(rs -> new DataResponse<>("success", rs));
     }
 
     @GetMapping(value = UrlPaths.Telecom.GET_ADMIN_ROLE)
     public Mono<DataResponse<TelecomClient>> getAdminRole(@RequestParam String originId) {
-        return telecomService.getAdminRoleOfService(originId)
+        return telecomService
+                .getAdminRoleOfService(originId)
                 .map(rs -> new DataResponse<>(Translator.toLocale(MessageConstant.SUCCESS), rs));
     }
 
     @GetMapping(value = UrlPaths.Telecom.GET_ADMIN_ROLE_V2)
     public Mono<DataResponse<TelecomClient>> getAdminRoleV2(@RequestParam String serviceAlias) {
-        return telecomService.getAdminRoleOfServiceByServiceAlias(serviceAlias)
+        return telecomService
+                .getAdminRoleOfServiceByServiceAlias(serviceAlias)
                 .map(rs -> new DataResponse<>(Translator.toLocale(MessageConstant.SUCCESS), rs));
     }
 
@@ -114,23 +131,25 @@ public class TelecomController {
 
     @PostMapping(value = UrlPaths.Telecom.GET_SERVICE_CONFIG_V2)
     @PreAuthorize("hasAnyAuthority('system')")
-    public Mono<DataResponse<List<TelecomServiceConfigDTO>>> getServiceConfigV2(@RequestBody GetServiceConfigRequest request) {
+    public Mono<DataResponse<List<TelecomServiceConfigDTO>>> getServiceConfigV2(
+            @RequestBody GetServiceConfigRequest request) {
         return telecomService.getTelecomServiceConfigV2(request);
     }
 
     @GetMapping(value = UrlPaths.Telecom.GET_ALL_TELECOM_SERVICE)
     public Mono<DataResponse<List<Telecom>>> getAllTelecomServiceIdAndCode() {
-        return this.telecomService.getAllTelecomServiceIdAndCode();
+        return telecomService.getAllTelecomServiceIdAndCode();
     }
 
     @GetMapping(value = UrlPaths.Telecom.GET_TELECOM_BY_LIST_ORIGIN_ID)
     public Mono<DataResponse<List<Telecom>>> getTelecomByLstOriginId(@RequestParam List<String> lstOriginId) {
-        return this.telecomService.getTelecomByLstOriginId(lstOriginId);
+        return telecomService.getTelecomByLstOriginId(lstOriginId);
     }
 
     @GetMapping(UrlPaths.Telecom.GET_AlIAS_BY_CLIENT_CODE)
     public Mono<DataResponse<ClientTelecom>> getAliasByClientCode(@RequestParam String clientCode) {
-        return telecomService.getAliasByClientCode(clientCode)
+        return telecomService
+                .getAliasByClientCode(clientCode)
                 .map(rs -> new DataResponse<>(Translator.toLocale(MessageConstant.SUCCESS), rs));
     }
 }

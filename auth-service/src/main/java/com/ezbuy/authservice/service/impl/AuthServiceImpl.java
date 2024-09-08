@@ -1,4 +1,23 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.authservice.service.impl;
+
+import static com.ezbuy.authmodel.constants.AuthConstants.ClientName.HUB_SME;
+import static io.hoangtien2k3.commons.constants.Constants.ActionUser.SYSTEM;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import com.ezbuy.authmodel.constants.AuthConstants;
 import com.ezbuy.authmodel.constants.ErrorCode;
@@ -10,32 +29,37 @@ import com.ezbuy.authmodel.dto.response.GetTwoWayPasswordResponse;
 import com.ezbuy.authmodel.dto.response.IndividualDTO;
 import com.ezbuy.authmodel.dto.response.Permission;
 import com.ezbuy.authmodel.model.*;
-import com.ezbuy.authservice.client.NotiServiceClient;
 import com.ezbuy.authservice.client.KeyCloakClient;
+import com.ezbuy.authservice.client.NotiServiceClient;
 import com.ezbuy.authservice.client.impl.KeyCloakClientImpl;
 import com.ezbuy.authservice.config.KeycloakProvider;
 import com.ezbuy.authservice.constants.ActionLogType;
+import com.ezbuy.authservice.repository.ActionLogRepository;
+import com.ezbuy.authservice.repository.IndOrgPermissionRepo;
+import com.ezbuy.authservice.repository.IndividualRepository;
+import com.ezbuy.authservice.repository.OrganizationRepo;
+import com.ezbuy.authservice.repository.OtpRepository;
+import com.ezbuy.authservice.repository.UserCredentialRepo;
 import com.ezbuy.authservice.service.AuthService;
 import com.ezbuy.authservice.service.IdentifyService;
-import com.ezbuy.authservice.repository.ActionLogRepository;
-import com.ezbuy.authservice.repository.UserCredentialRepo;
-import com.ezbuy.framework.config.CipherManager;
-import com.ezbuy.framework.constants.CommonErrorCode;
-import com.ezbuy.framework.constants.Constants;
-import com.ezbuy.framework.constants.Regex;
-import com.ezbuy.framework.exception.BusinessException;
-import com.ezbuy.framework.model.TokenUser;
-import com.ezbuy.framework.model.UserDTO;
-import com.ezbuy.framework.model.response.DataResponse;
-import com.ezbuy.framework.utils.*;
-import com.ezbuy.authservice.repository.IndividualRepository;
-import com.ezbuy.authservice.repository.OtpRepository;
-import com.ezbuy.authservice.repository.OrganizationRepo;
-import com.ezbuy.authservice.repository.IndOrgPermissionRepo;
 import com.ezbuy.notimodel.dto.request.CreateNotificationDTO;
 import com.ezbuy.notimodel.dto.request.NotiContentDTO;
 import com.ezbuy.notimodel.dto.request.ReceiverDataDTO;
+import io.hoangtien2k3.commons.config.CipherManager;
+import io.hoangtien2k3.commons.constants.CommonErrorCode;
+import io.hoangtien2k3.commons.constants.Constants;
+import io.hoangtien2k3.commons.constants.Regex;
+import io.hoangtien2k3.commons.exception.BusinessException;
+import io.hoangtien2k3.commons.model.TokenUser;
+import io.hoangtien2k3.commons.model.UserDTO;
+import io.hoangtien2k3.commons.model.response.DataResponse;
+import io.hoangtien2k3.commons.utils.*;
 import jakarta.ws.rs.core.Response;
+import java.security.SecureRandom;
+import java.text.DecimalFormat;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.mina.util.Base64;
@@ -57,17 +81,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import reactor.util.function.Tuple2;
-
-import java.security.SecureRandom;
-import java.text.DecimalFormat;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static com.ezbuy.authmodel.constants.AuthConstants.ClientName.HUB_SME;
-import static com.ezbuy.framework.constants.Constants.ActionUser.SYSTEM;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @Slf4j
 @Service
@@ -87,7 +102,7 @@ public class AuthServiceImpl implements AuthService {
     private final OrganizationRepo organizationRepo;
     private final IdentifyService identifyService;
     private final UserCredentialRepo userCredentialRepo;
-    //    private final OrganizationService organizationService;
+    // private final OrganizationService organizationService;
 
     private final CipherManager cipherManager;
     private final ActionLogRepository actionLogRepository;
@@ -108,26 +123,30 @@ public class AuthServiceImpl implements AuthService {
                 .onErrorResume(WebClientResponseException.class, this::handleKeyCloakError);
     }
 
-    //    @Override
-    //    public Mono<Optional<AccessToken>> getToken(ClientLogin clientLogin, ServerWebExchange serverWebExchange) {
-    //        if (DataUtil.isNullOrEmpty(clientLogin.getOrganizationId())) {
-    //            return getTokenWithClientLogin(clientLogin, serverWebExchange);
-    //        } else {
-    //            return blockLoginPartnerLicense(clientLogin.getOrganizationId(), clientLogin.getClientId())
-    //                    .flatMap(hasValidData -> {
-    //                        if (hasValidData) {
-    //                            return getTokenWithClientLogin(clientLogin, serverWebExchange);
-    //                        } else {
-    //                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS,
-    //                                    "invalid.param"));
-    //                        }
-    //                    })
-    //                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR,
-    //                            "can.not.block")));
-    //        }
-    //    }
+    // @Override
+    // public Mono<Optional<AccessToken>> getToken(ClientLogin clientLogin,
+    // ServerWebExchange serverWebExchange) {
+    // if (DataUtil.isNullOrEmpty(clientLogin.getOrganizationId())) {
+    // return getTokenWithClientLogin(clientLogin, serverWebExchange);
+    // } else {
+    // return blockLoginPartnerLicense(clientLogin.getOrganizationId(),
+    // clientLogin.getClientId())
+    // .flatMap(hasValidData -> {
+    // if (hasValidData) {
+    // return getTokenWithClientLogin(clientLogin, serverWebExchange);
+    // } else {
+    // return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS,
+    // "invalid.param"));
+    // }
+    // })
+    // .switchIfEmpty(Mono.error(new
+    // BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR,
+    // "can.not.block")));
+    // }
+    // }
 
-    private Mono<Optional<AccessToken>> getTokenWithClientLogin(ClientLogin clientLogin, ServerWebExchange serverWebExchange) {
+    private Mono<Optional<AccessToken>> getTokenWithClientLogin(
+            ClientLogin clientLogin, ServerWebExchange serverWebExchange) {
         return keyCloakClient
                 .getToken(clientLogin)
                 .flatMap(accessToken -> {
@@ -192,257 +211,267 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Mono<List<Permission>> getPermission(String clientId, String orgId, String userId) {
-        PolicyEvaluationRequest policyEvaluationRequest = new PolicyEvaluationRequest();
-        policyEvaluationRequest.setUserId(userId);
-        policyEvaluationRequest.setEntitlements(false);
         return indOrgPermissionRepo.getOrgIds(userId).flatMap(orgNumber -> {
-            log.info("org number {}", orgNumber);
+            log.debug("Organization number for user {}: {}", userId, orgNumber);
 
             // orgNumber = 1 => 1 doanh nghiệp
             // orgNumber = 0 => owner đấu nối từ mbccs
             if (orgNumber < 2) {
                 return getPermission(clientId);
             }
+
             return kcProvider
                     .getClient(clientId)
-                    .flatMap(client -> {
-                        var allPermissions = kcProvider
-                                .getRealmResource()
-                                .clients()
-                                .get(client.getId())
-                                .authorization()
-                                .policies()
-                                .evaluate(policyEvaluationRequest);
-                        var getOrgPolicies = indOrgPermissionRepo.getAllByUserId(orgId, userId);
-                        return getOrgPolicies
-                                .collectList()
-                                .flatMap(orgPolicies -> Mono.just(findOrgPermissions(allPermissions, orgPolicies)))
-                                .switchIfEmpty(Mono.just(new ArrayList<>()))
-                                .doOnError(err -> log.error("Get permissions error {}", err));
-                    })
                     .switchIfEmpty(
-                            Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "client.not.existed")));
+                            Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "client.not.existed")))
+                    .flatMap(client -> {
+                        PolicyEvaluationRequest policyEvaluationRequest = new PolicyEvaluationRequest();
+                        policyEvaluationRequest.setUserId(userId);
+                        policyEvaluationRequest.setEntitlements(false);
+
+                        Mono<PolicyEvaluationResponse> allPermissionsMono = Mono.fromCallable(() -> kcProvider
+                                        .getRealmResource()
+                                        .clients()
+                                        .get(client.getId())
+                                        .authorization()
+                                        .policies()
+                                        .evaluate(policyEvaluationRequest))
+                                .subscribeOn(Schedulers.boundedElastic());
+
+                        Mono<List<PermissionPolicy>> orgPoliciesMono = indOrgPermissionRepo
+                                .getAllByUserId(orgId, userId)
+                                .collectList();
+
+                        return Mono.zip(allPermissionsMono, orgPoliciesMono)
+                                .map(tuple -> findOrgPermissions(tuple.getT1(), tuple.getT2()))
+                                .defaultIfEmpty(Collections.emptyList())
+                                .doOnError(err -> log.error(
+                                        "Error getting permissions for user {} and client {}: {}",
+                                        userId,
+                                        clientId,
+                                        err.getMessage()));
+                    });
         });
     }
 
     private List<Permission> findOrgPermissions(
             PolicyEvaluationResponse allPermissions, List<PermissionPolicy> orgPermissionPolicies) {
-        List<Permission> permitPermissions = new ArrayList<>();
-        var results = allPermissions.getResults();
-        if (results == null) {
-            return permitPermissions;
+        if (allPermissions.getResults() == null) {
+            return Collections.emptyList();
         }
-        var orgPolicyIdSet = orgPermissionPolicies.stream()
+
+        Set<String> orgPolicyIdSet = orgPermissionPolicies.stream()
                 .map(PermissionPolicy::getPolicyId)
-                .collect(Collectors.toCollection(HashSet::new));
-        for (PolicyEvaluationResponse.EvaluationResultRepresentation pe : results) {
-            var policies = pe.getPolicies();
-            if (!pe.getStatus().equals(DecisionEffect.PERMIT) || policies == null || policies.isEmpty()) {
-                continue;
-            }
-            for (PolicyEvaluationResponse.PolicyResultRepresentation policy : policies) {
-                if (isOrgPermit(policy.getAssociatedPolicies(), orgPolicyIdSet)) {
-                    var resource = pe.getResource();
-                    Permission permission = new Permission();
-                    permission.setRsName(resource.getName());
-                    permission.setRsId(resource.getId());
-                    permitPermissions.add(permission);
-                    break;
-                }
-            }
-        }
-        return permitPermissions;
+                .collect(Collectors.toSet());
+
+        return allPermissions.getResults().stream()
+                .filter(pe -> DecisionEffect.PERMIT.equals(pe.getStatus())
+                        && pe.getPolicies() != null
+                        && !pe.getPolicies().isEmpty())
+                .flatMap(pe -> pe.getPolicies().stream()
+                        .filter(policy -> isOrgPermit(policy.getAssociatedPolicies(), orgPolicyIdSet))
+                        .map(policy -> {
+                            var resource = pe.getResource();
+                            return new Permission(resource.getId(), resource.getName());
+                        })
+                        .limit(1))
+                .collect(Collectors.toList());
     }
 
     private boolean isOrgPermit(
             List<PolicyEvaluationResponse.PolicyResultRepresentation> associatedPolicies, Set<String> policyIds) {
-        for (PolicyEvaluationResponse.PolicyResultRepresentation policy : associatedPolicies) {
-            if (policyIds.contains(policy.getPolicy().getId()) && DecisionEffect.PERMIT.equals(policy.getStatus())) {
-                return true;
-            }
-        }
-        return false;
+        return associatedPolicies.stream()
+                .anyMatch(policy -> policyIds.contains(policy.getPolicy().getId())
+                        && DecisionEffect.PERMIT.equals(policy.getStatus()));
     }
 
-    private Mono handleKeyCloakError(WebClientResponseException err) {
+    private Mono<Throwable> handleKeyCloakError(WebClientResponseException err) {
         String bodyResponse = err.getResponseBodyAsString();
         KeycloakErrorResponse errorResponse =
                 objectMapperUtil.convertStringToObject(bodyResponse, KeycloakErrorResponse.class);
+
         if (errorResponse == null) {
             return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "token.error"));
         }
+
         String errorCode = errorResponse.getError();
         String errorDescription = errorResponse.getErrorDescription();
-        if (!DataUtil.isNullOrEmpty(errorCode) && errorCode.equalsIgnoreCase(Constants.KeyCloakError.INVALID_GRANT)) {
-            if (errorDescription != null && errorDescription.toUpperCase().contains(Constants.KeyCloakError.DISABLED)) {
-                return Mono.error(new BusinessException(ErrorCode.AuthErrorCode.USER_DISABLED, "user.disabled"));
-            } else if (errorDescription != null
-                    && errorDescription.toUpperCase().contains(Constants.KeyCloakError.INVALID)) {
-                return Mono.error(new BusinessException(ErrorCode.AuthErrorCode.INVALID, "user.invalid"));
+
+        if (Constants.KeyCloakError.INVALID_GRANT.equalsIgnoreCase(errorCode)) {
+            if (errorDescription != null) {
+                String upperCaseDescription = errorDescription.toUpperCase();
+                if (upperCaseDescription.contains(Constants.KeyCloakError.DISABLED)) {
+                    return Mono.error(new BusinessException(ErrorCode.AuthErrorCode.USER_DISABLED, "user.disabled"));
+                } else if (upperCaseDescription.contains(Constants.KeyCloakError.INVALID)) {
+                    return Mono.error(new BusinessException(ErrorCode.AuthErrorCode.INVALID, "user.invalid"));
+                }
             }
         }
+
         return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorDescription));
     }
 
-    //    @Override
-    //    @Transactional
-    //    public Mono<Individual> createAccount(CreateOrgAccount createOrgAccount) {
-    //        // check account exit by using idNo
-    //        if (!ValidateUtils.validateRegex(createOrgAccount.getEmail(), Regex.EMAIL_REGEX)) {
-    //            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS,
-    //                    AuthConstants.Message.EMAIL_INVALID));
-    //        }
-    //        if (!ValidateUtils.validateRegex(createOrgAccount.getPhone(), Regex.PHONE_REGEX)) {
-    //            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS,
-    //                    "dto.phone.number.invalid"));
-    //        }
-    //        validateRepresentative(createOrgAccount.getRepresentative());
-    //        // validate identifies of org
-    //        var standardizedOrgIdentifies = settingIdentifies(createOrgAccount.getIdentifies());
-    //        createOrgAccount.setIdentifies(standardizedOrgIdentifies);
-    //        // get primary identify
-    //        String primaryIdentify = getPrimaryIdNo(standardizedOrgIdentifies);
-    //        // check exist identify was trusted
-    //        return identifyService.existedTrustedOrgIdentify(standardizedOrgIdentifies)
-    //                .flatMap(check -> {
-    //                    if (Boolean.TRUE.equals(check)) {
-    //                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS,
-    //                                "identify.trusted"));
-    //                    }
-    //                    return SecurityUtils.getCurrentUser().flatMap(currentUser ->
-    //                            createNewAccount(createOrgAccount, primaryIdentify, currentUser.getUsername()));
-    //                });
+    // @Override
+    // @Transactional
+    // public Mono<Individual> createAccount(CreateOrgAccount createOrgAccount) {
+    // // check account exit by using idNo
+    // if (!ValidateUtils.validateRegex(createOrgAccount.getEmail(),
+    // Regex.EMAIL_REGEX)) {
+    // return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS,
+    // AuthConstants.Message.EMAIL_INVALID));
+    // }
+    // if (!ValidateUtils.validateRegex(createOrgAccount.getPhone(),
+    // Regex.PHONE_REGEX)) {
+    // return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS,
+    // "dto.phone.number.invalid"));
+    // }
+    // validateRepresentative(createOrgAccount.getRepresentative());
+    // // validate identifies of org
+    // var standardizedOrgIdentifies =
+    // settingIdentifies(createOrgAccount.getIdentifies());
+    // createOrgAccount.setIdentifies(standardizedOrgIdentifies);
+    // // get primary identify
+    // String primaryIdentify = getPrimaryIdNo(standardizedOrgIdentifies);
+    // // check exist identify was trusted
+    // return identifyService.existedTrustedOrgIdentify(standardizedOrgIdentifies)
+    // .flatMap(check -> {
+    // if (Boolean.TRUE.equals(check)) {
+    // return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS,
+    // "identify.trusted"));
+    // }
+    // return SecurityUtils.getCurrentUser().flatMap(currentUser ->
+    // createNewAccount(createOrgAccount, primaryIdentify,
+    // currentUser.getUsername()));
+    // });
     //
-    //    }
+    // }
     //
-    //    private Mono<Individual> createNewAccount(CreateOrgAccount createOrgAccount, String username, String
+    // private Mono<Individual> createNewAccount(CreateOrgAccount createOrgAccount,
+    // String username, String
     // createUser) {
-    //        // check exist username
-    //        if (isExistedUsername(username)) {
-    //            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "username.existed"));
-    //        }
-    //        // create new user
-    //        String individualId = UUID.randomUUID().toString();
-    //        String password = PasswordGenerator.generateCommonLangPassword();
-    //        String email = createOrgAccount.getEmail();
-    //        String userId = createUserKeycloak(username, password, email);
-    //        // create new user profile
-    //        Individual individual = new Individual(createOrgAccount.getRepresentative());
-    //        individual.setId(individualId);
-    //        individual.setNew(true);
-    //        individual.setStatus(Constants.Activation.ACTIVE);
-    //        individual.setUserId(userId);
-    //        individual.setUsername(username);
-    //        individual.setEmail(email);
-    //        individual.setPhone(createOrgAccount.getPhone());
-    //        individual.setName(createOrgAccount.getName());
-    //        individual.setPasswordChange(false);
-    //        individual.setCreateBy(createUser);
-    //        individual.setUpdateBy(createUser);
+    // // check exist username
+    // if (isExistedUsername(username)) {
+    // return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS,
+    // "username.existed"));
+    // }
+    // // create new user
+    // String individualId = UUID.randomUUID().toString();
+    // String password = PasswordGenerator.generateCommonLangPassword();
+    // String email = createOrgAccount.getEmail();
+    // String userId = createUserKeycloak(username, password, email);
+    // // create new user profile
+    // Individual individual = new Individual(createOrgAccount.getRepresentative());
+    // individual.setId(individualId);
+    // individual.setNew(true);
+    // individual.setStatus(Constants.Activation.ACTIVE);
+    // individual.setUserId(userId);
+    // individual.setUsername(username);
+    // individual.setEmail(email);
+    // individual.setPhone(createOrgAccount.getPhone());
+    // individual.setName(createOrgAccount.getName());
+    // individual.setPasswordChange(false);
+    // individual.setCreateBy(createUser);
+    // individual.setUpdateBy(createUser);
     //
-    //        // save password into table user_credential
-    //        String hashedPassword = cipherManager.encrypt(password, publicKey);
-    //        UserCredential userCredential = UserCredential.builder()
-    //                .id(UUID.randomUUID().toString())
-    //                .userId(userId)
-    //                .username(username)
-    //                .createBy(username)
-    //                .updateBy(username)
-    //                .pwdChanged(AuthConstants.STATUS_INACTIVE)
-    //                .hashPwd(hashedPassword)
-    //                .isNew(true)
-    //                .status(Constants.STATUS.ACTIVE)
-    //                .build();
+    // // save password into table user_credential
+    // String hashedPassword = cipherManager.encrypt(password, publicKey);
+    // UserCredential userCredential = UserCredential.builder()
+    // .id(UUID.randomUUID().toString())
+    // .userId(userId)
+    // .username(username)
+    // .createBy(username)
+    // .updateBy(username)
+    // .pwdChanged(AuthConstants.STATUS_INACTIVE)
+    // .hashPwd(hashedPassword)
+    // .isNew(true)
+    // .status(Constants.STATUS.ACTIVE)
+    // .build();
     //
-    //        var saveIndividual = individualRepository.save(individual);
-    //        var saveUserCredential = userCredentialRep.save(userCredential);
+    // var saveIndividual = individualRepository.save(individual);
+    // var saveUserCredential = userCredentialRep.save(userCredential);
     //
-    //        return Mono.zip(saveIndividual, saveUserCredential)
-    //                .flatMap(tuple2 -> {
-    //                    CreateOrganizationRequest organizationDTO = buildOrgDTO(createOrgAccount);
-    //                    return organizationService.createOrganization(organizationDTO, SYSTEM, individualId, true)
-    //                            .flatMap(org -> {
-    //                                // sending mail for user
-    //                                CreateNotificationDTO notification = createNotificationDTO(password,
-    //                                        Translator.toLocaleVi("email.title.signup.success"),
-    //                                        Constants.TemplateMail.SIGN_UP_PASSWORD,
-    //                                        ReceiverDataDTO.builder().email(createOrgAccount.getEmail()).build(),
+    // return Mono.zip(saveIndividual, saveUserCredential)
+    // .flatMap(tuple2 -> {
+    // CreateOrganizationRequest organizationDTO = buildOrgDTO(createOrgAccount);
+    // return organizationService.createOrganization(organizationDTO, SYSTEM,
+    // individualId, true)
+    // .flatMap(org -> {
+    // // sending mail for user
+    // CreateNotificationDTO notification = createNotificationDTO(password,
+    // Translator.toLocaleVi("email.title.signup.success"),
+    // Constants.TemplateMail.SIGN_UP_PASSWORD,
+    // ReceiverDataDTO.builder().email(createOrgAccount.getEmail()).build(),
     // username);
-    //                                return notiServiceClient.insertTransmission(notification)
-    //                                        .flatMap(rs -> {
-    //                                            if (rs != null && rs.isPresent() &&
-    //                                                    DataUtil.isNullOrEmpty(rs.get().getErrorCode())
-    //                                                    && !DataUtil.isNullOrEmpty(rs.get().getMessage())) {
-    //                                                log.info("Send email success to {}",
-    //                                                        createOrgAccount.getEmail());
-    //                                                return Mono.just(tuple2.getT1());
-    //                                            }
-    //                                            return Mono.error(new
-    //                                                    BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR,
+    // return notiServiceClient.insertTransmission(notification)
+    // .flatMap(rs -> {
+    // if (rs != null && rs.isPresent() &&
+    // DataUtil.isNullOrEmpty(rs.get().getErrorCode())
+    // && !DataUtil.isNullOrEmpty(rs.get().getMessage())) {
+    // log.info("Send email success to {}",
+    // createOrgAccount.getEmail());
+    // return Mono.just(tuple2.getT1());
+    // }
+    // return Mono.error(new
+    // BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR,
     // "client.noti.service.call.error"));
-    //                                        });
-    //                            });
-    //                }).onErrorResume(error -> {
-    //                    kcProvider.getRealmResource().users().delete(userId);
-    //                    return Mono.error(error);
-    //                });
-    //    }
+    // });
+    // });
+    // }).onErrorResume(error -> {
+    // kcProvider.getRealmResource().users().delete(userId);
+    // return Mono.error(error);
+    // });
+    // }
 
     private void validateRepresentative(IndividualDTO individualDTO) {
         if (DataUtil.isNullOrEmpty(individualDTO.getName())) {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "individual.representative.name.null");
         }
-        List<TenantIdentify> identifies = individualDTO.getIdentifies();
-        if (identifies == null || identifies.isEmpty()) {
+        if (DataUtil.isNullOrEmpty(individualDTO.getIdentifies())) {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "individual.representative.identify.null");
         }
     }
 
     private String getPrimaryIdNo(List<TenantIdentify> identifies) {
-        for (TenantIdentify identify : identifies) {
-            if (Constants.Activation.ACTIVE.equals(identify.getPrimaryIdentify())) {
-                return identify.getIdNo();
-            }
-        }
-        return null;
+        return identifies.stream()
+                .filter(identify -> Constants.Activation.ACTIVE.equals(identify.getPrimaryIdentify()))
+                .findFirst()
+                .map(TenantIdentify::getIdNo)
+                .orElse(null);
     }
 
     private List<TenantIdentify> settingIdentifies(List<TenantIdentify> identifies) {
-        if (identifies == null || identifies.isEmpty()) {
+        if (DataUtil.isNullOrEmpty(identifies)) {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "danh.sach.giay.to.khong.hop.le");
         }
-        List<TenantIdentify> resultIdentifies = new ArrayList<>();
-        int MSTCount = 0;
-        int GPDKCount = 0;
-        for (TenantIdentify identify : identifies) {
-            validateIdentifyOrg(identify);
-            String idType = identify.getIdType();
-            if (AuthConstants.IDType.MST.equalsIgnoreCase(idType)) {
-                MSTCount += 1;
-            } else if (AuthConstants.IDType.GPKD.equalsIgnoreCase(idType)) {
-                GPDKCount += 1;
-            }
-            resultIdentifies.add(identify);
-        }
-        if (MSTCount > 1) {
+
+        Map<String, Long> idTypeCounts = identifies.stream()
+                .peek(this::validateIdentifyOrg)
+                .collect(Collectors.groupingBy(TenantIdentify::getIdType, Collectors.counting()));
+
+        long mstCount = idTypeCounts.getOrDefault(AuthConstants.IDType.MST, 0L);
+        long gpkdCount = idTypeCounts.getOrDefault(AuthConstants.IDType.GPKD, 0L);
+
+        if (mstCount > 1) {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "identify.mst.over.size");
         }
-        if (GPDKCount > 1) {
+        if (gpkdCount > 1) {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "identify.gpkd.over.size");
         }
-        if (MSTCount == 0 && GPDKCount == 0) {
+        if (mstCount == 0 && gpkdCount == 0) {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "indentify.invalid");
         }
-        String primaryIdentifyType = MSTCount == 1 ? AuthConstants.IDType.MST : AuthConstants.IDType.GPKD;
-        for (TenantIdentify identify : resultIdentifies) {
-            if (identify.getIdType().equals(primaryIdentifyType)) {
-                identify.setPrimaryIdentify(Constants.Activation.ACTIVE);
-            } else {
-                identify.setPrimaryIdentify(Constants.Activation.INACTIVE);
-            }
-            identify.setTrustStatus(Constants.Activation.ACTIVE);
-        }
-        return resultIdentifies;
+
+        String primaryIdentifyType = mstCount == 1 ? AuthConstants.IDType.MST : AuthConstants.IDType.GPKD;
+
+        return identifies.stream()
+                .peek(identify -> {
+                    identify.setPrimaryIdentify(
+                            identify.getIdType().equals(primaryIdentifyType)
+                                    ? Constants.Activation.ACTIVE
+                                    : Constants.Activation.INACTIVE);
+                    identify.setTrustStatus(Constants.Activation.ACTIVE);
+                })
+                .collect(Collectors.toList());
     }
 
     private void validateIdentifyOrg(TenantIdentify tenantIdentify) {
@@ -496,7 +525,8 @@ public class AuthServiceImpl implements AuthService {
     public Mono<UserOtp> signUp(SignupRequest signupRequest) {
         String requestEmail = DataUtil.safeTrim(signupRequest.getEmail());
         if (!ValidateUtils.validateRegex(requestEmail, Regex.EMAIL_REGEX)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, AuthConstants.Message.EMAIL_INVALID));
+            return Mono.error(
+                    new BusinessException(CommonErrorCode.INVALID_PARAMS, AuthConstants.Message.EMAIL_INVALID));
         }
         if (isExistedEmail(requestEmail)) {
             return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "signup.email.exist"));
@@ -525,7 +555,8 @@ public class AuthServiceImpl implements AuthService {
                     .insertTransmission(createNotificationDTO)
                     .flatMap(objects -> {
                         if (objects.isPresent()
-                                && ErrorCode.ResponseErrorCode.ERROR_CODE_SUCCESS.equals(objects.get().getErrorCode())
+                                && ErrorCode.ResponseErrorCode.ERROR_CODE_SUCCESS.equals(
+                                        objects.get().getErrorCode())
                                 && !DataUtil.isNullOrEmpty(objects.get().getMessage())) {
                             return Mono.just(otp);
                         }
@@ -538,7 +569,8 @@ public class AuthServiceImpl implements AuthService {
         });
     }
 
-    private CreateNotificationDTO createNotificationDTO(String subTitle, String title, String template, ReceiverDataDTO data, String externalData) {
+    private CreateNotificationDTO createNotificationDTO(
+            String subTitle, String title, String template, ReceiverDataDTO data, String externalData) {
         CreateNotificationDTO createNotificationDTO = new CreateNotificationDTO();
         createNotificationDTO.setSender(SYSTEM);
         createNotificationDTO.setSeverity(AuthConstants.Notification.SEVERITY);
@@ -567,14 +599,21 @@ public class AuthServiceImpl implements AuthService {
             return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "forgot.pass.email"));
         }
         String otpValue = generateOtpValue();
-        List<UserRepresentation> listUser = kcProvider.getRealmResource().users().search(userName, true);
+        List<UserRepresentation> listUser =
+                kcProvider.getRealmResource().users().search(userName, true);
         UserRepresentation user = listUser.getFirst();
         String requestEmail = user.getEmail();
         CreateNotificationDTO createNotificationDTO = createNotificationDTO(
-                otpValue, Translator.toLocaleVi("email.title.forgot.password"),
-                Constants.TemplateMail.FORGOT_PASSWORD, ReceiverDataDTO.builder().userId(user.getId()).email(requestEmail).build(),
+                otpValue,
+                Translator.toLocaleVi("email.title.forgot.password"),
+                Constants.TemplateMail.FORGOT_PASSWORD,
+                ReceiverDataDTO.builder()
+                        .userId(user.getId())
+                        .email(requestEmail)
+                        .build(),
                 null);
-        return otpRepository.currentTimeDB()
+        return otpRepository
+                .currentTimeDB()
                 .flatMap(time -> {
                     UserOtp otpBuild = UserOtp.builder()
                             .id(String.valueOf(UUID.randomUUID()))
@@ -587,21 +626,25 @@ public class AuthServiceImpl implements AuthService {
                             .expTime(time.plusMinutes(Constants.Otp.EXP_MINUTE))
                             .type(Constants.Otp.FORGOT_PASSWORD)
                             .build();
-                    AppUtils.runHiddenStream(otpRepository.disableOtp(requestEmail, Constants.Otp.FORGOT_PASSWORD, SYSTEM));
+                    AppUtils.runHiddenStream(
+                            otpRepository.disableOtp(requestEmail, Constants.Otp.FORGOT_PASSWORD, SYSTEM));
                     AppUtils.runHiddenStream(generateOtpAndSave(otpBuild));
                     return notiServiceClient
                             .insertTransmission(createNotificationDTO)
                             .flatMap(objects -> {
                                 if (objects.isPresent()
-                                        && ErrorCode.ResponseErrorCode.ERROR_CODE_SUCCESS.equals(objects.get().getErrorCode())
+                                        && ErrorCode.ResponseErrorCode.ERROR_CODE_SUCCESS.equals(
+                                                objects.get().getErrorCode())
                                         && !DataUtil.isNullOrEmpty(objects.get().getMessage())) {
                                     return Mono.just(otpBuild);
                                 }
-                                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, (objects.isPresent())
-                                        ? objects.get().getMessage() : "params.invalid"));
+                                return Mono.error(new BusinessException(
+                                        CommonErrorCode.INVALID_PARAMS,
+                                        (objects.isPresent()) ? objects.get().getMessage() : "params.invalid"));
                             });
                 })
-                .onErrorResume(throwable -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "noti.service.error")));
+                .onErrorResume(throwable ->
+                        Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "noti.service.error")));
     }
 
     private Mono<UserOtp> generateOtpAndSave(UserOtp otp) {
@@ -689,9 +732,10 @@ public class AuthServiceImpl implements AuthService {
             ResetPasswordRequest resetPasswordRequest, ServerWebExchange serverWebExchange) {
         String requestEmail = DataUtil.safeTrim(resetPasswordRequest.getEmail());
         String requestOtp = DataUtil.safeTrim(resetPasswordRequest.getOtp());
-        //        if (!ValidateUtils.validateRegex(requestEmail, Regex.EMAIL_REGEX)) {
-        //            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "dto.email.invalid"));
-        //        }
+        // if (!ValidateUtils.validateRegex(requestEmail, Regex.EMAIL_REGEX)) {
+        // return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS,
+        // "dto.email.invalid"));
+        // }
         if (!requestOtp.matches(Regex.OTP_REGEX)) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "dto.otp.invalid"));
         }
@@ -727,7 +771,8 @@ public class AuthServiceImpl implements AuthService {
                             .getUserCredentialByUserName(requestEmail, Constants.STATUS.ACTIVE)
                             .collectList()
                             .flatMap(userCredentials -> {
-                                String hashedPasswordHubSme = cipherManager.encrypt(resetPasswordRequest.getPassword(), publicKey);
+                                String hashedPasswordHubSme =
+                                        cipherManager.encrypt(resetPasswordRequest.getPassword(), publicKey);
                                 UserCredential userCredential = new UserCredential();
                                 if (userCredentials.isEmpty()) {
                                     userCredential.setId(String.valueOf(UUID.randomUUID()));
@@ -781,7 +826,8 @@ public class AuthServiceImpl implements AuthService {
                                 individual.setNew(false);
                                 return individualRepository.save(individual);
                             })
-                            .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, Translator.toLocaleVi("individual.not.exits"))));
+                            .switchIfEmpty(Mono.error(new BusinessException(
+                                    CommonErrorCode.NOT_FOUND, Translator.toLocaleVi("individual.not.exits"))));
                     // update user credential
                     Mono<UserCredential> updateCredential = userCredentialRepo
                             .getUserCredentialByUserName(tokenUser.getUsername(), Constants.STATUS.ACTIVE)
@@ -816,7 +862,8 @@ public class AuthServiceImpl implements AuthService {
                                     CommonErrorCode.BAD_REQUEST,
                                     Translator.toLocaleVi("change-pass.old-password.invalid")));
                     // zip mono
-                    return Mono.zip(updateIndividual, getTokenInfo, updateCredential).map(Tuple2::getT2);
+                    return Mono.zip(updateIndividual, getTokenInfo, updateCredential)
+                            .map(Tuple2::getT2);
                 })
                 .flatMap(tokenUser -> {
                     CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
@@ -966,8 +1013,10 @@ public class AuthServiceImpl implements AuthService {
         }
         return actionLogRepository
                 .countLoginInOneDay(request.getDateReport(), ActionLogType.LOGIN)
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "action-log.login.not.found")))
-                .flatMap(rs -> Mono.just(GetActionLoginReportResponse.builder().loginCount(rs).build()));
+                .switchIfEmpty(
+                        Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "action-log.login.not.found")))
+                .flatMap(rs -> Mono.just(
+                        GetActionLoginReportResponse.builder().loginCount(rs).build()));
     }
 
     @Override
@@ -988,7 +1037,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Mono<DataResponse<String>> generateOtp(ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange) {
+    public Mono<DataResponse<String>> generateOtp(
+            ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange) {
         String email = DataUtil.safeTrim(confirmOTPRequest.getEmail());
         String type = DataUtil.safeTrim(confirmOTPRequest.getType());
         String otpValue = generateOtpValue();

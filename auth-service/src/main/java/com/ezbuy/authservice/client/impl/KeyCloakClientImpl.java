@@ -1,3 +1,18 @@
+/*
+ * Copyright 2024 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ezbuy.authservice.client.impl;
 
 import com.ezbuy.authmodel.constants.AuthConstants;
@@ -10,12 +25,15 @@ import com.ezbuy.authmodel.dto.response.Permission;
 import com.ezbuy.authservice.client.KeyCloakClient;
 import com.ezbuy.authservice.client.properties.KeycloakClientProperties;
 import com.ezbuy.authservice.config.KeycloakProvider;
-import com.ezbuy.framework.constants.CommonErrorCode;
-import com.ezbuy.framework.constants.Constants;
-import com.ezbuy.framework.exception.BusinessException;
-import com.ezbuy.framework.utils.DataUtil;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import io.hoangtien2k3.commons.constants.CommonErrorCode;
+import io.hoangtien2k3.commons.constants.Constants;
+import io.hoangtien2k3.commons.exception.BusinessException;
+import io.hoangtien2k3.commons.utils.DataUtil;
+import java.lang.reflect.Type;
+import java.util.*;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.representations.idm.GroupRepresentation;
@@ -40,13 +58,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -61,6 +72,15 @@ public class KeyCloakClientImpl implements KeyCloakClient {
     @Value("${keycloak.serverUrl}")
     private String keycloakUrl;
 
+    @Value("${keycloak.realm}")
+    public String realm;
+
+    @Value("${keycloak.clientId}")
+    public String clientID;
+
+    @Value("${keycloak.clientSecret}")
+    public String clientSecret;
+
     @Value("${keycloak.host}")
     private String hostKeycloak;
 
@@ -72,15 +92,20 @@ public class KeyCloakClientImpl implements KeyCloakClient {
         formParameters.add(OAuth2ParameterNames.PASSWORD, loginRequest.getPassword());
         String clientId = loginRequest.getClientId();
         if (!DataUtil.isNullOrEmpty(clientId)) {
-            return keycloakProvider.getClientWithSecret(clientId)
+            return keycloakProvider
+                    .getClientWithSecret(clientId)
                     .flatMap(clientRepresentation -> {
                         formParameters.add(OAuth2ParameterNames.CLIENT_ID, clientId);
                         formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, clientRepresentation.getSecret());
                         return requestToken(formParameters);
-                    }).switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "client.id.not.valid")));
+                    })
+                    .switchIfEmpty(
+                            Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "client.id.not.valid")));
         } else {
-            formParameters.add(OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().getClientId());
-            formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().getClientSecret());
+            formParameters.add(
+                    OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().getClientId());
+            formParameters.add(
+                    OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().getClientSecret());
         }
         return requestToken(formParameters);
     }
@@ -101,13 +126,16 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                     if (!DataUtil.isNullOrEmpty(redirectUrl)) {
                         formParameters.add(OAuth2ParameterNames.REDIRECT_URI, redirectUrl);
                     } else {
-                        formParameters.add(OAuth2ParameterNames.REDIRECT_URI, clientRepresentation.getRedirectUris().getFirst());
+                        formParameters.add(
+                                OAuth2ParameterNames.REDIRECT_URI,
+                                clientRepresentation.getRedirectUris().getFirst());
                     }
                     formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, clientRepresentation.getSecret());
                     formParameters.add(OAuth2ParameterNames.CLIENT_ID, clientLogin.getClientId());
                     return requestToken(formParameters);
                 })
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "login.client.id.not.exist")));
+                .switchIfEmpty(
+                        Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "login.client.id.not.exist")));
     }
 
     @Override
@@ -166,7 +194,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                     .bodyToMono(Object.class)
                     .switchIfEmpty(Mono.just(true))
                     .map(response -> true)
-                    .doOnError(err -> log.error("Logout error {}", err));
+                    .doOnError(err -> log.error("Logout error: ", err));
         });
     }
 
@@ -200,7 +228,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
     }
 
     private Mono<Optional<AccessToken>> requestToken(MultiValueMap<String, String> formParameters) {
-        log.info("formParameters {}", formParameters);
+        log.info("formParameters: {}", formParameters);
         return keycloak.post()
                 .uri("/token")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -211,19 +239,16 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                                 new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .bodyToMono(AccessToken.class)
                 .map(Optional::ofNullable)
-                .doOnError(err -> {
-                    log.error("Keycloak get token error", err);
-                });
+                .doOnError(err -> log.error("Keycloak get token error", err));
     }
 
     public Mono<List<ClientResource>> getClientResources(String clientId, String token) {
-        String url = keycloakUrl + "/realms/ezbuy-server/clients/" + clientId + "/authz/resource-server/resource";
+        String url = keycloakUrl + "/realm/" + realm + "/clients/" + clientId + "/authz/resource-server/resource";
         return keycloak.get()
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {
-                })
+                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {})
                 .map(result -> result.stream()
                         .map(record -> {
                             ClientResource res = new ClientResource();
@@ -236,28 +261,26 @@ public class KeyCloakClientImpl implements KeyCloakClient {
 
     @Override
     public Mono<List<GroupPolicyRepresentation>> getGroupPolicies(String clientId, String token) {
-        String url = keycloakUrl + "/realms/ezbuy-server/clients/" + clientId
+        String url = keycloakUrl + "/realm/" + realm + "/clients/" + clientId
                 + "/authz/resource-server/policy/group?permission=false";
         return keycloak.get()
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<GroupPolicyRepresentation>>() {
-                })
-                .onErrorReturn(new ArrayList<GroupPolicyRepresentation>());
+                .bodyToMono(new ParameterizedTypeReference<List<GroupPolicyRepresentation>>() {})
+                .onErrorReturn(new ArrayList<>());
     }
 
     @Override
     public Mono<List<RolePolicyRepresentation>> getRolePolicies(String clientId, String token) {
-        String url = keycloakUrl + "/realms/ezbuy-server/clients/" + clientId
+        String url = keycloakUrl + "/realm/" + realm + "/clients/" + clientId
                 + "/authz/resource-server/policy/role?permission=false";
         return keycloak.get()
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<RolePolicyRepresentation>>() {
-                })
-                .onErrorReturn(new ArrayList<RolePolicyRepresentation>());
+                .bodyToMono(new ParameterizedTypeReference<List<RolePolicyRepresentation>>() {})
+                .onErrorReturn(new ArrayList<>());
     }
 
     @Override
@@ -299,7 +322,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
     }
 
     public Mono<String> createUserInKeycloak(CreateUserKeycloakRequest request, String token) {
-        String url = keycloakUrl + "/realms/ezbuy-server/users/";
+        String url = keycloakUrl + "/realm/" + realm + "/users/";
         return keycloak.post()
                 .uri(url)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -311,12 +334,12 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                                 new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .toEntity(Object.class)
                 .flatMap(response -> {
-                    String location = response.getHeaders().get("Location").get(0);
+                    String location = Objects.requireNonNull(
+                                    response.getHeaders().get("Location"))
+                            .getFirst();
                     return Mono.just(location.substring(location.lastIndexOf("/") + 1));
                 })
-                .doOnError(err -> {
-                    log.error("Keycloak create user error", err);
-                });
+                .doOnError(err -> log.error("Keycloak create user error", err));
     }
 
     @Override
@@ -325,7 +348,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
             String userId,
             String clientId,
             String token) {
-        String url = keycloakUrl + "/realms/ezbuy-server/users/" + userId + "/role-mappings/clients/" + clientId;
+        String url = keycloakUrl + "/realms/" + realm + "/users/" + userId + "/role-mappings/clients/" + clientId;
 
         return keycloak.post()
                 .uri(url)
@@ -338,15 +361,12 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                                 new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .toEntity(Object.class)
                 .flatMap(response -> Mono.just(true))
-                .doOnError(err -> {
-                    log.error("Keycloak create role user error", err);
-                });
+                .doOnError(err -> log.error("Keycloak create role user error", err));
     }
 
     @Override
     public Mono<Boolean> updateUser(UpdateUserKeycloakRequest request, String token) {
-        String url = keycloakUrl + "/realms/ezbuy-server/users/" + request.getId();
-
+        String url = keycloakUrl + "/realms/" + realm + "/users/" + request.getId();
         return keycloak.put()
                 .uri(url)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -358,15 +378,12 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                                 new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .toEntity(Object.class)
                 .flatMap(response -> Mono.just(true))
-                .doOnError(err -> {
-                    log.error("Keycloak update user error", err);
-                });
+                .doOnError(err -> log.error("Keycloak update user error", err));
     }
 
     @Override
     public Mono<Boolean> removeGroupToUser(String groupId, String userId, String token) {
-        String url = keycloakUrl + "/realms/ezbuy-server/users/" + userId + "/groups/" + groupId;
-
+        String url = keycloakUrl + "/realms/" + realm + "/users/" + userId + "/groups/" + groupId;
         return keycloak.delete()
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -376,15 +393,12 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                                 new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .toEntity(Object.class)
                 .flatMap(response -> Mono.just(true))
-                .doOnError(err -> {
-                    log.error("Keycloak Remove group to user error", err);
-                });
+                .doOnError(err -> log.error("Keycloak Remove group to user error", err));
     }
 
     @Override
     public Mono<Boolean> addGroupToUser(String groupId, String userId, String token) {
-        String url = keycloakUrl + "/realms/ezbuy-server/users/" + userId + "/groups/" + groupId;
-
+        String url = keycloakUrl + "/realms/" + realm + "/users/" + userId + "/groups/" + groupId;
         return keycloak.put()
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -394,9 +408,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                                 new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .toEntity(Object.class)
                 .flatMap(response -> Mono.just(true))
-                .doOnError(err -> {
-                    log.error("Keycloak Add group to user error", err);
-                });
+                .doOnError(err -> log.error("Keycloak Add group to user error", err));
     }
 
     @Override
@@ -405,8 +417,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
             String userId,
             String clientId,
             String token) {
-        String url = keycloakUrl + "/realms/ezbuy-server/users/" + userId + "/role-mappings/clients/" + clientId;
-
+        String url = keycloakUrl + "/realms/" + realm + "/users/" + userId + "/role-mappings/clients/" + clientId;
         return keycloak.method(HttpMethod.DELETE)
                 .uri(url)
                 .body(BodyInserters.fromValue(roleUserKeycloakRequests))
@@ -417,14 +428,12 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                                 new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .toEntity(Object.class)
                 .flatMap(response -> Mono.just(true))
-                .doOnError(err -> {
-                    log.error("Keycloak Remove role user error", err);
-                });
+                .doOnError(err -> log.error("Keycloak Remove role user error", err));
     }
 
     @Override
     public Mono<List<RoleDTO>> getRoleNameByUserIdAndClientId(String userId, String clientId, String token) {
-        String url = keycloakUrl + "/realms/ezbuy-server/users/" + userId + "/role-mappings/clients/" + clientId
+        String url = keycloakUrl + "/realms/" + realm + "/users/" + userId + "/role-mappings/clients/" + clientId
                 + "/composite";
         return keycloak.get()
                 .uri(url)
@@ -436,11 +445,9 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .bodyToMono(String.class)
                 .map(response -> {
                     Gson gson = new Gson();
-                    Type listType = new TypeToken<List<RoleDTO>>() {
-                    }.getType();
+                    Type listType = new TypeToken<List<RoleDTO>>() {}.getType();
                     log.info("response when login {}", response);
-                    List<RoleDTO> roleDTOS = gson.fromJson(response, listType);
-                    return roleDTOS;
+                    return gson.<List<RoleDTO>>fromJson(response, listType);
                 })
                 .doOnError(err -> log.error("Call keycloak error ", err))
                 .onErrorResume(throwable -> Mono.error(
@@ -449,8 +456,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
 
     @Override
     public Mono<UserRepresentation> getUser(String userId, String token) {
-        String url = keycloakUrl + "/realms/ezbuy-server/users/" + userId;
-
+        String url = keycloakUrl + "/realms/" + realm + "/users/" + userId;
         return keycloak.get()
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -459,23 +465,18 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                         .flatMap(errorBody -> Mono.error(
                                 new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                 .bodyToMono(UserRepresentation.class)
-                .doOnError(err -> {
-                    log.error("Get delete user error", err);
-                });
+                .doOnError(err -> log.error("Get delete user error", err));
     }
 
     public Mono<List<String>> getResourcesByClient(String clientId, String token) {
-        String url = keycloakUrl + "/realms/ezbuy-server/clients/" + clientId
+        String url = keycloakUrl + "/realms/" + realm + "/clients/" + clientId
                 + "/authz/resource-server/resource?deep=true&first=0&max=500";
         return keycloak.get()
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {
-                })
-                .doOnError(err -> {
-                    log.error("Error when get all resource ", err);
-                })
+                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {})
+                .doOnError(err -> log.error("Error when get all resource ", err))
                 .map(result -> result.stream()
                         .map(record -> (String) record.get("name"))
                         .collect(Collectors.toList()));
@@ -483,15 +484,13 @@ public class KeyCloakClientImpl implements KeyCloakClient {
 
     @Override
     public Mono<String> getGroupNameById(String groupId, String token) {
-        String url = keycloakUrl + "/realms/ezbuy-server/groups/" + groupId;
+        String url = keycloakUrl + "/realms/" + realm + "/groups/" + groupId;
         return keycloak.get()
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
                 .bodyToMono(GroupRepresentation.class)
-                .doOnError(err -> {
-                    log.error("Error when get group by id ", err);
-                })
+                .doOnError(err -> log.error("Error when get group by id ", err))
                 .map(GroupRepresentation::getName);
     }
 
@@ -501,7 +500,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
             String clientId, String token, RoleRepresentation roleRepresentation, String userId) {
         List<RoleRepresentation> roleRepresentations = new ArrayList<>();
         roleRepresentations.add(roleRepresentation);
-        String url = keycloakUrl + "/realms/ezbuy-server/users/" + userId + "/role-mappings/clients/" + clientId;
+        String url = keycloakUrl + "/realm/" + realm + "/users/" + userId + "/role-mappings/clients/" + clientId;
         return keycloak.post()
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -514,6 +513,6 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .bodyToMono(Object.class)
                 .switchIfEmpty(Mono.just(true))
                 .map(response -> true)
-                .doOnError(err -> log.error("Logout error {}", err));
+                .doOnError(err -> log.error("Logout error: ", err));
     }
 }
