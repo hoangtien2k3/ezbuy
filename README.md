@@ -1,6 +1,6 @@
 <div align="center">
 
-![Ezbuy](docs/image/ezbuy-logo.png) 
+<img src="docs/image/ezbuy-logo.png" alt="Ezbuy" width="200" />
 
 [📚 Docs]() • [💬 Slack]() • [✨ Live Demo]()
 
