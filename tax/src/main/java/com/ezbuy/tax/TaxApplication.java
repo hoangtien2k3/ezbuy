@@ -1,17 +1,14 @@
 package com.ezbuy.tax;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class TaxApplication {
 
     public static void main(String[] args) {
-//        SpringApplication.run(TaxApplication.class, args);
+        // SpringApplication.run(TaxApplication.class, args);
 
         // Lấy thời gian hiện tại
         LocalDateTime now = LocalDateTime.now();
@@ -24,6 +21,5 @@ public class TaxApplication {
 
         // In ra kết quả
         System.out.println("Thời gian hiện tại: " + formattedDateTime);
-
     }
 }
