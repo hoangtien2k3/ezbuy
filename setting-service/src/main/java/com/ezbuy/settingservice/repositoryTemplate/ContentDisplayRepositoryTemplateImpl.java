@@ -1,18 +1,3 @@
-/*
- * Copyright 2024 the original author Hoàng Anh Tiến.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.ezbuy.settingservice.repositoryTemplate;
 
 import com.ezbuy.settingmodel.dto.ContentDisplayDTO;
@@ -24,11 +9,9 @@ import io.hoangtien2k3.commons.repository.BaseTemplateRepository;
 import io.hoangtien2k3.commons.utils.DataUtil;
 import io.hoangtien2k3.commons.utils.SQLUtils;
 import io.hoangtien2k3.commons.utils.SortingUtils;
-
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
@@ -42,21 +25,20 @@ public class ContentDisplayRepositoryTemplateImpl extends BaseTemplateRepository
     @Override
     public Mono<List<ContentDisplayDTO>> getAllByPageId(String pageId) {
         Map<String, Object> params = new HashMap<>();
-        String query = """
-                 with recursive n as (
-                       select *\s
-                   from content_display where page_id = :pageId and status = 1 and parent_id is null
-                union all
-                select c.*
-                    from n
-                    join content_display c on c.parent_id = n.id and c.status = 1
-                    )
-                    select * FROM n
-                """;
+        String query =
+                """
+        with recursive n as (
+              select *\s
+          from content_display where page_id = :pageId and status = 1 and parent_id is null
+        union all
+        select c.*
+            from n
+            join content_display c on c.parent_id = n.id and c.status = 1
+            )
+            select * FROM n
+        """;
         params.put("pageId", pageId);
-        return listQuery(query, params, ContentDisplayDTO.class)
-                .collectList()
-                .map(this::getParentContents);
+        return listQuery(query, params, ContentDisplayDTO.class).collectList().map(this::getParentContents);
     }
 
     private List<ContentDisplayDTO> getParentContents(List<ContentDisplayDTO> displayDTOS) {
@@ -113,17 +95,18 @@ public class ContentDisplayRepositoryTemplateImpl extends BaseTemplateRepository
     @Override
     public Mono<ContentDisplayDTO> getContentWithParentId(String id) {
         Map<String, Object> params = new HashMap<>();
-        String query = """
-                 with recursive n as (
-                       select *\s
-                   from content_display where id = :id and status = 1
-                union all
-                select c.*
-                    from n
-                    join content_display c on c.parent_id = n.id and c.status = 1\s
-                    )
-                    select * FROM n order by display_order
-                """;
+        String query =
+                """
+        with recursive n as (
+              select *\s
+          from content_display where id = :id and status = 1
+        union all
+        select c.*
+            from n
+            join content_display c on c.parent_id = n.id and c.status = 1\s
+            )
+            select * FROM n order by display_order
+        """;
         params.put("id", id);
         return listQuery(query, params, ContentDisplayDTO.class)
                 .switchIfEmpty(
@@ -141,39 +124,39 @@ public class ContentDisplayRepositoryTemplateImpl extends BaseTemplateRepository
     @Override
     public Mono<List<ContentDisplayDTO>> getOriginComponentDetails(String name) {
         Map<String, Object> params = new HashMap<>();
-        String query = """
-                 with recursive n as (
-                       select *\s
-                   from content_display \
-                where id in (select cd.id from content_display cd where cd.parent_id is null and cd.status = 1 and cd.is_original = 1 and cd.name like CONCAT('%',:name, '%') )  \
-                 and status = 1
-                union all
-                select c.*
-                    from n
-                    join content_display c on c.parent_id = n.id and c.status =1\s
-                    )
-                    select * FROM n order by name
-                """;
+        String query =
+                """
+        with recursive n as (
+              select *\s
+          from content_display \
+        where id in (select cd.id from content_display cd where cd.parent_id is null and cd.status = 1 and cd.is_original = 1 and cd.name like CONCAT('%',:name, '%') )  \
+        and status = 1
+        union all
+        select c.*
+            from n
+            join content_display c on c.parent_id = n.id and c.status =1\s
+            )
+            select * FROM n order by name
+        """;
         params.put("name", SQLUtils.replaceSpecialDigit(name));
-        return listQuery(query, params, ContentDisplayDTO.class)
-                .collectList()
-                .map(this::getParentContents);
+        return listQuery(query, params, ContentDisplayDTO.class).collectList().map(this::getParentContents);
     }
 
     @Override
     public Flux<ContentDisplay> getOldContents(String pageId) {
         Map<String, Object> params = new HashMap<>();
-        String query = """
-                 with recursive n as (
-                       select *\s
-                   from content_display where id IN (select pc.component_id from page_component pc where pc.page_id = :pageId )
-                union all
-                select c.*
-                    from n
-                    join content_display c on c.parent_id = n.id
-                    )
-                    select * FROM n
-                """;
+        String query =
+                """
+        with recursive n as (
+              select *\s
+          from content_display where id IN (select pc.component_id from page_component pc where pc.page_id = :pageId )
+        union all
+        select c.*
+            from n
+            join content_display c on c.parent_id = n.id
+            )
+            select * FROM n
+        """;
         params.put("pageId", pageId);
         return listQuery(query, params, ContentDisplay.class);
     }

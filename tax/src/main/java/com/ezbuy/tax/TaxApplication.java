@@ -1,27 +1,29 @@
-/*
- * Copyright 2024 the original author Hoàng Anh Tiến.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.ezbuy.tax;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+
 @SpringBootApplication
 public class TaxApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(TaxApplication.class, args);
+//        SpringApplication.run(TaxApplication.class, args);
+
+        // Lấy thời gian hiện tại
+        LocalDateTime now = LocalDateTime.now();
+
+        // Định dạng ngày giờ theo kiểu dd/MM/yyyy HH:mm:ss
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
+        // Chuyển thời gian thành chuỗi theo định dạng
+        String formattedDateTime = now.format(formatter);
+
+        // In ra kết quả
+        System.out.println("Thời gian hiện tại: " + formattedDateTime);
+
     }
 }
