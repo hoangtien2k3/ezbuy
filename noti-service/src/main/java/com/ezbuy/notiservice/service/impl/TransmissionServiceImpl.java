@@ -1,18 +1,3 @@
-/*
- * Copyright 2024 the original author Hoàng Anh Tiến.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.ezbuy.notiservice.service.impl;
 
 import static com.ezbuy.notimodel.common.ConstValue.Channel.CHANNEL_EMAIL;
@@ -323,25 +308,27 @@ public class TransmissionServiceImpl implements TransmissionService {
             if (DataUtil.isNullOrEmpty(sortingString)) {
                 sortingString = "";
             }
-            String query = """
-                    SELECT nc.*, tr.state
-                    FROM notification_content nc
-                    INNER JOIN notification n ON n.notification_content_id = nc.id
-                    INNER JOIN notification_category nca ON n.category_id = nca.id
-                    INNER JOIN transmission tr ON tr.notification_id = n.id
-                    INNER JOIN channel c ON tr.channel_id = c.id
-                    WHERE tr.receiver = :receiver
-                    AND tr.status = 1
-                    AND tr.state IN ('NEW', 'UNREAD', 'READ')
-                    AND nc.status = 1
-                    AND n.status = 1
-                    AND nca.status = 1
-                    AND c.status = 1
-                    AND c.type = 'REST'
-                    AND nca.type = :categoryType
-                    ORDER BY %s
-                    LIMIT :pageSize OFFSET :index
-                    """.formatted(sortingString);
+            String query =
+                    """
+          SELECT nc.*, tr.state
+          FROM notification_content nc
+          INNER JOIN notification n ON n.notification_content_id = nc.id
+          INNER JOIN notification_category nca ON n.category_id = nca.id
+          INNER JOIN transmission tr ON tr.notification_id = n.id
+          INNER JOIN channel c ON tr.channel_id = c.id
+          WHERE tr.receiver = :receiver
+          AND tr.status = 1
+          AND tr.state IN ('NEW', 'UNREAD', 'READ')
+          AND nc.status = 1
+          AND n.status = 1
+          AND nca.status = 1
+          AND c.status = 1
+          AND c.type = 'REST'
+          AND nca.type = :categoryType
+          ORDER BY %s
+          LIMIT :pageSize OFFSET :index
+          """
+                            .formatted(sortingString);
             BigDecimal index = (new BigDecimal(pageIndex - 1)).multiply(new BigDecimal(pageSize));
             return template.getDatabaseClient()
                     .sql(query)
