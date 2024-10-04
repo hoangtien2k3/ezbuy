@@ -19,7 +19,7 @@ public enum ServiceType {
 
     @JsonCreator
     public static boolean statusOf(Integer value) {
-        return Arrays.stream(values()).anyMatch(v -> v.value.equals(value));
+        return Arrays.stream(values()).anyMatch(v -> v.value.equals(String.valueOf(value)));
     }
 
     public String value() {

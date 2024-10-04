@@ -8,7 +8,7 @@ import com.ezbuy.settingmodel.request.SearchMarketInfoRequest;
 import com.ezbuy.settingmodel.request.v2.GetByServiceRequestV2;
 import com.ezbuy.settingmodel.response.SearchMarketInfoResponse;
 import com.ezbuy.settingservice.service.MarketInfoService;
-import io.hoangtien2k3.commons.model.response.DataResponse;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

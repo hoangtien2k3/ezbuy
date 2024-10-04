@@ -1,10 +1,10 @@
-<div align="center">
+<h3 align="center">
+<img src="docs/image/ezbuy_banner.png" alt="Ezbuy" width="300" />
 
-<img src="docs/image/ezbuy_white.png" alt="Ezbuy" width="100" />
-
-[📚 Docs]() • [💬 Slack]() • [✨ Live Demo]()
-
-</div>
+<a href="https://github.com/hoangtien2k3/ezbuy/blob/master/docs/README.md">📚Docs</a> |
+<a href="https://github.com/hoangtien2k3/ezbuy/blob/master/docs/README.md">💬Chat</a> |
+<a href="https://github.com/hoangtien2k3/ezbuy/blob/master/docs/README.md">✨Live Demo</a>
+</h3>
 
 # 🛍️ EzBuy Server - Ecommerce Backend
 

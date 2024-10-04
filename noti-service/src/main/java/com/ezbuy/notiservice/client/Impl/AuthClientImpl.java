@@ -2,8 +2,8 @@ package com.ezbuy.notiservice.client.Impl;
 
 import com.ezbuy.notiservice.client.AuthClient;
 import com.fasterxml.jackson.core.type.TypeReference;
-import io.hoangtien2k3.commons.client.BaseRestClient;
-import io.hoangtien2k3.commons.utils.DataUtil;
+import io.hoangtien2k3.reactify.DataUtil;
+import io.hoangtien2k3.reactify.client.BaseRestClient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

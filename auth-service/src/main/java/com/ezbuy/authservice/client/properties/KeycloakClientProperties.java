@@ -1,7 +1,7 @@
 package com.ezbuy.authservice.client.properties;
 
-import io.hoangtien2k3.commons.client.properties.WebClientProperties;
-import io.hoangtien2k3.commons.filter.properties.KeyCloakProperties;
+import io.hoangtien2k3.reactify.client.properties.WebClientProperties;
+import io.hoangtien2k3.reactify.filter.properties.KeyCloakProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

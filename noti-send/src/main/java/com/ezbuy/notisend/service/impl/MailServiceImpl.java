@@ -6,7 +6,7 @@ import com.ezbuy.notimodel.dto.EmailResultDTO;
 import com.ezbuy.notimodel.dto.TransmissionNotiDTO;
 import com.ezbuy.notisend.constants.CommonConstants;
 import com.ezbuy.notisend.service.MailService;
-import io.hoangtien2k3.commons.utils.DataUtil;
+import io.hoangtien2k3.reactify.DataUtil;
 import jakarta.mail.internet.MimeMessage;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;

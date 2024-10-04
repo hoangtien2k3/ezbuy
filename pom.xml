@@ -52,7 +52,7 @@
         <module>coupon</module>
         <module>customer</module>
         <module>data</module>
-        <module>fw-commons</module>
+        <module>reactify</module>
         <module>order</module>
         <module>payment</module>
         <module>product</module>
