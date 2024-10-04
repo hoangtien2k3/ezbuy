@@ -24,10 +24,7 @@ public class CommonConstants {
             Map.entry(TemplateMail.ACCOUNT_ACTIVE, "mail/CreateUser.html"),
             Map.entry(TemplateMail.EMPLOYEE_REGISTER_SUCCESS, "mail/ActiveAccount.html"),
             Map.entry(TemplateMail.VERIFY_ACCOUNT_SUCESS, "mail/TransmissionMailVerifySuccess.html"), // path file html
-            // thong bao
-            // thanh cong
             Map.entry(TemplateMail.NOTI_VERIFY_ACCOUNT, "mail/TransmissionMailNotiVerify.html") // path file html thong
-            // bao thanh cong
             );
 
     public static final String TEMP_ACTIVE_ACCOUNT_CUSTOMER = "mail/ActiveCustomerAccount.html";

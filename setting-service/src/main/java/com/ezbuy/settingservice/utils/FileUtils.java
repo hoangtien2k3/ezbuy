@@ -1,7 +1,7 @@
 package com.ezbuy.settingservice.utils;
 
 import com.ezbuy.settingservice.constant.SettingConstant;
-import io.hoangtien2k3.commons.utils.MinioUtils;
+import io.hoangtien2k3.reactify.MinioUtils;
 import java.util.Base64;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;

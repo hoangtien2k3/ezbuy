@@ -3,7 +3,7 @@ package com.ezbuy.settingservice.service;
 import com.ezbuy.settingmodel.dto.UploadImagesDTO;
 import com.ezbuy.settingmodel.dto.request.*;
 import com.ezbuy.settingmodel.dto.response.SearchImageResponse;
-import io.hoangtien2k3.commons.model.response.DataResponse;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import java.util.List;
 import reactor.core.publisher.Mono;
 

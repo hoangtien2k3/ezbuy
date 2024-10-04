@@ -1,7 +1,7 @@
 package com.ezbuy.authservice.service.impl;
 
-import static com.ezbuy.authmodel.constants.AuthConstants.ClientName.HUB_SME;
-import static io.hoangtien2k3.commons.constants.Constants.ActionUser.SYSTEM;
+import static com.ezbuy.authmodel.constants.AuthConstants.ClientName.EZBUY_CLIENT;
+import static io.hoangtien2k3.reactify.constants.Constants.ActionUser.SYSTEM;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import com.ezbuy.authmodel.constants.AuthConstants;
@@ -30,15 +30,15 @@ import com.ezbuy.authservice.service.IdentifyService;
 import com.ezbuy.notimodel.dto.request.CreateNotificationDTO;
 import com.ezbuy.notimodel.dto.request.NotiContentDTO;
 import com.ezbuy.notimodel.dto.request.ReceiverDataDTO;
-import io.hoangtien2k3.commons.config.CipherManager;
-import io.hoangtien2k3.commons.constants.CommonErrorCode;
-import io.hoangtien2k3.commons.constants.Constants;
-import io.hoangtien2k3.commons.constants.Regex;
-import io.hoangtien2k3.commons.exception.BusinessException;
-import io.hoangtien2k3.commons.model.TokenUser;
-import io.hoangtien2k3.commons.model.UserDTO;
-import io.hoangtien2k3.commons.model.response.DataResponse;
-import io.hoangtien2k3.commons.utils.*;
+import io.hoangtien2k3.reactify.config.CipherManager;
+import io.hoangtien2k3.reactify.constants.CommonErrorCode;
+import io.hoangtien2k3.reactify.constants.Constants;
+import io.hoangtien2k3.reactify.constants.Regex;
+import io.hoangtien2k3.reactify.exception.BusinessException;
+import io.hoangtien2k3.reactify.model.TokenUser;
+import io.hoangtien2k3.reactify.model.UserDTO;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
+import io.hoangtien2k3.reactify.utils.*;
 import jakarta.ws.rs.core.Response;
 import java.security.SecureRandom;
 import java.text.DecimalFormat;
@@ -135,7 +135,7 @@ public class AuthServiceImpl implements AuthService {
         return keyCloakClient
                 .getToken(clientLogin)
                 .flatMap(accessToken -> {
-                    if (HUB_SME.equals(clientLogin.getClientId()) && accessToken.isPresent()) {
+                    if (EZBUY_CLIENT.equals(clientLogin.getClientId()) && accessToken.isPresent()) {
                         // get user info
                         UserDTO userDTO = SecurityUtils.getUserByAccessToken(
                                 accessToken.get().getToken());
@@ -270,7 +270,7 @@ public class AuthServiceImpl implements AuthService {
                         && DecisionEffect.PERMIT.equals(policy.getStatus()));
     }
 
-    private Mono<Throwable> handleKeyCloakError(WebClientResponseException err) {
+    private Mono handleKeyCloakError(WebClientResponseException err) {
         String bodyResponse = err.getResponseBodyAsString();
         KeycloakErrorResponse errorResponse =
                 objectMapperUtil.convertStringToObject(bodyResponse, KeycloakErrorResponse.class);

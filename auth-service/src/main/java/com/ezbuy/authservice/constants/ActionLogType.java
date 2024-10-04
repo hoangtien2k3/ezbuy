@@ -1,6 +1,6 @@
 package com.ezbuy.authservice.constants;
 
-import io.hoangtien2k3.commons.utils.Translator;
+import io.hoangtien2k3.reactify.utils.Translator;
 import java.util.Map;
 
 public interface ActionLogType {

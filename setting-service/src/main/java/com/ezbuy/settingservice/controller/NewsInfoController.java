@@ -8,7 +8,7 @@ import com.ezbuy.settingmodel.model.NewsInfo;
 import com.ezbuy.settingmodel.request.CreateNewsInfoRequest;
 import com.ezbuy.settingmodel.response.SearchNewsInfoResponse;
 import com.ezbuy.settingservice.service.NewsInfoService;
-import io.hoangtien2k3.commons.model.response.DataResponse;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

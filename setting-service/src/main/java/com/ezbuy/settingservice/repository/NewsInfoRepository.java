@@ -14,7 +14,9 @@ public interface NewsInfoRepository extends R2dbcRepository<NewsInfo, UUID> {
     @Query(value = "select * from news_info where id = :id")
     Mono<NewsInfo> getById(String id);
 
-    @Query(value = "update news_info set code = :code, title = :title, display_order = :displayOrder, status = :status, group_news_id = :groupNewsId, state = :state, summary = :summary, update_by = :user, update_at = CURRENT_TIMESTAMP(), navigator_url = :navigatorUrl where id = :id")
+    @Query(
+            value =
+                    "update news_info set code = :code, title = :title, display_order = :displayOrder, status = :status, group_news_id = :groupNewsId, state = :state, summary = :summary, update_by = :user, update_at = CURRENT_TIMESTAMP(), navigator_url = :navigatorUrl where id = :id")
     Mono<NewsInfo> updateNewsInfo(
             String id,
             String code,

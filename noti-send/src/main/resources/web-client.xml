@@ -3,11 +3,11 @@
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd">
-    <bean id="webClientFactory" class="io.hoangtien2k3.commons.client.WebClientFactory">
-        <property name="webClients">
-            <list>
-                <ref bean="authProperties"></ref>
-            </list>
-        </property>
-    </bean>
+<!--    <bean id="webClientFactory" class="io.hoangtien2k3.reactify.client.WebClientFactory">-->
+<!--        <property name="webClients">-->
+<!--            <list>-->
+<!--                <ref bean="authProperties"></ref>-->
+<!--            </list>-->
+<!--        </property>-->
+<!--    </bean>-->
 </beans>
