@@ -3,7 +3,7 @@ package com.ezbuy.settingservice.service.impl;
 import com.ezbuy.settingmodel.model.CustType;
 import com.ezbuy.settingservice.repository.CustTypeRepository;
 import com.ezbuy.settingservice.service.CustTypeService;
-import io.hoangtien2k3.commons.aop.cache.Cache2L;
+import io.hoangtien2k3.reactify.aop.cache.Cache2L;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -3,7 +3,7 @@ package com.ezbuy.settingservice.controller;
 import com.ezbuy.settingmodel.constants.UrlPaths;
 import com.ezbuy.settingmodel.model.CustType;
 import com.ezbuy.settingservice.service.CustTypeService;
-import io.hoangtien2k3.commons.model.response.DataResponse;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

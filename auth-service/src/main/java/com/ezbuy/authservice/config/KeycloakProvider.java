@@ -1,6 +1,6 @@
 package com.ezbuy.authservice.config;
 
-import io.hoangtien2k3.commons.aop.cache.Cache2L;
+import io.hoangtien2k3.reactify.aop.cache.Cache2L;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;

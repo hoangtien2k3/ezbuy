@@ -216,7 +216,7 @@ proxy-client:
 
 #cache2l config
 cache2l:
-  reflectionPath: io.hoangtien2k3
+  reflectionPath: io.hoangtien2k3.commons
   enable-global-cache: true
   redis:
     externalMode: true

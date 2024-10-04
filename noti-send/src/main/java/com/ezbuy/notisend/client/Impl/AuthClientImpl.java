@@ -2,7 +2,7 @@ package com.ezbuy.notisend.client.Impl;
 
 import com.ezbuy.notimodel.dto.response.ContactResponse;
 import com.ezbuy.notisend.client.AuthClient;
-import io.hoangtien2k3.commons.client.BaseRestClient;
+import io.hoangtien2k3.reactify.client.BaseRestClient;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
 @DependsOn("webClientFactory")
 public class AuthClientImpl implements AuthClient {
 
-    private final BaseRestClient baseRestClient;
+    private final BaseRestClient<ContactResponse> baseRestClient;
     private final WebClient auth;
 
     @Override

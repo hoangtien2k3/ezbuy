@@ -6,7 +6,7 @@ import com.ezbuy.settingmodel.model.GroupNews;
 import com.ezbuy.settingmodel.request.CreateGroupNewsRequest;
 import com.ezbuy.settingmodel.response.SearchGroupNewsResponse;
 import com.ezbuy.settingservice.service.GroupNewsService;
-import io.hoangtien2k3.commons.model.response.DataResponse;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

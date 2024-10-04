@@ -7,7 +7,7 @@ import com.ezbuy.notimodel.dto.request.CreateNotificationDTO;
 import com.ezbuy.notimodel.dto.response.NotificationHeader;
 import com.ezbuy.notimodel.model.NotificationContent;
 import com.ezbuy.notiservice.service.TransmissionService;
-import io.hoangtien2k3.commons.model.response.DataResponse;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import java.util.List;

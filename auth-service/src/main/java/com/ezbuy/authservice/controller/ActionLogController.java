@@ -3,7 +3,7 @@ package com.ezbuy.authservice.controller;
 import com.ezbuy.authmodel.constants.UrlPaths;
 import com.ezbuy.authmodel.dto.request.ActionLogRequest;
 import com.ezbuy.authservice.service.ActionLogService;
-import io.hoangtien2k3.commons.model.response.DataResponse;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;

@@ -1,6 +1,6 @@
 package com.ezbuy.authservice.client.properties;
 
-import io.hoangtien2k3.commons.client.properties.WebClientProperties;
+import io.hoangtien2k3.reactify.client.properties.WebClientProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

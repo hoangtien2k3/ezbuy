@@ -26,7 +26,7 @@
         <!-- internal -->
         <dependency>
             <groupId>com.ezbuy.platform</groupId>
-            <artifactId>fw-commons</artifactId>
+            <artifactId>reactify</artifactId>
             <version>${revision}</version>
         </dependency>
 

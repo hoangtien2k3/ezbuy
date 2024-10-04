@@ -3,7 +3,7 @@ package com.ezbuy.notiservice.service;
 import com.ezbuy.notimodel.dto.request.CreateNotificationDTO;
 import com.ezbuy.notimodel.dto.response.NotificationHeader;
 import com.ezbuy.notimodel.model.NotificationContent;
-import io.hoangtien2k3.commons.model.response.DataResponse;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import java.util.List;
 import reactor.core.publisher.Mono;
 

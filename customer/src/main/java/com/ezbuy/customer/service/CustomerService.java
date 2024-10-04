@@ -4,7 +4,7 @@ import com.ezbuy.customer.model.dto.CustomerDTO;
 import com.ezbuy.customer.model.dto.request.AuthenticationRequest;
 import com.ezbuy.customer.model.dto.request.CreateCustomerRequest;
 import com.ezbuy.customer.model.dto.response.AuthenticationResponse;
-import io.hoangtien2k3.commons.model.response.DataResponse;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 
 public interface CustomerService {

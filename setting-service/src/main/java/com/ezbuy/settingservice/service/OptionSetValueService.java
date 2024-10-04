@@ -5,7 +5,7 @@ import com.ezbuy.settingmodel.dto.request.SearchOptionSetValueRequest;
 import com.ezbuy.settingmodel.model.OptionSetValue;
 import com.ezbuy.settingmodel.request.CreateOptionSetValueRequest;
 import com.ezbuy.settingmodel.response.SearchOptionSetValueResponse;
-import io.hoangtien2k3.commons.model.response.DataResponse;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import java.util.List;
 import reactor.core.publisher.Mono;
 

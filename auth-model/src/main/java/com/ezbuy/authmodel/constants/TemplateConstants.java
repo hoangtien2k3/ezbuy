@@ -1,7 +1,6 @@
 package com.ezbuy.authmodel.constants;
 
 public final class TemplateConstants {
-
     public static final String ADD_UNIT_TEMPLATE_PATH = "/template/orgnaization/ADD_UNIT.xlsx";
     public static final String ADD_UNIT_RESULT_TEMPLATE_PATH = "/template/orgnaization/ADD_UNIT_RESULT.xlsx";
     public static final String ADD_UNIT_TEMPLATE_NAME = "ADD_UNIT.xlsx";
