@@ -27,8 +27,7 @@ public class ClientRegistrationFilter {
     @Bean
     public ReactiveOAuth2AuthorizedClientManager authorizedClientManager(
             ReactiveClientRegistrationRepository clientRegistrationRepository,
-            ReactiveOAuth2AuthorizedClientService authorizedClientService
-    ) {
+            ReactiveOAuth2AuthorizedClientService authorizedClientService) {
         return ReactiveOAuth2Utils.createAuthorizedClientManager(clientRegistrationRepository, authorizedClientService);
     }
 }
