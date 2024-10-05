@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(
@@ -17,11 +16,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
             HibernateJpaAutoConfiguration.class,
             SecurityAutoConfiguration.class
         })
-@ComponentScan(basePackages = {"com.ezbuy.*"})
-@ImportResource({"classpath*:applicationContext.xml"})
+@ComponentScan(basePackages = {"com.ezbuy", "io.hoangtien2k3.reactify"})
 @EnableScheduling
 public class RatingApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(RatingApplication.class, args);
     }

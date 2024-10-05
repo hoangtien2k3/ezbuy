@@ -10,7 +10,7 @@ import com.ezbuy.authservice.service.ActionLogService;
 import io.hoangtien2k3.reactify.constants.CommonErrorCode;
 import io.hoangtien2k3.reactify.constants.Constants;
 import io.hoangtien2k3.reactify.exception.BusinessException;
-import io.hoangtien2k3.reactify.utils.DataUtil;
+import io.hoangtien2k3.reactify.DataUtil;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -76,8 +76,7 @@ public class ActionLogServiceImpl implements ActionLogService {
     }
 
     private ByteArrayResource writeExcel(Workbook workbook) {
-        try (ByteArrayOutputStream os = new ByteArrayOutputStream();
-                workbook) {
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
             workbook.write(os);
             return new ByteArrayResource(os.toByteArray()) {
                 @Override

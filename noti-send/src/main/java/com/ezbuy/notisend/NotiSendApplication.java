@@ -16,8 +16,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
             HibernateJpaAutoConfiguration.class,
             SecurityAutoConfiguration.class
         })
-@ComponentScan(basePackages = {"com.ezbuy.*", "io.hoangtien2k3.reactify"})
-// @ImportResource({"classpath*:web-client.xml"})
+@ComponentScan(basePackages = {"com.ezbuy", "io.hoangtien2k3.reactify"})
 @EnableScheduling
 public class NotiSendApplication {
     public static void main(String[] args) {

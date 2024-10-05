@@ -15,7 +15,7 @@ import com.google.gson.Gson;
 import io.hoangtien2k3.reactify.constants.CommonErrorCode;
 import io.hoangtien2k3.reactify.constants.Constants;
 import io.hoangtien2k3.reactify.exception.BusinessException;
-import io.hoangtien2k3.reactify.utils.DataUtil;
+import io.hoangtien2k3.reactify.DataUtil;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;

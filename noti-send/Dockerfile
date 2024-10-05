@@ -1,13 +1,14 @@
-FROM  openjdk:11.0.12-oracle as builder
+FROM amazoncorretto:21.0.4 as builder
 WORKDIR application
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
-FROM  openjdk:11.0.12-oracle
-LABEL com.viettel.ecom.product.version="1.0.0"
+
+FROM  amazoncorretto:21.0.4
+LABEL com.ezbuy.ecom.product.version="1.0.0"
 LABEL version="1.0.0"
 LABEL description="product service"
-LABEL author="Viettel Company"
+LABEL author="Ezbuy Platform"
 WORKDIR application
 
 # additional timezone +7

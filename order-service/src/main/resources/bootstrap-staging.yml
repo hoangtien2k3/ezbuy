@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: order-service
+  cloud:
+    kubernetes:
+      enabled: false
+    config:
+      enabled: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:36355/auth/realms/sme-portal

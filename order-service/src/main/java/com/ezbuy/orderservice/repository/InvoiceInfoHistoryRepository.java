@@ -1,0 +1,17 @@
+package com.ezbuy.orderservice.repository;
+
+import com.ezbuy.sme.ordermodel.model.InvoiceInfoHistory;
+import com.ezbuy.sme.settingmodel.model.Setting;
+import org.springframework.data.r2dbc.repository.Query;
+import org.springframework.data.r2dbc.repository.R2dbcRepository;
+import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Mono;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Repository
+public interface InvoiceInfoHistoryRepository extends R2dbcRepository<InvoiceInfoHistory, UUID> {
+    @Query("select CURRENT_TIMESTAMP")
+    Mono<LocalDateTime> getSysDate();
+}

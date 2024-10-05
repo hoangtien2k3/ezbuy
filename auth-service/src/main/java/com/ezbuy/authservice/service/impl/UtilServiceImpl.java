@@ -14,7 +14,7 @@ import com.ezbuy.authservice.service.UtilService;
 import io.hoangtien2k3.reactify.constants.Constants;
 import io.hoangtien2k3.reactify.model.TokenUser;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
-import io.hoangtien2k3.reactify.utils.DataUtil;
+import io.hoangtien2k3.reactify.DataUtil;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

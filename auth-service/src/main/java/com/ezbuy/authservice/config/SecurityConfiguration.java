@@ -1,4 +1,4 @@
-package com.ezbuy.authservice.config; // package com.viettel.sme.authservice.config;
+package com.ezbuy.authservice.config;
 
 import java.util.Arrays;
 import org.springframework.context.annotation.Bean;

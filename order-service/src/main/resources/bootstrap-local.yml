@@ -1,0 +1,26 @@
+logging:
+  config: classpath:log4j2-local.xml
+spring:
+  application:
+    name: sme-auth-service
+  cloud:
+    kubernetes:
+      enabled: false
+    config:
+      enabled: false
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            token-uri: http://10.207.252.78:8430/auth/realms/sme-portal/protocol/openid-connect/token
+        registration:
+          oidc:
+            client-id: sme-auth-service
+            client-secret: YxzXsTW2sjHh3jBBYOmrIOzYT6DKE6vV
+            authorization-grant-type: client_credentials
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://10.207.252.78:8430/auth/realms/sme-portal/protocol/openid-connect/certs
+      keycloak:
+        client-id: web-client

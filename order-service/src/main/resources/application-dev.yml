@@ -1,0 +1,83 @@
+# server config
+server:
+  port: 8080
+# ot=oauth
+keycloak:
+  clientId: web-client
+  clientSecret: 24bcf1ec-4746-4cf6-9939-b56e6ca394b3
+  realm: sme-portal
+  serverUrl: http://sme-keycloak.bu-order.svc:8080/auth
+oauth2:
+  keycloak:
+    client-uri: http://sme-keycloak.bu-order.svc:8080/auth/realms/sme-portal
+    client-id: web-client
+    client-secret: 24bcf1ec-4746-4cf6-9939-b56e6ca394b3
+# spring config
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            issuer-uri: http://sme-keycloak.bu-order.svc:8080/auth/realms/sme-portal
+        registration:
+          oidc:
+            client-id: web-client
+            client-secret: 24bcf1ec-4746-4cf6-9939-b56e6ca394b3
+  r2dbc:
+    mariadb:
+      url: r2dbc:mariadb://admin:123456%40@10.207.222.154:9001/sme_order
+      pool:
+        initial-size: 50
+        max-size: 100
+        enabled: true
+        validation-query: select 1
+        max-life-time: 9223372036854775807
+# web client config
+client:
+  product:
+    address: http://sme-product-service.bu-order.svc:8080/
+    name: productClient
+  setting:
+    address: http://sme-setting-service.bu-order.svc:8080/
+    name: settingClient
+  payment:
+    address: http://10.207.252.76.8126/
+    name: paymentClient
+  cart:
+    address: http://sme-cart-service.bu-order.svc:8080/
+    name: cartClient
+  order:
+    address: http://10.207.252.104:8918/services/order/OrderSmePortalService
+    username: ${BCCS_ORDER_USERNAME}
+    password: ${BCCS_ORDER_PASSWORD}
+    name: orderClient
+    pool:
+      max-size: 100
+      max-pending-acquire: 100
+    timeout:
+      read: 60000
+      write: 1000
+  profile:
+    address: http://10.58.71.240:8565/wsap?wsdl
+    username: profile_bccs
+    password: profile_bccs
+    name: profileClient
+  pricing:
+    address: http://10.207.252.104:8918/services/pricing/PricingService
+    username: ${BCCS_ORDER_USERNAME}
+    password: ${BCCS_ORDER_PASSWORD}
+    name: pricingClient
+    pool:
+      max-size: 100
+      max-pending-acquire: 100
+    timeout:
+      read: 60000
+      write: 1000
+# unauthenticated endpoints config
+application:
+  whiteList:
+    - uri: /actuator/health
+      methods:
+        - GET
+

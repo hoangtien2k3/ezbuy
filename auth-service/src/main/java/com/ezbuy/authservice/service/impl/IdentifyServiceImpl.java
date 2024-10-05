@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -31,7 +32,7 @@ public class IdentifyServiceImpl implements IdentifyService {
     public Mono<Boolean> existedTrustedOrgIdentify(List<TenantIdentify> identifies) {
         List<Mono<Boolean>> observers = new ArrayList<>();
         for (TenantIdentify identify : identifies) {
-            var checkExisted = tenantIdentifyRepo.existsTrustedByIdNoAndType(
+            val checkExisted = tenantIdentifyRepo.existsTrustedByIdNoAndType(
                     identify.getIdNo(), identify.getIdType(), AuthConstants.TenantType.ORGANIZATION);
             observers.add(checkExisted);
         }

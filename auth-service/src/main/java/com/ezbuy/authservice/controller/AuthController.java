@@ -10,7 +10,7 @@ import com.ezbuy.authmodel.model.Individual;
 import com.ezbuy.authmodel.model.UserOtp;
 import com.ezbuy.authservice.service.AuthService;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
-import io.hoangtien2k3.reactify.utils.DataUtil;
+import io.hoangtien2k3.reactify.DataUtil;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;

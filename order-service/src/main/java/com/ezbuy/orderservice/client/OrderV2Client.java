@@ -1,0 +1,44 @@
+package com.ezbuy.orderservice.client;
+
+import com.ezbuy.sme.ordermodel.dto.ProfileForBusinessCustDTO;
+import com.ezbuy.sme.ordermodel.dto.request.PricingProductRequest;
+import com.ezbuy.sme.ordermodel.dto.request.SearchOrderRequest;
+import com.ezbuy.sme.ordermodel.dto.response.GetOrderHistoryResponse;
+import com.ezbuy.sme.ordermodel.dto.ws.CreateOrderResponse;
+import com.ezbuy.sme.ordermodel.dto.ws.PlaceOrderResponse;
+import com.ezbuy.sme.ordermodel.dto.ws.PricingProductWSResponse;
+import com.ezbuy.sme.ordermodel.dto.ws.SearchOrderStateResponse;
+import reactor.core.publisher.Mono;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+
+public interface OrderV2Client {
+    Mono<ProfileForBusinessCustDTO> getProfileKHDN(String data, Long telecomServiceId, HashMap<String, Object> metaData);
+    Mono<Optional<CreateOrderResponse>> createOrder(String orderType, String data);
+
+    /**
+     * Ham lay van ban chinh sach xu ly va bao ve du lieu
+     * @param data
+     * @return
+     */
+    Mono<ProfileForBusinessCustDTO> getProfileXNDLKH(String data);
+
+    /**
+     * Ham goi sang Order lay danh sach lich su don hang
+     * @param request
+     * @param systemTypeList
+     * @param orderTypeList
+     * @return
+     */
+    Mono<Optional<List<GetOrderHistoryResponse>>> getOrderHistoryHub(SearchOrderRequest request, List<String> systemTypeList, List<String> orderTypeList);
+
+    /**
+     * Ham goi sang lay file view hop dong
+     * @param orderType loai don hang
+     * @param data data duoi dang json
+     * @return
+     */
+    Mono<ProfileForBusinessCustDTO> getFileContractToView(String orderType, String data);
+}

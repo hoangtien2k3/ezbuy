@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="webClientFactory" class="com.viettel.sme.framework.client.WebClientFactory">
+        <property name="webClients">
+            <list>
+                <ref bean="settingProperties"></ref>
+                <ref bean="productProperties"></ref>
+                <ref bean="authProperties"></ref>
+                <ref bean="cmProperties"></ref>
+                <ref bean="orderProperties"></ref>
+                <ref bean="syncClientProperties"></ref>
+                <ref bean="caProperties"></ref>
+            </list>
+        </property>
+    </bean>
+</beans>

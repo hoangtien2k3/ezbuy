@@ -1,0 +1,22 @@
+# server config
+server:
+  port: 8080
+# spring config
+spring:
+  r2dbc:
+    mariadb:
+      url: r2dbc:mariadb://${DB_USERNAME}:${DB_PASSWORD}@${DB_ADDR}/sme_product
+  security:
+    oauth2:
+      keycloak:
+        client-id: web-client
+        client-secret: ${CLIENT_KEYCLOAK_SECRET}
+# unauthenticated endpoints config
+application:
+  whiteList:
+    - uri: /actuator/health
+      methods:
+        - GET
+    - uri: /v1/filter-template
+      methods:
+        - GET

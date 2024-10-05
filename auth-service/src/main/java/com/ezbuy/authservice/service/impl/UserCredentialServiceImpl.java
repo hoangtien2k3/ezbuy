@@ -5,7 +5,7 @@ import com.ezbuy.authservice.repository.UserCredentialRepository;
 import com.ezbuy.authservice.service.UserCredentialService;
 import io.hoangtien2k3.reactify.constants.CommonErrorCode;
 import io.hoangtien2k3.reactify.exception.BusinessException;
-import io.hoangtien2k3.reactify.utils.SecurityUtils;
+import io.hoangtien2k3.reactify.SecurityUtils;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

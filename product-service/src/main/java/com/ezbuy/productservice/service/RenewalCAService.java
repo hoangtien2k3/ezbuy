@@ -1,0 +1,22 @@
+package com.ezbuy.productservice.service;
+
+import com.ezbuy.sme.framework.model.response.DataResponse;
+import com.ezbuy.sme.productmodel.request.ProductSpecificationRequest;
+import com.ezbuy.sme.productmodel.response.SubscriberResponse;
+import org.springframework.web.bind.annotation.RequestParam;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
+
+public interface RenewalCAService {
+
+    Mono<DataResponse> getStatisticSubscriber(String organizationId, Integer time);
+
+    Mono<DataResponse> getListSubscriber(@RequestParam(required = false) Long telecomServiceId, @RequestParam(required = false) String telecomServiceAlias, @RequestParam(required = true) String organizationId);
+
+    Mono<DataResponse> syncListSubscriber();
+
+    Mono<DataResponse> getProductSpecification(ProductSpecificationRequest productSpecificationRequest);
+
+    Mono<List<SubscriberResponse>> getSubscriberSmeInfo(Long telecomServiceId, String idNo, String isdn, String telecomServiceAlias);
+}

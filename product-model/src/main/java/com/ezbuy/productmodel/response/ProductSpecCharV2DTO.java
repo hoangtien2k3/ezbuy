@@ -1,0 +1,21 @@
+package com.ezbuy.productmodel.response;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+@JsonIgnoreProperties
+public class ProductSpecCharV2DTO {
+    private String code;
+    private String name;
+    private String valueType;
+    private List<ProductSpecCharValueV2DTO> productSpecCharValueDTOList;
+}

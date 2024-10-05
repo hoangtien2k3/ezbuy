@@ -1,0 +1,178 @@
+package com.ezbuy.orderservice.service;
+
+import com.ezbuy.sme.framework.model.response.DataResponse;
+import com.ezbuy.sme.ordermodel.dto.response.GetGroupCAInfoResponse;
+import com.ezbuy.sme.ordermodel.dto.request.CreateOrderHistoryRequest;
+import com.ezbuy.sme.ordermodel.dto.request.CreatePreOrderRequest;
+import com.ezbuy.sme.ordermodel.dto.request.SearchOrderRequest;
+import com.ezbuy.sme.ordermodel.dto.request.SyncOrderStateRequest;
+import com.ezbuy.sme.productmodel.dto.ProductImportDTO;
+import com.ezbuy.sme.productmodel.dto.ProductImportListDTO;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.multipart.FilePart;
+import com.ezbuy.sme.ordermodel.dto.response.GetOrderReportResponse;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
+
+public interface OrderService {
+
+    Mono<DataResponse> searchOrder(SearchOrderRequest request);
+
+    Mono<DataResponse> findDetail(String orderId);
+
+    Mono<DataResponse> createPreOrder(CreatePreOrderRequest request);
+
+    Mono<DataResponse> syncOrderState(SyncOrderStateRequest request);
+
+    Mono<DataResponse> createPaidOrder(CreatePaidOrderRequest request);
+
+    Mono<DataResponse<Object>> updateStateAndPlaceOrder(UpdateOrderStateForOrderRequest request);
+
+    Mono<DataResponse> getPricingProduct(PricingProductRequest request);
+
+    Mono<DataResponse> getPricingProductInternal(PricingProductRequest request);
+
+    Mono<DataResponse> createOrderHistory(CreateOrderHistoryRequest request);
+
+    Mono<DataResponse> validateConnectFirst(ValidateConnectServiceRequest request);
+
+    /**
+     * Ham lay thong tin nhom
+     * @param request
+     * @return
+     */
+    Mono<DataResponse<GetGroupCAInfoResponse>> getGroupsCAInfo(GetGroupsCAinfoRequest request);
+
+    /**
+     * Ham lay thong tin thue bao tren tong dai ocs
+     */
+
+    /**
+     * Them thue bao vao nhom
+     * @param request
+     * @return
+     */
+    Mono<DataResponse> addCAgroupMember(AfterSaleGroupCARequest request);
+
+    /**
+     * Cap nhat thue bao nhom
+     * @param request
+     * @return
+     */
+    Mono<DataResponse> updateCAgroupMember(AfterSaleGroupCARequest request);
+
+    /**
+     * Xoa thue bao khoi nhom
+     * @param request
+     * @return
+     */
+    Mono<DataResponse> removeCAgroupMember(AfterSaleGroupCARequest request);
+
+    /**
+     * Ham tao don hang khong mat phi
+     * @param orderType
+     * @param orderData
+     * @param userId lay tu token
+     * @param username lay tu token
+     * @return
+     */
+    Mono<DataResponse> createNotPaidOrder(String orderType, PlaceOrderData orderData, String userId, String username, String individualId);
+
+    Mono<DataResponse> connectCASelfcare(CreateOrderPaidRequest request);
+
+    Mono<DataResponse<ProfileForBusinessCustDTO>> getProfileKHDN(CreateOrderPaidRequest createOrderPaidRequest);
+
+    /**
+     * Ham lay so luong da ky cua thue bao
+     * @param request
+     * @return
+     */
+    Mono<DataResponse> getCAsubNumberSign(GetGroupsCAinfoRequest request);
+
+    /**
+     * Ham lay so luong chu ky con lai cua thue bao
+     * @param request
+     * @return
+     */
+    Mono<DataResponse> getCAsubTotalSign(GetGroupsCAinfoRequest request);
+
+    Mono<DataResponse> getAdvice(CreatePreOrderRequest request);
+
+    Mono<DataResponse> validateDataOrder(CreateOrderPaidRequest data);
+
+    /**
+     * Ham cap nhat trang thai don hang PreOrder
+     * @param request
+     * @return
+     */
+    Mono<DataResponse<Object>> updateStatePreOrder(UpdateSatePreOrderRequest request);
+
+    /**
+     * Ham tao don hang di tu man selfCare SME_HUB
+     * @param request
+     * @return
+     */
+    Mono<DataResponse> createOrderSelfCare(CreateOrderPaidRequest request);
+
+    Mono<DataResponse<ProfileForBusinessCustDTO>> getDocDataPolicy(CreateOrderPaidRequest createOrderPaidRequest);
+
+    /**
+     * Ham tim kiem lich su don hang
+     * @param request
+     * @return
+     */
+    Mono<DataResponse> searchOrderHistory(SearchOrderRequest request);
+
+    Mono<DataResponse> searchOrderV2(SearchOrderRequest request, List<String> preOrderCodeList);
+
+    /**
+     * Lay thong tin thue bao thanh vien nhom CA
+     * @param request
+     * @return
+     */
+    Mono<DataResponse<GetGroupCAInfoResponse>> getGroupsMemberCAInfo(GetGroupsCAinfoRequest request);
+
+    /**
+     * api view file hsdt v2
+     * @param createOrderPaidRequest
+     * @return
+     */
+    Mono<DataResponse<ProfileForBusinessCustDTO>> getFileContractToView(CreateOrderPaidRequest createOrderPaidRequest);
+
+    /**
+     * Ham tai file import mau cho import thue bao nhom CA
+     * @return
+     */
+    Mono<ResponseEntity<Resource>> getImportGroupMemberTemplate();
+
+    /**
+     * Ham validate thong tin import
+     * @param filePart
+     * @return
+     */
+    Mono<GroupMemberImportListDTO> validateImportGroupMember(FilePart filePart, String totalSign);
+
+    /**
+     * Ham import thanh vien nhom CA
+     * @param filePart
+     * @return
+     */
+    Mono<GroupMemberImportListDTO> importGroupMember(FilePart filePart, String groupCode, String organizationId, String groupId, String totalSign);
+
+    /**
+     * Ham tra ve ket qua import file
+     * @param items
+     * @return
+     */
+    Mono<ResponseEntity<byte[]>> downloadImportResult(List<GroupMemberImportDTO> items);
+    Mono<DataResponse<GetOrderReportResponse>> getOrderReport(OrderReportRequest request);
+
+    /**
+     * Ham tao don xac thuc doanh nghiep
+     * @param request
+     * @return
+     */
+    Mono<DataResponse> createOrderCts(CreateOrderPaidRequest request);
+}
