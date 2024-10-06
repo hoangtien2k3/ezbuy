@@ -1,6 +1,6 @@
 package com.ezbuy.productservice.service;
 
-import com.ezbuy.sme.productmodel.dto.TelecomServiceResponse;
+import com.ezbuy.productmodel.dto.TelecomServiceResponse;
 import reactor.core.publisher.Flux;
 
 public interface TelecomServiceService {

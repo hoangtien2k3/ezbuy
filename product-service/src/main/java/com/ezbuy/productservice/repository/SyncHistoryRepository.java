@@ -1,6 +1,6 @@
 package com.ezbuy.productservice.repository;
 
-import com.ezbuy.sme.productmodel.model.SyncHistory;
+import com.ezbuy.productmodel.model.SyncHistory;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import org.springframework.stereotype.Repository;

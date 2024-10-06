@@ -1,9 +1,9 @@
 package com.ezbuy.productservice.repository.repoTemplate.impl;
 
+import com.ezbuy.productmodel.dto.TelecomServiceResponse;
+import com.ezbuy.productmodel.response.MegaMenuResponse;
 import com.ezbuy.productservice.repository.repoTemplate.TelecomServiceRepository;
-import com.ezbuy.sme.framework.utils.DataUtil;
-import com.ezbuy.sme.productmodel.dto.TelecomServiceResponse;
-import com.ezbuy.sme.productmodel.response.MegaMenuResponse;
+import io.hoangtien2k3.reactify.DataUtil;
 import lombok.Data;
 import org.springframework.data.elasticsearch.support.StringObjectMap;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;

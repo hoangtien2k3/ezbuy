@@ -1,7 +1,7 @@
 package com.ezbuy.productservice.repository.repoTemplate;
 
-import com.ezbuy.sme.productmodel.response.StatisticSubscriberResponse;
-import com.ezbuy.sme.productmodel.response.TotalSubscriberResponse;
+import com.ezbuy.productmodel.response.StatisticSubscriberResponse;
+import com.ezbuy.productmodel.response.TotalSubscriberResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

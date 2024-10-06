@@ -4,6 +4,5 @@ import lombok.Data;
 
 @Data
 public class SubscribeSmeInfoRequest {
-
     private String telecomServiceId;
 }

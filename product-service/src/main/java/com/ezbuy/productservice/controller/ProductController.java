@@ -1,12 +1,11 @@
 package com.ezbuy.productservice.controller;
 
+import com.ezbuy.productmodel.dto.ProductImportDTO;
+import com.ezbuy.productmodel.model.Product;
+import com.ezbuy.productmodel.request.*;
 import com.ezbuy.productservice.service.ProductService;
-import com.ezbuy.sme.authmodel.constants.AuthConstants;
-import com.ezbuy.sme.authmodel.constants.UrlPaths;
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.framework.utils.Translator;
-import com.ezbuy.sme.productmodel.dto.ProductImportDTO;
-import com.ezbuy.sme.productmodel.model.Product;
+import io.hoangtien2k3.reactify.Translator;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -20,7 +19,9 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-import static com.ezbuy.sme.framework.constants.MessageConstant.SUCCESS;
+import static com.ezbuy.authmodel.constants.AuthConstants.SUCCESS;
+import static com.ezbuy.productmodel.constants.UrlPaths.*;
+import static com.ezbuy.productmodel.constants.UrlPaths.Product.*;
 
 @Slf4j
 @RestController
@@ -87,7 +88,7 @@ public class ProductController {
     @PreAuthorize("hasAnyAuthority('user')")
     public Mono<ResponseEntity<DataResponse>> detailProduct(@RequestParam String productId) {
         return productService.detailProduct(productId)
-                .map(rs -> ResponseEntity.ok(new DataResponse<>(AuthConstants.SUCCESS, rs)));
+                .map(rs -> ResponseEntity.ok(new DataResponse<>(SUCCESS, rs)));
     }
 
     @PostMapping(value = LOCK_PRODUCT)
@@ -142,13 +143,13 @@ public class ProductController {
     @PreAuthorize("hasAnyAuthority('user')")
     public Mono<ResponseEntity<DataResponse>> validateSubIns(@RequestBody ValidateSubInsRequest request) {
         return productService.validateSubIns(request)
-                .map(rs -> ResponseEntity.ok(new DataResponse<>(AuthConstants.SUCCESS, rs)));
+                .map(rs -> ResponseEntity.ok(new DataResponse<>(SUCCESS, rs)));
     }
 
     @PostMapping(value = GET_LIST_AREA_INS)
     @PreAuthorize("hasAnyAuthority('user')")
     public Mono<ResponseEntity<DataResponse>> getListAreaIns(@RequestBody getListAreaInsRequest request) {
-            return productService.getListAreaIns(request).map(rs -> ResponseEntity.ok(new DataResponse<>(AuthConstants.SUCCESS, rs)));
+            return productService.getListAreaIns(request).map(rs -> ResponseEntity.ok(new DataResponse<>(SUCCESS, rs)));
     }
 
     @PostMapping(value = GET_DATA_REPORT)
@@ -175,6 +176,6 @@ public class ProductController {
     @PostMapping(value = CREATE_SUMMARY_REPORT)
     @PreAuthorize("hasAnyAuthority('system')")
     public Mono<ResponseEntity<DataResponse>> createSummaryReport(@RequestBody CreateSummaryRequest request) {
-        return productService.createSummaryReport(request).map(rs -> ResponseEntity.ok(new DataResponse<>(AuthConstants.SUCCESS, rs.getData())));
+        return productService.createSummaryReport(request).map(rs -> ResponseEntity.ok(new DataResponse<>(SUCCESS, rs.getData())));
     }
 }

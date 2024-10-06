@@ -1,7 +1,7 @@
 package com.ezbuy.productservice.repository.repoTemplate;
 
-import com.ezbuy.sme.productmodel.model.Product;
-import com.ezbuy.sme.productmodel.request.SearchProductRequest;
+import com.ezbuy.productmodel.model.Product;
+import com.ezbuy.productmodel.request.SearchProductRequest;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

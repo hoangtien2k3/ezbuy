@@ -1,14 +1,9 @@
 package com.ezbuy.productservice.client;
 
-import com.ezbuy.sme.productmodel.dto.ProductOfferingDTO;
-import com.ezbuy.sme.productmodel.dto.ProductOfferingHubSmeDTO;
-import com.ezbuy.sme.productmodel.request.ApiUtils;
-import com.ezbuy.sme.productmodel.request.GetListProductOfferingComboForHubSmeRequest;
-import com.ezbuy.sme.productmodel.request.GetProductTemplateDetailRequest;
-import com.ezbuy.sme.productmodel.response.GetProductTemplateDetailResponse;
-import com.ezbuy.sme.productmodel.response.ListProductOfferResponse;
-import com.ezbuy.sme.productmodel.response.LstServiceCharacteristicResponse;
-import com.ezbuy.sme.productmodel.response.ProductOfferingSpecificationResponse;
+import com.ezbuy.productmodel.request.ApiUtils;
+import com.ezbuy.productmodel.request.GetListProductOfferingComboForHubSmeRequest;
+import com.ezbuy.productmodel.request.GetProductTemplateDetailRequest;
+import com.ezbuy.productmodel.response.*;
 import reactor.core.publisher.Mono;
 
 import java.util.List;

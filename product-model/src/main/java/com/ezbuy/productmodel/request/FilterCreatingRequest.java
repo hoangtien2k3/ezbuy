@@ -1,9 +1,9 @@
 package com.ezbuy.productmodel.request;
 
 import com.ezbuy.productmodel.dto.ProductSpecCharAndValDTO;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Data

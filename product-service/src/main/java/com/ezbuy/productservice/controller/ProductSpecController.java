@@ -1,27 +1,25 @@
 package com.ezbuy.productservice.controller;
 
+import com.ezbuy.productmodel.dto.GetServiceConnectDTO;
+import com.ezbuy.productmodel.dto.ProductSpecCharAndValDTO;
+import com.ezbuy.productmodel.dto.UpdateAccountServiceInfoDTO;
+import com.ezbuy.productmodel.model.Subscriber;
+import com.ezbuy.productmodel.model.Telecom;
+import com.ezbuy.productmodel.request.FilterCreatingRequest;
+import com.ezbuy.productmodel.request.FilterGetListSubscriberActive;
+import com.ezbuy.productmodel.request.FilterGetListSubscriberActiveByAlias;
+import com.ezbuy.productmodel.request.GetListSubscriberActive;
 import com.ezbuy.productservice.service.ProductSpecService;
-import com.ezbuy.sme.framework.constants.MessageConstant;
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.framework.utils.Translator;
-import com.ezbuy.sme.productmodel.dto.GetServiceConnectDTO;
-import com.ezbuy.sme.productmodel.dto.ProductSpecCharAndValDTO;
-import com.ezbuy.sme.productmodel.dto.UpdateAccountServiceInfoDTO;
-import com.ezbuy.sme.productmodel.model.Subscriber;
-import com.ezbuy.sme.productmodel.request.FilterCreatingRequest;
-import com.ezbuy.sme.productmodel.request.FilterGetListSubscriberActive;
-import com.ezbuy.sme.productmodel.request.FilterGetListSubscriberActiveByAlias;
-import com.ezbuy.sme.productmodel.request.GetListSubscriberActive;
-import com.ezbuy.sme.settingmodel.model.Telecom;
-import com.ezbuy.sme.settingmodel.request.MarketPageRequest;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-import javax.validation.Valid;
-
 import java.util.List;
+
+import static com.ezbuy.productmodel.constants.UrlPaths.*;
 
 @Slf4j
 @RestController

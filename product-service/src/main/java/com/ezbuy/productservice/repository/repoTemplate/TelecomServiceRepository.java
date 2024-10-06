@@ -1,7 +1,7 @@
 package com.ezbuy.productservice.repository.repoTemplate;
 
-import com.ezbuy.sme.productmodel.dto.TelecomServiceResponse;
-import com.ezbuy.sme.productmodel.response.MegaMenuResponse;
+import com.ezbuy.productmodel.dto.TelecomServiceResponse;
+import com.ezbuy.productmodel.response.MegaMenuResponse;
 import reactor.core.publisher.Flux;
 
 public interface TelecomServiceRepository {

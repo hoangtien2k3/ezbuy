@@ -1,13 +1,14 @@
 package com.ezbuy.productservice.client.impl;
-import com.ezbuy.sme.framework.client.BaseRestClient;
-import com.ezbuy.sme.framework.constants.CommonErrorCode;
-import com.ezbuy.sme.framework.factory.ObjectMapperFactory;
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.framework.utils.DataUtil;
-import com.ezbuy.sme.framework.utils.Translator;
-import com.ezbuy.sme.productmodel.request.CallApiSyncProductRequest;
-import com.ezbuy.sme.productmodel.response.GetTransSyncResponse;
+
+import com.ezbuy.productmodel.request.CallApiSyncProductRequest;
+import com.ezbuy.productmodel.response.GetTransSyncResponse;
 import com.ezbuy.productservice.client.SyncClient;
+import io.hoangtien2k3.reactify.DataUtil;
+import io.hoangtien2k3.reactify.Translator;
+import io.hoangtien2k3.reactify.client.BaseRestClient;
+import io.hoangtien2k3.reactify.constants.CommonErrorCode;
+import io.hoangtien2k3.reactify.factory.ObjectMapperFactory;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;

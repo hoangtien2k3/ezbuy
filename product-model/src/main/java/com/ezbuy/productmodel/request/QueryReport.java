@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
+
 @Data
 public class QueryReport {
-
   @DateTimeFormat(pattern = "dd-MM-yyyy")
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
   private LocalDate fromDateParse;//tu ngay

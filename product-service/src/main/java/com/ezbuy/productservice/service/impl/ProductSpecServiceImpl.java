@@ -1,5 +1,22 @@
 package com.ezbuy.productservice.service.impl;
 
+import com.ezbuy.authmodel.constants.AuthConstants;
+import com.ezbuy.productmodel.constants.Constants;
+import com.ezbuy.productmodel.dto.GetServiceConnectDTO;
+import com.ezbuy.productmodel.dto.ProductSpecCharAndValDTO;
+import com.ezbuy.productmodel.dto.ProductSpecCharValueDTO;
+import com.ezbuy.productmodel.dto.UpdateAccountServiceInfoDTO;
+import com.ezbuy.productmodel.dto.ws.SubscriberCMResponse;
+import com.ezbuy.productmodel.model.ActiveTelecom;
+import com.ezbuy.productmodel.model.ProductSpecChar;
+import com.ezbuy.productmodel.model.ProductSpecCharValue;
+import com.ezbuy.productmodel.model.Subscriber;
+import com.ezbuy.productmodel.request.FilterCreatingRequest;
+import com.ezbuy.productmodel.request.FilterGetListSubscriberActive;
+import com.ezbuy.productmodel.request.FilterGetListSubscriberActiveByAlias;
+import com.ezbuy.productmodel.request.GetListSubscriberActive;
+import com.ezbuy.productmodel.response.LstServiceCharacteristicResponse;
+import com.ezbuy.productmodel.response.ServiceCharacteristicDTO;
 import com.ezbuy.productservice.client.AuthClient;
 import com.ezbuy.productservice.client.CmClient;
 import com.ezbuy.productservice.client.ProductClient;
@@ -9,52 +26,33 @@ import com.ezbuy.productservice.repository.repoTemplate.ProductSpecRepo;
 import com.ezbuy.productservice.service.ProductSpecService;
 import com.ezbuy.productservice.service.RenewalCAService;
 import com.ezbuy.productservice.utils.DataUtils;
+import com.ezbuy.settingmodel.dto.TelecomDTO;
+import com.ezbuy.productmodel.model.Telecom;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ezbuy.sme.authmodel.constants.AuthConstants;
-import com.ezbuy.sme.framework.constants.CommonErrorCode;
-import com.ezbuy.sme.framework.exception.BusinessException;
-import com.ezbuy.sme.framework.factory.ModelMapperFactory;
-import com.ezbuy.sme.framework.factory.ObjectMapperFactory;
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.framework.utils.AppUtils;
-import com.ezbuy.sme.framework.utils.DataUtil;
-import com.ezbuy.sme.framework.utils.Translator;
-import com.ezbuy.sme.productmodel.constants.Constants;
-import com.ezbuy.sme.productmodel.dto.GetServiceConnectDTO;
-import com.ezbuy.sme.productmodel.dto.ProductSpecCharAndValDTO;
-import com.ezbuy.sme.productmodel.dto.ProductSpecCharValueDTO;
-import com.ezbuy.sme.productmodel.dto.UpdateAccountServiceInfoDTO;
-import com.ezbuy.sme.productmodel.dto.ws.SubscriberCMResponse;
-import com.ezbuy.sme.productmodel.model.ActiveTelecom;
-import com.ezbuy.sme.productmodel.model.ProductSpecChar;
-import com.ezbuy.sme.productmodel.model.ProductSpecCharValue;
-import com.ezbuy.sme.productmodel.model.Subscriber;
-import com.ezbuy.sme.productmodel.request.FilterCreatingRequest;
-import com.ezbuy.sme.productmodel.request.FilterGetListSubscriberActive;
-import com.ezbuy.sme.productmodel.request.FilterGetListSubscriberActiveByAlias;
-import com.ezbuy.sme.productmodel.request.GetListSubscriberActive;
-import com.ezbuy.sme.productmodel.response.LstServiceCharacteristicResponse;
-import com.ezbuy.sme.productmodel.response.ServiceCharacteristicDTO;
-import com.ezbuy.sme.productservice.repository.*;
-import com.ezbuy.sme.settingmodel.dto.TelecomDTO;
-import com.ezbuy.sme.settingmodel.model.Telecom;
+import io.hoangtien2k3.reactify.AppUtils;
+import io.hoangtien2k3.reactify.DataUtil;
+import io.hoangtien2k3.reactify.Translator;
+import io.hoangtien2k3.reactify.constants.CommonErrorCode;
+import io.hoangtien2k3.reactify.exception.BusinessException;
+import io.hoangtien2k3.reactify.factory.ModelMapperFactory;
+import io.hoangtien2k3.reactify.factory.ObjectMapperFactory;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.ezbuy.sme.framework.constants.MessageConstant.SUCCESS;
+import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ProductSpecServiceImpl implements ProductSpecService {
-
 
     private final ProductSpecCharRepository productSpecCharRepository;
     private final ProductSpecCharValueRepository productSpecCharValueRepository;
@@ -175,12 +173,12 @@ public class ProductSpecServiceImpl implements ProductSpecService {
                         continue;
                     }
                     List<ProductSpecCharValueDTO> productSpecCharValueList = productSpec.getProductSpecCharValueDTOList();
-                    List<com.ezbuy.sme.productmodel.response.ProductSpecCharValueDTO> values = serviceCharacteristic.getProductSpecCharValueDTOList() != null
+                    List<com.ezbuy.productmodel.response.ProductSpecCharValueDTO> values = serviceCharacteristic.getProductSpecCharValueDTOList() != null
                             ? serviceCharacteristic.getProductSpecCharValueDTOList()
                             : new ArrayList<>();
                     List<ProductSpecCharValueDTO> tempDeleteProductSpecValueList = productSpecCharValueList.stream()
                             .filter(specValue -> values.stream().noneMatch(value -> DataUtil.safeEqual(value.getValue(), specValue.getValue())))
-                            .collect(Collectors.toList());
+                            .toList();
                     deleteProductSpecValueList.addAll(tempDeleteProductSpecValueList);
 
                     List<ProductSpecCharValue> tempInsertProductSpecValueList = values.stream()
@@ -192,14 +190,15 @@ public class ProductSpecServiceImpl implements ProductSpecService {
                                     .value(value.getValue())
                                     .status(1)
                                     .state(0)
-                                    .build()).collect(Collectors.toList());
+                                    .build())
+                            .toList();
                     insertProductSpecValueList.addAll(tempInsertProductSpecValueList);
 
                     productSpec.setName(serviceCharacteristic.getName());
                     productSpec.setTelecomServiceAlias(telecomAlias);
                     List<ProductSpecCharValueDTO> updateSpecCharValueList = new ArrayList<>();
                     for (ProductSpecCharValueDTO productSpecValue : productSpecCharValueList) {
-                        Optional<com.ezbuy.sme.productmodel.response.ProductSpecCharValueDTO> productSpecCharValueOptional = values.stream()
+                        Optional<com.ezbuy.productmodel.response.ProductSpecCharValueDTO> productSpecCharValueOptional = values.stream()
                                 .filter(value -> DataUtil.safeEqual(value.getValue(), productSpecValue.getValue()))
                                 .findAny();
                         productSpecCharValueOptional.ifPresent(productSpecCharValueDTO -> {
@@ -837,7 +836,7 @@ public class ProductSpecServiceImpl implements ProductSpecService {
                     if (data.size() != 1) {
                         return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "update.account.service.info.error.account.not.found"));
                     }
-                    Subscriber subscriber = DataUtils.dtoToModel(data.get(0));
+                    Subscriber subscriber = DataUtils.dtoToModel(data.getFirst());
                     subscriber.setTelecomServiceId(request.getTelecomServiceId());
                     subscriber.setTelecomServiceAlias(request.getTelecomServiceAlias());
                     return subscriberRepository.findById(DataUtil.safeToString(subscriber.getId())).transform(DataUtils::optional) // check subscriber ton tai trong DB
@@ -868,7 +867,7 @@ public class ProductSpecServiceImpl implements ProductSpecService {
                                         // return activeTelecom
                                         return Mono.just(activeTelecom);
                                     }))
-                            .map(activeTelecom -> new DataResponse("success", activeTelecom.getIdNo()));
+                            .map(activeTelecom -> new DataResponse<>("success", activeTelecom.getIdNo()));
                 });
     }
 

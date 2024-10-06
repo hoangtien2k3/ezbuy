@@ -1,26 +1,27 @@
 package com.ezbuy.productservice.service.impl;
 
+import com.ezbuy.authmodel.dto.response.TenantIdentifyDTO;
+import com.ezbuy.ordermodel.dto.request.*;
+import com.ezbuy.ordermodel.dto.response.PricingProductItemResponse;
+import com.ezbuy.productmodel.constants.ErrorCode;
+import com.ezbuy.productmodel.dto.ws.SubscriberCMResponse;
+import com.ezbuy.productmodel.model.ActiveTelecom;
+import com.ezbuy.productmodel.model.Subscriber;
+import com.ezbuy.productmodel.request.ProductSpecificationRequest;
+import com.ezbuy.productmodel.response.*;
 import com.ezbuy.productservice.client.*;
 import com.ezbuy.productservice.client.utils.ProductClientUtils;
 import com.ezbuy.productservice.repository.ActiveTelecomRepository;
 import com.ezbuy.productservice.repository.SubscriberRepository;
 import com.ezbuy.productservice.repository.TelecomRepository;
 import com.ezbuy.productservice.service.RenewalCAService;
-import com.ezbuy.sme.authmodel.dto.response.TenantIdentifyDTO;
-import com.ezbuy.sme.framework.constants.CommonErrorCode;
-import com.ezbuy.sme.framework.constants.Constants;
-import com.ezbuy.sme.framework.exception.BusinessException;
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.framework.utils.DataUtil;
-import com.ezbuy.sme.framework.utils.Translator;
-import com.ezbuy.sme.ordermodel.dto.response.PricingProductItemResponse;
-import com.ezbuy.sme.productmodel.constants.ErrorCode;
-import com.ezbuy.sme.productmodel.dto.ws.SubscriberCMResponse;
-import com.ezbuy.sme.productmodel.model.ActiveTelecom;
-import com.ezbuy.sme.productmodel.model.Subscriber;
-import com.ezbuy.sme.productmodel.request.ProductSpecificationRequest;
-import com.ezbuy.sme.productservice.client.*;
-import com.ezbuy.sme.settingmodel.dto.TelecomDTO;
+import com.ezbuy.settingmodel.dto.TelecomDTO;
+import io.hoangtien2k3.reactify.DataUtil;
+import io.hoangtien2k3.reactify.Translator;
+import io.hoangtien2k3.reactify.constants.CommonErrorCode;
+import io.hoangtien2k3.reactify.constants.Constants;
+import io.hoangtien2k3.reactify.exception.BusinessException;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,8 +35,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.ezbuy.sme.authmodel.constants.AuthConstants.MySign.SIGH_HASH_SUCCESS;
-import static com.ezbuy.sme.framework.constants.MessageConstant.SUCCESS;
+import static com.ezbuy.authmodel.constants.AuthConstants.MySign.SIGH_HASH_SUCCESS;
+import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
 
 @Data
 @Service
@@ -79,7 +80,7 @@ public class RenewalCAServiceImpl implements RenewalCAService {
                                 return statisticSubscriber;
                             })
                             .collectList();
-                }).map(response -> new DataResponse(Translator.toLocaleVi(SUCCESS), response));
+                }).map(response -> new DataResponse<>(Translator.toLocaleVi(SUCCESS), response));
     }
 
     public Mono<List<SubscriberResponse>> getSubscriberSmeInfo(Long telecomServiceId, String idNo, String isdn, String telecomServiceAlias) {
@@ -108,9 +109,9 @@ public class RenewalCAServiceImpl implements RenewalCAService {
                     subscriberCM.getListSubAttDTO().forEach(subAtt -> {
                         // TODO: đưa EXPIRED_DATE_DURATION ra constant
                         if ("EXPIRED_DATE_DURATION".equalsIgnoreCase(subAtt.getAttCode()) && subAtt.getListSubAttDetailDTO() != null
-                                && !subAtt.getListSubAttDetailDTO().isEmpty() && !DataUtil.isNullOrEmpty(subAtt.getListSubAttDetailDTO().get(0).getAttDetailValue())) {
+                                && !subAtt.getListSubAttDetailDTO().isEmpty() && !DataUtil.isNullOrEmpty(subAtt.getListSubAttDetailDTO().getFirst().getAttDetailValue())) {
                             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                            subscriberResponse.setExpiredDate(LocalDate.parse(subAtt.getListSubAttDetailDTO().get(0).getAttDetailValue(), dateTimeFormatter));
+                            subscriberResponse.setExpiredDate(LocalDate.parse(subAtt.getListSubAttDetailDTO().getFirst().getAttDetailValue(), dateTimeFormatter));
                         }
                     });
                 }
@@ -272,7 +273,7 @@ public class RenewalCAServiceImpl implements RenewalCAService {
                                 telecoService.flatMap(serviceId ->
                                         getPricingProduct(product, request.getGroupType(), idNo, product.getProductId(), Long.valueOf(serviceId),request.getTelecomServiceAlias()))))
                                         .collectList()
-                                        .map(data -> new DataResponse(Translator.toLocaleVi(SUCCESS), data));
+                                        .map(data -> new DataResponse<>(Translator.toLocaleVi(SUCCESS), data));
     }
 
     private Mono<ProductSpecificationCAResponse> getProductTemplate(String productId) {
@@ -287,7 +288,7 @@ public class RenewalCAServiceImpl implements RenewalCAService {
                     }
                     List<ProductSpecCharDTO> productSpecCharDTOS = respOptional.get().getLstProductSpecCharUseDTO().stream()
                             .map(ProductSpecCharUseDTO::getProductSpecCharDTO)
-                            .collect(Collectors.toList());
+                            .toList();
                     List<PriceProductDTO> priceProductList = new ArrayList<>();
                     for (ProductSpecCharDTO productSpecCharDTO : productSpecCharDTOS) {
                         if (ProductClientUtils.CA_PREPAID_DURATION.equals(productSpecCharDTO.getCode())) {
@@ -362,7 +363,7 @@ public class RenewalCAServiceImpl implements RenewalCAService {
         );
     }
 
-    //    TODO: ham nay phai kiem tra them xem user goi api co thuoc organizationId khong? truyen them thong tin user_id sang.
+    // TODO: ham nay phai kiem tra them xem user goi api co thuoc organizationId khong? truyen them thong tin user_id sang.
     private Mono<String> getIdNo(String organizationId) {
         return authClient.getTenantIdentify(organizationId).map(tenantIdentifies -> {
             Optional<TenantIdentifyDTO> primaryIdentify = tenantIdentifies.stream()

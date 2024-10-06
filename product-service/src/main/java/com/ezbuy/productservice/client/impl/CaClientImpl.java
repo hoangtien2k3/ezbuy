@@ -1,17 +1,16 @@
 package com.ezbuy.productservice.client.impl;
 
-import com.ezbuy.sme.framework.client.BaseRestClient;
-import com.ezbuy.sme.framework.constants.CommonErrorCode;
-import com.ezbuy.sme.framework.exception.BusinessException;
-import com.ezbuy.sme.framework.utils.DataUtil;
-import com.ezbuy.sme.framework.utils.ObjectMapperUtil;
-import com.ezbuy.sme.framework.utils.Translator;
-import com.ezbuy.sme.productmodel.request.ValidateSubInsRequest;
-import com.ezbuy.sme.productmodel.request.getListAreaInsRequest;
-import com.ezbuy.sme.productmodel.response.ListAreaInsResponse;
-import com.ezbuy.sme.productmodel.response.ValidateSubInsResponse;
+import com.ezbuy.productmodel.request.ValidateSubInsRequest;
+import com.ezbuy.productmodel.request.getListAreaInsRequest;
+import com.ezbuy.productmodel.response.ListAreaInsResponse;
+import com.ezbuy.productmodel.response.ValidateSubInsResponse;
 import com.ezbuy.productservice.client.CaClient;
 import com.ezbuy.productservice.client.properties.CaProperties;
+import io.hoangtien2k3.reactify.DataUtil;
+import io.hoangtien2k3.reactify.Translator;
+import io.hoangtien2k3.reactify.client.BaseRestClient;
+import io.hoangtien2k3.reactify.constants.CommonErrorCode;
+import io.hoangtien2k3.reactify.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Qualifier;

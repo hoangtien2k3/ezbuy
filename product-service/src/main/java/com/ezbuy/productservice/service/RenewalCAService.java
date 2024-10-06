@@ -1,8 +1,8 @@
 package com.ezbuy.productservice.service;
 
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.productmodel.request.ProductSpecificationRequest;
-import com.ezbuy.sme.productmodel.response.SubscriberResponse;
+import com.ezbuy.productmodel.request.ProductSpecificationRequest;
+import com.ezbuy.productmodel.response.SubscriberResponse;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import org.springframework.web.bind.annotation.RequestParam;
 import reactor.core.publisher.Mono;
 

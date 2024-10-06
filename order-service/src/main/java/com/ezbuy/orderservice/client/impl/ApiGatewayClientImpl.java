@@ -1,14 +1,14 @@
 package com.ezbuy.orderservice.client.impl;
 
+import com.ezbuy.ordermodel.dto.OrderFileDTO;
+import com.ezbuy.ordermodel.dto.request.UploadFileBase64Request;
 import com.ezbuy.orderservice.client.ApiGatewayClient;
-import com.ezbuy.sme.framework.client.BaseRestClient;
-import com.ezbuy.sme.framework.constants.CommonErrorCode;
-import com.ezbuy.sme.framework.exception.BusinessException;
-import com.ezbuy.sme.framework.factory.ObjectMapperFactory;
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.framework.utils.DataUtil;
-import com.ezbuy.sme.ordermodel.dto.OrderFileDTO;
-import com.ezbuy.sme.ordermodel.dto.request.UploadFileBase64Request;
+import io.hoangtien2k3.reactify.DataUtil;
+import io.hoangtien2k3.reactify.client.BaseRestClient;
+import io.hoangtien2k3.reactify.constants.CommonErrorCode;
+import io.hoangtien2k3.reactify.exception.BusinessException;
+import io.hoangtien2k3.reactify.factory.ObjectMapperFactory;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.ezbuy.sme.ordermodel.constants.MessageConstant.AUTH_SERVICE_ERROR;
-import static com.ezbuy.sme.ordermodel.constants.MessageConstant.GATEWAY_SERVICE_ERROR;
+import static com.ezbuy.ordermodel.constants.MessageConstant.AUTH_SERVICE_ERROR;
+import static com.ezbuy.ordermodel.constants.MessageConstant.GATEWAY_SERVICE_ERROR;
 
 @Log4j2
 @Service

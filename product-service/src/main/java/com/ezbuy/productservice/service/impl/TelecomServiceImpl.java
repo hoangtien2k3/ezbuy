@@ -2,10 +2,10 @@ package com.ezbuy.productservice.service.impl;
 
 import com.ezbuy.productservice.repository.TelecomRepository;
 import com.ezbuy.productservice.service.TelecomService;
-import com.ezbuy.sme.framework.constants.MessageConstant;
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.framework.utils.Translator;
-import com.ezbuy.sme.settingmodel.model.Telecom;
+import io.hoangtien2k3.reactify.Translator;
+import io.hoangtien2k3.reactify.constants.MessageConstant;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
+import com.ezbuy.productmodel.model.Telecom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-import static com.ezbuy.sme.framework.constants.MessageConstant.SUCCESS;
+import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
 
 @Slf4j
 @Service
@@ -21,19 +21,16 @@ import static com.ezbuy.sme.framework.constants.MessageConstant.SUCCESS;
 public class TelecomServiceImpl implements TelecomService {
     private final TelecomRepository telecomRepository;
 
-
     @Override
     public Mono<DataResponse<Telecom>> getByOriginId(String originId) {
         return this.telecomRepository.getByOriginId(originId).switchIfEmpty(Mono.just(new Telecom()))
                 .flatMap(telecom -> Mono.just(new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), telecom)));
     }
 
-
     @Override
     public Mono<DataResponse<List<Telecom>>> getAllActive() {
-        return this.telecomRepository.getAllActive().collectList().flatMap(lstService -> {
-            return Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), lstService));
-        });
+        return this.telecomRepository.getAllActive().collectList()
+                .flatMap(lstService -> Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), lstService)));
     }
 
     @Override

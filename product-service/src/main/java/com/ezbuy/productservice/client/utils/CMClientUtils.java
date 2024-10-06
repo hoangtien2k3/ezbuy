@@ -1,8 +1,8 @@
 package com.ezbuy.productservice.client.utils;
 
-import com.ezbuy.sme.framework.factory.MarshallerFactory;
-import com.ezbuy.sme.framework.utils.DataWsUtil;
-import com.ezbuy.sme.productmodel.request.GetLstSubscriberRequest;
+import com.ezbuy.productmodel.request.GetLstSubscriberRequest;
+import io.hoangtien2k3.reactify.DataWsUtil;
+import io.hoangtien2k3.reactify.factory.MarshallerFactory;
 
 import java.text.MessageFormat;
 

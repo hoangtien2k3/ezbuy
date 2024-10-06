@@ -1,6 +1,6 @@
 package com.ezbuy.productservice.service;
 
-import com.ezbuy.sme.settingmodel.dto.TelecomDTO;
+import com.ezbuy.settingmodel.dto.TelecomDTO;
 import reactor.core.publisher.Mono;
 
 import java.util.List;

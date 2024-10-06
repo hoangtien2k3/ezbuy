@@ -1,19 +1,19 @@
 package com.ezbuy.productservice.service.impl;
 
+import com.ezbuy.productmodel.dto.FilterProductTemplateDTO;
+import com.ezbuy.productmodel.request.ApiUtils;
+import com.ezbuy.productmodel.response.ListProductOfferResponse;
+import com.ezbuy.productmodel.response.ProductOfferTemplateDTO;
 import com.ezbuy.productservice.client.ProductClient;
 import com.ezbuy.productservice.client.SettingClient;
 import com.ezbuy.productservice.repository.repoTemplate.TelecomServiceRepository;
 import com.ezbuy.productservice.service.ProductOfferTemplateService;
-import com.ezbuy.sme.framework.annotations.LocalCache;
-import com.ezbuy.sme.framework.constants.CommonErrorCode;
-import com.ezbuy.sme.framework.exception.BusinessException;
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.framework.utils.DataUtil;
-import com.ezbuy.sme.framework.utils.Translator;
-import com.ezbuy.sme.productmodel.dto.FilterProductTemplateDTO;
-import com.ezbuy.sme.productmodel.request.ApiUtils;
-import com.ezbuy.sme.productmodel.response.ListProductOfferResponse;
-import com.ezbuy.sme.productmodel.response.ProductOfferTemplateDTO;
+import io.hoangtien2k3.reactify.DataUtil;
+import io.hoangtien2k3.reactify.Translator;
+import io.hoangtien2k3.reactify.annotations.LocalCache;
+import io.hoangtien2k3.reactify.constants.CommonErrorCode;
+import io.hoangtien2k3.reactify.exception.BusinessException;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-import static com.ezbuy.sme.framework.constants.MessageConstant.SUCCESS;
+import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
 
 @Service
 @RequiredArgsConstructor

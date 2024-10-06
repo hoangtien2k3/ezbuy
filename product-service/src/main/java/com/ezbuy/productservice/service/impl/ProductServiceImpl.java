@@ -1,5 +1,18 @@
 package com.ezbuy.productservice.service.impl;
 
+import com.ezbuy.authmodel.constants.AuthConstants;
+import com.ezbuy.authmodel.dto.response.GetActionLoginReportResponse;
+import com.ezbuy.authmodel.model.OrganizationUnit;
+import com.ezbuy.ordermodel.dto.response.GetOrderReportResponse;
+import com.ezbuy.productmodel.dto.*;
+import com.ezbuy.productmodel.model.Product;
+import com.ezbuy.productmodel.model.SummaryReport;
+import com.ezbuy.productmodel.model.SyncHistory;
+import com.ezbuy.productmodel.model.SyncHistoryDetail;
+import com.ezbuy.productmodel.request.*;
+import com.ezbuy.productmodel.response.GetProductInfoResponse;
+import com.ezbuy.productmodel.response.PaginationDTO;
+import com.ezbuy.productmodel.response.ProductSearchResult;
 import com.ezbuy.productservice.client.AuthClient;
 import com.ezbuy.productservice.client.CaClient;
 import com.ezbuy.productservice.client.OrderClient;
@@ -8,32 +21,27 @@ import com.ezbuy.productservice.repository.repoTemplate.ProductCustomRepository;
 import com.ezbuy.productservice.repository.repoTemplate.ServiceGroupCustomerRepo;
 import com.ezbuy.productservice.service.ProductService;
 import com.ezbuy.productservice.service.SyncHistoryService;
-import com.ezbuy.sme.authmodel.constants.AuthConstants;
-import com.ezbuy.sme.authmodel.dto.response.GetActionLoginReportResponse;
-import com.ezbuy.sme.authmodel.model.OrganizationUnit;
-import com.ezbuy.sme.framework.constants.CommonErrorCode;
-import com.ezbuy.sme.framework.constants.Constants;
-import com.ezbuy.sme.framework.exception.BusinessException;
-import com.ezbuy.sme.framework.factory.ModelMapperFactory;
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.framework.utils.AppUtils;
-import com.ezbuy.sme.framework.utils.DataUtil;
-import com.ezbuy.sme.framework.utils.SecurityUtils;
-import com.ezbuy.sme.framework.utils.Translator;
-import com.ezbuy.sme.ordermodel.dto.response.GetOrderReportResponse;
-import com.ezbuy.sme.productmodel.response.GetProductInfoResponse;
-import com.ezbuy.sme.productmodel.response.PaginationDTO;
-import com.ezbuy.sme.productmodel.response.ProductSearchResult;
 import com.ezbuy.productservice.repository.ProductRepository;
 import com.ezbuy.productservice.repository.SubscriberRepository;
 import com.ezbuy.productservice.repository.SummaryReportRepository;
 import com.ezbuy.productservice.repository.TelecomRepository;
 import com.ezbuy.productservice.repository.SummaryReportRepo;
+import com.ezbuy.productmodel.model.Subscriber;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalTime;
+
+import io.hoangtien2k3.reactify.AppUtils;
+import io.hoangtien2k3.reactify.DataUtil;
+import io.hoangtien2k3.reactify.SecurityUtils;
+import io.hoangtien2k3.reactify.Translator;
+import io.hoangtien2k3.reactify.constants.CommonErrorCode;
+import io.hoangtien2k3.reactify.constants.Constants;
+import io.hoangtien2k3.reactify.exception.BusinessException;
+import io.hoangtien2k3.reactify.factory.ModelMapperFactory;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -48,12 +56,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import javax.transaction.Transactional;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,12 +68,14 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.ezbuy.sme.framework.constants.Constants.COMMON.STATUS_ACTIVE;
-import static com.ezbuy.sme.framework.constants.MessageConstant.FAIL;
-import static com.ezbuy.sme.framework.constants.MessageConstant.SUCCESS;
-import static com.ezbuy.sme.productmodel.constants.Constants.LOCK_STATUS.LOCK_STATUS_LOCK;
-import static com.ezbuy.sme.productmodel.constants.Constants.LOCK_STATUS.LOCK_STATUS_UNLOCK;
-import static com.ezbuy.sme.productmodel.constants.Constants.SYNC_HISTORY_DETAIL.SOURCE_ALIAS_HUB_PRODUCT;
+import static com.ezbuy.authmodel.constants.AuthConstants.STATUS_ACTIVE;
+import static com.ezbuy.productmodel.constants.Constants.*;
+import static com.ezbuy.productmodel.constants.Constants.LOCK_STATUS.LOCK_STATUS_LOCK;
+import static com.ezbuy.productmodel.constants.Constants.LOCK_STATUS.LOCK_STATUS_UNLOCK;
+import static com.ezbuy.productmodel.constants.Constants.Message.FAIL;
+import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
+import static com.ezbuy.productmodel.constants.Constants.SYNC_HISTORY_DETAIL.SOURCE_ALIAS_HUB_PRODUCT;
+import static com.ezbuy.productmodel.constants.TemplateConstants.*;
 
 @Service
 @RequiredArgsConstructor
@@ -250,7 +259,7 @@ public class ProductServiceImpl implements ProductService {
                 .syncHistoryId(syncHistory.getId())
                 .syncTransId(syncHistory.getSyncTransId())
                 .targetId(targetId)
-                .status(com.ezbuy.sme.framework.constants.Constants.COMMON.STATUS_ACTIVE)
+                .status(STATUS_ACTIVE)
                 .createAt(now)
                 .createBy(userName)
                 .updateAt(now)
@@ -339,7 +348,7 @@ public class ProductServiceImpl implements ProductService {
             String userName = tuple1.getT1().getUsername();
             CreateSyncHistoryRequest request = new CreateSyncHistoryRequest();
             request.setOrgId(organizationId);
-            request.setIdNo(opIdNo.isEmpty() ? null : opIdNo.get());
+            request.setIdNo(opIdNo.orElse(null));
             request.setAction("DELETE");
             request.setServiceType("ALL_BY_ORG");
             request.setSyncType("EVENT");
@@ -399,7 +408,7 @@ public class ProductServiceImpl implements ProductService {
                                                                     .syncHistoryId(syncHistoryId)
                                                                     .syncTransId(syncTransId)
                                                                     .targetId(productId)
-                                                                    .status(com.ezbuy.sme.framework.constants.Constants.COMMON.STATUS_ACTIVE)
+                                                                    .status(STATUS_ACTIVE)
                                                                     .createAt(now)
                                                                     .createBy(userName)
                                                                     .updateAt(now)
@@ -760,7 +769,7 @@ public class ProductServiceImpl implements ProductService {
                                                                 .syncHistoryId(syncHistoryId)
                                                                 .syncTransId(syncTransId)
                                                                 .targetId(productId)
-                                                                .status(com.ezbuy.sme.framework.constants.Constants.COMMON.STATUS_ACTIVE)
+                                                                .status(STATUS_ACTIVE)
                                                                 .createAt(now)
                                                                 .createBy(userName)
                                                                 .updateAt(now)
@@ -950,15 +959,15 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Mono<DataResponse> validateSubIns(ValidateSubInsRequest request) {
         return caClient.validateSubIns(request)
-                .flatMap(rsp -> Mono.just(new DataResponse(SUCCESS, Message.SUCCESS, rsp.get().getData())))
+                .flatMap(rsp -> Mono.just(new DataResponse(SUCCESS, SUCCESS, rsp.get().getData())))
                 .onErrorResume(throwable -> Mono.just(new DataResponse(FAIL, throwable.getMessage(), null)));
     }
 
     @Override
     public Mono<DataResponse> getListAreaIns(getListAreaInsRequest request) {
         return caClient.getListAreaIns(request)
-                .flatMap(rsp -> Mono.just(new DataResponse(SUCCESS, Message.SUCCESS, rsp.get().getData())))
-                .onErrorResume(throwable -> Mono.just(new DataResponse(FAIL, Message.FAIL, null)));
+                .flatMap(rsp -> Mono.just(new DataResponse(SUCCESS, SUCCESS, rsp.get().getData())))
+                .onErrorResume(throwable -> Mono.just(new DataResponse(FAIL, FAIL, null)));
     }
 
     @Override

@@ -1,9 +1,8 @@
 package com.ezbuy.productservice.client;
 
-import com.ezbuy.sme.authmodel.dto.response.GetActionLoginReportResponse;
-import com.ezbuy.sme.authmodel.dto.response.TenantIdentifyDTO;
-import com.ezbuy.sme.authmodel.model.OrganizationUnit;
-import com.ezbuy.sme.authmodel.model.UserProfile;
+import com.ezbuy.authmodel.dto.response.GetActionLoginReportResponse;
+import com.ezbuy.authmodel.dto.response.TenantIdentifyDTO;
+import com.ezbuy.authmodel.model.OrganizationUnit;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;

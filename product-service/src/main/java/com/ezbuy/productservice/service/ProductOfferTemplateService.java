@@ -1,7 +1,7 @@
 package com.ezbuy.productservice.service;
 
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.productmodel.dto.FilterProductTemplateDTO;
+import com.ezbuy.productmodel.dto.FilterProductTemplateDTO;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 
 public interface ProductOfferTemplateService {

@@ -1,12 +1,8 @@
 package com.ezbuy.orderservice.client;
 
-import com.ezbuy.sme.authmodel.constants.UrlPaths;
-import com.ezbuy.sme.authmodel.dto.request.UpdateTenantTrustStatusRequest;
-import com.ezbuy.sme.authmodel.dto.response.TenantIdentifyDTO;
-import com.ezbuy.sme.authmodel.model.Individual;
-import com.ezbuy.sme.authmodel.model.Organization;
-import com.ezbuy.sme.authmodel.model.TenantIdentify;
-import com.ezbuy.sme.authmodel.model.UserProfile;
+import com.ezbuy.authmodel.dto.response.TenantIdentifyDTO;
+import com.ezbuy.authmodel.model.Organization;
+import com.ezbuy.authmodel.model.TenantIdentify;
 import reactor.core.publisher.Mono;
 
 import java.util.List;

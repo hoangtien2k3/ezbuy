@@ -1,12 +1,11 @@
 package com.ezbuy.productservice.repository.repoTemplate.impl;
 
+import com.ezbuy.productmodel.model.Product;
+import com.ezbuy.productmodel.request.SearchProductRequest;
 import com.ezbuy.productservice.repository.repoTemplate.BaseRepositoryTemplate;
 import com.ezbuy.productservice.repository.repoTemplate.ProductCustomRepository;
-import com.ezbuy.sme.framework.constants.Constants;
-import com.ezbuy.sme.framework.utils.DataUtil;
-import com.ezbuy.sme.framework.utils.SQLUtils;
-import com.ezbuy.sme.productmodel.model.Product;
-import com.ezbuy.sme.productmodel.request.SearchProductRequest;
+import io.hoangtien2k3.reactify.DataUtil;
+import io.hoangtien2k3.reactify.SQLUtils;
 import io.r2dbc.spi.Row;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
@@ -30,13 +29,15 @@ public class ProductCustomRepositoryImpl extends BaseRepositoryTemplate implemen
 
     @Override
     public Flux<Product> searchProduct(SearchProductRequest request, String organizationId) {
-        return handleSearchProduct(request, organizationId, false).map(this::buildEmployeeSearchResponse).all();
+        return handleSearchProduct(request, organizationId, false)
+                .map((row, rowMetadata) -> buildEmployeeSearchResponse(row))
+                .all();
     }
 
     @Override
     public Mono<Integer> countProduct(SearchProductRequest request, String organizationId) {
         return handleSearchProduct(request, organizationId, true)
-                .map(x -> DataUtil.safeToInt(x.get("total"), 0))
+                .map((row, rowMetadata) -> DataUtil.safeToInt(row.get("total"), 0))
                 .one();
     }
 
@@ -119,10 +120,10 @@ public class ProductCustomRepositoryImpl extends BaseRepositoryTemplate implemen
         StringBuilder query = new StringBuilder();
         query.append(
                 "select p.* " +
-                "from sme_product.product p " +
-                "inner join sme_product.sync_history_detail d on p.id = d.target_id " +
-                "inner join sme_product.sync_history s on d.sync_history_id = s.id " +
-                "where 1 = 1 ");
+                        "from sme_product.product p " +
+                        "inner join sme_product.sync_history_detail d on p.id = d.target_id " +
+                        "inner join sme_product.sync_history s on d.sync_history_id = s.id " +
+                        "where 1 = 1 ");
         if (!DataUtil.isNullOrEmpty(ids)) {
             query.append(" and p.id in (:ids) ");
             params.put("ids", ids);
@@ -149,7 +150,7 @@ public class ProductCustomRepositoryImpl extends BaseRepositoryTemplate implemen
     protected <T> Flux<T> listQuery(String sql, Map<String, Object> params, Class<T> type) {
         DatabaseClient.GenericExecuteSpec spec = template.getDatabaseClient().sql(sql);
         if (!DataUtil.isNullOrEmpty(params)) {
-            for (String param: params.keySet()) {
+            for (String param : params.keySet()) {
                 spec = spec.bind(param, params.get(param));
             }
         }

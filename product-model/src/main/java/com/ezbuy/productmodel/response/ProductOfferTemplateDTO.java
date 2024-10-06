@@ -23,7 +23,6 @@ import java.util.Optional;
 @JsonIgnoreProperties
 public class ProductOfferTemplateDTO extends BaseProductSpecDTO {
 
-
     private Long cost;
     private String imageLink;
     private List<PriceTemplateDTO> lstPriceTemplate;

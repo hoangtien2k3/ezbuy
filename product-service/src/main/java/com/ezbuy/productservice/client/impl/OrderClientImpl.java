@@ -1,15 +1,15 @@
 package com.ezbuy.productservice.client.impl;
 
-import com.ezbuy.sme.framework.client.BaseRestClient;
-import com.ezbuy.sme.framework.constants.CommonErrorCode;
-import com.ezbuy.sme.framework.exception.BusinessException;
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.framework.utils.DataUtil;
-import com.ezbuy.sme.framework.utils.ObjectMapperUtil;
-import com.ezbuy.sme.ordermodel.dto.request.PricingProductRequest;
-import com.ezbuy.sme.ordermodel.dto.response.GetOrderReportResponse;
-import com.ezbuy.sme.ordermodel.dto.response.PricingProductResponse;
+import com.ezbuy.ordermodel.dto.request.PricingProductRequest;
+import com.ezbuy.ordermodel.dto.response.GetOrderReportResponse;
+import com.ezbuy.ordermodel.dto.response.PricingProductResponse;
 import com.ezbuy.productservice.client.OrderClient;
+import io.hoangtien2k3.reactify.DataUtil;
+import io.hoangtien2k3.reactify.ObjectMapperUtil;
+import io.hoangtien2k3.reactify.client.BaseRestClient;
+import io.hoangtien2k3.reactify.constants.CommonErrorCode;
+import io.hoangtien2k3.reactify.exception.BusinessException;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Qualifier;

@@ -1,17 +1,15 @@
 package com.ezbuy.orderservice.client.impl;
 
-
 import com.ezbuy.orderservice.client.ProductClient;
+import com.ezbuy.productmodel.dto.FilterProductTemplateDTO;
+import com.ezbuy.productmodel.model.Subscriber;
+import com.ezbuy.productmodel.model.Telecom;
+import com.ezbuy.productmodel.request.FilterGetListSubscriberActive;
+import com.ezbuy.productmodel.response.ProductOfferTemplateDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.ezbuy.sme.framework.client.BaseRestClient;
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.framework.utils.DataUtil;
-import com.ezbuy.sme.productmodel.dto.FilterProductTemplateDTO;
-import com.ezbuy.sme.productmodel.model.Subscriber;
-import com.ezbuy.sme.productmodel.request.FilterGetListSubscriberActive;
-import com.ezbuy.sme.productmodel.response.ProductOfferTemplateDTO;
-import com.ezbuy.sme.settingmodel.dto.OptionSetValueDTO;
-import com.ezbuy.sme.settingmodel.model.Telecom;
+import io.hoangtien2k3.reactify.DataUtil;
+import io.hoangtien2k3.reactify.client.BaseRestClient;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;

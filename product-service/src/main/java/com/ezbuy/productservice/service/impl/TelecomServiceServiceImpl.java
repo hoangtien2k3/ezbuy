@@ -1,8 +1,8 @@
 package com.ezbuy.productservice.service.impl;
 
+import com.ezbuy.productmodel.dto.TelecomServiceResponse;
 import com.ezbuy.productservice.repository.repoTemplate.TelecomServiceRepository;
 import com.ezbuy.productservice.service.TelecomServiceService;
-import com.ezbuy.sme.productmodel.dto.TelecomServiceResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;

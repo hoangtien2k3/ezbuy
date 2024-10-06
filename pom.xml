@@ -53,9 +53,11 @@
         <module>customer</module>
         <module>data</module>
         <module>reactify</module>
-        <module>order</module>
+        <module>order-model</module>
+        <module>order-service</module>
         <module>payment</module>
-        <module>product</module>
+        <module>product-model</module>
+        <module>product-service</module>
         <module>report</module>
         <module>shipping</module>
         <module>system</module>

@@ -1,11 +1,11 @@
 package com.ezbuy.ordermodel.dto;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Data
@@ -15,7 +15,6 @@ import java.util.List;
 public class Product {
 
     private Boolean isBundle;
-
 
     @Valid
     private List<CharacteristicDTO> productCharacteristic;

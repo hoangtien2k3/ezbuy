@@ -1,7 +1,7 @@
 package com.ezbuy.productservice.client;
 
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.productmodel.request.CallApiSyncProductRequest;
+import com.ezbuy.productmodel.request.CallApiSyncProductRequest;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 
 public interface SyncClient {

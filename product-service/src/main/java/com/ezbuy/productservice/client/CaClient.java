@@ -1,9 +1,9 @@
 package com.ezbuy.productservice.client;
 
-import com.ezbuy.sme.productmodel.request.ValidateSubInsRequest;
-import com.ezbuy.sme.productmodel.request.getListAreaInsRequest;
-import com.ezbuy.sme.productmodel.response.ListAreaInsResponse;
-import com.ezbuy.sme.productmodel.response.ValidateSubInsResponse;
+import com.ezbuy.productmodel.request.ValidateSubInsRequest;
+import com.ezbuy.productmodel.request.getListAreaInsRequest;
+import com.ezbuy.productmodel.response.ListAreaInsResponse;
+import com.ezbuy.productmodel.response.ValidateSubInsResponse;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;

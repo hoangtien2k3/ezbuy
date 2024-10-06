@@ -1,9 +1,8 @@
 package com.ezbuy.productservice.repository.repoTemplate;
 
-import com.ezbuy.sme.productmodel.dto.ProductSpecCharAndValDTO;
-import com.ezbuy.sme.productmodel.dto.ProductSpecCharValueDTO;
-import com.ezbuy.sme.productmodel.model.ProductSpecCharAndValue;
-import org.springframework.data.r2dbc.repository.R2dbcRepository;
+import com.ezbuy.productmodel.dto.ProductSpecCharAndValDTO;
+import com.ezbuy.productmodel.dto.ProductSpecCharValueDTO;
+import com.ezbuy.productmodel.model.ProductSpecCharAndValue;
 import reactor.core.publisher.Flux;
 
 import java.util.List;

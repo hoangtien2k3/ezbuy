@@ -1,10 +1,10 @@
 package com.ezbuy.orderservice.client;
 
-import com.ezbuy.sme.settingmodel.dto.AreaDTO;
-import com.ezbuy.sme.settingmodel.dto.OptionSetValueDTO;
-import com.ezbuy.sme.settingmodel.dto.TelecomDTO;
-import com.ezbuy.sme.settingmodel.model.OptionSetValue;
-import com.ezbuy.sme.settingmodel.model.Telecom;
+import com.ezbuy.productmodel.model.Telecom;
+import com.ezbuy.settingmodel.dto.AreaDTO;
+import com.ezbuy.settingmodel.dto.OptionSetValueDTO;
+import com.ezbuy.settingmodel.dto.TelecomDTO;
+import com.ezbuy.settingmodel.model.OptionSetValue;
 import reactor.core.publisher.Mono;
 
 import java.util.List;

@@ -1,10 +1,9 @@
 package com.ezbuy.productservice.service;
 
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.productmodel.model.SyncHistory;
-import com.ezbuy.sme.productmodel.model.SyncHistoryDetail;
-import com.ezbuy.sme.productmodel.request.CreateSyncHistoryRequest;
-import com.ezbuy.sme.productmodel.request.SyncCustomerInfoRequest;
+import com.ezbuy.productmodel.model.SyncHistory;
+import com.ezbuy.productmodel.model.SyncHistoryDetail;
+import com.ezbuy.productmodel.request.CreateSyncHistoryRequest;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 
 public interface SyncHistoryService {
@@ -21,6 +20,4 @@ public interface SyncHistoryService {
      * @return
      */
     Mono<DataResponse<SyncHistoryDetail>> createSyncHistoryDetail(SyncHistoryDetail detail);
-
-
 }

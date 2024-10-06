@@ -22,9 +22,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.viettel.sme</groupId>
+            <groupId>com.ezbuy.platform</groupId>
             <artifactId>product-model</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 

@@ -1,6 +1,6 @@
 package com.ezbuy.productservice.repository;
 
-import com.ezbuy.sme.productmodel.model.Product;
+import com.ezbuy.productmodel.model.Product;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Flux;

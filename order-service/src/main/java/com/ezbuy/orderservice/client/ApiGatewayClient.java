@@ -1,8 +1,7 @@
 package com.ezbuy.orderservice.client;
 
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.ordermodel.dto.OrderFileDTO;
-import com.ezbuy.sme.ordermodel.dto.request.UploadFileBase64Request;
+import com.ezbuy.ordermodel.dto.OrderFileDTO;
+import com.ezbuy.ordermodel.dto.request.UploadFileBase64Request;
 import reactor.core.publisher.Mono;
 
 import java.util.List;

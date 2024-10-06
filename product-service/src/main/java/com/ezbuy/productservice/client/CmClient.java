@@ -1,7 +1,7 @@
 package com.ezbuy.productservice.client;
 
-import com.ezbuy.sme.productmodel.dto.ws.CustomerSubscribeInfoCMResponse;
-import com.ezbuy.sme.productmodel.dto.ws.SubscriberCMResponse;
+import com.ezbuy.productmodel.dto.ws.CustomerSubscribeInfoCMResponse;
+import com.ezbuy.productmodel.dto.ws.SubscriberCMResponse;
 import reactor.core.publisher.Mono;
 
 import java.util.List;

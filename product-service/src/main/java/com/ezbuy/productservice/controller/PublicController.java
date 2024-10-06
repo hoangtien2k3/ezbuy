@@ -1,18 +1,18 @@
 package com.ezbuy.productservice.controller;
 
-
+import com.ezbuy.productmodel.dto.FilterProductTemplateDTO;
+import com.ezbuy.productmodel.request.GetListProductOfferingComboForHubSmeRequest;
+import com.ezbuy.productmodel.request.GetProductTemplateDetailRequest;
 import com.ezbuy.productservice.service.ProductOfferTemplateService;
 import com.ezbuy.productservice.service.ProductSpecService;
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.productmodel.dto.FilterProductTemplateDTO;
-import com.ezbuy.sme.productmodel.request.GetListProductOfferingComboForHubSmeRequest;
-import com.ezbuy.sme.productmodel.request.GetProductTemplateDetailRequest;
-import com.ezbuy.sme.productmodel.request.RegisteredServiceRequest;
 import com.ezbuy.productservice.service.PublicService;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+
+import static com.ezbuy.productmodel.constants.UrlPaths.*;
 
 /**
  * author duclv

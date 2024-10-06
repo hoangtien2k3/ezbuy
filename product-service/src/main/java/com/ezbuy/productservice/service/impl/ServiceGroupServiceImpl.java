@@ -1,21 +1,21 @@
 package com.ezbuy.productservice.service.impl;
 
+import com.ezbuy.productmodel.dto.ServiceGroupDTO;
+import com.ezbuy.productmodel.model.ServiceGroup;
+import com.ezbuy.productmodel.request.CreateServiceGroupRequest;
+import com.ezbuy.productmodel.request.SearchServiceGroupRequest;
+import com.ezbuy.productmodel.response.PaginationDTO;
+import com.ezbuy.productmodel.response.SearchServiceGroupResponse;
 import com.ezbuy.productservice.repository.ServiceGroupRepository;
 import com.ezbuy.productservice.repository.repoTemplate.ServiceGroupCustomerRepo;
 import com.ezbuy.productservice.service.ServiceGroupService;
-import com.ezbuy.sme.framework.constants.CommonErrorCode;
-import com.ezbuy.sme.framework.constants.Constants;
-import com.ezbuy.sme.framework.exception.BusinessException;
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.framework.utils.DataUtil;
-import com.ezbuy.sme.framework.utils.SecurityUtils;
-import com.ezbuy.sme.framework.utils.Translator;
-import com.ezbuy.sme.productmodel.dto.ServiceGroupDTO;
-import com.ezbuy.sme.productmodel.model.ServiceGroup;
-import com.ezbuy.sme.productmodel.request.CreateServiceGroupRequest;
-import com.ezbuy.sme.productmodel.request.SearchServiceGroupRequest;
-import com.ezbuy.sme.productmodel.response.PaginationDTO;
-import com.ezbuy.sme.productmodel.response.SearchServiceGroupResponse;
+import io.hoangtien2k3.reactify.DataUtil;
+import io.hoangtien2k3.reactify.SecurityUtils;
+import io.hoangtien2k3.reactify.Translator;
+import io.hoangtien2k3.reactify.constants.CommonErrorCode;
+import io.hoangtien2k3.reactify.constants.Constants;
+import io.hoangtien2k3.reactify.exception.BusinessException;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.ezbuy.sme.framework.constants.MessageConstant.SUCCESS;
+import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
 
 @Service
 @RequiredArgsConstructor

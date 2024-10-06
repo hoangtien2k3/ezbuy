@@ -1,8 +1,8 @@
 package com.ezbuy.orderservice.client;
 
-import com.ezbuy.sme.productmodel.model.Subscriber;
-import com.ezbuy.sme.productmodel.response.ProductOfferTemplateDTO;
-import com.ezbuy.sme.settingmodel.model.Telecom;
+import com.ezbuy.productmodel.model.Subscriber;
+import com.ezbuy.productmodel.model.Telecom;
+import com.ezbuy.productmodel.response.ProductOfferTemplateDTO;
 import reactor.core.publisher.Mono;
 
 import java.util.List;

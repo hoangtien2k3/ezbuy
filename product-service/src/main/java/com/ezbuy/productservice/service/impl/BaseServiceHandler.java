@@ -1,7 +1,7 @@
 package com.ezbuy.productservice.service.impl;
 
-import com.ezbuy.sme.framework.constants.CommonErrorCode;
-import com.ezbuy.sme.framework.exception.BusinessException;
+import io.hoangtien2k3.reactify.constants.CommonErrorCode;
+import io.hoangtien2k3.reactify.exception.BusinessException;
 
 public class BaseServiceHandler {
     public int validatePageSize(Integer pageSize, int defaultPageSize) {

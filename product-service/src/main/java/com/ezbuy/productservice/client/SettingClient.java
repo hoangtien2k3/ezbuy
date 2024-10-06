@@ -1,7 +1,7 @@
 package com.ezbuy.productservice.client;
 
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.settingmodel.dto.TelecomDTO;
+import com.ezbuy.settingmodel.dto.TelecomDTO;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 
 import java.util.List;

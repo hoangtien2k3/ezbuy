@@ -1,18 +1,18 @@
 package com.ezbuy.productservice.service.impl;
 
+import com.ezbuy.productmodel.request.GetListProductOfferingComboForHubSmeRequest;
+import com.ezbuy.productmodel.request.GetProductTemplateDetailRequest;
 import com.ezbuy.productservice.client.ProductClient;
-import com.ezbuy.sme.framework.annotations.LocalCache;
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.framework.utils.Translator;
-import com.ezbuy.sme.productmodel.request.GetListProductOfferingComboForHubSmeRequest;
-import com.ezbuy.sme.productmodel.request.GetProductTemplateDetailRequest;
 import com.ezbuy.productservice.service.PublicService;
+import io.hoangtien2k3.reactify.Translator;
+import io.hoangtien2k3.reactify.annotations.LocalCache;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import static com.ezbuy.sme.framework.constants.MessageConstant.SUCCESS;
+import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
 
 @Service
 @RequiredArgsConstructor

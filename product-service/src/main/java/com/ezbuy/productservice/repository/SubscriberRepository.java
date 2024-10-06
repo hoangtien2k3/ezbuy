@@ -1,6 +1,6 @@
 package com.ezbuy.productservice.repository;
 
-import com.ezbuy.sme.productmodel.model.Subscriber;
+import com.ezbuy.productmodel.model.Subscriber;
 import com.ezbuy.productservice.repository.repoTemplate.SubscriberCustomRepository;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;

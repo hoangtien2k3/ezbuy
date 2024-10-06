@@ -3,21 +3,23 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.8</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <groupId>com.ezbuy.platform</groupId>
+        <artifactId>ezbuy</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
-
-    <groupId>com.viettel.sme</groupId>
     <artifactId>product-service</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>${revision}</version>
+    <name>product-service</name>
+    <description>product-service</description>
 
     <properties>
-        <java.version>11</java.version>
-        <spring-cloud.version>2021.0.4</spring-cloud.version>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <revision>1.0-SNAPSHOT</revision>
+        <spring-cloud.version>2023.0.2</spring-cloud.version>
     </properties>
 
     <dependencyManagement>
@@ -35,19 +37,19 @@
     <dependencies>
         <!-- internal dependencies-->
         <dependency>
-            <groupId>com.viettel.sme</groupId>
-            <artifactId>framework</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>io.github.hoangtien2k3</groupId>
+            <artifactId>reactify</artifactId>
+            <version>1.1.6</version>
         </dependency>
         <dependency>
-            <groupId>com.viettel.sme</groupId>
+            <groupId>com.ezbuy.platform</groupId>
             <artifactId>product-model</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>com.viettel.sme</groupId>
+            <groupId>com.ezbuy.platform</groupId>
             <artifactId>setting-model</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
         <!-- external dependencies-->
         <dependency>
@@ -65,32 +67,32 @@
                 </exclusion>
             </exclusions>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-starter-sleuth</artifactId>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-sleuth</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.viettel.sme</groupId>
+            <groupId>com.ezbuy.platform</groupId>
             <artifactId>setting-model</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.viettel.sme</groupId>
+            <groupId>com.ezbuy.platform</groupId>
             <artifactId>auth-model</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.viettel.sme</groupId>
+            <groupId>com.ezbuy.platform</groupId>
             <artifactId>order-model</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.viettel.sme</groupId>
+            <groupId>com.ezbuy.platform</groupId>
             <artifactId>order-model</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
         <!--        log4j setting-->

@@ -1,18 +1,15 @@
 package com.ezbuy.productservice.controller;
 
+import com.ezbuy.productmodel.constants.UrlPaths;
+import com.ezbuy.productmodel.model.Telecom;
 import com.ezbuy.productservice.service.TelecomService;
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.productmodel.constants.UrlPaths;
-import com.ezbuy.sme.settingmodel.model.Telecom;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-
-import static com.ezbuy.sme.productmodel.constants.UrlPaths.DEFAULT_V1_PREFIX;
-import static com.ezbuy.sme.productmodel.constants.UrlPaths.GET_TELECOM_SERVICE;
 
 @RequiredArgsConstructor
 @Slf4j

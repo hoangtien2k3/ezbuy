@@ -1,9 +1,10 @@
 package com.ezbuy.productservice.repository;
 
-import com.ezbuy.sme.productmodel.request.QueryReport;
-import com.ezbuy.sme.productmodel.model.SummaryReport;
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import com.ezbuy.productmodel.model.SummaryReport;
+import com.ezbuy.productmodel.request.QueryReport;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Mono;

@@ -16,5 +16,4 @@ public class TemplateOfferUtils {
     private Integer pageSize;
     private String sortField;
     private String sortOrder;
-
 }

@@ -3,7 +3,7 @@ package com.ezbuy.productservice.service.impl;
 import com.ezbuy.productservice.repository.SubscriberRepository;
 import com.ezbuy.productservice.client.SettingClient;
 import com.ezbuy.productservice.service.InfoSerService;
-import com.ezbuy.sme.settingmodel.dto.TelecomDTO;
+import com.ezbuy.settingmodel.dto.TelecomDTO;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
