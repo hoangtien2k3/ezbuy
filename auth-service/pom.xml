@@ -21,11 +21,6 @@
 
 	<dependencies>
 		<!-- internal -->
-<!--		<dependency>-->
-<!--			<groupId>com.ezbuy.platform</groupId>-->
-<!--			<artifactId>reactify</artifactId>-->
-<!--			<version>${revision}</version>-->
-<!--		</dependency>-->
 		<dependency>
 			<groupId>io.github.hoangtien2k3</groupId>
 			<artifactId>reactify</artifactId>

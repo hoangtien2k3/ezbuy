@@ -1,7 +1,6 @@
 package com.ezbuy.orderservice.service;
 
-
-import com.ezbuy.sme.ordermodel.dto.PartnerLicenseKeyDTO;
+import com.ezbuy.ordermodel.dto.PartnerLicenseKeyDTO;
 import reactor.core.publisher.Mono;
 
 import java.util.List;

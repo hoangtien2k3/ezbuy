@@ -28,13 +28,10 @@ public class CommonUtils {
 
             InputSource inputSource = new InputSource(new StringReader(xml));
             Document doc = dBuilder.parse(inputSource);
-
             doc.getDocumentElement().normalize();
-            String extractedValue = doc.getElementsByTagName(tagName).item(0).getTextContent();
 
-            return extractedValue;
+            return doc.getElementsByTagName(tagName).item(0).getTextContent();
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }

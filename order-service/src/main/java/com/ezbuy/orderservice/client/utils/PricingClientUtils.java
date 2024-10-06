@@ -1,8 +1,8 @@
 package com.ezbuy.orderservice.client.utils;
 
-import com.ezbuy.sme.framework.factory.MarshallerFactory;
-import com.ezbuy.sme.framework.utils.DataWsUtil;
-import com.ezbuy.sme.ordermodel.dto.request.PricingProductRequest;
+import com.ezbuy.ordermodel.dto.request.PricingProductRequest;
+import io.hoangtien2k3.reactify.DataWsUtil;
+import io.hoangtien2k3.reactify.factory.MarshallerFactory;
 
 import java.text.MessageFormat;
 

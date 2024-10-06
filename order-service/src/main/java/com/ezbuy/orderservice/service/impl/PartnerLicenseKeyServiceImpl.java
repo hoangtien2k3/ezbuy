@@ -1,26 +1,23 @@
 package com.ezbuy.orderservice.service.impl;
 
-import com.ezbuy.sme.framework.model.TokenUser;
-import com.ezbuy.sme.framework.utils.AppUtils;
-import com.ezbuy.sme.ordermodel.model.OrderItem;
+import com.ezbuy.ordermodel.constants.Constants;
+import com.ezbuy.ordermodel.dto.PartnerLicenseKeyDTO;
+import com.ezbuy.ordermodel.model.OrderItem;
+import com.ezbuy.ordermodel.model.PartnerLicenseKey;
 import com.ezbuy.orderservice.client.SettingClient;
-import com.ezbuy.sme.settingmodel.model.OptionSetValue;
-import com.ezbuy.sme.framework.constants.CommonErrorCode;
-import com.ezbuy.sme.framework.exception.BusinessException;
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.framework.utils.DataUtil;
-import com.ezbuy.sme.framework.utils.SecurityUtils;
-import com.ezbuy.sme.framework.utils.Translator;
-import com.ezbuy.sme.ordermodel.constants.Constants;
-import com.ezbuy.sme.ordermodel.dto.PartnerLicenseKeyDTO;
-import com.ezbuy.sme.ordermodel.dto.request.PartnerLicenseKeyRequest;
-import com.ezbuy.sme.ordermodel.model.PartnerLicenseKey;
 import com.ezbuy.orderservice.repository.PartnerLicenseKeyRepository;
 import com.ezbuy.orderservice.service.PartnerLicenseKeyService;
+import com.ezbuy.settingmodel.model.OptionSetValue;
+import io.hoangtien2k3.reactify.AppUtils;
+import io.hoangtien2k3.reactify.DataUtil;
+import io.hoangtien2k3.reactify.SecurityUtils;
+import io.hoangtien2k3.reactify.Translator;
+import io.hoangtien2k3.reactify.constants.CommonErrorCode;
+import io.hoangtien2k3.reactify.exception.BusinessException;
+import io.hoangtien2k3.reactify.model.TokenUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -28,8 +25,6 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.ezbuy.sme.framework.constants.MessageConstant.SUCCESS;
 
 @Slf4j
 @Service

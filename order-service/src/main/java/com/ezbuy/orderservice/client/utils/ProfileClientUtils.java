@@ -1,10 +1,9 @@
 package com.ezbuy.orderservice.client.utils;
 
-import com.ezbuy.sme.authmodel.model.Message;
-import com.ezbuy.sme.framework.utils.DataUtil;
-import com.ezbuy.sme.ordermodel.dto.request.GetListProductOfferingRecordRequest;
-import com.ezbuy.sme.ordermodel.dto.request.GetListServiceRecordRequest;
-import com.ezbuy.sme.ordermodel.dto.ws.lstServiceDTO;
+import com.ezbuy.ordermodel.dto.request.GetListProductOfferingRecordRequest;
+import com.ezbuy.ordermodel.dto.request.GetListServiceRecordRequest;
+import com.ezbuy.ordermodel.dto.ws.lstServiceDTO;
+import io.hoangtien2k3.reactify.DataUtil;
 
 import java.text.MessageFormat;
 
@@ -34,35 +33,35 @@ public class ProfileClientUtils {
 
 
     public static String getListServiceRecord(GetListServiceRecordRequest request, String username, String password) {
-        String lstService= new String("");
+        StringBuilder lstService= new StringBuilder();
         for (lstServiceDTO item : request.getLstService()) {
-            lstService += "<lstService>\n";
-            lstService += DataUtil.ConvertObjectToXMLString(item, "lstService");
-            lstService += "</lstService>\n";
+            lstService.append("<lstService>\n");
+            lstService.append(DataUtil.convertObjectToXMLString(item, "lstService"));
+            lstService.append("</lstService>\n");
         }
 
         String body=  MessageFormat.format(GET_LIST_SERVICE_REQUEST_TEMPLATE,
                 username,
                 password,
                 request.getActionCode(),
-                lstService
+                lstService.toString()
                 );
         return MessageFormat.format(PROFILE_CLIENT_REQUEST, body);
     }
 
     public static String getListProductOfferingRecord(GetListProductOfferingRecordRequest request, String username, String password) {
-        String lstProductOffering= new String("");
+        StringBuilder lstProductOffering= new StringBuilder();
         for (String item : request.getLstProductOffering()) {
-            lstProductOffering += "<lstProductOffering>";
-            lstProductOffering += item;
-            lstProductOffering += "</lstProductOffering>\n";
+            lstProductOffering.append("<lstProductOffering>");
+            lstProductOffering.append(item);
+            lstProductOffering.append("</lstProductOffering>\n");
         }
 
         String body=  MessageFormat.format(GET_LIST_PRODUCT_OFFERING_RECORD_REQUEST_TEMPLATE,
                 username,
                 password,
                 request.getActionCode(),
-                lstProductOffering
+                lstProductOffering.toString()
         );
         return MessageFormat.format(PROFILE_CLIENT_REQUEST, body);
     }

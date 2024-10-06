@@ -1,6 +1,5 @@
 package com.ezbuy.ordermodel.dto;
 
-import com.ezbuy.sme.productmodel.dto.ProductImportDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

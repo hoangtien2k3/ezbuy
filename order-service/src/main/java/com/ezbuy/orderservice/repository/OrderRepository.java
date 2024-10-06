@@ -1,8 +1,8 @@
 package com.ezbuy.orderservice.repository;
 
-import com.ezbuy.sme.ordermodel.dto.OrderSyncDTO;
-import com.ezbuy.sme.ordermodel.dto.response.GetOrderReportResponse;
-import com.ezbuy.sme.ordermodel.model.Order;
+import com.ezbuy.ordermodel.dto.OrderSyncDTO;
+import com.ezbuy.ordermodel.dto.response.GetOrderReportResponse;
+import com.ezbuy.ordermodel.model.Order;
 import org.springframework.data.r2dbc.repository.Modifying;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;

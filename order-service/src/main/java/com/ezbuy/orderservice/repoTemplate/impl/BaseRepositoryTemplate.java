@@ -1,6 +1,6 @@
 package com.ezbuy.orderservice.repoTemplate.impl;
 
-import com.ezbuy.sme.framework.utils.DataUtil;
+import io.hoangtien2k3.reactify.DataUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.r2dbc.core.DatabaseClient;
@@ -24,8 +24,6 @@ public class BaseRepositoryTemplate {
                 .all()
                 .map(raw -> convert(raw, type));
     }
-
-
 
     protected <T> T convert(Map<String, Object> raw, Class<T> type) {
         return DataUtil.convertObject().convertValue(raw, type);

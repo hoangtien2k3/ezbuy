@@ -1,9 +1,9 @@
 package com.ezbuy.orderservice.client;
 
-import com.ezbuy.sme.paymentmodel.dto.request.ProductPaymentRequest;
-import com.ezbuy.sme.paymentmodel.dto.request.ProductPriceRequest;
-import com.ezbuy.sme.paymentmodel.dto.request.UpdateOrderStateRequest;
-import com.ezbuy.sme.paymentmodel.dto.response.ProductPaymentResponse;
+import com.ezbuy.paymentmodel.dto.request.ProductPaymentRequest;
+import com.ezbuy.paymentmodel.dto.request.ProductPriceRequest;
+import com.ezbuy.paymentmodel.dto.request.UpdateOrderStateRequest;
+import com.ezbuy.paymentmodel.dto.response.ProductPaymentResponse;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;

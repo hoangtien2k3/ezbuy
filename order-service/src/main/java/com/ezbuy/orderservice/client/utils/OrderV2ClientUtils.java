@@ -1,7 +1,7 @@
 package com.ezbuy.orderservice.client.utils;
 
-import com.ezbuy.sme.framework.utils.DataUtil;
-import com.ezbuy.sme.ordermodel.constants.Constants;
+import com.ezbuy.ordermodel.constants.Constants;
+import io.hoangtien2k3.reactify.DataUtil;
 
 import java.text.MessageFormat;
 import java.util.List;

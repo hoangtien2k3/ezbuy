@@ -34,7 +34,6 @@ public class ProductClientImpl implements ProductClient {
 
     private final WebClient productClient;
 
-
     public ProductClientImpl(BaseRestClient baseRestClient,
                              @Qualifier("productClient") WebClient product) {
         this.baseRestClient = baseRestClient;

@@ -1,54 +1,55 @@
 package com.ezbuy.orderservice.service.impl;
 
-import com.ezbuy.common.ViettelService;
+import com.ezbuy.authmodel.dto.request.UpdateTenantTrustStatusRequest;
+import com.ezbuy.authmodel.dto.response.TenantIdentifyDTO;
+import com.ezbuy.ordermodel.constants.Constants;
+import com.ezbuy.ordermodel.constants.ErrorCode;
+import com.ezbuy.ordermodel.constants.MessageConstant;
+import com.ezbuy.ordermodel.constants.OrderState;
+import com.ezbuy.ordermodel.dto.*;
+import com.ezbuy.ordermodel.dto.CustomerDTO;
+import com.ezbuy.ordermodel.dto.OrderProductDTO;
+import com.ezbuy.ordermodel.dto.pricing.OrderPrice;
+import com.ezbuy.ordermodel.dto.request.*;
+import com.ezbuy.ordermodel.dto.response.*;
+import com.ezbuy.ordermodel.dto.sale.*;
+import com.ezbuy.ordermodel.dto.ws.CreateOrderResponse;
+import com.ezbuy.ordermodel.dto.ws.GetCustomerSubscriberSmeInfoResponse;
+import com.ezbuy.ordermodel.dto.ws.PricingProductWSResponse;
+import com.ezbuy.ordermodel.dto.ws.ProductOrderItemWsDTO;
+import com.ezbuy.ordermodel.model.*;
+import com.ezbuy.ordermodel.model.Order;
+import com.ezbuy.ordermodel.model.OrderBccsData;
+import com.ezbuy.ordermodel.model.OrderExt;
 import com.ezbuy.orderservice.client.*;
 import com.ezbuy.orderservice.repository.*;
-import com.ezbuy.sme.authmodel.dto.request.UpdateTenantTrustStatusRequest;
-import com.ezbuy.sme.authmodel.dto.response.TenantIdentifyDTO;
-import com.ezbuy.sme.framework.constants.CommonErrorCode;
-import com.ezbuy.sme.framework.constants.Regex;
-import com.ezbuy.sme.framework.exception.BusinessException;
-import com.ezbuy.sme.framework.factory.ModelMapperFactory;
-import com.ezbuy.sme.framework.factory.ObjectMapperFactory;
-import com.ezbuy.sme.framework.model.TokenUser;
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.framework.utils.*;
-import com.ezbuy.sme.ordermodel.constants.Constants;
-import com.ezbuy.sme.ordermodel.constants.ErrorCode;
-import com.ezbuy.sme.ordermodel.constants.OrderState;
-import com.ezbuy.sme.ordermodel.dto.CustomerDTO;
-import com.ezbuy.sme.ordermodel.dto.OrderProductDTO;
-import com.ezbuy.sme.ordermodel.dto.pricing.OrderPrice;
-import com.ezbuy.sme.ordermodel.dto.ws.CreateOrderResponse;
-import com.ezbuy.sme.ordermodel.dto.ws.GetCustomerSubscriberSmeInfoResponse;
-import com.ezbuy.sme.ordermodel.dto.ws.PricingProductWSResponse;
-import com.ezbuy.sme.ordermodel.dto.ws.ProductOrderItemWsDTO;
-import com.ezbuy.sme.ordermodel.model.Order;
-import com.ezbuy.sme.ordermodel.model.OrderBccsData;
-import com.ezbuy.sme.ordermodel.model.OrderExt;
-import com.ezbuy.sme.orderservice.client.*;
+import com.ezbuy.paymentmodel.dto.UpdateOrderStateDTO;
+import com.ezbuy.paymentmodel.dto.request.*;
 import com.ezbuy.orderservice.client.properties.OrderProperties;
 import com.ezbuy.orderservice.client.utils.OrderClientUtils;
 import com.ezbuy.orderservice.repoTemplate.OrderRepositoryTemplate;
-import com.ezbuy.sme.orderservice.repository.*;
 import com.ezbuy.orderservice.service.OrderFieldConfigService;
 import com.ezbuy.orderservice.service.OrderService;
 import com.ezbuy.orderservice.service.PartnerLicenseKeyService;
 import com.ezbuy.orderservice.utils.CommonUtils;
-import com.ezbuy.sme.paymentmodel.dto.UpdateOrderStateDTO;
-import com.ezbuy.sme.paymentmodel.dto.request.*;
-import com.ezbuy.sme.paymentmodel.dto.response.ProductPaymentResponse;
-import com.ezbuy.sme.productmodel.dto.ProductImportDTO;
-import com.ezbuy.sme.productmodel.dto.ProductImportListDTO;
-import com.ezbuy.sme.productmodel.model.Subscriber;
-import com.ezbuy.sme.productmodel.response.ProductOfferTemplateDTO;
-import com.ezbuy.sme.settingmodel.dto.OptionSetValueDTO;
-import com.ezbuy.sme.settingmodel.dto.TelecomDTO;
-import com.ezbuy.sme.settingmodel.model.OptionSetValue;
-import com.ezbuy.sme.settingmodel.model.Telecom;
+import com.ezbuy.paymentmodel.dto.response.ProductPaymentResponse;
+import com.ezbuy.productmodel.model.Subscriber;
+import com.ezbuy.productmodel.response.ProductOfferTemplateDTO;
+import com.ezbuy.settingmodel.dto.OptionSetValueDTO;
+import com.ezbuy.settingmodel.dto.TelecomDTO;
+import com.ezbuy.settingmodel.model.OptionSetValue;
+import com.ezbuy.settingmodel.model.Telecom;
+import io.hoangtien2k3.reactify.*;
+import io.hoangtien2k3.reactify.constants.CommonErrorCode;
+import io.hoangtien2k3.reactify.constants.Regex;
+import io.hoangtien2k3.reactify.exception.BusinessException;
+import io.hoangtien2k3.reactify.factory.ModelMapperFactory;
+import io.hoangtien2k3.reactify.factory.ObjectMapperFactory;
+import io.hoangtien2k3.reactify.model.TokenUser;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -75,20 +76,27 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import static com.ezbuy.sme.authmodel.constants.AuthConstants.MySign.SIGH_HASH_SUCCESS;
-import static com.ezbuy.sme.framework.constants.MessageConstant.FAIL;
-import static com.ezbuy.sme.framework.constants.MessageConstant.SUCCESS;
-import static com.ezbuy.sme.ordermodel.constants.Constants.Common.VALUE_0_STRING;
-import static com.ezbuy.sme.ordermodel.constants.Constants.Common.VALUE_1_STRING;
-import static com.ezbuy.sme.ordermodel.constants.Constants.OptionSetCode.DATA_POLICY;
-import static com.ezbuy.sme.ordermodel.constants.Constants.Order.CURRENCY_VND;
-import static com.ezbuy.sme.ordermodel.constants.Constants.OrderBccsData.STATUS_ACTIVE;
-import static com.ezbuy.sme.ordermodel.constants.Constants.OrderExt.ORDER_TRUST_IDENTITY;
-import static com.ezbuy.sme.ordermodel.constants.Constants.OrderType.ALLOW_ORDER_TYPES;
-import static com.ezbuy.sme.ordermodel.constants.Constants.OrderType.CONNECT_SME_PORTAL;
-import static com.ezbuy.sme.paymentmodel.constants.PaymentConstants.OrderType.*;
-import static com.ezbuy.sme.productmodel.constants.Constants.REVENUE_RATIO_LIST;
-import static com.ezbuy.sme.productmodel.constants.TemplateConstants.IMPORT_PRODUCT_RESULT_TEMPLATE_NAME;
+import static com.ezbuy.authmodel.constants.AuthConstants.MySign.SIGH_HASH_SUCCESS;
+import static com.ezbuy.ordermodel.constants.Constants.*;
+import static com.ezbuy.ordermodel.constants.Constants.Actor.SYSTEM;
+import static com.ezbuy.ordermodel.constants.Constants.CharacteristicKey.SUB_ISDN;
+import static com.ezbuy.ordermodel.constants.Constants.Common.VALUE_1_STRING;
+import static com.ezbuy.ordermodel.constants.Constants.OptionSetCode.DATA_POLICY;
+import static com.ezbuy.ordermodel.constants.Constants.Order.CURRENCY_VND;
+import static com.ezbuy.ordermodel.constants.Constants.OrderBccsData.STATUS_ACTIVE;
+import static com.ezbuy.ordermodel.constants.Constants.OrderExt.ORDER_TRUST_IDENTITY;
+import static com.ezbuy.ordermodel.constants.Constants.OrderType.*;
+import static com.ezbuy.ordermodel.constants.Constants.OrderType.ALLOW_ORDER_TYPES;
+import static com.ezbuy.ordermodel.constants.Constants.OrderType.COMBO_SME_HUB;
+import static com.ezbuy.ordermodel.constants.Constants.ROW_TEMPLATE_NAME.*;
+import static com.ezbuy.ordermodel.constants.Constants.TRUST_STATUS.*;
+import static com.ezbuy.ordermodel.constants.MessageConstant.*;
+import static com.ezbuy.ordermodel.constants.TemplateConstants.*;
+import static com.ezbuy.paymentmodel.constants.PaymentConstants.OrderType.*;
+import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
+import static com.ezbuy.settingmodel.constants.Constants.UPLOAD_STATUS.ACTIVE;
+import static io.hoangtien2k3.reactify.constants.MessageConstant.FAIL;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @Slf4j
 @Service
@@ -97,48 +105,29 @@ import static com.ezbuy.sme.productmodel.constants.TemplateConstants.IMPORT_PROD
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
-
     private final CharacteristicRepository characteristicRepository;
-
     private final OrderFieldConfigService orderFieldConfigService;
-
     private final OrderItemRepository orderItemRepository;
-
     private final ProductClient productClient;
-
     private final OrderClient orderClient;
-
     private final PricingClient pricingClient;
-
     private final PaymentClient paymentClient;
-
     private final SettingClient settingClient;
-
     private final CartClient cartClient;
-
-    private final CmClient cmClient;
-
+//    private final CmClient cmClient;
     private final AuthClient authClient;
-
     private final ObjectMapperUtil objectMapperUtil;
-
-    private final CmPortalClient cmPortalClient;
-
-    private final ProvisioningClient provisioningClient;
-
+//    private final CmPortalClient cmPortalClient;
+//    private final ProvisioningClient provisioningClient;
     private final OrderBccsDataRepository orderBccsDataRepository;
-
     private final OrderRepositoryTemplate orderRepositoryTemplate;
-
     private final OrderV2Client orderV2Client;
-
     private final OrderProperties orderProperties;
     private static final Integer PAYMENT_STATUS = 1;
     private static final String ORGANIZATION_ID_CHARACTERISTIC = "ORGANIZATION_ID";
     private static final String RETURN_URL_SINGLE = "/SINGLE";
     private static final String RETURN_URL_COMBO = "COMBO";
     private final OrderExtRepository orderExtRepository;
-
     private final PartnerLicenseKeyService partnerLicenseKeyService;
 
     @Value("${application.data.sync-order.limit}")
@@ -174,7 +163,6 @@ public class OrderServiceImpl implements OrderService {
 
         return SecurityUtils.getCurrentUser()
                 .flatMap(tokenUser -> {
-
                     var countMono = orderRepository.countOrderHistory(tokenUser.getId(), state);
                     return Mono.zip(
                             countMono,
@@ -197,9 +185,9 @@ public class OrderServiceImpl implements OrderService {
                     ).collectList();
 
                     return Mono.zip(
-                            orderListMono,
-                            Mono.just(count)
-                    )
+                                    orderListMono,
+                                    Mono.just(count)
+                            )
                             .flatMap(orderGroupData -> {
                                 Map<String, OrderDetailDTO> orderMap = new LinkedHashMap<>();
                                 for (OrderDetailDTO order : orderGroupData.getT1()) {
@@ -230,7 +218,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Mono<DataResponse> findDetail(String orderId) {
         String trimOrderId = DataUtil.safeTrim(orderId);
-        if (!ValidateUtils.validateUuid(trimOrderId)) {
+        if (!ValidateUtils.validateUUID(trimOrderId)) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "orderId.invalid"));
         }
 
@@ -241,7 +229,7 @@ public class OrderServiceImpl implements OrderService {
                         return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "order.not.found"));
                     }
 
-                    OrderDetailDTO orderDetail = orderList.get(0);
+                    OrderDetailDTO orderDetail = orderList.getFirst();
                     for (int i = 1; i < orderList.size(); i++) {
                         orderDetail.addItem(orderList.get(i).getItemList());
                     }
@@ -281,123 +269,123 @@ public class OrderServiceImpl implements OrderService {
                     //Bo sung alias
                     return settingClient.getTelecomData(null, new ArrayList<>(telecomServiceAliasSet), new ArrayList<>(telecomServiceIdSet))
                             .flatMap(lstTelecom -> {
-                        //Lay thong tin danh sach sach dich vu
-                        if (DataUtil.isNullOrEmpty(lstTelecom)) {
-                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.item.info.invalid"));
-                        }
+                                //Lay thong tin danh sach sach dich vu
+                                if (DataUtil.isNullOrEmpty(lstTelecom)) {
+                                    return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.item.info.invalid"));
+                                }
 
-                        return validateConnectService(request.getOrganizationId(), lstTelecom).flatMap(validateConnect -> {
-                            List<String> lstOrderCode = lstTelecom.stream().map(TelecomDTO::getDeployOrderCode).distinct().collect(Collectors.toList());
-                            if (!DataUtil.isNullOrEmpty(lstOrderCode) && lstOrderCode.size() > 1) {
-                                return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "order.telecom.error.config.order.code"));
-                            }
-                            String orderTypeCode = DataUtil.isNullOrEmpty(lstOrderCode.get(0)) ? CONNECT_SME_PORTAL : lstOrderCode.get(0);
-                            return orderClient.placeOrder(orderTypeCode, dataJson)
-                                    .flatMap(respOptional -> {
-                                        if (respOptional.isEmpty()) {
-                                            return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "create.order.fail"));
-                                        }
-                                        if (!DataUtil.isTrue(respOptional.get().getSuccess())
-                                                || !DataUtil.safeEqual(respOptional.get().getErrorCode(), 0)) {
-                                            String message = DataUtil.safeToString(respOptional.get().getDescription());
-                                            String[] messageSplit = message.split(":", 2);
-                                            String messageValue = messageSplit.length == 2
-                                                    ? messageSplit[1] : messageSplit[0];
-                                            log.error("placeOrderError message: {}", messageValue);
-                                            if (message.contains("PO000001")
-                                                    || message.contains("PO000002")
-                                                    || message.contains("PO000003")
-                                                    || message.contains("PO000008")) {
-                                                return Mono.error(new BusinessException(ErrorCode.ORDER_INVALID_CUSTOMER_INFO, messageValue));
-                                            } else if (message.contains("PO000018")
-                                                    || message.contains("PO000019")
-                                                    || message.contains("PO000020")
-                                                    || message.contains("PO000021")
-                                                    || message.contains("PO000022")) {
-                                                return Mono.error(new BusinessException(ErrorCode.ORDER_INVALID_PRODUCT, messageValue));
-                                            } else if (message.contains("COG_O0002")) {
-                                                return Mono.error(new BusinessException(ErrorCode.ORDER_INVALID_AREA, messageValue));
-                                            } else {
-                                                return Mono.error(new BusinessException(ErrorCode.CREATE_ORDER_ERROR, messageValue));
-                                            }
-                                        }
+                                return validateConnectService(request.getOrganizationId(), lstTelecom).flatMap(validateConnect -> {
+                                    List<String> lstOrderCode = lstTelecom.stream().map(TelecomDTO::getDeployOrderCode).distinct().collect(Collectors.toList());
+                                    if (!DataUtil.isNullOrEmpty(lstOrderCode) && lstOrderCode.size() > 1) {
+                                        return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "order.telecom.error.config.order.code"));
+                                    }
+                                    String orderTypeCode = DataUtil.isNullOrEmpty(lstOrderCode.get(0)) ? CONNECT_SME_PORTAL : lstOrderCode.get(0);
+                                    return orderClient.placeOrder(orderTypeCode, dataJson)
+                                            .flatMap(respOptional -> {
+                                                if (respOptional.isEmpty()) {
+                                                    return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "create.order.fail"));
+                                                }
+                                                if (!DataUtil.isTrue(respOptional.get().getSuccess())
+                                                        || !DataUtil.safeEqual(respOptional.get().getErrorCode(), 0)) {
+                                                    String message = DataUtil.safeToString(respOptional.get().getDescription());
+                                                    String[] messageSplit = message.split(":", 2);
+                                                    String messageValue = messageSplit.length == 2
+                                                            ? messageSplit[1] : messageSplit[0];
+                                                    log.error("placeOrderError message: {}", messageValue);
+                                                    if (message.contains("PO000001")
+                                                            || message.contains("PO000002")
+                                                            || message.contains("PO000003")
+                                                            || message.contains("PO000008")) {
+                                                        return Mono.error(new BusinessException(ErrorCode.ORDER_INVALID_CUSTOMER_INFO, messageValue));
+                                                    } else if (message.contains("PO000018")
+                                                            || message.contains("PO000019")
+                                                            || message.contains("PO000020")
+                                                            || message.contains("PO000021")
+                                                            || message.contains("PO000022")) {
+                                                        return Mono.error(new BusinessException(ErrorCode.ORDER_INVALID_PRODUCT, messageValue));
+                                                    } else if (message.contains("COG_O0002")) {
+                                                        return Mono.error(new BusinessException(ErrorCode.ORDER_INVALID_AREA, messageValue));
+                                                    } else {
+                                                        return Mono.error(new BusinessException(ErrorCode.CREATE_ORDER_ERROR, messageValue));
+                                                    }
+                                                }
 
-                                        var userMono = SecurityUtils.getCurrentUser();
+                                                var userMono = SecurityUtils.getCurrentUser();
 
-                                        ProductPriceRequest priceRequest = new ProductPriceRequest();
-                                        List<ProductItem> productItemPrices = producTemplateList.stream()
-                                                .map(template -> ProductItem.builder()
-                                                        .templateId(template.getTemplateId())
-                                                        .price(DataUtil.safeToDouble(template.getPrice()).longValue())
-                                                        .quantity(template.getQuantity())
-                                                        .build()).collect(Collectors.toList());
-                                        priceRequest.setProductItems(productItemPrices);
+                                                ProductPriceRequest priceRequest = new ProductPriceRequest();
+                                                List<ProductItem> productItemPrices = producTemplateList.stream()
+                                                        .map(template -> ProductItem.builder()
+                                                                .templateId(template.getTemplateId())
+                                                                .price(DataUtil.safeToDouble(template.getPrice()).longValue())
+                                                                .quantity(template.getQuantity())
+                                                                .build()).collect(Collectors.toList());
+                                                priceRequest.setProductItems(productItemPrices);
 
-                                        var totalFeeMono = paymentClient.getTotalFee(priceRequest);
-                                        return Mono.zip(
-                                                userMono,
-                                                totalFeeMono,
-                                                Mono.just(respOptional.get().getDescription())
-                                        );
-                                    })
-                                    .flatMap(userTotalFeeGroupData -> {
-                                        UUID orderId = UUID.randomUUID();
+                                                var totalFeeMono = paymentClient.getTotalFee(priceRequest);
+                                                return Mono.zip(
+                                                        userMono,
+                                                        totalFeeMono,
+                                                        Mono.just(respOptional.get().getDescription())
+                                                );
+                                            })
+                                            .flatMap(userTotalFeeGroupData -> {
+                                                UUID orderId = UUID.randomUUID();
 
-                                        String username = userTotalFeeGroupData.getT1().getUsername();
-                                        Double price = userTotalFeeGroupData.getT2().isPresent()
-                                                ? userTotalFeeGroupData.getT2().get().doubleValue()
-                                                : null;
+                                                String username = userTotalFeeGroupData.getT1().getUsername();
+                                                Double price = userTotalFeeGroupData.getT2().isPresent()
+                                                        ? userTotalFeeGroupData.getT2().get().doubleValue()
+                                                        : null;
 
-                                        String orderCode = userTotalFeeGroupData.getT3();
+                                                String orderCode = userTotalFeeGroupData.getT3();
 
-                                        String userId = userTotalFeeGroupData.getT1().getId();
-                                        // insert order data
-                                        return saveOrder(orderId, orderCode, userId, individualId, price, username, request)
-                                                .flatMap(savers -> {
-                                                    List<OrderItem> itemList = producTemplateList.stream()
-                                                            .map(item -> {
-                                                                TelecomDTO telecomDto = lstTelecom.stream()
-                                                                        .filter(telecom -> DataUtil.safeEqual(telecom.getOriginId(), item.getTelecomServiceId()))
-                                                                        //Bo sung alias
-                                                                        .filter(telecom -> DataUtil.safeEqual(telecom.getServiceAlias(), item.getTelecomServiceAlias()))
-                                                                        .findAny().orElse(new TelecomDTO());
+                                                String userId = userTotalFeeGroupData.getT1().getId();
+                                                // insert order data
+                                                return saveOrder(orderId, orderCode, userId, individualId, price, username, request)
+                                                        .flatMap(savers -> {
+                                                            List<OrderItem> itemList = producTemplateList.stream()
+                                                                    .map(item -> {
+                                                                        TelecomDTO telecomDto = lstTelecom.stream()
+                                                                                .filter(telecom -> DataUtil.safeEqual(telecom.getOriginId(), item.getTelecomServiceId()))
+                                                                                //Bo sung alias
+                                                                                .filter(telecom -> DataUtil.safeEqual(telecom.getServiceAlias(), item.getTelecomServiceAlias()))
+                                                                                .findAny().orElse(new TelecomDTO());
 
-                                                                UUID itemId = UUID.randomUUID();
-                                                                return OrderItem.builder()
-                                                                        .id(itemId.toString())
-                                                                        .orderId(orderId.toString())
-                                                                        .name(item.getName())
-                                                                        .price(item.getPrice())
-                                                                        .originPrice(item.getOriginPrice())
-                                                                        .productId(item.getTemplateId())
-                                                                        .telecomServiceId(DataUtil.safeToString(item.getTelecomServiceId()))
-                                                                        //Bo sung alias
-                                                                        .telecomServiceAlias(DataUtil.safeToString(item.getTelecomServiceAlias()))
-                                                                        .telecomServiceName(DataUtil.safeToString(telecomDto.getName()))
-                                                                        .quantity(item.getQuantity())
-                                                                        .currency("VND")
-                                                                        .status(com.ezbuy.sme.framework.constants.Constants.Activation.ACTIVE)
-                                                                        .duration(item.getDuration())
-                                                                        .createBy(username)
-                                                                        .updateBy(username)
-                                                                        .state(OrderState.IN_PROGRESS.getValue())
-                                                                        .build();
-                                                            })
-                                                            .collect(Collectors.toList());
+                                                                        UUID itemId = UUID.randomUUID();
+                                                                        return OrderItem.builder()
+                                                                                .id(itemId.toString())
+                                                                                .orderId(orderId.toString())
+                                                                                .name(item.getName())
+                                                                                .price(item.getPrice())
+                                                                                .originPrice(item.getOriginPrice())
+                                                                                .productId(item.getTemplateId())
+                                                                                .telecomServiceId(DataUtil.safeToString(item.getTelecomServiceId()))
+                                                                                //Bo sung alias
+                                                                                .telecomServiceAlias(DataUtil.safeToString(item.getTelecomServiceAlias()))
+                                                                                .telecomServiceName(DataUtil.safeToString(telecomDto.getName()))
+                                                                                .quantity(item.getQuantity())
+                                                                                .currency("VND")
+                                                                                .status(ACTIVE)
+                                                                                .duration(item.getDuration())
+                                                                                .createBy(username)
+                                                                                .updateBy(username)
+                                                                                .state(OrderState.IN_PROGRESS.getValue())
+                                                                                .build();
+                                                                    })
+                                                                    .collect(Collectors.toList());
 
-                                                    DataResponse response = new DataResponse<>(Translator.toLocaleVi(SUCCESS), orderCode);
+                                                            DataResponse response = new DataResponse<>(Translator.toLocaleVi(SUCCESS), orderCode);
 
-                                                    var saveAllItemMono = AppUtils.insertData(orderItemRepository.saveAll(itemList).collectList());
-                                                    var deleteCartMono = deleteCartItem(producTemplateList, userId, request.isFromCart());
-                                                    return Mono.zip(saveAllItemMono, deleteCartMono)
-                                                            .flatMap(rs -> Mono.just(response))
-                                                            .switchIfEmpty(Mono.just(response));
-                                                });
-                                    });
-                        });
+                                                            var saveAllItemMono = AppUtils.insertData(orderItemRepository.saveAll(itemList).collectList());
+                                                            var deleteCartMono = deleteCartItem(producTemplateList, userId, request.isFromCart());
+                                                            return Mono.zip(saveAllItemMono, deleteCartMono)
+                                                                    .flatMap(rs -> Mono.just(response))
+                                                                    .switchIfEmpty(Mono.just(response));
+                                                        });
+                                            });
+                                });
 
 
-                    });
+                            });
 
                 });
     }
@@ -445,7 +433,7 @@ public class OrderServiceImpl implements OrderService {
         String monthLabel = Translator.toLocaleVi("month.string");
         return productTemplateList.stream()
                 .map(item -> {
-                    Optional<OrderProductDTO> productOptional = request.getProductList().stream()
+                    Optional<com.ezbuy.ordermodel.dto.OrderProductDTO> productOptional = request.getProductList().stream()
                             .filter(product -> DataUtil.safeEqual(product.getTemplateId(), item.getProductOfferTemplateId()))
                             .findAny();
                     List<ProductTemplateCharacteristicDTO> characteristicList = getProductCharacteristics(item, request);
@@ -453,7 +441,7 @@ public class OrderServiceImpl implements OrderService {
                     if (productOptional.isEmpty()) {
                         return null;
                     }
-                    OrderProductDTO orderProductDTO = productOptional.get();
+                    com.ezbuy.ordermodel.dto.OrderProductDTO orderProductDTO = productOptional.get();
                     String duration = !DataUtil.isNullOrEmpty(item.getDurationValue())
                             ? DataUtil.safeToInt(item.getDurationValue()) + " " + monthLabel
                             : "";
@@ -691,98 +679,99 @@ public class OrderServiceImpl implements OrderService {
                                     String userId = user.getId();
                                     String username = user.getUsername();
 
-                        return Mono.zip(getPricingProductForPaidOrder(pricingProductRequest),
-                                authClient.findIndividualIdByUserId(userId, request.getOrganizationId())).flatMap(tuple2 -> {
-                            String individualId = tuple2.getT2();
-                            DataResponse pricingResponse = tuple2.getT1();
-                            if (!DataUtil.isNullOrEmpty(pricingResponse.getErrorCode()) || DataUtil.isNullOrEmpty(pricingResponse.getData())) {
-                                return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "order.pricing.invalid"));
-                            }
+                                    return Mono.zip(getPricingProductForPaidOrder(pricingProductRequest),
+                                            authClient.findIndividualIdByUserId(userId, request.getOrganizationId())).flatMap(tuple2 -> {
+                                        String individualId = tuple2.getT2();
+                                        DataResponse pricingResponse = tuple2.getT1();
+                                        if (!DataUtil.isNullOrEmpty(pricingResponse.getErrorCode()) || DataUtil.isNullOrEmpty(pricingResponse.getData())) {
+                                            return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "order.pricing.invalid"));
+                                        }
 
-                            PricingProductWSResponse pricingProductWSResponse = (PricingProductWSResponse) pricingResponse.getData();
+                                        PricingProductWSResponse pricingProductWSResponse = (PricingProductWSResponse) pricingResponse.getData();
 
-                            Map<String, Long> idPriceMap = new HashMap<>();
-                            pricingProductWSResponse.getProductOrderItem().forEach(productOrderItemDTO -> {
-                                totalFee.updateAndGet(v -> v + productOrderItemDTO.getItemPrice().getPrice());
-                                idPriceMap.put(productOrderItemDTO.getProductOffering().getId(), productOrderItemDTO.getItemPrice().getPrice());
-                            });
-
-                            return saveOrderForPaidOrder(orderId, userId, individualId, Double.valueOf(totalFee.get()), username, request)
-                                    .flatMap(saveOrder -> {
-                                        // build listItem and listCharacteristic
-                                        List<Characteristic> characteristicList = new ArrayList<>();
-                                        List<OrderItem> orderItemList = new ArrayList<>();
-                                        request.getProductOrderItems().forEach(productOrderItem -> {
-
-                                            UUID itemId = UUID.randomUUID();
-                                            orderItemList.add(OrderItem.builder()
-                                                    .id(String.valueOf(itemId))
-                                                    .productId(String.valueOf(productOrderItem.getProductOfferingRef().getId()))
-                                                    .orderId(String.valueOf(orderId))
-                                                    .name(productOrderItem.getProductOfferingRef().getName())
-                                                    .currency(Constants.Currency.VND)
-                                                    .quantity(1)
-                                                    .status(1)
-                                                    .telecomServiceId(String.valueOf(productOrderItem.getProductOfferingRef().getTelecomServiceId()))
-                                                    .telecomServiceAlias(productOrderItem.getProductOfferingRef().getTelecomServiceAlias())
-                                                                .createBy(username)
-                                                    .updateBy(username)
-                                                    .subscriberId(productOrderItem.getSubscriberId())
-                                                    .isBundle(productOrderItem.getProduct().getIsBundle() ? 1 : 0)
-                                                    .accountId(String.valueOf(productOrderItem.getProductOfferingRef().getAccountId()))
-                                                    .productCode(productOrderItem.getProductOfferingRef().getCode())
-                                                    .state(OrderState.NEW.getValue())
-                                                    .price(Double.valueOf(idPriceMap.get(productOrderItem.getProductOfferingRef().getId().toString())))
-                                                    .originPrice(Double.valueOf(idPriceMap.get(productOrderItem.getProductOfferingRef().getId().toString())))
-                                                    .build());
-                                            productOrderItem.getProduct().getProductCharacteristic().forEach(characteristicDTO -> {
-                                                UUID characteristicId = UUID.randomUUID();
-                                                characteristicList.add(Characteristic.builder()
-                                                        .id(String.valueOf(characteristicId))
-                                                        .orderItemId(String.valueOf(itemId))
-                                                        .code(characteristicDTO.getCode())
-                                                        .value(characteristicDTO.getValue())
-                                                        .valueType(characteristicDTO.getValueType())
-                                                        .name(characteristicDTO.getName())
-                                                        .createBy(username)
-                                                        .updateBy(username)
-                                                        .build());
-                                            });
-                                            String fromStaffValue = request.getFromStaff();
-                                            if (!DataUtil.isNullOrEmpty(fromStaffValue)) {
-                                                UUID characteristicId = UUID.randomUUID();
-                                                Characteristic formStaffCharacteristic = Characteristic.builder()
-                                                        .id(String.valueOf(characteristicId))
-                                                        .orderItemId(String.valueOf(itemId))
-                                                        .name(Constants.PreOrderInfo.FROM_STAFF)
-                                                        .value(fromStaffValue)
-                                                        .valueType(Constants.DataType.STRING)
-                                                        .createBy(username)
-                                                        .updateBy(username)
-                                                        .build();
-                                                characteristicList.add(formStaffCharacteristic);
-                                            }
+                                        Map<String, Long> idPriceMap = new HashMap<>();
+                                        pricingProductWSResponse.getProductOrderItem().forEach(productOrderItemDTO -> {
+                                            totalFee.updateAndGet(v -> v + productOrderItemDTO.getItemPrice().getPrice());
+                                            idPriceMap.put(productOrderItemDTO.getProductOffering().getId(), productOrderItemDTO.getItemPrice().getPrice());
                                         });
-                                        var saveAllItemMono = orderItemRepository.saveAll(orderItemList).collectList();
-                                        var saveAllCharacteristicMono = characteristicRepository.saveAll(characteristicList).collectList();
 
-                                        return Mono.zip(saveAllItemMono, saveAllCharacteristicMono)
-                                                .flatMap(saveAllItemAndCharacteristic -> {
-                                                    ProductPaymentRequest productPaymentRequest = new ProductPaymentRequest();
-                                                    productPaymentRequest.setOrderCode(String.valueOf(orderId));
-                                                    productPaymentRequest.setOrderType(request.getOrderType());
-                                                    productPaymentRequest.setReturnUrl(request.getReturnUrl());
-                                                    productPaymentRequest.setCancelUrl(request.getCancelUrl());
-                                                    productPaymentRequest.setTotalFee(totalFee.get());
-                                                    return paymentClient.getLinkCheckOut(productPaymentRequest);
-                                                }).flatMap(createLinkCheckout -> {
-                                                    if (createLinkCheckout.isEmpty()) {
-                                                        return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "create.link.checkout.internal"));
-                                                    }
-                                                    return Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), createLinkCheckout.get().getCheckoutLink()));
+                                        return saveOrderForPaidOrder(orderId, userId, individualId, Double.valueOf(totalFee.get()), username, request)
+                                                .flatMap(saveOrder -> {
+                                                    // build listItem and listCharacteristic
+                                                    List<Characteristic> characteristicList = new ArrayList<>();
+                                                    List<OrderItem> orderItemList = new ArrayList<>();
+                                                    request.getProductOrderItems().forEach(productOrderItem -> {
+
+                                                        UUID itemId = UUID.randomUUID();
+                                                        orderItemList.add(OrderItem.builder()
+                                                                .id(String.valueOf(itemId))
+                                                                .productId(String.valueOf(productOrderItem.getProductOfferingRef().getId()))
+                                                                .orderId(String.valueOf(orderId))
+                                                                .name(productOrderItem.getProductOfferingRef().getName())
+                                                                .currency(Constants.Currency.VND)
+                                                                .quantity(1)
+                                                                .status(1)
+                                                                .telecomServiceId(String.valueOf(productOrderItem.getProductOfferingRef().getTelecomServiceId()))
+                                                                .telecomServiceAlias(productOrderItem.getProductOfferingRef().getTelecomServiceAlias())
+                                                                .createBy(username)
+                                                                .updateBy(username)
+                                                                .subscriberId(productOrderItem.getSubscriberId())
+                                                                .isBundle(productOrderItem.getProduct().getIsBundle() ? 1 : 0)
+                                                                .accountId(String.valueOf(productOrderItem.getProductOfferingRef().getAccountId()))
+                                                                .productCode(productOrderItem.getProductOfferingRef().getCode())
+                                                                .state(OrderState.NEW.getValue())
+                                                                .price(Double.valueOf(idPriceMap.get(productOrderItem.getProductOfferingRef().getId().toString())))
+                                                                .originPrice(Double.valueOf(idPriceMap.get(productOrderItem.getProductOfferingRef().getId().toString())))
+                                                                .build());
+                                                        productOrderItem.getProduct().getProductCharacteristic().forEach(characteristicDTO -> {
+                                                            UUID characteristicId = UUID.randomUUID();
+                                                            characteristicList.add(Characteristic.builder()
+                                                                    .id(String.valueOf(characteristicId))
+                                                                    .orderItemId(String.valueOf(itemId))
+                                                                    .code(characteristicDTO.getCode())
+                                                                    .value(characteristicDTO.getValue())
+                                                                    .valueType(characteristicDTO.getValueType())
+                                                                    .name(characteristicDTO.getName())
+                                                                    .createBy(username)
+                                                                    .updateBy(username)
+                                                                    .build());
+                                                        });
+                                                        String fromStaffValue = request.getFromStaff();
+                                                        if (!DataUtil.isNullOrEmpty(fromStaffValue)) {
+                                                            UUID characteristicId = UUID.randomUUID();
+                                                            Characteristic formStaffCharacteristic = Characteristic.builder()
+                                                                    .id(String.valueOf(characteristicId))
+                                                                    .orderItemId(String.valueOf(itemId))
+                                                                    .name(Constants.PreOrderInfo.FROM_STAFF)
+                                                                    .value(fromStaffValue)
+                                                                    .valueType(Constants.DataType.STRING)
+                                                                    .createBy(username)
+                                                                    .updateBy(username)
+                                                                    .build();
+                                                            characteristicList.add(formStaffCharacteristic);
+                                                        }
+                                                    });
+                                                    var saveAllItemMono = orderItemRepository.saveAll(orderItemList).collectList();
+                                                    var saveAllCharacteristicMono = characteristicRepository.saveAll(characteristicList).collectList();
+
+                                                    return Mono.zip(saveAllItemMono, saveAllCharacteristicMono)
+                                                            .flatMap(saveAllItemAndCharacteristic -> {
+                                                                ProductPaymentRequest productPaymentRequest = new ProductPaymentRequest();
+                                                                productPaymentRequest.setOrderCode(String.valueOf(orderId));
+                                                                productPaymentRequest.setOrderType(request.getOrderType());
+                                                                productPaymentRequest.setReturnUrl(request.getReturnUrl());
+                                                                productPaymentRequest.setCancelUrl(request.getCancelUrl());
+                                                                productPaymentRequest.setTotalFee(totalFee.get());
+                                                                return paymentClient.getLinkCheckOut(productPaymentRequest);
+                                                            }).flatMap(createLinkCheckout -> {
+                                                                if (createLinkCheckout.isEmpty()) {
+                                                                    return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "create.link.checkout.internal"));
+                                                                }
+                                                                return Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), createLinkCheckout.get().getCheckoutLink()));
+                                                            });
                                                 });
                                     });
-                        });});
+                                });
                     });
                 });
     }
@@ -790,11 +779,11 @@ public class OrderServiceImpl implements OrderService {
     // build telcomServiceId cho dich vu khi co Alias
     private Mono<CreatePaidOrderRequest> buildTelecomIdForPaidOrder(CreatePaidOrderRequest request) {
         List<String> telecomServiceAlias = request.getProductOrderItems().stream().map(productOrderItem -> productOrderItem.getProductOfferingRef().getTelecomServiceAlias()).collect(Collectors.toList());
-        return settingClient.getTelecomData(null, telecomServiceAlias,null)
+        return settingClient.getTelecomData(null, telecomServiceAlias, null)
                 .flatMap(telecomDTOS -> {
                     List<ProductOrderItem> lstProductOrderItem = request.getProductOrderItems();
-                    for (ProductOrderItem productOrderItem: lstProductOrderItem) {
-                        for (TelecomDTO telecomDTO: telecomDTOS) {
+                    for (ProductOrderItem productOrderItem : lstProductOrderItem) {
+                        for (TelecomDTO telecomDTO : telecomDTOS) {
                             if (productOrderItem.getProductOfferingRef().getTelecomServiceAlias().equals(telecomDTO.getServiceAlias())) {
                                 productOrderItem.getProductOfferingRef().setTelecomServiceId(Long.valueOf(telecomDTO.getOriginId()));
                                 break;
@@ -848,7 +837,7 @@ public class OrderServiceImpl implements OrderService {
                             if (DataUtil.safeEqual(placeOrderResponse.get().getErrorCode(), "0")) {
                                 var updateOrderItemsState = AppUtils.insertData(orderItemRepository.updateOrderItemByOrderCode(request.getOrderCode(), SYSTEM, OrderState.IN_PROGRESS.getValue()));
                                 var updateOrderState = orderRepository.updateStateAndOrderCode(OrderState.IN_PROGRESS.getValue(),
-                                        SYSTEM, request.getOrderCode(), placeOrderResponse.get().getDescription())
+                                                SYSTEM, request.getOrderCode(), placeOrderResponse.get().getDescription())
                                         .then(Mono.just(new Object()));
                                 return Mono.zip(updateOrderState, updateOrderItemsState)
                                         .flatMap(r -> {
@@ -868,62 +857,62 @@ public class OrderServiceImpl implements OrderService {
             log.info("Pass call orderV2Client");
 
             return orderRepositoryTemplate.findCustomerSubscriberSmeInfoById(request.getOrderCode()).collectList().switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "odder.not.found"))).flatMap(orderInfos -> {
-                log.info("When call customer by order and orderItem");
-                if (DataUtil.isNullOrEmpty(orderInfos)) {
-                    return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.invalid"));
-                }
-                if (orderInfos.get(0).getOrderState() >= 1) {
-                    return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.invalid"));
-                }
-
-                List<GetCustomerSubscriberSmeInfoRequest> getCustomerSubscriberSmeInfoRequestList = new ArrayList<>();
-                // tao orderItemIdSet
-                Set<String> orderItemIdSet = new HashSet<>();
-                orderInfos.forEach(o -> {
-                    orderItemIdSet.add(o.getId());
-                });
-
-                orderItemIdSet.forEach(orderItemId -> {
-                    GetCustomerSubscriberSmeInfoRequest getCustomerSubscriberSmeInfoRequest = new GetCustomerSubscriberSmeInfoRequest();
-                    List<Characteristic> characteristicList = new ArrayList<>();
-                    orderInfos.forEach(orderInfo -> {
-                        //bo sung lay id doanh nghiep -> de lay individualId truyen sang Order
-                        if (ORGANIZATION_ID_CHARACTERISTIC.equals(orderInfo.getCharacteristic().getName())) {
-                            getCustomerSubscriberSmeInfoRequest.setOrganizationId(orderInfo.getCharacteristic().getValue());
-                            return;
+                        log.info("When call customer by order and orderItem");
+                        if (DataUtil.isNullOrEmpty(orderInfos)) {
+                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.invalid"));
                         }
-                        Characteristic characteristic = new Characteristic();
-                        characteristic.setId(orderInfo.getCharacteristic().getId());
-                        characteristic.setName(orderInfo.getCharacteristic().getName());
-                        characteristic.setValueType(orderInfo.getCharacteristic().getValueType());
-                        characteristic.setValue(orderInfo.getCharacteristic().getValue());
-                        characteristic.setCode(orderInfo.getCharacteristic().getCode());
-                        getCustomerSubscriberSmeInfoRequest.setIsdn(orderInfo.getIsdn());
-                        if (Objects.equals(orderInfo.getId(), orderItemId)) {
-                            getCustomerSubscriberSmeInfoRequest.setIdNo(orderInfo.getIdNo());
-                            getCustomerSubscriberSmeInfoRequest.setIsdn(orderInfo.getIsdn());
-                            getCustomerSubscriberSmeInfoRequest.setTelecomServiceId(orderInfo.getTelecomServiceId());
-                            getCustomerSubscriberSmeInfoRequest.setTelecomServiceAlias(orderInfo.getTelecomServiceAlias()); // bo sung them alias cho PYCXXX/LuongToanTrinhScontract
-                            getCustomerSubscriberSmeInfoRequest.setProductId(orderInfo.getProductId());
-                            getCustomerSubscriberSmeInfoRequest.setProductCode(orderInfo.getProductCode());
-                            getCustomerSubscriberSmeInfoRequest.setName(orderInfo.getName());
-                            getCustomerSubscriberSmeInfoRequest.setSubscriberId(orderInfo.getSubscriberId());
-                            getCustomerSubscriberSmeInfoRequest.setPrice(orderInfo.getPrice());
-                            getCustomerSubscriberSmeInfoRequest.setId(orderInfo.getId());
-                            getCustomerSubscriberSmeInfoRequest.setIsBundle(orderInfo.getIsBundle());
-                            getCustomerSubscriberSmeInfoRequest.setIndividualId(orderInfo.getIndividualId());
-                            characteristicList.add(characteristic);
+                        if (orderInfos.getFirst().getOrderState() >= 1) {
+                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.invalid"));
                         }
-                    });
-                    getCustomerSubscriberSmeInfoRequest.setCharacteristicList(characteristicList);
-                    getCustomerSubscriberSmeInfoRequestList.add(getCustomerSubscriberSmeInfoRequest);
 
-                });
-                return placePaidOrderData(getCustomerSubscriberSmeInfoRequestList, orderId);
-            }).switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "odder.failed")))
+                        List<GetCustomerSubscriberSmeInfoRequest> getCustomerSubscriberSmeInfoRequestList = new ArrayList<>();
+                        // tao orderItemIdSet
+                        Set<String> orderItemIdSet = new HashSet<>();
+                        orderInfos.forEach(o -> {
+                            orderItemIdSet.add(o.getId());
+                        });
+
+                        orderItemIdSet.forEach(orderItemId -> {
+                            GetCustomerSubscriberSmeInfoRequest getCustomerSubscriberSmeInfoRequest = new GetCustomerSubscriberSmeInfoRequest();
+                            List<Characteristic> characteristicList = new ArrayList<>();
+                            orderInfos.forEach(orderInfo -> {
+                                //bo sung lay id doanh nghiep -> de lay individualId truyen sang Order
+                                if (ORGANIZATION_ID_CHARACTERISTIC.equals(orderInfo.getCharacteristic().getName())) {
+                                    getCustomerSubscriberSmeInfoRequest.setOrganizationId(orderInfo.getCharacteristic().getValue());
+                                    return;
+                                }
+                                Characteristic characteristic = new Characteristic();
+                                characteristic.setId(orderInfo.getCharacteristic().getId());
+                                characteristic.setName(orderInfo.getCharacteristic().getName());
+                                characteristic.setValueType(orderInfo.getCharacteristic().getValueType());
+                                characteristic.setValue(orderInfo.getCharacteristic().getValue());
+                                characteristic.setCode(orderInfo.getCharacteristic().getCode());
+                                getCustomerSubscriberSmeInfoRequest.setIsdn(orderInfo.getIsdn());
+                                if (Objects.equals(orderInfo.getId(), orderItemId)) {
+                                    getCustomerSubscriberSmeInfoRequest.setIdNo(orderInfo.getIdNo());
+                                    getCustomerSubscriberSmeInfoRequest.setIsdn(orderInfo.getIsdn());
+                                    getCustomerSubscriberSmeInfoRequest.setTelecomServiceId(orderInfo.getTelecomServiceId());
+                                    getCustomerSubscriberSmeInfoRequest.setTelecomServiceAlias(orderInfo.getTelecomServiceAlias()); // bo sung them alias cho PYCXXX/LuongToanTrinhScontract
+                                    getCustomerSubscriberSmeInfoRequest.setProductId(orderInfo.getProductId());
+                                    getCustomerSubscriberSmeInfoRequest.setProductCode(orderInfo.getProductCode());
+                                    getCustomerSubscriberSmeInfoRequest.setName(orderInfo.getName());
+                                    getCustomerSubscriberSmeInfoRequest.setSubscriberId(orderInfo.getSubscriberId());
+                                    getCustomerSubscriberSmeInfoRequest.setPrice(orderInfo.getPrice());
+                                    getCustomerSubscriberSmeInfoRequest.setId(orderInfo.getId());
+                                    getCustomerSubscriberSmeInfoRequest.setIsBundle(orderInfo.getIsBundle());
+                                    getCustomerSubscriberSmeInfoRequest.setIndividualId(orderInfo.getIndividualId());
+                                    characteristicList.add(characteristic);
+                                }
+                            });
+                            getCustomerSubscriberSmeInfoRequest.setCharacteristicList(characteristicList);
+                            getCustomerSubscriberSmeInfoRequestList.add(getCustomerSubscriberSmeInfoRequest);
+
+                        });
+                        return placePaidOrderData(getCustomerSubscriberSmeInfoRequestList, orderId);
+                    }).switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "odder.failed")))
                     .flatMap(orderItems -> {
                         log.info("After placePaidOrder {}", orderItems);
-                        if (orderItems.size() > 0) {
+                        if (!orderItems.isEmpty()) {
                             log.info("When orderItems ordered > 0");
                             var updateOrderItemsState = Mono.from(orderRepositoryTemplate.updateOrderItemsState(orderItems));
                             var updateOrderState = orderRepository.updateState(OrderState.IN_PROGRESS.getValue(), SYSTEM, request.getOrderCode())
@@ -949,8 +938,8 @@ public class OrderServiceImpl implements OrderService {
         long offset = request.getOffSet();
         log.info("run sync order offset: {}, limit: {}", offset, request.getLimit());
         return orderRepository.findAllOrderByStateAndTime(OrderState.IN_PROGRESS.getValue(),
-                request.getStartDate(), request.getEndDate(),
-                request.getLimit(), offset).collectList()
+                        request.getStartDate(), request.getEndDate(),
+                        request.getLimit(), offset).collectList()
                 .flatMap(orders -> {
                     if (DataUtil.isNullOrEmpty(orders)) {
                         return Mono.just(currentList);
@@ -977,7 +966,7 @@ public class OrderServiceImpl implements OrderService {
                                                     .id(orderSyncDTO.getOrderId())
                                                     .state(item.getState())
                                                     .description(item.getReasonCancel())
-                                                    .updateBy(Constants.Actor.SYSTEM)
+                                                    .updateBy(SYSTEM)
                                                     .type(orderSyncDTO.getType())
                                                     .build();
                                         }).collect(Collectors.toList());
@@ -1000,22 +989,22 @@ public class OrderServiceImpl implements OrderService {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, message));
         }
 
-        for (OrderProductDTO product : request.getProductList()) {
+        for (com.ezbuy.ordermodel.dto.OrderProductDTO product : request.getProductList()) {
             if (DataUtil.isNullOrEmpty(product.getTemplateId())) {
-                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, "templateId")));
+                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(PARAMS_REQUIRED, "templateId")));
             }
 
             if (DataUtil.isNullOrEmpty(product.getTelecomServiceId())) {
-                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, "telecomServiceId")));
+                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(PARAMS_REQUIRED, "telecomServiceId")));
             }
 
             // bổ sung thêm alias theo PYCXXX/LuongToanTrinhScontract Order-005
             if (DataUtil.isNullOrEmpty(product.getTelecomServiceAlias())) {
-                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, "telecomServiceAlias")));
+                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(PARAMS_REQUIRED, "telecomServiceAlias")));
             }
 
             if (DataUtil.isNullOrEmpty(product.getQuantity())) {
-                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, "quantity")));
+                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(PARAMS_REQUIRED, "quantity")));
             }
 
             if (DataUtil.safeToDouble(product.getQuantity()) <= 0) {
@@ -1140,33 +1129,33 @@ public class OrderServiceImpl implements OrderService {
                         String key = entry.getKey();
                         Object requestValue = customerInfoMap.get(key);
                         if (DataUtil.isNullOrEmpty(requestValue)) {
-                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, key)));
+                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(PARAMS_REQUIRED, key)));
                         }
                     }
 
                     int addressConfigValue = DataUtil.safeToInt(configMap.get(Constants.CustomerInfoProperty.AREA_CODE));
                     if (addressConfigValue == Constants.OrderConfigType.REQUIRED) {
                         if (DataUtil.isNullOrEmpty(customerInfoMap.get(Constants.CustomerInfoProperty.PROVINCE))) {
-                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, Constants.CustomerInfoProperty.PROVINCE)));
+                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(PARAMS_REQUIRED, Constants.CustomerInfoProperty.PROVINCE)));
                         }
 
                         if (DataUtil.isNullOrEmpty(customerInfoMap.get(Constants.CustomerInfoProperty.PROVINCE_NAME))) {
-                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, Constants.CustomerInfoProperty.PROVINCE_NAME)));
+                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(PARAMS_REQUIRED, Constants.CustomerInfoProperty.PROVINCE_NAME)));
                         }
 
                         if (DataUtil.isNullOrEmpty(customerInfoMap.get(Constants.CustomerInfoProperty.DISTRICT))) {
-                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, Constants.CustomerInfoProperty.DISTRICT)));
+                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(PARAMS_REQUIRED, Constants.CustomerInfoProperty.DISTRICT)));
                         }
 
                         if (DataUtil.isNullOrEmpty(customerInfoMap.get(Constants.CustomerInfoProperty.DISTRICT_NAME))) {
-                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, Constants.CustomerInfoProperty.DISTRICT_NAME)));
+                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(PARAMS_REQUIRED, Constants.CustomerInfoProperty.DISTRICT_NAME)));
                         }
 
                         if (DataUtil.isNullOrEmpty(customerInfoMap.get(Constants.CustomerInfoProperty.PRECINCT))) {
-                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, Constants.CustomerInfoProperty.PRECINCT)));
+                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(PARAMS_REQUIRED, Constants.CustomerInfoProperty.PRECINCT)));
                         }
                         if (DataUtil.isNullOrEmpty(customerInfoMap.get(Constants.CustomerInfoProperty.PRECINCT_NAME))) {
-                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, Constants.CustomerInfoProperty.PRECINCT_NAME)));
+                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(PARAMS_REQUIRED, Constants.CustomerInfoProperty.PRECINCT_NAME)));
                         }
                     }
                     return Mono.just(true);
@@ -1348,12 +1337,12 @@ public class OrderServiceImpl implements OrderService {
                 .flatMapSequential(customerSubscriberSmeInfoRequest -> {
                     log.info("start call cm");
                     return Mono.zip(
-                            // da confirm la khi goi qua cac doi khong can bo sung alias
-                            cmClient.getCustomerSubscriberSmeInfo(customerSubscriberSmeInfoRequest.getIdNo(), customerSubscriberSmeInfoRequest.getIsdn(), customerSubscriberSmeInfoRequest.getTelecomServiceId())
-                                    .doOnError(err -> {
-                                        log.error("Handle CM error", err);
-                                    }),
-                            SecurityUtils.getCurrentUser())
+                                    // da confirm la khi goi qua cac doi khong can bo sung alias
+                                    cmClient.getCustomerSubscriberSmeInfo(customerSubscriberSmeInfoRequest.getIdNo(), customerSubscriberSmeInfoRequest.getIsdn(), customerSubscriberSmeInfoRequest.getTelecomServiceId())
+                                            .doOnError(err -> {
+                                                log.error("Handle CM error", err);
+                                            }),
+                                    SecurityUtils.getCurrentUser())
                             .flatMap(responseOptionalUser -> {
                                 Optional<GetCustomerSubscriberSmeInfoResponse> responseOptional = responseOptionalUser.getT1();
                                 if (responseOptional.isEmpty() || DataUtil.isNullOrEmpty(responseOptional.get().getLstCustomerDTO())
@@ -1827,10 +1816,10 @@ public class OrderServiceImpl implements OrderService {
             var saveAllCharacteristicMono = characteristicRepository.saveAll(characteristicList).collectList();
             var saveOrder = saveOrderV2(orderId, orderCode, userId, individualId, 0D, Constants.Currency.VND, null, null, null, null, OrderState.COMPLETED.getValue(), Constants.OrderType.PAID_ORDER, username, username);
             return Mono.zip(saveAllItemMono,
-                    saveAllCharacteristicMono,
-                    saveOrder).flatMap(saveAllItemAndCharacteristic -> {
-                return Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), placeOrderResponse.get()));
-            }).doOnError(err -> log.error("Exception when saveOrder ", err))
+                            saveAllCharacteristicMono,
+                            saveOrder).flatMap(saveAllItemAndCharacteristic -> {
+                        return Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), placeOrderResponse.get()));
+                    }).doOnError(err -> log.error("Exception when saveOrder ", err))
                     .onErrorResume(throwable -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "")));
 
         });
@@ -1992,7 +1981,7 @@ public class OrderServiceImpl implements OrderService {
                     return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, PARAMS_INVALID));
                 }
                 HandleCharacteristicDTO handleCharacteristicDTO = handleProductCharacteristic(responseCM, requestGroupInfo.getGroupId());
-                handleCharacteristicDTO.getProductCharacteristic().add(new CharacteristicDTO(Constants.CharacteristicKey.SUB_ISDN, Constants.DataType.STRING, request.getIsdn(), null, null));
+                handleCharacteristicDTO.getProductCharacteristic().add(new CharacteristicDTO(SUB_ISDN, Constants.DataType.STRING, request.getIsdn(), null, null));
                 handleCharacteristicDTO.getProductCharacteristic().add(new CharacteristicDTO(Constants.CharacteristicKey.NUMBER_OF_SIGNATURES, Constants.DataType.LONG, DataUtil.parseObjectToString(request.getTotalSign()), null, null));
                 // thuc hien tao don hang chua thanh toan
                 return handleCreateNotPaidOrder(handleCharacteristicDTO.getProductCharacteristic(), handleCharacteristicDTO.getProductOfferingRef(), orderType, userId, userName, result.getT2());
@@ -2037,7 +2026,7 @@ public class OrderServiceImpl implements OrderService {
                     handleCharacteristicDTO.getProductCharacteristic().add(new CharacteristicDTO(Constants.CharacteristicKey.GROUP_MEMBER_ID, Constants.DataType.STRING, DataUtil.safeToString(memberDTO.getGroupMemberId()), null, null));
 
                 }
-                handleCharacteristicDTO.getProductCharacteristic().add(new CharacteristicDTO(Constants.CharacteristicKey.SUB_ISDN, Constants.DataType.STRING, request.getIsdn(), null, null));
+                handleCharacteristicDTO.getProductCharacteristic().add(new CharacteristicDTO(SUB_ISDN, Constants.DataType.STRING, request.getIsdn(), null, null));
 
                 TokenUser tokenUser = tuple1.getT1();
                 String userName = tokenUser.getUsername();
@@ -2113,7 +2102,7 @@ public class OrderServiceImpl implements OrderService {
                                         .telecomServiceAlias(DataUtil.safeToString(request.getServiceAlias())).telecomServiceName(DataUtil.safeToString(request.getServiceName()))
                                         .quantity(1)
                                         .currency("VND")
-                                        .status(com.ezbuy.sme.framework.constants.Constants.Activation.ACTIVE)
+                                        .status(ACTIVE)
                                         .createBy(username)
                                         .updateBy(username)
                                         .state(OrderState.NEW.getValue()) //update: bo sung insert state = 0 (NEW)
@@ -2122,9 +2111,10 @@ public class OrderServiceImpl implements OrderService {
 
                                 OrderBccsData orderBccsData = new OrderBccsData();
                                 orderBccsData.setOrderId(orderId.toString());
-                                placePaidOrderData.setExtCode(orderId.toString());orderBccsData.setData(DataUtil.parseObjectToString(placePaidOrderData));
+                                placePaidOrderData.setExtCode(orderId.toString());
+                                orderBccsData.setData(DataUtil.parseObjectToString(placePaidOrderData));
                                 orderBccsData.setOrderType(CONNECT_SME_PORTAL);
-                                orderBccsData.setStatus(com.ezbuy.sme.framework.constants.Constants.Activation.ACTIVE);
+                                orderBccsData.setStatus(ACTIVE);
                                 orderBccsData.setCreateBy(username);
                                 orderBccsData.setCreateAt(LocalDateTime.now());
                                 var saveBccsOrder = AppUtils.insertData(orderBccsDataRepository.save(orderBccsData));
@@ -2133,7 +2123,8 @@ public class OrderServiceImpl implements OrderService {
                                 createLinkRequest.setOrderCode(DataUtil.safeToString(orderId));
                                 createLinkRequest.setCancelUrl(cancelUrl + orderId);
                                 createLinkRequest.setReturnUrl(returnUrl + orderId);
-                                createLinkRequest.setOrderType(SELFCARE_CONNECT_CA);createLinkRequest.setTelecomServiceAlias(request.getTelecomServiceAlias());
+                                createLinkRequest.setOrderType(SELFCARE_CONNECT_CA);
+                                createLinkRequest.setTelecomServiceAlias(request.getTelecomServiceAlias());
                                 createLinkRequest.setTotalFee(DataUtil.safeToLong(request.getTotalFee()));
                                 return Mono.zip(
                                                 paymentClient.getLinkCheckOut(createLinkRequest),
@@ -2156,7 +2147,7 @@ public class OrderServiceImpl implements OrderService {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "connect.ca.error.organization.id.empty"));
         }
         if (request.getTotalFee() == null) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, "totalFee")));
+            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi(PARAMS_REQUIRED, "totalFee")));
         }
         Long telecomServiceId = request.getServiceId();
         if (Constants.TelecomServiceId.CA.equals(telecomServiceId)) {
@@ -2228,40 +2219,40 @@ public class OrderServiceImpl implements OrderService {
         }
         // bo sung dynamic validate cho tham so chinh sach xu ly bao ve du lieu
         // lay cau hinh chinh sach
-      if (!DataUtil.safeEqual(request.getIsBusinessAuth(), true)){
-        return settingClient.getConfDataPolicy(DATA_POLICY)
-            .flatMap(policyConfList -> {
-              if (DataUtil.isNullOrEmpty(policyConfList)) {
-                return Mono.just(true);
-              }
-              if (request.getDataPolicy() == null) {
-                request.setDataPolicy(new HashMap<>());
-              }
-              // validate cau hinh chinh sach voi danh sach chinh sach truyen tu param
-              for (OptionSetValueDTO policyConf : policyConfList) {
-                if (policyConf.getRequired()) {
-                  if (
-                      !request.getDataPolicy().containsKey(policyConf.getCode()) ||
-                          DataUtil.isNullOrEmpty(request.getDataPolicy().get(policyConf.getCode())) // neu khong truyen chinh sach required => loi
-                  ) {
-                    return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "connect.ca.error.data.policy.required", policyConf.getCode()));
-                  }
-                  if (!DataUtil.safeEqual(request.getDataPolicy().get(policyConf.getCode()), VALUE_1_STRING)) { // neu truyen chinh sach required voi value != 1 => loi
-                    return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "connect.ca.error.data.policy.value.invalid", policyConf.getCode()));
-                  }
-                } else if (
-                    request.getDataPolicy().containsKey(policyConf.getCode()) &&
-                        !DataUtil.safeEqual(request.getDataPolicy().get(policyConf.getCode()), VALUE_0_STRING) &&
-                        !DataUtil.safeEqual(request.getDataPolicy().get(policyConf.getCode()), VALUE_1_STRING) // neu truyen chinh sach not required nhung value khong hop le => loi
-                ) {
-                  return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS,
-                      "connect.ca.error.data.policy.value.invalid", policyConf.getCode()));
-                }
-              }
-              return Mono.just(true);
-            });
-      }
-      return Mono.just(true);
+        if (!DataUtil.safeEqual(request.getIsBusinessAuth(), true)) {
+            return settingClient.getConfDataPolicy(DATA_POLICY)
+                    .flatMap(policyConfList -> {
+                        if (DataUtil.isNullOrEmpty(policyConfList)) {
+                            return Mono.just(true);
+                        }
+                        if (request.getDataPolicy() == null) {
+                            request.setDataPolicy(new HashMap<>());
+                        }
+                        // validate cau hinh chinh sach voi danh sach chinh sach truyen tu param
+                        for (OptionSetValueDTO policyConf : policyConfList) {
+                            if (policyConf.getRequired()) {
+                                if (
+                                        !request.getDataPolicy().containsKey(policyConf.getCode()) ||
+                                                DataUtil.isNullOrEmpty(request.getDataPolicy().get(policyConf.getCode())) // neu khong truyen chinh sach required => loi
+                                ) {
+                                    return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "connect.ca.error.data.policy.required", policyConf.getCode()));
+                                }
+                                if (!DataUtil.safeEqual(request.getDataPolicy().get(policyConf.getCode()), VALUE_1_STRING)) { // neu truyen chinh sach required voi value != 1 => loi
+                                    return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "connect.ca.error.data.policy.value.invalid", policyConf.getCode()));
+                                }
+                            } else if (
+                                    request.getDataPolicy().containsKey(policyConf.getCode()) &&
+                                            !DataUtil.safeEqual(request.getDataPolicy().get(policyConf.getCode()), VALUE_0_STRING) &&
+                                            !DataUtil.safeEqual(request.getDataPolicy().get(policyConf.getCode()), VALUE_1_STRING) // neu truyen chinh sach not required nhung value khong hop le => loi
+                            ) {
+                                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS,
+                                        "connect.ca.error.data.policy.value.invalid", policyConf.getCode()));
+                            }
+                        }
+                        return Mono.just(true);
+                    });
+        }
+        return Mono.just(true);
     }
 
     @Override
@@ -2369,6 +2360,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * Order-005
+     *
      * @param request
      * @return
      */
@@ -2380,6 +2372,7 @@ public class OrderServiceImpl implements OrderService {
     /**
      * Ham luu lich su tao don hang
      * (bo sung logic neu order chua truyen alias)
+     *
      * @param requestBegin gom thong tin order va order item
      * @return order code
      */
@@ -2388,7 +2381,7 @@ public class OrderServiceImpl implements OrderService {
     public Mono<DataResponse> createOrderHistory(CreateOrderHistoryRequest requestBegin) {
         return validateAndFormatCreateOrderHistoryRequest(requestBegin) //validate
                 .flatMap(customerId -> Mono.zip(convertRequest(requestBegin), // convert Request neu telecomServiceAlias null
-                        orderRepository.findFirstByOrderIdAndOrderCode(requestBegin.getOrder().getExtCode(), requestBegin.getOrder().getOrderCode()).collectList())
+                                orderRepository.findFirstByOrderIdAndOrderCode(requestBegin.getOrder().getExtCode(), requestBegin.getOrder().getOrderCode()).collectList())
                         .flatMap(tuple -> {
                             CreateOrderHistoryRequest request = tuple.getT1();
                             List<Order> lstOrderDb = tuple.getT2();
@@ -2418,44 +2411,44 @@ public class OrderServiceImpl implements OrderService {
                                                     .telecomServiceId(DataUtil.safeToString(item.getTelecomServiceId()))
                                                     //Bo sung alias
                                                     .telecomServiceAlias(DataUtil.safeToString(item.getTelecomServiceAlias()))
-                                        .telecomServiceName(DataUtil.safeToString(item.getTelecomServiceName()))
-                                        .quantity(item.getQuantity())
-                                        .currency(CURRENCY_VND)
-                                        .status(com.ezbuy.sme.framework.constants.Constants.Activation.ACTIVE)
-                                        .duration(item.getDuration())
-                                        .createBy(name)
-                                        .updateBy(name)
-                                        // bo sung cac truong
-                                        .description(item.getDescription())
-                                        .reviewContent(item.getReviewContent())
-                                        .rating(item.getRating())
-                                        .orderCode(item.getOrderCode())
-                                        .subscriberId(item.getSubscriberId())
-                                        .isBundle(item.getIsBundle())
-                                        .accountId(item.getAccountId())
-                                        .state(item.getState())
-                                        .productCode(item.getProductCode())
-                                        .createAt(LocalDateTime.now())
-                                        .updateAt(LocalDateTime.now())
-                                        .build()).collect(Collectors.toList());
-                                // tao response
-                                DataResponse response = new DataResponse<>(Translator.toLocale(SUCCESS), orderId.toString());
-                                // insert order item vao DB
-                                return orderItemRepository.saveAll(itemList).collectList()
-                                        .flatMap(insertOrderItem -> {
-                                            if (DataUtil.isNullOrEmpty(insertOrderItem)) {
-                                                return Mono.error(new BusinessException(CommonErrorCode.SQL_ERROR, "create.order.history.common.error"));
-                                            }
-                                            return Mono.just(response)
-                                                    .switchIfEmpty(Mono.just(response));
+                                                    .telecomServiceName(DataUtil.safeToString(item.getTelecomServiceName()))
+                                                    .quantity(item.getQuantity())
+                                                    .currency(CURRENCY_VND)
+                                                    .status(ACTIVE)
+                                                    .duration(item.getDuration())
+                                                    .createBy(name)
+                                                    .updateBy(name)
+                                                    // bo sung cac truong
+                                                    .description(item.getDescription())
+                                                    .reviewContent(item.getReviewContent())
+                                                    .rating(item.getRating())
+                                                    .orderCode(item.getOrderCode())
+                                                    .subscriberId(item.getSubscriberId())
+                                                    .isBundle(item.getIsBundle())
+                                                    .accountId(item.getAccountId())
+                                                    .state(item.getState())
+                                                    .productCode(item.getProductCode())
+                                                    .createAt(LocalDateTime.now())
+                                                    .updateAt(LocalDateTime.now())
+                                                    .build()).collect(Collectors.toList());
+                                            // tao response
+                                            DataResponse response = new DataResponse<>(Translator.toLocale(SUCCESS), orderId.toString());
+                                            // insert order item vao DB
+                                            return orderItemRepository.saveAll(itemList).collectList()
+                                                    .flatMap(insertOrderItem -> {
+                                                        if (DataUtil.isNullOrEmpty(insertOrderItem)) {
+                                                            return Mono.error(new BusinessException(CommonErrorCode.SQL_ERROR, "create.order.history.common.error"));
+                                                        }
+                                                        return Mono.just(response)
+                                                                .switchIfEmpty(Mono.just(response));
+                                                    });
                                         });
-                            });
-                }else {
+                            } else {
                                 OrderDTO order = requestBegin.getOrder();
                                 DataResponse response = new DataResponse<>(Translator.toLocale(SUCCESS), order.getExtCode());
                                 return Mono.zip(
-                                        orderRepository.updateStateAndOrderCode(order.getState(), "ORDER_SYSTEM", order.getExtCode(), order.getOrderCode()),
-                                        handleUpdateTrustStatus(order.getOrderCode(), order.getState()))
+                                                orderRepository.updateStateAndOrderCode(order.getState(), "ORDER_SYSTEM", order.getExtCode(), order.getOrderCode()),
+                                                handleUpdateTrustStatus(order.getOrderCode(), order.getState()))
                                         .flatMap(updateOrder -> {
                                             String rs = updateOrder.getT2();
                                             return Mono.just(response).switchIfEmpty(Mono.just(response));
@@ -2473,7 +2466,7 @@ public class OrderServiceImpl implements OrderService {
                         log.info("OrderExt not found");
                         return Mono.just(EMPTY);
                     }
-                    OrderExt orderExt = orderExtList.get(0);
+                    OrderExt orderExt = orderExtList.getFirst();
                     Integer trustStatus;
                     if (DataUtil.safeEqual(orderState, 3)) {
                         trustStatus = NOT_SIGN;
@@ -2580,8 +2573,8 @@ public class OrderServiceImpl implements OrderService {
                 .lstTelecomServiceAlias(telecomServiceAliasList)
                 .build();
         return Mono.zip(
-                getConfigOrder(getOrderFieldConfigRequest),
-                authClient.findUserIdByIndividualIdAndActive(request.getIndividualId().trim())) // update lay user id tu individual id
+                        getConfigOrder(getOrderFieldConfigRequest),
+                        authClient.findUserIdByIndividualIdAndActive(request.getIndividualId().trim())) // update lay user id tu individual id
                 .flatMap(orderConfig -> {
                     // validate cac truong cua order
                     if (orderConfig.getT2().isEmpty() || DataUtil.isNullOrEmpty(orderConfig.getT2().get())) {
@@ -2592,42 +2585,42 @@ public class OrderServiceImpl implements OrderService {
                     boolean areaCodeRequired = DataUtil.safeEqual(orderFieldConfig.getAreaCode(), Constants.OrderConfigType.REQUIRED);
                     if (areaCodeRequired) {
                         if (DataUtil.isNullOrEmpty(order.getAreaCode())) {
-                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, Constants.CustomerInfoProperty.AREA_CODE));
+                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, PARAMS_REQUIRED, Constants.CustomerInfoProperty.AREA_CODE));
                         }
                         if (DataUtil.isNullOrEmpty(order.getProvince())) {
-                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, Constants.CustomerInfoProperty.PROVINCE));
+                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, PARAMS_REQUIRED, Constants.CustomerInfoProperty.PROVINCE));
                         }
                         if (DataUtil.isNullOrEmpty(order.getDistrict())) {
-                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, Constants.CustomerInfoProperty.DISTRICT));
+                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, PARAMS_REQUIRED, Constants.CustomerInfoProperty.DISTRICT));
                         }
                         if (DataUtil.isNullOrEmpty(order.getPrecinct())) {
-                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, Constants.CustomerInfoProperty.PRECINCT));
+                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, PARAMS_REQUIRED, Constants.CustomerInfoProperty.PRECINCT));
                         }
                     }
                     if (DataUtil.safeEqual(orderFieldConfig.getName(), Constants.OrderConfigType.REQUIRED) && DataUtil.isNullOrEmpty(order.getName())) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, "name"));
+                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, PARAMS_REQUIRED, "name"));
                     }
                     if (DataUtil.safeEqual(orderFieldConfig.getDetailAddress(), Constants.OrderConfigType.REQUIRED) && DataUtil.isNullOrEmpty(order.getDetailAddress())) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, "detailAddress"));
+                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, PARAMS_REQUIRED, "detailAddress"));
                     }
                     if (DataUtil.safeEqual(orderFieldConfig.getEmail(), Constants.OrderConfigType.REQUIRED) && DataUtil.isNullOrEmpty(order.getEmail())) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, "email"));
+                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, PARAMS_REQUIRED, "email"));
                     }
                     if (DataUtil.safeEqual(orderFieldConfig.getPhone(), Constants.OrderConfigType.REQUIRED) && DataUtil.isNullOrEmpty(order.getPhone())) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, "phone"));
+                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, PARAMS_REQUIRED, "phone"));
                     }
                     if (!DataUtil.isNullOrEmpty(order.getName()) && order.getName().getBytes().length > 500) {
                         return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "name.exceed.length"));
                     }
                     if (DataUtil.isNullOrEmpty(order.getSystemType())) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, Constants.CustomerInfoProperty.SYSTEM_TYPE));
+                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, PARAMS_REQUIRED, Constants.CustomerInfoProperty.SYSTEM_TYPE));
                     }
                     if (!DataUtil.isNullOrEmpty(order.getSystemType()) && order.getSystemType().getBytes().length > 30) {
                         return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.order.history.error.system.type.exceed.length"));
                     }
                     // bo sung validate state tu request
                     if (DataUtil.isNullOrEmpty(order.getState())) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, "order.state"));
+                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, PARAMS_REQUIRED, "order.state"));
                     }
                     if (!containsState(order.getState())) {
                         return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.order.history.error.order.state.invalid"));
@@ -2661,13 +2654,13 @@ public class OrderServiceImpl implements OrderService {
                         //trim order item
                         trimOrderItem(orderItem);
                         if (DataUtil.isNullOrEmpty(orderItem.getProductId())) {
-                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, "productId"));
+                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, PARAMS_REQUIRED, "productId"));
                         }
                         if (DataUtil.isNullOrEmpty(orderItem.getTelecomServiceId())) {
-                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, "telecomServiceId"));
+                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, PARAMS_REQUIRED, "telecomServiceId"));
                         }
                         if (orderItem.getQuantity() == null) {
-                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, "quantity"));
+                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, PARAMS_REQUIRED, "quantity"));
                         }
                         if (DataUtil.safeToInt(orderItem.getQuantity()) <= 0) {
                             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.quantity.invalid"));
@@ -2677,7 +2670,7 @@ public class OrderServiceImpl implements OrderService {
                         }
                         // bo sung validate state tu request
                         if (DataUtil.isNullOrEmpty(orderItem.getState())) {
-                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, com.ezbuy.sme.ordermodel.constants.MessageConstant.PARAMS_REQUIRED, "orderItem.state"));
+                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, PARAMS_REQUIRED, "orderItem.state"));
                         }
                         if (!containsState(orderItem.getState())) {
                             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.order.history.error.order.item.state.invalid"));
@@ -2750,7 +2743,7 @@ public class OrderServiceImpl implements OrderService {
                     String dataJson = DataUtil.parseObjectToString(placeOrderData);
 
                     // build set alias de goi sang setting lay thong tin cua dich vu PYCXXX/LuongToanTrinhScontract Order-005
-                        Set<String> telecomServiceAliasSet = producTemplateList.stream()
+                    Set<String> telecomServiceAliasSet = producTemplateList.stream()
                             .map(productTemplate -> DataUtil.safeToString(productTemplate.getTelecomServiceAlias()))
                             .collect(Collectors.toSet());
 
@@ -2822,9 +2815,9 @@ public class OrderServiceImpl implements OrderService {
                                                         .telecomServiceId(DataUtil.safeToString(item.getTelecomServiceId()))
                                                         .telecomServiceName(DataUtil.safeToString(telecomDto.getName()))
                                                         .telecomServiceAlias(DataUtil.safeToString(telecomDto.getServiceAlias())) // bo sung alias cho PYCXXX/LuongToanTrinhScontract
-                                                            .quantity(item.getQuantity())
+                                                        .quantity(item.getQuantity())
                                                         .currency("VND")
-                                                        .status(com.ezbuy.sme.framework.constants.Constants.Activation.ACTIVE)
+                                                        .status(ACTIVE)
                                                         .duration(item.getDuration())
                                                         .createBy(username)
                                                         .updateBy(username)
@@ -2847,7 +2840,7 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
-    private Mono<List<PartnerLicenseKeyDTO>> setLstAliasCreateDTO (List<ServiceItemDTO> lstTelecomService, String alias, Long telecomServiceId) {
+    private Mono<List<PartnerLicenseKeyDTO>> setLstAliasCreateDTO(List<ServiceItemDTO> lstTelecomService, String alias, Long telecomServiceId) {
         List<PartnerLicenseKeyDTO> lstLicenseKeyDTOS = new ArrayList<>();
         if (DataUtil.isNullOrEmpty(lstTelecomService)) {
             PartnerLicenseKeyDTO partnerLicenseKeyDTO = PartnerLicenseKeyDTO.builder()
@@ -2876,17 +2869,17 @@ public class OrderServiceImpl implements OrderService {
                     List<PartnerLicenseKeyDTO> lstAliasCreateDTO = tuple.getT2();
                     return authClient.findIndividualIdByUserId(validateUser.getId(), data.getOrganizationId()).flatMap(id -> // Set licenseKey
                             partnerLicenseKeyService.createLicenseKey(id, data.getOrganizationId(), lstAliasCreateDTO)
-                            .flatMap(licenseKey -> {
-                                data.setLstLicenseKey(licenseKey);
-                                PlacePaidOrderData placePaidOrderData = OrderClientUtils.mapDataOrderBccs(data, systemUser, id);
-                                String dataJson = DataUtil.parseObjectToString(placePaidOrderData);
-                                boolean isCombo = data.getIsCombo() != null ? data.getIsCombo() : false;
-                                boolean isSingle = data.getIsSingle() != null ? data.getIsSingle() : false;
-                                String orderType = isCombo && !isSingle ? Constants.OrderType.COMBO_SME_HUB : CONNECT_SME_PORTAL;
+                                    .flatMap(licenseKey -> {
+                                        data.setLstLicenseKey(licenseKey);
+                                        PlacePaidOrderData placePaidOrderData = OrderClientUtils.mapDataOrderBccs(data, systemUser, id);
+                                        String dataJson = DataUtil.parseObjectToString(placePaidOrderData);
+                                        boolean isCombo = data.getIsCombo() != null ? data.getIsCombo() : false;
+                                        boolean isSingle = data.getIsSingle() != null ? data.getIsSingle() : false;
+                                        String orderType = isCombo && !isSingle ? COMBO_SME_HUB : CONNECT_SME_PORTAL;
 
-                                return orderClient.validateDataOrder(orderType, dataJson, null)
-                                        .map(rs -> new DataResponse<>(CommonErrorCode.SUCCESS, Translator.toLocaleVi(SUCCESS), rs));
-                            }));
+                                        return orderClient.validateDataOrder(orderType, dataJson, null)
+                                                .map(rs -> new DataResponse<>(CommonErrorCode.SUCCESS, Translator.toLocaleVi(SUCCESS), rs));
+                                    }));
                 });
 
     }
@@ -2965,170 +2958,171 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Mono<DataResponse> createOrderSelfCare(CreateOrderPaidRequest request) {
         return Mono.zip(
-                validateConnectCARequest(request),
-                SecurityUtils.getCurrentUser(),
-                setLstAliasCreateDTO(request.getLstTelecomService(), request.getTelecomServiceAlias(), request.getServiceId()))
+                        validateConnectCARequest(request),
+                        SecurityUtils.getCurrentUser(),
+                        setLstAliasCreateDTO(request.getLstTelecomService(), request.getTelecomServiceAlias(), request.getServiceId()))
                 .flatMap(validateUser -> authClient.findIndividualIdByUserId(validateUser.getT2().getId(), request.getOrganizationId())
                         .flatMap(individualId ->
                                 partnerLicenseKeyService.createLicenseKey(individualId, request.getOrganizationId(), validateUser.getT3())
                                         .flatMap(licenseKey -> {
-                    request.setLstLicenseKey(licenseKey);
-                    PlacePaidOrderData placePaidOrderData = OrderClientUtils.mapDataOrderBccs(request, systemUser, individualId);
-                    UUID orderId = UUID.randomUUID();
-                    TokenUser user = validateUser.getT2();
-                    String userId = user.getId();
-                    String username = user.getUsername();
-                    CustomerDTO customerDTO = placePaidOrderData.getCustomer();
-                    return saveOrderV2(orderId, null, userId, individualId, request.getTotalFee(), "VND", customerDTO.getAreaCode(), customerDTO.getProvince(), customerDTO.getDistrict(), customerDTO.getPrecinct(), OrderState.NEW.getValue(), Constants.OrderType.PAID_ORDER, username, username)
-                            .flatMap(order -> {
+                                            request.setLstLicenseKey(licenseKey);
+                                            PlacePaidOrderData placePaidOrderData = OrderClientUtils.mapDataOrderBccs(request, systemUser, individualId);
+                                            UUID orderId = UUID.randomUUID();
+                                            TokenUser user = validateUser.getT2();
+                                            String userId = user.getId();
+                                            String username = user.getUsername();
+                                            CustomerDTO customerDTO = placePaidOrderData.getCustomer();
+                                            return saveOrderV2(orderId, null, userId, individualId, request.getTotalFee(), "VND", customerDTO.getAreaCode(), customerDTO.getProvince(), customerDTO.getDistrict(), customerDTO.getPrecinct(), OrderState.NEW.getValue(), Constants.OrderType.PAID_ORDER, username, username)
+                                                    .flatMap(order -> {
 
-                                List<OrderItem> lstSaveOrderItem = new ArrayList<>();
-                                List<PaymentOrderDetailDTO> lstPaymentOrderDetail = new ArrayList<>();
-                                //luong don le
-                                if (DataUtil.isNullOrEmpty(request.getLstProductOrderItemPricing())) {
-                                    UUID itemId = UUID.randomUUID();
-                                    OrderItem orderItem = OrderItem.builder()
-                                            .id(itemId.toString())
-                                            .orderId(orderId.toString())
-                                            .price(placePaidOrderData.getTotalFee())
-                                            .productId(request.getTemplateId())
-                                            .telecomServiceId(DataUtil.safeToString(request.getServiceId()))
-                                            .telecomServiceName(DataUtil.safeToString(request.getServiceName()))
-                                            .quantity(1)
-                                            .currency("VND")
-                                            .status(com.ezbuy.sme.framework.constants.Constants.Activation.ACTIVE)
-                                            .createBy(username)
-                                            .updateBy(username)
-                                            .state(OrderState.NEW.getValue()) //update: bo sung insert state = 0 (NEW)
-                                            .build();
-                                    lstSaveOrderItem.add(orderItem);
-                                } else {
-                                    //luong combo
-                                    for (com.ezbuy.sme.ordermodel.dto.pricing.ProductOrderItem priceItem : request.getLstProductOrderItemPricing()) {
-                                        UUID itemId = UUID.randomUUID();
-                                        OrderPrice totalPrice = priceItem.getTotalPrice();
-                                        ProductOfferingRef productOffering = priceItem.getProductOffering();
-                                        Long telecomServiceId = productOffering.getTelecomServiceId();
-                                        List<ServiceItemDTO> lstTelecomService = request.getLstTelecomService();
-                                        String telecomServiceAlias = null;
-                                        if (!DataUtil.isNullOrEmpty(lstTelecomService)) {
-                                            ServiceItemDTO serviceItemDTO = lstTelecomService.stream().filter(x -> DataUtil.safeEqual(x.getTelecomServiceId(), telecomServiceId)).findFirst().orElse(null);
-                                            telecomServiceAlias = serviceItemDTO != null ? serviceItemDTO.getTelecomServiceAlias() : null;
-                                        }
-                                        OrderItem orderItem = OrderItem.builder()
-                                                .id(itemId.toString())
-                                                .orderId(orderId.toString())
-                                                .price(totalPrice.getPrice().doubleValue())
-                                                .originPrice(totalPrice.getOriginalPrice().doubleValue())
-                                                .productId(DataUtil.safeToString(productOffering.getId()))
-                                                .name(DataUtil.safeToString(productOffering.getName()))
-                                                .productCode(DataUtil.safeToString(productOffering.getCode()))
-                                                .telecomServiceId(DataUtil.safeToString(productOffering.getTelecomServiceId()))
-                                                .telecomServiceName(DataUtil.safeToString(priceItem.getTelecomServiceName()))
-                                                .quantity(priceItem.getQuantity().intValue())
-                                                .telecomServiceAlias(telecomServiceAlias)
-                                                .currency("VND")
-                                                .status(com.ezbuy.sme.framework.constants.Constants.Activation.ACTIVE)
-                                                .createBy(username)
-                                                .updateBy(username)
-                                                .state(OrderState.NEW.getValue()) //update: bo sung insert state = 0 (NEW)
-                                                .build();
-                                        lstSaveOrderItem.add(orderItem);
-                                        PaymentOrderDetailDTO paymentDetail = PaymentOrderDetailDTO.builder()
-                                                .merchantCodeCombo(telecomServiceAlias)
-                                                .orderCodeCombo(itemId.toString())
-                                                .amount(totalPrice.getPrice().doubleValue())
-                                                .build();
-                                        lstPaymentOrderDetail.add(paymentDetail);
-                                    }
-                                }
-
-                                OrderBccsData orderBccsData = new OrderBccsData();
-                                orderBccsData.setOrderId(orderId.toString());
-                                placePaidOrderData.setExtCode(orderId.toString());
-                                boolean isCombo = request.getIsCombo() != null ? request.getIsCombo() : false;
-                                boolean isSingle = request.getIsSingle() != null ? request.getIsSingle() : false;
-                                if (isCombo && !isSingle) {
-                                    orderBccsData.setOrderType(Constants.OrderType.COMBO_SME_HUB);
-                                } else {
-                                    orderBccsData.setOrderType(CONNECT_SME_PORTAL);
-                                }
-                                orderBccsData.setStatus(com.ezbuy.sme.framework.constants.Constants.Activation.ACTIVE);
-                                orderBccsData.setCreateBy(username);
-                                orderBccsData.setCreateAt(LocalDateTime.now());
-                                return orderItemRepository.saveAll(lstSaveOrderItem).collectList()
-                                        .flatMap(rs -> {
-                                            double D = 0;
-                                            //
-                                            if (request.getTotalFee() != D && (request.getRevenueForAm() == null || !request.getRevenueForAm())) {
-                                                // lay link redirect sang payment de thanh toan
-                                                ProductPaymentRequest createLinkRequest = new ProductPaymentRequest();
-                                                createLinkRequest.setOrderCode(DataUtil.safeToString(orderId));
-                                                createLinkRequest.setCancelUrl(cancelOrderUrl);
-                                                createLinkRequest.setReturnUrl(returnOrderUrl + orderId + RETURN_URL_SINGLE);
-                                                Long telecomServiceId = request.getServiceId();
-                                                if (isSingle && !DataUtil.isNullOrEmpty(request.getLstTelecomService())) {
-                                                    telecomServiceId = request.getLstTelecomService().get(0).getTelecomServiceId();
-                                                }
-                                                if (Constants.TelecomServiceId.CA.equals(telecomServiceId)) {
-                                                    createLinkRequest.setOrderType(SELFCARE_CONNECT_CA);
-                                                } else if (Constants.TelecomServiceId.EASY_BOOK.equals(telecomServiceId)) {
-                                                    createLinkRequest.setOrderType(SELFCARE_CONNECT_ESB);
-                                                } else if (Constants.TelecomServiceId.SINVOICE.equals(telecomServiceId)) {
-                                                    createLinkRequest.setOrderType(SELFCARE_CONNECT_SINVOICE);
-                                                } else if (Constants.TelecomServiceId.VCONTRACT.equals(telecomServiceId)) {
-                                                    createLinkRequest.setOrderType(SELFCARE_CONNECT_VCONTRACT);
-                                                } else if (Constants.TelecomServiceId.VBHXH.equals(telecomServiceId)) {
-                                                    createLinkRequest.setOrderType(SELFCARE_CONNECT_VBHXH);
-                                                }
-                                                if (isCombo && !isSingle) {
-                                                    createLinkRequest.setOrderType(COMBO_SME_HUB);
-                                                    createLinkRequest.setCancelUrl(cancelOrderUrl);
-                                                    String packageName = !DataUtil.isNullOrEmpty(request.getComboPackageName()) ? request.getComboPackageName() : RETURN_URL_COMBO;
-                                                    createLinkRequest.setReturnUrl(returnOrderUrl + orderId + "/" + packageName);
-                                                }
-                                                createLinkRequest.setTotalFee(DataUtil.safeToLong(request.getTotalFee()));
-                                                createLinkRequest.setTelecomServiceAlias(request.getTelecomServiceAlias());
-                                                if (!DataUtil.isNullOrEmpty(lstPaymentOrderDetail)) {
-                                                    createLinkRequest.setLstPaymentOrderDetail(lstPaymentOrderDetail);
-                                                }
-                                                return paymentClient.getLinkCheckOut(createLinkRequest)
-                                                        .flatMap(obcheckOut -> {
-                                                            if (obcheckOut.isEmpty()) {
-                                                                return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "create.link.checkout.internal"));
+                                                        List<OrderItem> lstSaveOrderItem = new ArrayList<>();
+                                                        List<PaymentOrderDetailDTO> lstPaymentOrderDetail = new ArrayList<>();
+                                                        //luong don le
+                                                        if (DataUtil.isNullOrEmpty(request.getLstProductOrderItemPricing())) {
+                                                            UUID itemId = UUID.randomUUID();
+                                                            OrderItem orderItem = OrderItem.builder()
+                                                                    .id(itemId.toString())
+                                                                    .orderId(orderId.toString())
+                                                                    .price(placePaidOrderData.getTotalFee())
+                                                                    .productId(request.getTemplateId())
+                                                                    .telecomServiceId(DataUtil.safeToString(request.getServiceId()))
+                                                                    .telecomServiceName(DataUtil.safeToString(request.getServiceName()))
+                                                                    .quantity(1)
+                                                                    .currency("VND")
+                                                                    .status(ACTIVE)
+                                                                    .createBy(username)
+                                                                    .updateBy(username)
+                                                                    .state(OrderState.NEW.getValue()) //update: bo sung insert state = 0 (NEW)
+                                                                    .build();
+                                                            lstSaveOrderItem.add(orderItem);
+                                                        } else {
+                                                            //luong combo
+                                                            for (ProductOrderItem priceItem : request.getLstProductOrderItemPricing()) {
+                                                                UUID itemId = UUID.randomUUID();
+                                                                OrderPrice totalPrice = priceItem.getTotalPrice();
+                                                                ProductOfferingRef productOffering = priceItem.getProductOffering();
+                                                                Long telecomServiceId = productOffering.getTelecomServiceId();
+                                                                List<ServiceItemDTO> lstTelecomService = request.getLstTelecomService();
+                                                                String telecomServiceAlias = null;
+                                                                if (!DataUtil.isNullOrEmpty(lstTelecomService)) {
+                                                                    ServiceItemDTO serviceItemDTO = lstTelecomService.stream().filter(x -> DataUtil.safeEqual(x.getTelecomServiceId(), telecomServiceId)).findFirst().orElse(null);
+                                                                    telecomServiceAlias = serviceItemDTO != null ? serviceItemDTO.getTelecomServiceAlias() : null;
+                                                                }
+                                                                OrderItem orderItem = OrderItem.builder()
+                                                                        .id(itemId.toString())
+                                                                        .orderId(orderId.toString())
+                                                                        .price(totalPrice.getPrice().doubleValue())
+                                                                        .originPrice(totalPrice.getOriginalPrice().doubleValue())
+                                                                        .productId(DataUtil.safeToString(productOffering.getId()))
+                                                                        .name(DataUtil.safeToString(productOffering.getName()))
+                                                                        .productCode(DataUtil.safeToString(productOffering.getCode()))
+                                                                        .telecomServiceId(DataUtil.safeToString(productOffering.getTelecomServiceId()))
+                                                                        .telecomServiceName(DataUtil.safeToString(priceItem.getTelecomServiceName()))
+                                                                        .quantity(priceItem.getQuantity().intValue())
+                                                                        .telecomServiceAlias(telecomServiceAlias)
+                                                                        .currency("VND")
+                                                                        .status(ACTIVE)
+                                                                        .createBy(username)
+                                                                        .updateBy(username)
+                                                                        .state(OrderState.NEW.getValue()) //update: bo sung insert state = 0 (NEW)
+                                                                        .build();
+                                                                lstSaveOrderItem.add(orderItem);
+                                                                PaymentOrderDetailDTO paymentDetail = PaymentOrderDetailDTO.builder()
+                                                                        .merchantCodeCombo(telecomServiceAlias)
+                                                                        .orderCodeCombo(itemId.toString())
+                                                                        .amount(totalPrice.getPrice().doubleValue())
+                                                                        .build();
+                                                                lstPaymentOrderDetail.add(paymentDetail);
                                                             }
-                                                            //luu them thong tin transactionIdNo
-                                                            ProductPaymentResponse paymentResponse = obcheckOut.get();
-                                                            String createLinkCheckout = paymentResponse.getCheckoutLink();
-                                                            String requestBankingId = paymentResponse.getRequestBankingId();
-                                                            PayInfoPaidOrderDTO payInfoPaidOrderDTO = placePaidOrderData.getPayInfo();
-                                                            payInfoPaidOrderDTO.setTransactionIdNo(requestBankingId);
-                                                            placePaidOrderData.setPayInfo(payInfoPaidOrderDTO);
-                                                            orderBccsData.setData(DataUtil.parseObjectToString(placePaidOrderData));
-                                                            return (orderBccsDataRepository.save(orderBccsData))
-                                                                    .flatMap(rsa -> Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), createLinkCheckout)));
+                                                        }
 
-                                                        });
-                                            }
-                                            orderBccsData.setData(DataUtil.parseObjectToString(placePaidOrderData));
-                                            return orderBccsDataRepository.save(orderBccsData).flatMap(saveOrderBccsData -> {
-                                                UpdateOrderStateForOrderRequest updateOrderStateForOrderRequest = new UpdateOrderStateForOrderRequest();
-                                                updateOrderStateForOrderRequest.setOrderCode(DataUtil.safeToString(orderId));
-                                                updateOrderStateForOrderRequest.setPaymentStatus(PAYMENT_STATUS);
-                                                String url = returnOrderUrl + orderId + RETURN_URL_SINGLE;
-                                                if (isCombo && !isSingle) {
-                                                    String packageName = !DataUtil.isNullOrEmpty(request.getComboPackageName()) ? request.getComboPackageName() : RETURN_URL_COMBO;
-                                                    url = returnOrderUrl + orderId + "/" + packageName;
-                                                }
-                                                String finalUrl = url;
-                                                return updateStateAndPlaceOrder(updateOrderStateForOrderRequest).flatMap(updateOrder -> Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), finalUrl)));
-                                            });
-                                        });
-                            });
+                                                        OrderBccsData orderBccsData = new OrderBccsData();
+                                                        orderBccsData.setOrderId(orderId.toString());
+                                                        placePaidOrderData.setExtCode(orderId.toString());
+                                                        boolean isCombo = request.getIsCombo() != null ? request.getIsCombo() : false;
+                                                        boolean isSingle = request.getIsSingle() != null ? request.getIsSingle() : false;
+                                                        if (isCombo && !isSingle) {
+                                                            orderBccsData.setOrderType(COMBO_SME_HUB);
+                                                        } else {
+                                                            orderBccsData.setOrderType(CONNECT_SME_PORTAL);
+                                                        }
+                                                        orderBccsData.setStatus(ACTIVE);
+                                                        orderBccsData.setCreateBy(username);
+                                                        orderBccsData.setCreateAt(LocalDateTime.now());
+                                                        return orderItemRepository.saveAll(lstSaveOrderItem).collectList()
+                                                                .flatMap(rs -> {
+                                                                    double D = 0;
+                                                                    //
+                                                                    if (request.getTotalFee() != D && (request.getRevenueForAm() == null || !request.getRevenueForAm())) {
+                                                                        // lay link redirect sang payment de thanh toan
+                                                                        ProductPaymentRequest createLinkRequest = new ProductPaymentRequest();
+                                                                        createLinkRequest.setOrderCode(DataUtil.safeToString(orderId));
+                                                                        createLinkRequest.setCancelUrl(cancelOrderUrl);
+                                                                        createLinkRequest.setReturnUrl(returnOrderUrl + orderId + RETURN_URL_SINGLE);
+                                                                        Long telecomServiceId = request.getServiceId();
+                                                                        if (isSingle && !DataUtil.isNullOrEmpty(request.getLstTelecomService())) {
+                                                                            telecomServiceId = request.getLstTelecomService().get(0).getTelecomServiceId();
+                                                                        }
+                                                                        if (Constants.TelecomServiceId.CA.equals(telecomServiceId)) {
+                                                                            createLinkRequest.setOrderType(SELFCARE_CONNECT_CA);
+                                                                        } else if (Constants.TelecomServiceId.EASY_BOOK.equals(telecomServiceId)) {
+                                                                            createLinkRequest.setOrderType(SELFCARE_CONNECT_ESB);
+                                                                        } else if (Constants.TelecomServiceId.SINVOICE.equals(telecomServiceId)) {
+                                                                            createLinkRequest.setOrderType(SELFCARE_CONNECT_SINVOICE);
+                                                                        } else if (Constants.TelecomServiceId.VCONTRACT.equals(telecomServiceId)) {
+                                                                            createLinkRequest.setOrderType(SELFCARE_CONNECT_VCONTRACT);
+                                                                        } else if (Constants.TelecomServiceId.VBHXH.equals(telecomServiceId)) {
+                                                                            createLinkRequest.setOrderType(SELFCARE_CONNECT_VBHXH);
+                                                                        }
+                                                                        if (isCombo && !isSingle) {
+                                                                            createLinkRequest.setOrderType(COMBO_SME_HUB);
+                                                                            createLinkRequest.setCancelUrl(cancelOrderUrl);
+                                                                            String packageName = !DataUtil.isNullOrEmpty(request.getComboPackageName()) ? request.getComboPackageName() : RETURN_URL_COMBO;
+                                                                            createLinkRequest.setReturnUrl(returnOrderUrl + orderId + "/" + packageName);
+                                                                        }
+                                                                        createLinkRequest.setTotalFee(DataUtil.safeToLong(request.getTotalFee()));
+                                                                        createLinkRequest.setTelecomServiceAlias(request.getTelecomServiceAlias());
+                                                                        if (!DataUtil.isNullOrEmpty(lstPaymentOrderDetail)) {
+                                                                            createLinkRequest.setLstPaymentOrderDetail(lstPaymentOrderDetail);
+                                                                        }
+                                                                        return paymentClient.getLinkCheckOut(createLinkRequest)
+                                                                                .flatMap(obcheckOut -> {
+                                                                                    if (obcheckOut.isEmpty()) {
+                                                                                        return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "create.link.checkout.internal"));
+                                                                                    }
+                                                                                    //luu them thong tin transactionIdNo
+                                                                                    ProductPaymentResponse paymentResponse = obcheckOut.get();
+                                                                                    String createLinkCheckout = paymentResponse.getCheckoutLink();
+                                                                                    String requestBankingId = paymentResponse.getRequestBankingId();
+                                                                                    PayInfoPaidOrderDTO payInfoPaidOrderDTO = placePaidOrderData.getPayInfo();
+                                                                                    payInfoPaidOrderDTO.setTransactionIdNo(requestBankingId);
+                                                                                    placePaidOrderData.setPayInfo(payInfoPaidOrderDTO);
+                                                                                    orderBccsData.setData(DataUtil.parseObjectToString(placePaidOrderData));
+                                                                                    return (orderBccsDataRepository.save(orderBccsData))
+                                                                                            .flatMap(rsa -> Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), createLinkCheckout)));
+
+                                                                                });
+                                                                    }
+                                                                    orderBccsData.setData(DataUtil.parseObjectToString(placePaidOrderData));
+                                                                    return orderBccsDataRepository.save(orderBccsData).flatMap(saveOrderBccsData -> {
+                                                                        UpdateOrderStateForOrderRequest updateOrderStateForOrderRequest = new UpdateOrderStateForOrderRequest();
+                                                                        updateOrderStateForOrderRequest.setOrderCode(DataUtil.safeToString(orderId));
+                                                                        updateOrderStateForOrderRequest.setPaymentStatus(PAYMENT_STATUS);
+                                                                        String url = returnOrderUrl + orderId + RETURN_URL_SINGLE;
+                                                                        if (isCombo && !isSingle) {
+                                                                            String packageName = !DataUtil.isNullOrEmpty(request.getComboPackageName()) ? request.getComboPackageName() : RETURN_URL_COMBO;
+                                                                            url = returnOrderUrl + orderId + "/" + packageName;
+                                                                        }
+                                                                        String finalUrl = url;
+                                                                        return updateStateAndPlaceOrder(updateOrderStateForOrderRequest).flatMap(updateOrder -> Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), finalUrl)));
+                                                                    });
+                                                                });
+                                                    });
                                         })
                         )
                 );
     }
+
     @Override
     public Mono<DataResponse<ProfileForBusinessCustDTO>> getDocDataPolicy(CreateOrderPaidRequest createOrderPaidRequest) {
         PlacePaidOrderData placePaidOrderData = OrderClientUtils.mapDataOrderBccs(createOrderPaidRequest, systemUser, null);
@@ -3169,8 +3163,8 @@ public class OrderServiceImpl implements OrderService {
                                     preOrderCodeList = preOrderList.stream().map(GetOrderHistoryResponse.OrderDTO::getOrderCode).collect(Collectors.toList());
                                 }
                                 return Mono.zip(
-                                        settingClient.getAllTelecomService(),
-                                        searchOrderV2(request, preOrderCodeList)) // get order list from db
+                                                settingClient.getAllTelecomService(),
+                                                searchOrderV2(request, preOrderCodeList)) // get order list from db
                                         .map(telecomOrderDb -> {
                                             // map data from ws
                                             List<OrderDetailDTO> orderDetailList = new ArrayList<>();
@@ -3259,7 +3253,7 @@ public class OrderServiceImpl implements OrderService {
         if (DataUtil.isNullOrEmpty(request.getIndividualId())) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "search.order.history.individual.id.empty"));
         }
-        if (!ValidateUtils.validateUuid(request.getIndividualId())) {
+        if (!ValidateUtils.validateUUID(request.getIndividualId())) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "search.order.history.individual.id.invalid"));
         }
         return Mono.just(true);
@@ -3275,13 +3269,13 @@ public class OrderServiceImpl implements OrderService {
                 .flatMap(tokenUser -> {
                     int offset = PageUtils.getOffset(page, size);
                     return orderRepositoryTemplate.searchOrderDetailV2(
-                            tokenUser.getId(),
-                            state,
-                            offset,
-                            size,
-                            sort,
-                            preOrderCodeList
-                    ).collectList()
+                                    tokenUser.getId(),
+                                    state,
+                                    offset,
+                                    size,
+                                    sort,
+                                    preOrderCodeList
+                            ).collectList()
                             .flatMap(orderGroupData -> {
                                 Map<String, OrderDetailDTO> orderMap = new LinkedHashMap<>();
                                 for (OrderDetailDTO order : orderGroupData) {
@@ -3310,10 +3304,10 @@ public class OrderServiceImpl implements OrderService {
         PlacePaidOrderData placePaidOrderData = OrderClientUtils.mapDataOrderBccs(createOrderPaidRequest, systemUser, null);
         boolean isCombo = createOrderPaidRequest.getIsCombo() != null ? createOrderPaidRequest.getIsCombo() : false;
         boolean isSingle = createOrderPaidRequest.getIsSingle() != null ? createOrderPaidRequest.getIsSingle() : false;
-        String orderType = isCombo && !isSingle ? Constants.OrderType.COMBO_SME_HUB : CONNECT_SME_PORTAL;
+        String orderType = isCombo && !isSingle ? COMBO_SME_HUB : CONNECT_SME_PORTAL;
         String data = DataUtil.parseObjectToString(placePaidOrderData);
         return orderV2Client.getFileContractToView(orderType, data)
-                .map(response -> new DataResponse<>(Translator.toLocaleVi(SUCCESS),response));
+                .map(response -> new DataResponse<>(Translator.toLocaleVi(SUCCESS), response));
     }
 
     @Override
@@ -3338,6 +3332,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * Ham lay danh sach cac phan tu bi trung trong list
+     *
      * @param list
      * @return
      */
@@ -3374,9 +3369,10 @@ public class OrderServiceImpl implements OrderService {
                     .flatMap(memberList -> {
                         // check tong so luot ky cac thanh vien trong nhom vuot qua tong so luot ky cua nhom
                         long signSum = 0L;
-                        for(GroupMemberImportDTO member: memberList) {
+                        for (GroupMemberImportDTO member : memberList) {
                             signSum = signSum + DataUtil.safeToLong(member.getNumberOfSign());
-                        };
+                        }
+                        ;
                         if (signSum > DataUtil.safeToLong(totalSign)) {
                             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.import.error.sum.sign.reach.limit"));
                         }
@@ -3418,7 +3414,7 @@ public class OrderServiceImpl implements OrderService {
     private Mono<GroupMemberImportDTO> validateImport(GroupMemberImportDTO request, List<String> isdnList) {
         return validateImportGroupMember(request, isdnList)
                 .map(validateOrg -> {
-                    request.setErrMsg(StringUtils.EMPTY);
+                    request.setErrMsg(EMPTY);
                     request.setResult(true);
                     return request;
                 })
@@ -3493,15 +3489,15 @@ public class OrderServiceImpl implements OrderService {
     private void buildRowWithProduct(Sheet sheet, int i, GroupMemberImportDTO item) {
         var row = sheet.createRow(i + 1);
         row.createCell(0).setCellValue(i + 1);
-        row.createCell(1).setCellValue(Optional.ofNullable(item.getSubIsdn()).orElse(StringUtils.EMPTY));
-        row.createCell(2).setCellValue(Optional.ofNullable(item.getStatus()).orElse(StringUtils.EMPTY));
-        row.createCell(3).setCellValue(Optional.ofNullable(DataUtil.safeToString(item.getAddGroupDate())).orElse(StringUtils.EMPTY));
-        row.createCell(4).setCellValue(Optional.ofNullable(DataUtil.safeToString(item.getNumberOfSign())).orElse(StringUtils.EMPTY));
+        row.createCell(1).setCellValue(Optional.ofNullable(item.getSubIsdn()).orElse(EMPTY));
+        row.createCell(2).setCellValue(Optional.ofNullable(item.getStatus()).orElse(EMPTY));
+        row.createCell(3).setCellValue(Optional.ofNullable(DataUtil.safeToString(item.getAddGroupDate())).orElse(EMPTY));
+        row.createCell(4).setCellValue(Optional.ofNullable(DataUtil.safeToString(item.getNumberOfSign())).orElse(EMPTY));
         // Ket qua
         row.createCell(5).setCellValue(Optional.ofNullable(item.isResult()).map(x -> x.equals(true) ?
-                Translator.toLocaleVi(SUCCESS) : Translator.toLocaleVi(FAIL)).orElse(StringUtils.EMPTY));
+                Translator.toLocaleVi(SUCCESS) : Translator.toLocaleVi(FAIL)).orElse(EMPTY));
         row.createCell(6).setCellValue(Optional.ofNullable(item.isResult()).map(x -> x.equals(true) ?
-                StringUtils.EMPTY : item.getErrMsg()).orElse(StringUtils.EMPTY));
+                EMPTY : item.getErrMsg()).orElse(EMPTY));
     }
 
     private Flux<GroupMemberImportDTO> getCreateGroupMemberRequestFlux(FilePart filePart) {
@@ -3555,11 +3551,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private String getValueInCell(Row row, DataFormatter formatter, int i) {
-        return Optional.ofNullable(row.getCell(i)).map(value -> formatter.formatCellValue(value).trim()).orElse(StringUtils.EMPTY);
+        return Optional.ofNullable(row.getCell(i)).map(value -> formatter.formatCellValue(value).trim()).orElse(EMPTY);
     }
 
     /**
      * Ham them thanh vien nhom CA theo file
+     *
      * @param filePart
      * @param groupCode
      * @param organizationId
@@ -3590,9 +3587,10 @@ public class OrderServiceImpl implements OrderService {
             return results.collectList().flatMap(memberList -> {
                 // check tong so luot ky cac thanh vien trong nhom vuot qua tong so luot ky cua nhom
                 long signSum = 0L;
-                for(GroupMemberImportDTO member: memberList) {
+                for (GroupMemberImportDTO member : memberList) {
                     signSum = signSum + DataUtil.safeToLong(member.getNumberOfSign());
-                };
+                }
+                ;
                 if (signSum > DataUtil.safeToLong(totalSign)) {
                     return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.import.error.sum.sign.reach.limit"));
                 }
@@ -3633,7 +3631,7 @@ public class OrderServiceImpl implements OrderService {
                     if (DataUtil.safeEqual(createOrderResponse.getErrorCode(), ERROR_CODE_SUCCESS) &&
                             DataUtil.safeEqual(createOrderResponse.getSuccess(), SUCCESS_TRUE)) {
                         memberList.forEach(groupMemberImport -> {
-                            groupMemberImport.setErrMsg(StringUtils.EMPTY);
+                            groupMemberImport.setErrMsg(EMPTY);
                             groupMemberImport.setResult(true);
                         });
                         result.setItems(memberList);
@@ -3678,8 +3676,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Mono<DataResponse> createOrderCts(CreateOrderPaidRequest request) {
         return Mono.zip(
-                validateConnectCARequest(request), //validate input
-                SecurityUtils.getCurrentUser())
+                        validateConnectCARequest(request), //validate input
+                        SecurityUtils.getCurrentUser())
                 .flatMap(validateUser -> authClient.findIndividualIdByUserId(validateUser.getT2().getId(), request.getOrganizationId()).flatMap(individualId -> {
                     UploadFileBase64Request uploadFileBase64Request = new UploadFileBase64Request();
                     uploadFileBase64Request.setFolderName("SME_PORTAL");
@@ -3692,9 +3690,9 @@ public class OrderServiceImpl implements OrderService {
                         // lay ban ghi tenant
                         var getTenantID = authClient.getByTypeAndTenantIdAndTrustStatus("ORGANIZATION", request.getOrganizationId(), "2");
                         //call order tao don cts
-                        var createOrder = orderV2Client.createOrder(Constants.OrderType.CONNECT_SME_PORTAL, dataPlacePaidOrder);
-                        return Mono.zip(getTenantID,createOrder).flatMap(response->{
-                            if (DataUtil.safeEqual(response.getT2().get().getErrorCode(), "0")){
+                        var createOrder = orderV2Client.createOrder(CONNECT_SME_PORTAL, dataPlacePaidOrder);
+                        return Mono.zip(getTenantID, createOrder).flatMap(response -> {
+                            if (DataUtil.safeEqual(response.getT2().get().getErrorCode(), "0")) {
                                 UUID orderId = UUID.randomUUID();
                                 TokenUser user = validateUser.getT2();
                                 String userId = user.getId();
@@ -3716,14 +3714,14 @@ public class OrderServiceImpl implements OrderService {
                                                         .telecomServiceName(DataUtil.safeToString(request.getServiceName()))
                                                         .quantity(1)
                                                         .currency("VND")
-                                                        .status(com.ezbuy.sme.framework.constants.Constants.Activation.ACTIVE)
+                                                        .status(ACTIVE)
                                                         .createBy(username)
                                                         .updateBy(username)
                                                         .state(OrderState.NEW.getValue()) //update: bo sung insert state = 0 (NEW)
                                                         .build();
                                                 lstSaveOrderItem.add(orderItem);
                                             } else {
-                                                for (com.ezbuy.sme.ordermodel.dto.pricing.ProductOrderItem priceItem : request.getLstProductOrderItemPricing()) {
+                                                for (com.ezbuy.ordermodel.dto.pricing.ProductOrderItem priceItem : request.getLstProductOrderItemPricing()) {
                                                     UUID itemId = UUID.randomUUID();
                                                     OrderPrice totalPrice = priceItem.getTotalPrice();
                                                     ProductOfferingRef productOffering = priceItem.getProductOffering();
@@ -3747,7 +3745,7 @@ public class OrderServiceImpl implements OrderService {
                                                             .quantity(priceItem.getQuantity().intValue())
                                                             .telecomServiceAlias(telecomServiceAlias)
                                                             .currency("VND")
-                                                            .status(com.ezbuy.sme.framework.constants.Constants.Activation.ACTIVE)
+                                                            .status(ACTIVE)
                                                             .createBy(username)
                                                             .updateBy(username)
                                                             .state(OrderState.NEW.getValue()) //update: bo sung insert state = 0 (NEW)
@@ -3761,7 +3759,7 @@ public class OrderServiceImpl implements OrderService {
                                             placePaidOrderData.setExtCode(orderId.toString());
                                             orderBccsData.setData(DataUtil.parseObjectToString(placePaidOrderData));
                                             orderBccsData.setOrderType(CONNECT_SME_PORTAL);
-                                            orderBccsData.setStatus(com.ezbuy.sme.framework.constants.Constants.Activation.ACTIVE);
+                                            orderBccsData.setStatus(ACTIVE);
                                             orderBccsData.setCreateBy(username);
                                             orderBccsData.setCreateAt(LocalDateTime.now());
                                             var saveBccsOrder = AppUtils.insertData(orderBccsDataRepository.save(orderBccsData));
@@ -3771,12 +3769,12 @@ public class OrderServiceImpl implements OrderService {
                                             orderExt.setOrderId(orderId.toString());
                                             orderExt.setCode("ORDER_TRUST_IDENTITY");
                                             orderExt.setValue(response.getT1().get(0).getTenantId());
-                                            orderExt.setStatus(com.ezbuy.sme.framework.constants.Constants.Activation.ACTIVE);
+                                            orderExt.setStatus(ACTIVE);
                                             orderExt.setCreateBy(username);
                                             orderExt.setCreateAt(LocalDateTime.now());
                                             orderExt.setUpdateBy(username);
                                             orderExt.setNew(true);
-                                            var saveOrderExt= AppUtils.insertData(orderExtRepository.save(orderExt));
+                                            var saveOrderExt = AppUtils.insertData(orderExtRepository.save(orderExt));
                                             //update tenant_identify
                                             UpdateTenantTrustStatusRequest updateTenantTrustStatus = new UpdateTenantTrustStatusRequest();
                                             updateTenantTrustStatus.setTenantId(response.getT1().get(0).getTenantId());
@@ -3789,14 +3787,13 @@ public class OrderServiceImpl implements OrderService {
                                                     updateTrustStatusTenant
                                             ).map(responseData -> new DataResponse<>(Translator.toLocaleVi(SUCCESS), null));
                                         });
-                            }
-                            else {
+                            } else {
                                 UpdateTenantTrustStatusRequest updateTenantTrustStatus = new UpdateTenantTrustStatusRequest();
                                 updateTenantTrustStatus.setTenantId(response.getT1().get(0).getTenantId());
                                 updateTenantTrustStatus.setTrustStatus(WAIT_CREATE_CTS);
                                 // update trang thai xac thuc doanh nghiep
                                 return authClient.updateTrustStatusByTenantId(updateTenantTrustStatus)
-                                        .map(responseData -> new DataResponse<>("fail", response.getT2().get().getDescription(),null));
+                                        .map(responseData -> new DataResponse<>("fail", response.getT2().get().getDescription(), null));
                             }
                         }).onErrorResume(throwable -> {
                             log.error("createOrderCts error: " + throwable.getMessage());

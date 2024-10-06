@@ -1,5 +1,6 @@
 package com.ezbuy.orderservice.client;
 
+import com.ezbuy.authmodel.dto.request.UpdateTenantTrustStatusRequest;
 import com.ezbuy.authmodel.dto.response.TenantIdentifyDTO;
 import com.ezbuy.authmodel.model.Organization;
 import com.ezbuy.authmodel.model.TenantIdentify;

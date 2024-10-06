@@ -1,14 +1,18 @@
 package com.ezbuy.orderservice.service.impl;
 
-import com.ezbuy.sme.framework.constants.CommonErrorCode;
-import com.ezbuy.sme.framework.constants.Constants;
-import com.ezbuy.sme.framework.constants.MessageConstant;
-import com.ezbuy.sme.framework.exception.BusinessException;
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.framework.utils.*;
-import com.ezbuy.sme.ordermodel.dto.request.ReviewOrderItemRequest;
+import com.ezbuy.ordermodel.dto.request.ReviewOrderItemRequest;
 import com.ezbuy.orderservice.repository.OrderItemRepository;
 import com.ezbuy.orderservice.service.OrderItemService;
+import io.hoangtien2k3.reactify.AppUtils;
+import io.hoangtien2k3.reactify.DataUtil;
+import io.hoangtien2k3.reactify.SecurityUtils;
+import io.hoangtien2k3.reactify.Translator;
+import io.hoangtien2k3.reactify.constants.CommonErrorCode;
+import io.hoangtien2k3.reactify.constants.Constants;
+import io.hoangtien2k3.reactify.constants.MessageConstant;
+import io.hoangtien2k3.reactify.exception.BusinessException;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
+import io.hoangtien2k3.reactify.ValidateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -27,7 +31,7 @@ public class OrderItemServiceImpl implements OrderItemService {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.item.required"));
         }
         String orderId = request.getOrderItemId().trim();
-        if (!ValidateUtils.validateUuid(orderId)) {
+        if (!ValidateUtils.validateUUID(orderId)) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.item.invalid"));
         }
 
@@ -49,8 +53,6 @@ public class OrderItemServiceImpl implements OrderItemService {
                     if (!existGroupData.getT1()) {
                         return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "order.item.not.found"));
                     }
-                    ;
-
                     var updateMono = orderItemRepository.updateContent(orderId, content, existGroupData.getT2());
                     return AppUtils.insertData(updateMono);
                 })
@@ -61,7 +63,6 @@ public class OrderItemServiceImpl implements OrderItemService {
                     return Mono.just(new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), null));
                 });
     }
-
 
     private Mono<Boolean> checkExistItem(String orderItem, String userId) {
         return orderItemRepository.checkOrderItemExist(orderItem, userId)

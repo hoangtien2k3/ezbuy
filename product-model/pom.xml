@@ -23,12 +23,6 @@
     </properties>
 
     <dependencies>
-<!--        <dependency>-->
-<!--            <groupId>org.mariadb</groupId>-->
-<!--            <artifactId>r2dbc-mariadb</artifactId>-->
-<!--            <version>1.0.3</version>-->
-<!--            <scope>compile</scope>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>io.github.hoangtien2k3</groupId>
             <artifactId>reactify</artifactId>

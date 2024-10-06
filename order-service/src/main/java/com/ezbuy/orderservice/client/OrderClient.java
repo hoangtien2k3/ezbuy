@@ -1,12 +1,11 @@
 package com.ezbuy.orderservice.client;
 
-import com.ezbuy.sme.ordermodel.dto.ExtKeyDTO;
-import com.ezbuy.sme.ordermodel.dto.ProfileForBusinessCustDTO;
-import com.ezbuy.sme.ordermodel.dto.request.PricingProductRequest;
-import com.ezbuy.sme.ordermodel.dto.ws.PlaceOrderResponse;
-import com.ezbuy.sme.ordermodel.dto.ws.PricingProductWSResponse;
-import com.ezbuy.sme.ordermodel.dto.ws.SearchOrderStateResponse;
-import com.ezbuy.sme.ordermodel.dto.ws.ValidateDataOrderResponse;
+import com.ezbuy.ordermodel.dto.ExtKeyDTO;
+import com.ezbuy.ordermodel.dto.request.PricingProductRequest;
+import com.ezbuy.ordermodel.dto.ws.PlaceOrderResponse;
+import com.ezbuy.ordermodel.dto.ws.PricingProductWSResponse;
+import com.ezbuy.ordermodel.dto.ws.SearchOrderStateResponse;
+import com.ezbuy.ordermodel.dto.ws.ValidateDataOrderResponse;
 import reactor.core.publisher.Mono;
 
 import java.util.List;

@@ -1,8 +1,6 @@
 package com.ezbuy.orderservice.repository;
 
-import com.ezbuy.sme.ordermodel.model.InvoiceInfo;
-import com.ezbuy.sme.ordermodel.model.OrderBccsData;
-import com.ezbuy.sme.settingmodel.model.NewsContent;
+import com.ezbuy.ordermodel.model.InvoiceInfo;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import org.springframework.stereotype.Repository;

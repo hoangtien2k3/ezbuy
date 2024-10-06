@@ -1,7 +1,7 @@
 package com.ezbuy.orderservice.repository;
 
-import com.ezbuy.sme.authmodel.model.OptionSetValue;
-import com.ezbuy.sme.ordermodel.model.PartnerLicenseKey;
+import com.ezbuy.ordermodel.model.PartnerLicenseKey;
+import com.ezbuy.settingmodel.model.OptionSetValue;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import org.springframework.stereotype.Repository;

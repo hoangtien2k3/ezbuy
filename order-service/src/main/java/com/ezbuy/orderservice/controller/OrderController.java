@@ -1,16 +1,13 @@
 package com.ezbuy.orderservice.controller;
 
+import com.ezbuy.ordermodel.constants.UrlPaths;
+import com.ezbuy.ordermodel.dto.GroupMemberImportDTO;
+import com.ezbuy.ordermodel.dto.ProfileForBusinessCustDTO;
+import com.ezbuy.ordermodel.dto.request.*;
+import com.ezbuy.ordermodel.dto.response.GetOrderReportResponse;
 import com.ezbuy.orderservice.service.OrderService;
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.ordermodel.constants.UrlPaths;
-import com.ezbuy.sme.ordermodel.dto.GroupMemberImportDTO;
-import com.ezbuy.sme.ordermodel.dto.ProfileForBusinessCustDTO;
-import com.ezbuy.sme.ordermodel.dto.request.CreateOrderHistoryRequest;
-import com.ezbuy.sme.ordermodel.dto.request.CreatePreOrderRequest;
-import com.ezbuy.sme.ordermodel.dto.request.SearchOrderRequest;
-import com.ezbuy.sme.ordermodel.dto.request.SyncOrderStateRequest;
-import com.ezbuy.sme.ordermodel.dto.response.GetOrderReportResponse;
-import com.ezbuy.sme.productmodel.dto.ProductImportDTO;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -20,14 +17,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-import javax.validation.Valid;
-
 import java.util.List;
 
-import static com.ezbuy.sme.framework.constants.MessageConstant.SUCCESS;
-import static com.ezbuy.sme.ordermodel.constants.UrlPaths.Order.CA_DOWNLOAD_GROUP_MEMBER_IMPORT_RESULT;
-import static com.ezbuy.sme.productmodel.constants.UrlPaths.Product.IMPORT_PRODUCT;
-import static com.ezbuy.sme.productmodel.constants.UrlPaths.Product.PRODUCT_DOWNLOAD_IMPORT_RESULT;
+import static com.ezbuy.ordermodel.constants.UrlPaths.Order.CA_DOWNLOAD_GROUP_MEMBER_IMPORT_RESULT;
+import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,7 +29,6 @@ public class OrderController {
 
     private final OrderService orderService;
 
-
     @GetMapping
     @PreAuthorize("hasAnyAuthority('user')")
     public Mono<ResponseEntity<DataResponse>> searchOrder(SearchOrderRequest request) {
@@ -44,7 +36,6 @@ public class OrderController {
                 .map(ResponseEntity::ok);
     }
 
-    // TODO: LAMHT12 ham nay
     @GetMapping(UrlPaths.Order.DETAIL)
     @PreAuthorize("hasAnyAuthority('user')")
     public Mono<ResponseEntity<DataResponse>> findDetail(@PathVariable("orderId") String orderId) {

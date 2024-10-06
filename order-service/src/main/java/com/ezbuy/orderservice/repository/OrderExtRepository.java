@@ -1,6 +1,6 @@
 package com.ezbuy.orderservice.repository;
 
-import com.ezbuy.sme.ordermodel.model.OrderExt;
+import com.ezbuy.ordermodel.model.OrderExt;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import org.springframework.stereotype.Repository;

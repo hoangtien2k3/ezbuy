@@ -1,7 +1,7 @@
 package com.ezbuy.orderservice.client.utils;
 
-import com.ezbuy.sme.framework.utils.DataUtil;
-import com.ezbuy.sme.ordermodel.dto.request.GetGroupsCAinfoRequest;
+import com.ezbuy.ordermodel.dto.request.GetGroupsCAinfoRequest;
+import io.hoangtien2k3.reactify.DataUtil;
 
 import java.text.MessageFormat;
 
@@ -64,7 +64,7 @@ public class CmClientUtils {
                 "   </soapenv:Header> \n" +
                 "   <soapenv:Body>\n" +
                 "      <ext:getGroupsInfoForPortalV2> \n" +
-                DataUtil.ConvertObjectToXMLString(request, "getGroupsCAinfoRequest") +
+                DataUtil.convertObjectToXMLString(request, "getGroupsCAinfoRequest") +
                 "      </ext:getGroupsInfoForPortalV2>\n" +
                 "   </soapenv:Body>\n" +
                 "</soapenv:Envelope>";
@@ -82,7 +82,7 @@ public class CmClientUtils {
                 "   </soapenv:Header> \n" +
                 "   <soapenv:Body>\n" +
                 "      <ext:getListSubscriberByGroup> \n" +
-                DataUtil.ConvertObjectToXMLString(request, "getGroupsCAinfoRequest") +
+                DataUtil.convertObjectToXMLString(request, "getGroupsCAinfoRequest") +
                 "      </ext:getListSubscriberByGroup>\n" +
                 "   </soapenv:Body>\n" +
                 "</soapenv:Envelope>";

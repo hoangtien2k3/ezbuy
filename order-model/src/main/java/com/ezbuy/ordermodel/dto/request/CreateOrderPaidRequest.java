@@ -1,7 +1,6 @@
 package com.ezbuy.ordermodel.dto.request;
 
 import com.ezbuy.ordermodel.dto.*;
-import com.ezbuy.sme.ordermodel.dto.*;
 import com.ezbuy.ordermodel.dto.pricing.ProductOrderItem;
 import com.ezbuy.ordermodel.dto.ws.ProductOrderItemWsDTO;
 import lombok.Data;

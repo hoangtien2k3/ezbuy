@@ -1,8 +1,8 @@
 package com.ezbuy.orderservice.repoTemplate;
 
-import com.ezbuy.sme.ordermodel.dto.OrderDetailDTO;
-import com.ezbuy.sme.ordermodel.dto.OrderSyncDTO;
-import com.ezbuy.sme.ordermodel.model.response.CustomerSubscriberSmeInfoDTO;
+import com.ezbuy.ordermodel.dto.OrderDetailDTO;
+import com.ezbuy.ordermodel.dto.OrderSyncDTO;
+import com.ezbuy.ordermodel.model.response.CustomerSubscriberSmeInfoDTO;
 import reactor.core.publisher.Flux;
 
 import java.util.List;

@@ -1,16 +1,16 @@
 package com.ezbuy.orderservice.repoTemplate.impl;
 
-import com.ezbuy.sme.framework.utils.DataUtil;
-import com.ezbuy.sme.framework.utils.SortingUtils;
-import com.ezbuy.sme.ordermodel.constants.Constants;
-import com.ezbuy.sme.ordermodel.dto.OrderDetailDTO;
-import com.ezbuy.sme.ordermodel.dto.OrderItemDTO;
-import com.ezbuy.sme.ordermodel.dto.OrderSyncDTO;
-import com.ezbuy.sme.ordermodel.model.Characteristic;
-import com.ezbuy.sme.ordermodel.model.Order;
-import com.ezbuy.sme.ordermodel.model.response.CustomerSubscriberSmeInfoDTO;
+import com.ezbuy.ordermodel.constants.Constants;
+import com.ezbuy.ordermodel.constants.OrderState;
+import com.ezbuy.ordermodel.dto.OrderDetailDTO;
+import com.ezbuy.ordermodel.dto.OrderItemDTO;
+import com.ezbuy.ordermodel.dto.OrderSyncDTO;
+import com.ezbuy.ordermodel.model.Characteristic;
+import com.ezbuy.ordermodel.model.Order;
+import com.ezbuy.ordermodel.model.response.CustomerSubscriberSmeInfoDTO;
 import com.ezbuy.orderservice.repoTemplate.OrderRepositoryTemplate;
-import com.ezbuy.sme.paymentmodel.constants.OrderState;
+import io.hoangtien2k3.reactify.DataUtil;
+import io.hoangtien2k3.reactify.SortingUtils;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.Statement;
 import lombok.RequiredArgsConstructor;
@@ -73,7 +73,7 @@ public class OrderRepositoryTemplateImpl implements OrderRepositoryTemplate {
         }
 
         return genericExecuteSpec
-                .map(this::build)
+                .map((x, y) -> this.build(x))
                 .all();
     }
 
@@ -90,7 +90,7 @@ public class OrderRepositoryTemplateImpl implements OrderRepositoryTemplate {
                         " and o.status = 1 and oi.status = 1")
                 .bind("orderId", orderId)
                 .bind("customerId", customerId)
-                .map(this::buildDetail)
+                .map((x, y) -> this.buildDetail(x))
                 .all();
     }
 
@@ -293,7 +293,7 @@ public class OrderRepositoryTemplateImpl implements OrderRepositoryTemplate {
             genericExecuteSpec = genericExecuteSpec.bind("orderCodeList", orderCodeList);
         }
         return genericExecuteSpec
-                .map(this::build)
+                .map((x, y) -> this.build(x))
                 .all();
     }
 }

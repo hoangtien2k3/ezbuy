@@ -1,7 +1,10 @@
 package com.ezbuy.orderservice.client.impl;
 
+import com.ezbuy.authmodel.dto.request.GetOrganizationByIndividualIdRequest;
+import com.ezbuy.authmodel.dto.request.UpdateTenantTrustStatusRequest;
 import com.ezbuy.authmodel.dto.response.TenantIdentifyDTO;
 import com.ezbuy.authmodel.model.Organization;
+import com.ezbuy.authmodel.model.TenantIdentify;
 import com.ezbuy.orderservice.client.AuthClient;
 import io.hoangtien2k3.reactify.DataUtil;
 import io.hoangtien2k3.reactify.SecurityUtils;
@@ -22,6 +25,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
+
+import static com.ezbuy.ordermodel.constants.MessageConstant.AUTH_SERVICE_ERROR;
 
 @Log4j2
 @Service
@@ -64,7 +69,6 @@ public class AuthClientImpl implements AuthClient {
 
     @Override
     public Mono<Organization> getOrganizationByIndividualId(String individualId) {
-
         return SecurityUtils.getCurrentUser()
                 .map(currentUser -> {
                     GetOrganizationByIndividualIdRequest params = new GetOrganizationByIndividualIdRequest();

@@ -1,7 +1,6 @@
 package com.ezbuy.ordermodel.dto.response;
 
-import com.ezbuy.sme.ordermodel.dto.recordTypeDTO;
-import com.ezbuy.ordermodel.dto.recordTypeInfo;
+import com.ezbuy.ordermodel.dto.RecordTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,7 +24,7 @@ public class GetListProductOfferingRecordResponse {
 
     @Data
     public static class lst {
-        private List<recordTypeInfo> lstRecordType;
+        private List<RecordTypeInfo> lstRecordType;
         private String productOffering;
     }
 

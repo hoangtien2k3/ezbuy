@@ -1,0 +1,13 @@
+# server config
+server:
+  port: 8080
+# spring config
+spring:
+  main:
+    allow-bean-definition-overriding: true
+# unauthenticated endpoints config
+application:
+  whiteList:
+    - uri: /actuator/health
+      methods:
+        - GET

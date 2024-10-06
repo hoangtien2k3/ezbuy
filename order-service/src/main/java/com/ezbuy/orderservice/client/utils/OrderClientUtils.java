@@ -1,24 +1,25 @@
 package com.ezbuy.orderservice.client.utils;
 
+import com.ezbuy.ordermodel.constants.Constants;
+import com.ezbuy.ordermodel.dto.*;
+import com.ezbuy.ordermodel.dto.request.CreateOrderPaidRequest;
+import com.ezbuy.ordermodel.dto.request.PricingProductRequest;
+import com.ezbuy.ordermodel.dto.ws.CustIdentity;
+import com.ezbuy.ordermodel.dto.ws.ProductOrderItemWsDTO;
+import com.ezbuy.ordermodel.dto.ws.SearchOrderStateRequest;
 import com.ezbuy.orderservice.service.PartnerLicenseKeyService;
-import com.ezbuy.sme.framework.factory.MarshallerFactory;
-import com.ezbuy.sme.framework.utils.DataUtil;
-import com.ezbuy.sme.framework.utils.DataWsUtil;
-import com.ezbuy.sme.framework.utils.Translator;
-import com.ezbuy.sme.ordermodel.constants.Constants;
-import com.ezbuy.sme.ordermodel.dto.request.CreateOrderPaidRequest;
-import com.ezbuy.sme.ordermodel.dto.request.PricingProductRequest;
-import com.ezbuy.sme.ordermodel.dto.ws.CustIdentity;
-import com.ezbuy.sme.ordermodel.dto.ws.ProductOrderItemWsDTO;
-import com.ezbuy.sme.ordermodel.dto.ws.SearchOrderStateRequest;
-import org.apache.commons.lang.StringEscapeUtils;
+import io.hoangtien2k3.reactify.DataUtil;
+import io.hoangtien2k3.reactify.DataWsUtil;
+import io.hoangtien2k3.reactify.Translator;
+import io.hoangtien2k3.reactify.factory.MarshallerFactory;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.beans.BeanUtils;
 
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.ezbuy.sme.ordermodel.constants.Constants.GROUP_TYPE_ORGANIZATION;
+import static com.ezbuy.ordermodel.constants.Constants.GROUP_TYPE_ORGANIZATION;
 
 public class OrderClientUtils {
     private static final String ORDER_REQUEST_TEMPLATE = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ser=\"http://service.order.bccs.viettel.com/\">\n" +

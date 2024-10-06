@@ -1,14 +1,9 @@
 package com.ezbuy.orderservice.service.impl;
 
-import com.ezbuy.sme.framework.constants.MessageConstant;
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.framework.utils.Translator;
-import com.ezbuy.sme.ordermodel.constants.UrlPaths;
-import com.ezbuy.sme.ordermodel.dto.request.GetGroupsCAinfoRequest;
-import com.ezbuy.sme.ordermodel.dto.request.GetListProductOfferingRecordRequest;
-import com.ezbuy.sme.ordermodel.dto.request.GetListServiceRecordRequest;
-import com.ezbuy.sme.ordermodel.dto.response.GetListProductOfferingRecordResponse;
-import com.ezbuy.sme.ordermodel.dto.response.GetListServiceRecordResponse;
+import com.ezbuy.ordermodel.dto.request.GetListProductOfferingRecordRequest;
+import com.ezbuy.ordermodel.dto.request.GetListServiceRecordRequest;
+import com.ezbuy.ordermodel.dto.response.GetListProductOfferingRecordResponse;
+import com.ezbuy.ordermodel.dto.response.GetListServiceRecordResponse;
 import com.ezbuy.orderservice.client.ProfileClient;
 import com.ezbuy.orderservice.service.ProfileService;
 import lombok.RequiredArgsConstructor;

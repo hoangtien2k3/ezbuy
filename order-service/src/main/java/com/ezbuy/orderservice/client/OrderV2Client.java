@@ -1,13 +1,9 @@
 package com.ezbuy.orderservice.client;
 
-import com.ezbuy.sme.ordermodel.dto.ProfileForBusinessCustDTO;
-import com.ezbuy.sme.ordermodel.dto.request.PricingProductRequest;
-import com.ezbuy.sme.ordermodel.dto.request.SearchOrderRequest;
-import com.ezbuy.sme.ordermodel.dto.response.GetOrderHistoryResponse;
-import com.ezbuy.sme.ordermodel.dto.ws.CreateOrderResponse;
-import com.ezbuy.sme.ordermodel.dto.ws.PlaceOrderResponse;
-import com.ezbuy.sme.ordermodel.dto.ws.PricingProductWSResponse;
-import com.ezbuy.sme.ordermodel.dto.ws.SearchOrderStateResponse;
+import com.ezbuy.ordermodel.dto.ProfileForBusinessCustDTO;
+import com.ezbuy.ordermodel.dto.request.SearchOrderRequest;
+import com.ezbuy.ordermodel.dto.response.GetOrderHistoryResponse;
+import com.ezbuy.ordermodel.dto.ws.CreateOrderResponse;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;

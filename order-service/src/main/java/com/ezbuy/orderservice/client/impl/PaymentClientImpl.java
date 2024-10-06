@@ -1,14 +1,9 @@
 package com.ezbuy.orderservice.client.impl;
 
 import com.ezbuy.orderservice.client.PaymentClient;
-import com.ezbuy.sme.framework.client.BaseRestClient;
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.framework.utils.DataUtil;
-import com.ezbuy.sme.paymentmodel.dto.TelecomDTO;
-import com.ezbuy.sme.paymentmodel.dto.request.ProductPaymentRequest;
-import com.ezbuy.sme.paymentmodel.dto.request.ProductPriceRequest;
-import com.ezbuy.sme.paymentmodel.dto.request.UpdateOrderStateRequest;
-import com.ezbuy.sme.paymentmodel.dto.response.ProductPaymentResponse;
+import io.hoangtien2k3.reactify.DataUtil;
+import io.hoangtien2k3.reactify.client.BaseRestClient;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;

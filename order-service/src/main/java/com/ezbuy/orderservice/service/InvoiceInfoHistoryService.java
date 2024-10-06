@@ -1,9 +1,9 @@
 package com.ezbuy.orderservice.service;
 
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.ordermodel.dto.request.CreateInvoiceInfoHistoryRequest;
-import com.ezbuy.sme.ordermodel.dto.request.GetInvoiceInfoHistoryRequest;
-import com.ezbuy.sme.ordermodel.model.InvoiceInfoHistory;
+import com.ezbuy.ordermodel.dto.request.CreateInvoiceInfoHistoryRequest;
+import com.ezbuy.ordermodel.dto.request.GetInvoiceInfoHistoryRequest;
+import com.ezbuy.ordermodel.model.InvoiceInfoHistory;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 
 import java.util.List;

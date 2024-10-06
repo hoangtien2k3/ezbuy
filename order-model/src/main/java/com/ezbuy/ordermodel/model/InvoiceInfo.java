@@ -7,12 +7,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
-import reactor.core.publisher.Mono;
+import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.Table;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Data
 @AllArgsConstructor

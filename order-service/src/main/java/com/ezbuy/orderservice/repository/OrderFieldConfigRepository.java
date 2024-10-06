@@ -1,7 +1,7 @@
 package com.ezbuy.orderservice.repository;
 
+import com.ezbuy.ordermodel.model.OrderFieldConfig;
 import com.ezbuy.orderservice.repository.query.OrderFieldConfigQuery;
-import com.ezbuy.sme.ordermodel.model.OrderFieldConfig;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Flux;

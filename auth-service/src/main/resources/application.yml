@@ -16,11 +16,9 @@ dotenv:
 spring:
   application:
     name: auth-service
-
   main:
     web-application-type: reactive
     allow-bean-definition-overriding: true
-
   messages:
     basename: messages
 
@@ -226,6 +224,3 @@ cache2l:
     externalCluster: 10.207.59.4:8001,10.207.59.4:8002,10.207.60.5:8003,10.207.60.6:8004
     username: redis
     password: Redis@2021
-
-#component scan package
-app.scan.packages: com.ezbuy.*,io.hoangtien2k3.reactify.*

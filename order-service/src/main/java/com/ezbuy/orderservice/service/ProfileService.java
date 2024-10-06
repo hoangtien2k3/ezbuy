@@ -1,10 +1,9 @@
 package com.ezbuy.orderservice.service;
 
-import com.ezbuy.sme.framework.model.response.DataResponse;
-import com.ezbuy.sme.ordermodel.dto.request.GetListProductOfferingRecordRequest;
-import com.ezbuy.sme.ordermodel.dto.request.GetListServiceRecordRequest;
-import com.ezbuy.sme.ordermodel.dto.response.GetListProductOfferingRecordResponse;
-import com.ezbuy.sme.ordermodel.dto.response.GetListServiceRecordResponse;
+import com.ezbuy.ordermodel.dto.request.GetListProductOfferingRecordRequest;
+import com.ezbuy.ordermodel.dto.request.GetListServiceRecordRequest;
+import com.ezbuy.ordermodel.dto.response.GetListProductOfferingRecordResponse;
+import com.ezbuy.ordermodel.dto.response.GetListServiceRecordResponse;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;

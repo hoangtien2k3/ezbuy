@@ -7,12 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.MappedSuperclass;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@MappedSuperclass
 @SuperBuilder
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Characteristic {

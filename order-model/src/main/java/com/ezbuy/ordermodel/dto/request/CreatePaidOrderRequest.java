@@ -2,10 +2,10 @@ package com.ezbuy.ordermodel.dto.request;
 
 import com.ezbuy.ordermodel.dto.AddressDTO;
 import com.ezbuy.ordermodel.dto.ProductOrderItem;
+import jakarta.validation.Valid;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Data

@@ -49,16 +49,16 @@
     <modules>
         <module>auth-model</module>
         <module>auth-service</module>
-        <module>coupon</module>
+        <module>cart-model</module>
+        <module>cart-service</module>
         <module>customer</module>
-        <module>data</module>
         <module>reactify</module>
         <module>order-model</module>
         <module>order-service</module>
-        <module>payment</module>
+        <module>payment-model</module>
+        <module>payment-service</module>
         <module>product-model</module>
         <module>product-service</module>
-        <module>report</module>
         <module>shipping</module>
         <module>system</module>
         <module>tax</module>
