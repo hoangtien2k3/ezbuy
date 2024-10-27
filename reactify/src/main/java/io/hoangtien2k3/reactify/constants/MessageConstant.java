@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,17 @@
  */
 package io.hoangtien2k3.reactify.constants;
 
+/**
+ * <p>
+ * MessageConstant class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 public class MessageConstant {
     public static final String SUCCESS = "success";
     public static final String FAIL = "fail";
     public static final String ERROR_CODE_SUCCESS = "0";
-
     public static final String PARAMS_INVALID = "params.invalid";
     public static final String QUERY_CART_ITEM_NOT_FOUND = "query.cartItem.not.found";
     public static final String ORGANIZATION_INVALID = "organization.invalid";

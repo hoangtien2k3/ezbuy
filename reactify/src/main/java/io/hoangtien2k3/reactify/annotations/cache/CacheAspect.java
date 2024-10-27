@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,13 @@ import reactor.cache.CacheMono;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Signal;
 
-/** @deprecated */
-@Deprecated
+/**
+ * <p>
+ * CacheAspect class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 @Aspect
 @Configuration
 @Slf4j
@@ -38,21 +43,31 @@ public class CacheAspect {
     @Pointcut("@annotation(io.hoangtien2k3.reactify.annotations.LocalCache)")
     private void processAnnotation() {}
 
+    /**
+     * <p>
+     * aroundAdvice.
+     * </p>
+     *
+     * @param joinPoint
+     *            a {@link org.aspectj.lang.ProceedingJoinPoint} object
+     * @return a {@link java.lang.Object} object
+     * @throws java.lang.Throwable
+     *             if any.
+     */
     @Around("processAnnotation()")
     public Object aroundAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
         Object[] args = joinPoint.getArgs();
         Object key = SimpleKeyGenerator.generateKey(args);
         String name = ClassUtils.getUserClass(joinPoint.getTarget().getClass()).getSimpleName() + "."
                 + joinPoint.getSignature().getName();
-        Cache cache = CacheStore.getCache(name);
+        Cache<Object, Object> cache = CacheStore.getCache(name);
 
         return CacheMono.lookup(k -> Mono.justOrEmpty(cache.getIfPresent(key)).map(Signal::next), key)
-                .onCacheMissResume((Mono<Object>) joinPoint.proceed(args))
+                .onCacheMissResume( (Mono<Object>) joinPoint.proceed(args))
                 .andWriteWith((k, sig) -> Mono.fromRunnable(() -> {
-                    if (sig != null && sig.get() != null) {
-                        if (!(sig.get() instanceof Optional && ((Optional) sig.get()).isEmpty())) {
-                            cache.put(k, sig.get());
-                        }
+                    Object result = sig != null ? sig.get() : null;
+                    if (result != null && !(result instanceof Optional && ((Optional<?>) result).isEmpty())) {
+                        cache.put(k, result);
                     }
                 }));
     }

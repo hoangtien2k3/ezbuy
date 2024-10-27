@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,29 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Base64;
 
+/**
+ * <p>
+ * PasswordService class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 public class PasswordService {
     private static PasswordService instance;
 
     private PasswordService() {}
 
+    /**
+     * <p>
+     * encrypt.
+     * </p>
+     *
+     * @param plaintext
+     *            a {@link java.lang.String} object
+     * @return a {@link java.lang.String} object
+     * @throws java.lang.Exception
+     *             if any.
+     */
     public synchronized String encrypt(String plaintext) throws Exception {
         MessageDigest md = null;
         md = MessageDigest.getInstance("SHA-1");
@@ -32,6 +50,13 @@ public class PasswordService {
         return new String(Base64.getEncoder().encode(raw));
     }
 
+    /**
+     * <p>
+     * Getter for the field <code>instance</code>.
+     * </p>
+     *
+     * @return a {@link io.hoangtien2k3.reactify.common.PasswordService} object
+     */
     public static synchronized PasswordService getInstance() {
         if (instance == null) {
             instance = new PasswordService();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,13 +23,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-/** @deprecated */
-@Deprecated
+/**
+ * <p>
+ * CustomizeRemovalListener class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 @Slf4j
 @AllArgsConstructor
-public class CustomizeRemovalListener implements RemovalListener {
+public class CustomizeRemovalListener implements RemovalListener<Object, Object> {
     private Method method;
 
+    /** {@inheritDoc} */
     @Override
     public void onRemoval(@Nullable Object key, @Nullable Object value, @NonNull RemovalCause removalCause) {
         if (removalCause.wasEvicted()) {

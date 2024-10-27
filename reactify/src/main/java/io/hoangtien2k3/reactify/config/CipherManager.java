@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,16 +26,42 @@ import javax.crypto.Cipher;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.stereotype.Component;
 
+/**
+ * <p>
+ * CipherManager class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 @Component
 public class CipherManager {
     private final Cipher rsaCipher;
 
+    /**
+     * <p>
+     * Constructor for CipherManager.
+     * </p>
+     *
+     * @throws java.lang.Exception
+     *             if any.
+     */
     public CipherManager() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
         this.rsaCipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding", "BC");
     }
 
     // ma hoa password custom
+    /**
+     * <p>
+     * encrypt.
+     * </p>
+     *
+     * @param message
+     *            a {@link java.lang.String} object
+     * @param publicKeyString
+     *            a {@link java.lang.String} object
+     * @return a {@link java.lang.String} object
+     */
     public String encrypt(String message, String publicKeyString) {
         try {
             PublicKey publicKey = stringToPublicKey(publicKeyString);

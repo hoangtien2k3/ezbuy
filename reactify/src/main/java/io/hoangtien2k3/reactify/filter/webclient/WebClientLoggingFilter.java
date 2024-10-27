@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,20 @@ package io.hoangtien2k3.reactify.filter.webclient;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.ExchangeFunction;
 import reactor.core.publisher.Mono;
 
+/**
+ * <p>
+ * WebClientLoggingFilter class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class WebClientLoggingFilter implements ExchangeFilterFunction {
@@ -31,11 +39,13 @@ public class WebClientLoggingFilter implements ExchangeFilterFunction {
     private static final String OBFUSCATE_HEADER = "xxxxx";
     private final List<String> obfuscateHeader;
 
+    /** {@inheritDoc} */
+    @NotNull
     @Override
-    public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
+    public Mono<ClientResponse> filter(ClientRequest request, @NotNull ExchangeFunction next) {
         log.info("Start Call API - Method: {} {}", request.method(), request.url());
         if (request.headers().getContentLength() > 0) {
-            log.info("body ", request.body());
+            log.info("body {}", request.body());
         }
         if (log.isDebugEnabled()) {
             request.headers()

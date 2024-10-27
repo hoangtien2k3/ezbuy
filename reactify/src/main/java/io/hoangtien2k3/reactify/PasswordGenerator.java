@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 /**
  * Utility class for generating random passwords. Provides methods to generate
  * passwords with a mix of upper case letters, lower case letters, and numbers.
+ *
+ * @author hoangtien2k3
  */
 public class PasswordGenerator {
 

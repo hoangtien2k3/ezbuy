@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,13 @@
  */
 package io.hoangtien2k3.reactify.constants;
 
+/**
+ * <p>
+ * Role class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 public enum Role {
     ROLE_admin,
     ROLE_user,

@@ -56,16 +56,12 @@ public class KeyCloakClientImpl implements KeyCloakClient {
 
     @Value("${keycloak.serverUrl}")
     private String keycloakUrl;
-
     @Value("${keycloak.realm}")
     public String realm;
-
     @Value("${keycloak.clientId}")
     public String clientID;
-
     @Value("${keycloak.clientSecret}")
     public String clientSecret;
-
     @Value("${keycloak.host}")
     private String hostKeycloak;
 

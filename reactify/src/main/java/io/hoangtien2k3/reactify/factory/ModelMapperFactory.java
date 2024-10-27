@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,40 @@
 package io.hoangtien2k3.reactify.factory;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.config.Configuration;
+import org.modelmapper.convention.MatchingStrategies;
 
+/**
+ * <p>
+ * ModelMapperFactory class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 public class ModelMapperFactory {
-    private static ModelMapper modelMapper = new ModelMapper();
+    private static volatile ModelMapper modelMapper;
 
+    private ModelMapperFactory() {}
+
+    /**
+     * <p>
+     * getInstance.
+     * </p>
+     *
+     * @return a {@link org.modelmapper.ModelMapper} object
+     */
     public static ModelMapper getInstance() {
+        if (modelMapper == null) {
+            synchronized (ModelMapperFactory.class) {
+                if (modelMapper == null) {
+                    modelMapper = new ModelMapper();
+                    modelMapper.getConfiguration()
+                            .setFieldMatchingEnabled(true)
+                            .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
+                            .setMatchingStrategy(MatchingStrategies.STRICT);
+                }
+            }
+        }
         return modelMapper;
     }
 }

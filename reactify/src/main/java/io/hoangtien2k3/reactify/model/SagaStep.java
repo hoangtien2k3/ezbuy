@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,39 @@ package io.hoangtien2k3.reactify.model;
 
 import reactor.core.publisher.Mono;
 
+/**
+ * <p>
+ * SagaStep interface.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 public interface SagaStep {
 
+    /**
+     * <p>
+     * complete.
+     * </p>
+     *
+     * @return a boolean
+     */
     boolean complete();
 
+    /**
+     * <p>
+     * execute.
+     * </p>
+     *
+     * @return a {@link reactor.core.publisher.Mono} object
+     */
     Mono<StepResult> execute();
 
+    /**
+     * <p>
+     * revert.
+     * </p>
+     *
+     * @return a {@link reactor.core.publisher.Mono} object
+     */
     Mono<Boolean> revert();
 }

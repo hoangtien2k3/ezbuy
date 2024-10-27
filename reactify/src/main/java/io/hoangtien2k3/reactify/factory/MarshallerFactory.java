@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,33 +23,47 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * <p>
+ * MarshallerFactory class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 @Slf4j
 public class MarshallerFactory {
     private static Map<Class, Marshaller> instance = new HashMap<>();
 
+    /**
+     * <p>
+     * convertObjectToXML.
+     * </p>
+     *
+     * @param obj
+     *            a {@link java.lang.Object} object
+     * @param cls
+     *            a {@link java.lang.Class} object
+     * @return a {@link java.lang.String} object
+     */
     public static String convertObjectToXML(Object obj, Class cls) {
         Marshaller marshaller = instance.get(cls);
         String xmlTxt = "";
         try {
-            // create an instance of `JAXBContext`
-            // create an instance of `Marshaller`
             if (marshaller == null) {
                 marshaller = JAXBContext.newInstance(cls).createMarshaller();
                 // enable pretty-print XML output
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
                 instance.put(cls, marshaller);
             }
-
             // write XML to `StringWriter`
             StringWriter sw = new StringWriter();
-
             // convert book object to XML
             marshaller.marshal(obj, sw);
-
             xmlTxt = sw.toString();
-
         } catch (JAXBException ex) {
             log.error("Convert Object To XML  fail: ", ex);
+        } catch (RuntimeException e) {
+            log.error("Unexpected error during marshaller creation for class {}: {}", cls.getName(), e.getMessage(), e);
         }
         return xmlTxt;
     }

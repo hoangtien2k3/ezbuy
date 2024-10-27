@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import reactor.core.publisher.Mono;
 /**
  * Utility class for handling HTTP responses. Provides methods to create
  * ResponseEntity objects and to process DataResponse objects.
+ *
+ * @author hoangtien2k3
  */
 public class ResponseUtils {
 

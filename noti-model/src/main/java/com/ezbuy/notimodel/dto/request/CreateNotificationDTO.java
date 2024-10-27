@@ -35,9 +35,11 @@ public class CreateNotificationDTO {
     @NotEmpty(message = "params.channelType.null")
     private String channelType; // EMAIL || SMS || REST
 
-    private String templateMail; // SIGN_UP || FORGOT_PASSWORD || SIGN_UP_PASSWORD || CUSTOMER_ACTIVE_SUCCESS ||
+    // SIGN_UP || FORGOT_PASSWORD || SIGN_UP_PASSWORD || CUSTOMER_ACTIVE_SUCCESS ||
     // CUSTOMER_REGISTER_SUCCESS || EMPLOYEE_REGISTER_SUCCESS || ACCOUNT_ACTIVE ||
     // VERIFY_ACCOUNT_SUCESS || NOTI_VERIFY_ACCOUNT
+    private String templateMail;
+
     private LocalDateTime expectSendTime;
     private List<ReceiverDataDTO> receiverList; // IS NONE NULL
     private Boolean sendAll; // true || false || null (default is false)

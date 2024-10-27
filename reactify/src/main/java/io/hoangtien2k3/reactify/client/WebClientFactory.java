@@ -77,7 +77,7 @@ public class WebClientFactory implements InitializingBean {
      * </p>
      *
      * @param webClients
-     *            a {@link List} object
+     *            a {@link java.util.List} object
      */
     public void initWebClients(List<WebClientProperties> webClients) {
         final ConfigurableListableBeanFactory beanFactory =
@@ -96,8 +96,11 @@ public class WebClientFactory implements InitializingBean {
      * </p>
      *
      * @param webClientProperties
-     *            a {@link WebClientProperties} object
-     * @return a {@link WebClient} object
+     *            a
+     *            {@link io.hoangtien2k3.reactify.client.properties.WebClientProperties}
+     *            object
+     * @return a {@link org.springframework.web.reactive.function.client.WebClient}
+     *         object
      */
     public WebClient createNewClient(WebClientProperties webClientProperties) {
         if (!isValidProperties(webClientProperties)) {

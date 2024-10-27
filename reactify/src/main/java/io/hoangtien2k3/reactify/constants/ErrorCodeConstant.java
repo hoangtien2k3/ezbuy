@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,13 @@
  */
 package io.hoangtien2k3.reactify.constants;
 
+/**
+ * <p>
+ * ErrorCodeConstant class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 public class ErrorCodeConstant {
     public static final String ORGANIZATION_INVALID = "user_not_exist_organization";
     public static final String ORGANIZATION_NOT_FOUND = "not_exit_data";

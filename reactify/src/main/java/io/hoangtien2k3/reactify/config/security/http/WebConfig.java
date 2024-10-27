@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,9 @@ package io.hoangtien2k3.reactify.config.security.http;
 import io.hoangtien2k3.reactify.DataUtil;
 import io.hoangtien2k3.reactify.config.WhiteListProperties;
 import io.hoangtien2k3.reactify.model.WhiteList;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -37,6 +39,13 @@ import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Mono;
 
+/**
+ * <p>
+ * WebConfig class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Configuration
@@ -46,6 +55,20 @@ public class WebConfig {
 
     private final WhiteListProperties whiteListProperties;
 
+    /**
+     * <p>
+     * springSecurityFilterChain.
+     * </p>
+     *
+     * @param http a
+     * {@link org.springframework.security.config.web.server.ServerHttpSecurity}
+     * object
+     * @param jwtAuthenticationConverter a {@link org.springframework.core.convert.converter.Converter}
+     * object
+     * @return a
+     * {@link org.springframework.security.web.server.SecurityWebFilterChain}
+     * object
+     */
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(
             ServerHttpSecurity http, Converter<Jwt, Mono<AbstractAuthenticationToken>> jwtAuthenticationConverter) {
@@ -80,18 +103,6 @@ public class WebConfig {
 
         return http.build();
     }
-
-    // @Bean
-    // public CorsConfigurationSource corsConfigurationSource() {
-    // UrlBasedCorsConfigurationSource configurationSource = new
-    // UrlBasedCorsConfigurationSource();
-    // CorsConfiguration corsConfiguration = new CorsConfiguration();
-    // corsConfiguration.setAllowedOrigins(List.of("*"));
-    // corsConfiguration.setAllowedMethods(List.of("*"));
-    // corsConfiguration.setAllowedHeaders(List.of("*"));
-    // configurationSource.registerCorsConfiguration("/**", corsConfiguration);
-    // return configurationSource;
-    // }
 
     private CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

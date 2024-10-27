@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,23 @@ package io.hoangtien2k3.reactify;
 
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * <p>
+ * SQLUtils class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 public class SQLUtils {
+    /**
+     * <p>
+     * replaceSpecialDigit.
+     * </p>
+     *
+     * @param value
+     *            a {@link java.lang.String} object
+     * @return a {@link java.lang.String} object
+     */
     public static String replaceSpecialDigit(String value) {
         if (!StringUtils.isEmpty(value)) {
             value = value.replace("%", "\\%").replace("_", "\\_");

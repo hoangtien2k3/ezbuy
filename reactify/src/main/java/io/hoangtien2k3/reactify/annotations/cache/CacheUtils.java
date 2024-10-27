@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,26 +22,37 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-/** @deprecated */
-@Deprecated
+/**
+ * <p>
+ * CacheUtils class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class CacheUtils {
 
+    /**
+     * <p>
+     * invokeMethod.
+     * </p>
+     *
+     * @param method
+     *            a {@link java.lang.reflect.Method} object
+     */
     public static void invokeMethod(Method method) {
         try {
-            Class declaringClass = method.getDeclaringClass();
-            Object t = ApplicationContextProvider.getApplicationContext().getBean(declaringClass);
-            Mono<Object> rs = (Mono<Object>) method.invoke(t);
-            rs.subscribe();
-        } catch (Exception exception) {
-            log.error(
-                    "Error when autoload cache {}.{}",
-                    method.getDeclaringClass().getSimpleName(),
-                    method.getName(),
-                    exception.getMessage(),
-                    exception);
+            Class<?> declaringClass = method.getDeclaringClass();
+            Object rs = method.invoke(ApplicationContextProvider.getApplicationContext().getBean(declaringClass));
+            if (rs != null) {
+                log.info("Method {} invoked successfully with result: {}", method.getName(), rs);
+            } else {
+                log.warn("Method {} returned null.", method.getName());
+            }
+        } catch (Exception e) {
+            log.error("General error when autoload cache {}.{}: {}", method.getDeclaringClass().getSimpleName(), method.getName(), e.getMessage(), e);
         }
     }
 }

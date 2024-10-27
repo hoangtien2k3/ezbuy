@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * <p>
+ * TokenUser class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 @JsonIgnoreProperties
 @Data
 @AllArgsConstructor
@@ -32,9 +39,7 @@ public class TokenUser {
     private String name;
     private String username;
     private String email;
-
     @JsonProperty("individual_id")
     private String individualId;
-
     private String organizationId;
 }

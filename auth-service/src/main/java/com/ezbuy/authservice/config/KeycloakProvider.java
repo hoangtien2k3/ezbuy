@@ -1,6 +1,5 @@
 package com.ezbuy.authservice.config;
 
-import io.hoangtien2k3.reactify.aop.cache.Cache2L;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
@@ -63,7 +62,6 @@ public class KeycloakProvider {
         return getInstance().realm(realm);
     }
 
-    @Cache2L(autoCache = true, maxRecord = 100, durationInMinute = 12 * 6)
     public Mono<ClientRepresentation> getClient(String clientId) {
         var clients = getRealmResource().clients().findByClientId(clientId);
         if (clients == null) {
@@ -77,12 +75,10 @@ public class KeycloakProvider {
         return Mono.empty();
     }
 
-    @Cache2L(maxRecord = 100, durationInMinute = 60 * 24)
     public Mono<String> getKCIdFromClientId(String clientId) {
         return getClient(clientId).flatMap(rs -> Mono.just(rs.getId()));
     }
 
-    @Cache2L(autoCache = true, maxRecord = 100, durationInMinute = 12 * 6)
     public Mono<ClientRepresentation> getClientWithSecret(String clientId) {
         return getClient(clientId).flatMap(clientRepresentation -> {
             var result = getRealmResource()

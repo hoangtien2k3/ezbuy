@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,13 @@ import java.util.List;
 import org.slf4j.MDC;
 import org.springframework.http.MediaType;
 
+/**
+ * <p>
+ * Constants class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 public final class Constants {
     public static final String NAME_PATTERN =
             "^[a-zA-ZàáãạảăắằẳẵặâấầẩẫậèéẹẻẽêềếểễệđìíĩỉịòóõọỏôốồổỗộơớờởỡợùúũụủưứừửữựỳỵỷỹýÀÁÃẠẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẺẼÊỀẾỂỄỆĐÌÍĨỈỊÒÓÕỌỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝ\\s]+$";
@@ -43,9 +50,17 @@ public final class Constants {
             MediaType.TEXT_PLAIN,
             MediaType.TEXT_XML,
             MediaType.MULTIPART_FORM_DATA);
+
     private static final List<String> SENSITIVE_HEADERS = Arrays.asList("authorization", "proxy-authorization");
 
     // for prevent sonar issues
+    /**
+     * <p>
+     * getSensitiveHeaders.
+     * </p>
+     *
+     * @return a {@link java.util.List} object
+     */
     public static List<String> getSensitiveHeaders() {
         return SENSITIVE_HEADERS;
     }
@@ -168,6 +183,7 @@ public final class Constants {
         String MARKET_SECTION = "market-section";
     }
 
+    /** Constant <code>NULL_IMAGE_SRC="null"</code> */
     public static final String NULL_IMAGE_SRC = null;
 
     public static final class COMMON {
@@ -206,8 +222,10 @@ public final class Constants {
         public static final String GROUP = "GROUP";
     }
 
+    /** Constant <code>EXCLUDE_LOGGING_ENDPOINTS</code> */
     public static final HashSet<String> EXCLUDE_LOGGING_ENDPOINTS = new HashSet<>(List.of("/actuator/health"));
 
+    /** Constant <code>MAX_BYTE=4096</code> */
     public static final int MAX_BYTE = 4096;
 
     public static class POOL {

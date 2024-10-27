@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 /**
  * Utility class for handling HTTP requests. Provides methods to extract the
  * real IP address from request headers and to generate offline cache keys.
+ *
+ * @author hoangtien2k3
  */
 public class RequestUtils {
 

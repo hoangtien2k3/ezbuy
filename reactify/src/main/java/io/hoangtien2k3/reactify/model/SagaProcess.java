@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,34 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+/**
+ * <p>
+ * Abstract SagaProcess class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 @Slf4j
 public abstract class SagaProcess {
 
+    /**
+     * <p>
+     * getSteps.
+     * </p>
+     *
+     * @return a {@link java.util.List} object
+     */
     public abstract List<SagaStep> getSteps();
 
     protected final List<SagaStep> executedStep = new LinkedList<>();
 
+    /**
+     * <p>
+     * execute.
+     * </p>
+     *
+     * @return a {@link reactor.core.publisher.Flux} object
+     */
     public Flux<?> execute() {
         log.info("==================Start execute================");
         return Flux.fromIterable(getSteps())
@@ -48,6 +69,13 @@ public abstract class SagaProcess {
                 .onErrorResume(ex -> revert().then(Mono.error(ex)));
     }
 
+    /**
+     * <p>
+     * revert.
+     * </p>
+     *
+     * @return a {@link reactor.core.publisher.Flux} object
+     */
     public Flux<?> revert() {
         log.info("==================Start rollback================");
         Collections.reverse(getSteps());

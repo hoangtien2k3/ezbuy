@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,18 @@ package io.hoangtien2k3.reactify.filter.http;
 import io.hoangtien2k3.reactify.constants.Constants;
 import io.hoangtien2k3.reactify.filter.properties.HttpLogProperties;
 import io.hoangtien2k3.reactify.model.GatewayContext;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -47,6 +51,13 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * <p>
+ * GatewayContextFilter class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 @Component
 @Log4j2
 @AllArgsConstructor
@@ -55,13 +66,20 @@ public class GatewayContextFilter implements WebFilter, Ordered {
     private HttpLogProperties httpLogProperties;
     private CodecConfigurer codecConfigurer;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getOrder() {
         return Ordered.HIGHEST_PRECEDENCE;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @NotNull
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+    public Mono<Void> filter(ServerWebExchange exchange, @NotNull WebFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         boolean enableRequest = httpLogProperties.getRequest().isEnable();
         boolean enableResponse = httpLogProperties.getResponse().isEnable();
@@ -100,10 +118,6 @@ public class GatewayContextFilter implements WebFilter, Ordered {
 
     /**
      * ReadFormData
-     *
-     * @param exchange
-     * @param chain
-     * @return
      */
     private Mono<Void> readFormData(ServerWebExchange exchange, WebFilterChain chain, GatewayContext gatewayContext) {
         HttpHeaders headers = exchange.getRequest().getHeaders();
@@ -114,7 +128,7 @@ public class GatewayContextFilter implements WebFilter, Ordered {
                     log.debug("[GatewayContext]Read FormData Success");
                 })
                 .then(Mono.defer(() -> {
-                    Charset charset = headers.getContentType().getCharset();
+                    Charset charset = Objects.requireNonNull(headers.getContentType()).getCharset();
                     charset = charset == null ? StandardCharsets.UTF_8 : charset;
                     String charsetName = charset.name();
                     MultiValueMap<String, String> formData = gatewayContext.getFormData();
@@ -146,11 +160,12 @@ public class GatewayContextFilter implements WebFilter, Ordered {
                                 formDataBodyBuilder
                                         .append(entryKey)
                                         .append("=")
-                                        .append(URLEncoder.encode(entryValue.get(0), charsetName))
+                                        .append(URLEncoder.encode(entryValue.getFirst(), charsetName))
                                         .append("&");
                             }
                         }
                     } catch (UnsupportedEncodingException e) {
+                        log.error("Error encoding form data: {}", e.getMessage(), e);
                     }
                     /*
                      * substring with the last char '&'
@@ -175,7 +190,7 @@ public class GatewayContextFilter implements WebFilter, Ordered {
                      * use BodyInserter to InsertFormData Body
                      */
                     BodyInserter<String, ReactiveHttpOutputMessage> bodyInserter =
-                            BodyInserters.fromObject(formDataBodyString);
+                            BodyInserters.fromValue(formDataBodyString);
                     CachedBodyOutputMessage cachedBodyOutputMessage =
                             new CachedBodyOutputMessage(exchange, httpHeaders);
                     log.debug("[GatewayContext]Rewrite Form Data :{}", formDataBodyString);
@@ -184,11 +199,13 @@ public class GatewayContextFilter implements WebFilter, Ordered {
                             .then(Mono.defer(() -> {
                                 ServerHttpRequestDecorator decorator =
                                         new ServerHttpRequestDecorator(exchange.getRequest()) {
+                                            @NotNull
                                             @Override
                                             public HttpHeaders getHeaders() {
                                                 return httpHeaders;
                                             }
 
+                                            @NotNull
                                             @Override
                                             public Flux<DataBuffer> getBody() {
                                                 return cachedBodyOutputMessage.getBody();
@@ -202,36 +219,31 @@ public class GatewayContextFilter implements WebFilter, Ordered {
 
     /**
      * ReadJsonBody
-     *
-     * @param exchange
-     * @param chain
-     * @return
      */
     private Mono<Void> readBody(ServerWebExchange exchange, WebFilterChain chain, GatewayContext gatewayContext) {
-        return DataBufferUtils.join(exchange.getRequest().getBody()).flatMap(dataBuffer -> {
-            DataBufferUtils.retain(dataBuffer);
-            Flux<DataBuffer> cachedFlux =
-                    Flux.defer(() -> Flux.just(dataBuffer.slice(0, dataBuffer.readableByteCount())));
-            /*
-             * repackage ServerHttpRequest
-             */
+        return DataBufferUtils.join(exchange.getRequest().getBody()).flatMap(originalDataBuffer -> {
+            DataBuffer retainedDataBuffer = DataBufferUtils.retain(originalDataBuffer);
+            Flux<DataBuffer> cachedFlux = Flux.just(retainedDataBuffer);
             ServerHttpRequest mutatedRequest = new ServerHttpRequestDecorator(exchange.getRequest()) {
+                @NotNull
                 @Override
                 public Flux<DataBuffer> getBody() {
                     return cachedFlux;
                 }
             };
-            ServerWebExchange mutatedExchange =
-                    exchange.mutate().request(mutatedRequest).build();
+            ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
             return ServerRequest.create(mutatedExchange, codecConfigurer.getReaders())
                     .bodyToMono(String.class)
-                    .doOnNext(objectValue -> {
-                        if (objectValue != null)
-                            objectValue = objectValue.replaceAll("\r", "").replaceAll("\n", "");
-                        gatewayContext.setRequestBody(objectValue);
-                        log.debug("[GatewayContext]Read JsonBody Success");
+                    .doOnNext(bodyContent -> {
+                        if (bodyContent != null) {
+                            String cleanedContent = bodyContent.replaceAll("\r", "").replaceAll("\n", "");
+                            gatewayContext.setRequestBody(cleanedContent);
+                        }
+                        log.debug("[GatewayContext] Read JsonBody Success");
                     })
-                    .then(chain.filter(mutatedExchange));
+                    .then(chain.filter(mutatedExchange))
+                    .doFinally(signalType -> DataBufferUtils.release(retainedDataBuffer));
         });
     }
+
 }

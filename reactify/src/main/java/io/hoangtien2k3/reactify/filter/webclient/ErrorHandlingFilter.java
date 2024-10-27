@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package io.hoangtien2k3.reactify.filter.webclient;
 
 import io.hoangtien2k3.reactify.exception.CustomWebClientResponseException;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ClientResponse;
@@ -23,9 +24,18 @@ import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.ExchangeFunction;
 import reactor.core.publisher.Mono;
 
+/**
+ * <p>
+ * ErrorHandlingFilter class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 public class ErrorHandlingFilter implements ExchangeFilterFunction {
+    /** {@inheritDoc} */
+    @NotNull
     @Override
-    public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
+    public Mono<ClientResponse> filter(@NotNull ClientRequest request, ExchangeFunction next) {
         return next.exchange(request).flatMap(clientResponse -> {
             if (clientResponse.statusCode().is5xxServerError()
                     || clientResponse.statusCode().is4xxClientError()) {

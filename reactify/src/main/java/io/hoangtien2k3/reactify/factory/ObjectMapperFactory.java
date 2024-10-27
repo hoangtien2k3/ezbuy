@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,25 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.IOException;
 
+/**
+ * <p>
+ * ObjectMapperFactory class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 public class ObjectMapperFactory {
     private static ObjectMapper objectMapper;
     private static final ObjectMapper objectMapperV2 = new ObjectMapper();
     private static final ObjectMapper defaultGetInstance = new ObjectMapper();
 
+    /**
+     * <p>
+     * getInstance.
+     * </p>
+     *
+     * @return a {@link com.fasterxml.jackson.databind.ObjectMapper} object
+     */
     public static ObjectMapper getInstance() {
         if (objectMapper == null) {
             objectMapper = new ObjectMapper();
@@ -45,12 +59,26 @@ public class ObjectMapperFactory {
         return objectMapper;
     }
 
+    /**
+     * <p>
+     * getInstance2.
+     * </p>
+     *
+     * @return a {@link com.fasterxml.jackson.databind.ObjectMapper} object
+     */
     public static ObjectMapper getInstance2() {
         objectMapperV2.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapperV2.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         return objectMapperV2;
     }
 
+    /**
+     * <p>
+     * defaultGetInstance.
+     * </p>
+     *
+     * @return a {@link com.fasterxml.jackson.databind.ObjectMapper} object
+     */
     public static ObjectMapper defaultGetInstance() {
         defaultGetInstance.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         defaultGetInstance.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);

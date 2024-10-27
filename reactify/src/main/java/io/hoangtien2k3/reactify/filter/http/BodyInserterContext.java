@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,32 +19,62 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.codec.HttpMessageWriter;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 
+/**
+ * <p>
+ * BodyInserterContext class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 public class BodyInserterContext implements BodyInserter.Context {
     private final ExchangeStrategies exchangeStrategies;
 
+    /**
+     * <p>
+     * Constructor for BodyInserterContext.
+     * </p>
+     */
     public BodyInserterContext() {
         this.exchangeStrategies = ExchangeStrategies.withDefaults();
     }
 
+    /**
+     * <p>
+     * Constructor for BodyInserterContext.
+     * </p>
+     *
+     * @param exchangeStrategies
+     *            a
+     *            {@link org.springframework.web.reactive.function.client.ExchangeStrategies}
+     *            object
+     */
     public BodyInserterContext(ExchangeStrategies exchangeStrategies) {
         this.exchangeStrategies = exchangeStrategies;
     }
 
+    /** {@inheritDoc} */
+    @NotNull
     @Override
     public List<HttpMessageWriter<?>> messageWriters() {
         return exchangeStrategies.messageWriters();
     }
 
+    /** {@inheritDoc} */
+    @NotNull
     @Override
     public Optional<ServerHttpRequest> serverRequest() {
         return Optional.empty();
     }
 
+    /** {@inheritDoc} */
+    @NotNull
     @Override
     public Map<String, Object> hints() {
         return Collections.emptyMap();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,26 @@ import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.MultiValueMap;
 
+/**
+ * <p>
+ * TruncateUtils class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 @Slf4j
 public class TruncateUtils {
+    /**
+     * <p>
+     * truncate.
+     * </p>
+     *
+     * @param s
+     *            a {@link java.lang.String} object
+     * @param maxByte
+     *            a int
+     * @return a {@link java.lang.String} object
+     */
     public static String truncate(String s, int maxByte) {
         try {
             if (DataUtil.isNullOrEmpty(s)) {
@@ -39,6 +57,17 @@ public class TruncateUtils {
         return s;
     }
 
+    /**
+     * <p>
+     * truncateBody.
+     * </p>
+     *
+     * @param s
+     *            a {@link java.lang.String} object
+     * @param maxByte
+     *            a int
+     * @return a {@link java.lang.String} object
+     */
     public static String truncateBody(String s, int maxByte) {
         int b = 0;
         for (int i = 0; i < s.length(); i++) {
@@ -70,6 +99,15 @@ public class TruncateUtils {
         return s;
     }
 
+    /**
+     * <p>
+     * truncateBody.
+     * </p>
+     *
+     * @param responseBody
+     *            a {@link java.lang.Object} object
+     * @return a {@link java.lang.String} object
+     */
     public static String truncateBody(Object responseBody) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {

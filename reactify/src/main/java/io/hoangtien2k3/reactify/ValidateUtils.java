@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Utility class for validating various types of input. Provides methods to
  * validate strings against regular expressions, phone numbers, UUIDs, and URLs.
+ *
+ * @author hoangtien2k3
  */
 @Slf4j
 public class ValidateUtils {

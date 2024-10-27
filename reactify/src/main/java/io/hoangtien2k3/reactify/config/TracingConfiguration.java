@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,36 @@ import io.micrometer.tracing.brave.bridge.BraveTracer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * <p>
+ * TracingConfiguration class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 @Configuration
 public class TracingConfiguration {
+    /**
+     * <p>
+     * tracer.
+     * </p>
+     *
+     * @param tracing
+     *            a {@link brave.Tracing} object
+     * @return a {@link io.micrometer.tracing.Tracer} object
+     */
     @Bean
     public Tracer tracer(Tracing tracing) {
         return BraveTracer.NOOP;
     }
 
+    /**
+     * <p>
+     * tracing.
+     * </p>
+     *
+     * @return a {@link brave.Tracing} object
+     */
     @Bean
     public Tracing tracing() {
         return Tracing.newBuilder().build();

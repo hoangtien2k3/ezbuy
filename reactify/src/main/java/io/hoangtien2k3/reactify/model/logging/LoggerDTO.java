@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import reactor.util.context.Context;
 
+/**
+ * <p>
+ * LoggerDTO class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

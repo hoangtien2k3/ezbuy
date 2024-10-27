@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * <p>
+ * MinioConfiguration class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
@@ -29,6 +36,13 @@ public class MinioConfiguration {
 
     private final MinioProperties minioProperties;
 
+    /**
+     * <p>
+     * minioClient.
+     * </p>
+     *
+     * @return a {@link io.minio.MinioClient} object
+     */
     @Bean
     @ConditionalOnProperty(value = "minio.enabled", havingValue = "true", matchIfMissing = false)
     public MinioClient minioClient() {

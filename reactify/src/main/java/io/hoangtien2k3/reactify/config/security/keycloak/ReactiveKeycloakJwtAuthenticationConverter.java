@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,12 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
+ * <p>
+ * ReactiveKeycloakJwtAuthenticationConverter class.
+ * </p>
+ *
  * @see org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverter
+ * @author hoangtien2k3
  */
 public final class ReactiveKeycloakJwtAuthenticationConverter
         implements Converter<Jwt, Mono<AbstractAuthenticationToken>> {
@@ -38,6 +43,15 @@ public final class ReactiveKeycloakJwtAuthenticationConverter
     private static final String USERNAME_CLAIM = "preferred_username";
     private final Converter<Jwt, Flux<GrantedAuthority>> jwtGrantedAuthoritiesConverter;
 
+    /**
+     * <p>
+     * Constructor for ReactiveKeycloakJwtAuthenticationConverter.
+     * </p>
+     *
+     * @param jwtGrantedAuthoritiesConverter
+     *            a {@link org.springframework.core.convert.converter.Converter}
+     *            object
+     */
     public ReactiveKeycloakJwtAuthenticationConverter(
             Converter<Jwt, Collection<GrantedAuthority>> jwtGrantedAuthoritiesConverter) {
         Assert.notNull(jwtGrantedAuthoritiesConverter, "jwtGrantedAuthoritiesConverter cannot be null");
@@ -45,6 +59,7 @@ public final class ReactiveKeycloakJwtAuthenticationConverter
                 new ReactiveJwtGrantedAuthoritiesConverterAdapter(jwtGrantedAuthoritiesConverter);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Mono<AbstractAuthenticationToken> convert(@NotNull Jwt jwt) {
         // @formatter:off
@@ -54,6 +69,15 @@ public final class ReactiveKeycloakJwtAuthenticationConverter
         // @formatter:on
     }
 
+    /**
+     * <p>
+     * extractUsername.
+     * </p>
+     *
+     * @param jwt
+     *            a {@link org.springframework.security.oauth2.jwt.Jwt} object
+     * @return a {@link java.lang.String} object
+     */
     protected String extractUsername(Jwt jwt) {
         Map<String, Object> claims = jwt.getClaims();
         if (claims.containsKey(USERNAME_CLAIM)) {

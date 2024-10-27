@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package io.hoangtien2k3.reactify.filter.webclient;
 
 import brave.Tracer;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ClientResponse;
@@ -24,13 +25,22 @@ import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.ExchangeFunction;
 import reactor.core.publisher.Mono;
 
+/**
+ * <p>
+ * TraceIdWebClientFilter class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 @Component
 @RequiredArgsConstructor
 public class TraceIdWebClientFilter implements ExchangeFilterFunction {
     private final Tracer tracer;
 
+    /** {@inheritDoc} */
+    @NotNull
     @Override
-    public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
+    public Mono<ClientResponse> filter(@NotNull ClientRequest request, @NotNull ExchangeFunction next) {
         return Mono.defer(() -> {
             var span = tracer.currentSpan();
             if (span != null) {

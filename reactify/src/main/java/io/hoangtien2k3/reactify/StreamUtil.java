@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,24 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * <p>
+ * StreamUtil class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 @Slf4j
 public class StreamUtil {
+    /**
+     * <p>
+     * streamToByteArray.
+     * </p>
+     *
+     * @param inStream
+     *            a {@link java.io.InputStream} object
+     * @return an array of {@link byte} objects
+     */
     public static byte[] streamToByteArray(InputStream inStream) {
         ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
         byte[] buff = new byte[100];

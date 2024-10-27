@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,19 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.web.server.i18n.AcceptHeaderLocaleContextResolver;
 import org.springframework.web.server.i18n.LocaleContextResolver;
 
+/**
+ * <p>
+ * LocaleConfiguration class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 @Configuration
 public class LocaleConfiguration {
+    /**
+     * @return a {@link org.springframework.web.server.i18n.LocaleContextResolver}
+     *         object
+     */
     @Bean("localeContextResolver2")
     public LocaleContextResolver localeContextResolver() {
         var resolver = new AcceptHeaderLocaleContextResolver();
@@ -31,6 +42,11 @@ public class LocaleConfiguration {
         return resolver;
     }
 
+    /**
+     * @return a
+     *         {@link org.springframework.context.support.ReloadableResourceBundleMessageSource}
+     *         object
+     */
     @Bean
     public ReloadableResourceBundleMessageSource messageSource() {
         ReloadableResourceBundleMessageSource rs = new ReloadableResourceBundleMessageSource();

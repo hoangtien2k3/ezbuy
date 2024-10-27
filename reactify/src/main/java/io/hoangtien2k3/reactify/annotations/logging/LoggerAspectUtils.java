@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,11 @@ import brave.Tracer;
 import io.hoangtien2k3.reactify.DataUtil;
 import io.hoangtien2k3.reactify.annotations.LogPerformance;
 import io.hoangtien2k3.reactify.exception.BusinessException;
+
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.PostConstruct;
+
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -34,6 +36,13 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.context.Context;
 
+/**
+ * <p>
+ * LoggerAspectUtils class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 @Component
 @RequiredArgsConstructor
 public class LoggerAspectUtils {
@@ -47,8 +56,18 @@ public class LoggerAspectUtils {
     private boolean detailException;
 
     @PostConstruct
-    private void init() {}
+    private void init() {
+    }
 
+    /**
+     * <p>
+     * logAround.
+     * </p>
+     *
+     * @param joinPoint a {@link org.aspectj.lang.ProceedingJoinPoint} object
+     * @return a {@link java.lang.Object} object
+     * @throws java.lang.Throwable if any.
+     */
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
@@ -76,24 +95,25 @@ public class LoggerAspectUtils {
         }
 
         Span newSpan = tracer.nextSpan().name(name);
-
         var result = joinPoint.proceed();
         if (result instanceof Mono) {
             return logMonoResult(
-                    joinPoint, start, (Mono) result, newSpan, name, logType, actionType, logOutput, logInput, title);
+                    joinPoint, start, (Mono<?>) result, newSpan, name, logType, actionType, logOutput, logInput, title)
+                    .subscribe();
         }
         if (result instanceof Flux) {
             return logFluxResult(
-                    joinPoint, start, (Flux) result, newSpan, name, logType, actionType, logOutput, logInput, title);
+                    joinPoint, start, (Flux<?>) result, newSpan, name, logType, actionType, logOutput, logInput, title)
+                    .subscribe();
         } else {
             return result;
         }
     }
 
-    private Mono logMonoResult(
+    private Mono<?> logMonoResult(
             ProceedingJoinPoint joinPoint,
             long start,
-            Mono result,
+            Mono<?> result,
             Span newSpan,
             String name,
             String logType,
@@ -114,18 +134,12 @@ public class LoggerAspectUtils {
                     }
                 })
                 .contextWrite(context -> {
-                    var currContext = (Context) context;
-                    contextRef.set(currContext);
-                    // the error happens in a different thread, so get the trace from context, set
-                    // in MDC
-                    // and downstream
-                    // to doOnError
+                    contextRef.set(context);
                     return context;
                 })
                 .doOnError(o -> {
                     if (detailException) log.error(" ", o);
                     else log.error(o.toString());
-
                     if (o instanceof BusinessException) {
                         logPerf(contextRef, newSpan, name, start, "0", o, logType, actionType, null, title);
                     } else {
@@ -134,10 +148,10 @@ public class LoggerAspectUtils {
                 });
     }
 
-    private Flux logFluxResult(
+    private Flux<?> logFluxResult(
             ProceedingJoinPoint joinPoint,
             long start,
-            Flux result,
+            Flux<?> result,
             Span newSpan,
             String name,
             String logType,
@@ -146,21 +160,12 @@ public class LoggerAspectUtils {
             boolean logInput,
             String title) {
         var contextRef = new AtomicReference<Context>();
-        return result.doFinally(o -> {
-                    logPerf(contextRef, newSpan, name, start, "1", null, logType, actionType, null, title);
-                })
+        return result.doFinally(o -> logPerf(contextRef, newSpan, name, start, "1", null, logType, actionType, null, title))
                 .contextWrite(context -> {
-                    var currContext = (Context) context;
-                    contextRef.set(currContext);
-                    // the error happens in a different thread, so get the trace from context, set
-                    // in MDC
-                    // and downstream
-                    // to doOnError
+                    contextRef.set(context);
                     return context;
                 })
-                .doOnError(o -> {
-                    logPerf(contextRef, newSpan, name, start, "0", o, logType, actionType, null, title);
-                });
+                .doOnError(o -> logPerf(contextRef, newSpan, name, start, "0", o, logType, actionType, null, title));
     }
 
     private void logPerf(
@@ -185,19 +190,7 @@ public class LoggerAspectUtils {
         newSpan.finish();
         long endTime = System.currentTimeMillis();
         if (endTime - startTime > 50) {
-            LoggerQueue.getInstance()
-                    .addQueue(
-                            contextRef,
-                            newSpan,
-                            name,
-                            startTime,
-                            endTime,
-                            result,
-                            obj,
-                            logType,
-                            actionType,
-                            args,
-                            title);
+            LoggerQueue.getInstance().addQueue(contextRef, newSpan, name, startTime, endTime, result, obj, logType, actionType, args, title);
         }
     }
 }

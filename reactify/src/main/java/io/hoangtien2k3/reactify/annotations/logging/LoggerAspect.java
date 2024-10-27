@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,24 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * <p>
+ * LoggerAspect class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 @Aspect
 @Configuration
 @RequiredArgsConstructor
 public class LoggerAspect {
     private final LoggerAspectUtils loggerAspectUtils;
 
+    /**
+     * <p>
+     * performancePointCut.
+     * </p>
+     */
     @Pointcut("(execution(* io.hoangtien2k3.reactify.*.controller..*(..)) || "
             + "execution(* io.hoangtien2k3.reactify.*.service..*(..))  ||  "
             + "execution(* io.hoangtien2k3.reactify.*.repository..*(..)) || "
@@ -38,6 +50,17 @@ public class LoggerAspect {
     @Pointcut("@annotation(io.hoangtien2k3.reactify.annotations.LogPerformance)")
     private void logPerfMethods() {}
 
+    /**
+     * <p>
+     * logAround.
+     * </p>
+     *
+     * @param joinPoint
+     *            a {@link org.aspectj.lang.ProceedingJoinPoint} object
+     * @return a {@link java.lang.Object} object
+     * @throws java.lang.Throwable
+     *             if any.
+     */
     @Around("performancePointCut() || logPerfMethods()")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
         return loggerAspectUtils.logAround(joinPoint);

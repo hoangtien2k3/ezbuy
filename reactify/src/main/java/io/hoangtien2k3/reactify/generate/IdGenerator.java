@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,23 @@ package io.hoangtien2k3.reactify.generate;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * <p>
+ * IdGenerator class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 public class IdGenerator {
     private static final AtomicInteger idCounter = new AtomicInteger();
 
+    /**
+     * <p>
+     * generateId.
+     * </p>
+     *
+     * @return a int
+     */
     public static int generateId() {
         return idCounter.incrementAndGet();
     }

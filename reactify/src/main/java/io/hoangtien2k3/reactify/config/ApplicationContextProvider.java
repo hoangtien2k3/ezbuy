@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,29 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
+/**
+ * <p>
+ * ApplicationContextProvider class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 @Component
 public class ApplicationContextProvider implements ApplicationContextAware {
     private static ApplicationContext context;
 
+    /**
+     * <p>
+     * getApplicationContext.
+     * </p>
+     *
+     * @return a {@link org.springframework.context.ApplicationContext} object
+     */
     public static ApplicationContext getApplicationContext() {
         return context;
     }
 
+    /** {@inheritDoc} */
     @SuppressWarnings("squid:S2696")
     @Override
     public void setApplicationContext(ApplicationContext ac) throws BeansException {

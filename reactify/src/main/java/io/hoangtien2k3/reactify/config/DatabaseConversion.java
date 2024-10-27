@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.*;
 import java.util.*;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
@@ -28,13 +29,30 @@ import org.springframework.data.r2dbc.convert.MappingR2dbcConverter;
 import org.springframework.data.r2dbc.convert.R2dbcCustomConversions;
 import org.springframework.data.r2dbc.dialect.MySqlDialect;
 import org.springframework.data.r2dbc.mapping.R2dbcMappingContext;
+import org.springframework.data.relational.core.mapping.DefaultNamingStrategy;
 import org.springframework.data.relational.core.mapping.NamingStrategy;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+/**
+ * <p>
+ * DatabaseConversion class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 @Slf4j
 @Component
 public class DatabaseConversion {
+    /**
+     * <p>
+     * getR2dbcConverter.
+     * </p>
+     *
+     * @return a
+     *         {@link org.springframework.data.r2dbc.convert.MappingR2dbcConverter}
+     *         object
+     */
     public MappingR2dbcConverter getR2dbcConverter() {
         R2dbcMappingContext mappingContext = getR2dbcMappingContext();
         R2dbcCustomConversions r2dbcCustomConversions = getR2dbcCustomConversions();
@@ -42,7 +60,7 @@ public class DatabaseConversion {
     }
 
     private R2dbcMappingContext getR2dbcMappingContext() {
-        NamingStrategy namingStrategy = NamingStrategy.INSTANCE;
+        NamingStrategy namingStrategy = DefaultNamingStrategy.INSTANCE;
         R2dbcCustomConversions r2dbcCustomConversions = getR2dbcCustomConversions();
         R2dbcMappingContext context = new R2dbcMappingContext(namingStrategy);
         context.setSimpleTypeHolder(r2dbcCustomConversions.getSimpleTypeHolder());
@@ -53,6 +71,13 @@ public class DatabaseConversion {
         return R2dbcCustomConversions.of(MySqlDialect.INSTANCE, getListConverters());
     }
 
+    /**
+     * <p>
+     * getListConverters.
+     * </p>
+     *
+     * @return a {@link java.util.List} object
+     */
     public List<Object> getListConverters() {
         List<Object> converters = new ArrayList<>();
         converters.add(InstantWriteConverter.INSTANCE);
@@ -73,7 +98,7 @@ public class DatabaseConversion {
     public enum InstantWriteConverter implements Converter<Instant, LocalDateTime> {
         INSTANCE;
 
-        public LocalDateTime convert(Instant source) {
+        public LocalDateTime convert(@NotNull Instant source) {
             return LocalDateTime.ofInstant(source, ZoneOffset.UTC);
         }
     }
@@ -83,14 +108,12 @@ public class DatabaseConversion {
         INSTANCE;
 
         @Override
-        public String convert(Blob source) {
+        public String convert(@NotNull Blob source) {
             try {
-                return source == null
-                        ? null
-                        : Mono.from(source.stream())
-                                .map(bb -> StandardCharsets.UTF_8.decode(bb).toString())
-                                .toFuture()
-                                .get();
+                return Mono.from(source.stream())
+                        .map(bb -> StandardCharsets.UTF_8.decode(bb).toString())
+                        .toFuture()
+                        .get();
             } catch (Exception e) {
                 log.error("Exception when read blob value", e);
                 return null;
@@ -116,7 +139,7 @@ public class DatabaseConversion {
         INSTANCE;
 
         @Override
-        public UUID convert(byte[] source) {
+        public UUID convert(@NotNull byte[] source) {
             ByteBuffer byteBuffer = ByteBuffer.wrap(source);
             long high = byteBuffer.getLong();
             long low = byteBuffer.getLong();
@@ -149,7 +172,7 @@ public class DatabaseConversion {
         INSTANCE;
 
         @Override
-        public ZonedDateTime convert(LocalDateTime localDateTime) {
+        public ZonedDateTime convert(@NotNull LocalDateTime localDateTime) {
             // Be aware - we are using the UTC timezone
             return ZonedDateTime.of(localDateTime, ZoneOffset.UTC);
         }
@@ -170,8 +193,8 @@ public class DatabaseConversion {
         INSTANCE;
 
         @Override
-        public Long convert(Duration source) {
-            return source != null ? source.toMillis() : null;
+        public Long convert(@NotNull Duration source) {
+            return source.toMillis();
         }
     }
 
@@ -183,8 +206,7 @@ public class DatabaseConversion {
         public Date convert(LocalDateTime localDateTime) {
             // Be aware - we are using the UTC timezone
             Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
-            Date date = Date.from(instant);
-            return date;
+            return Date.from(instant);
         }
     }
 
@@ -193,8 +215,8 @@ public class DatabaseConversion {
         INSTANCE;
 
         @Override
-        public Duration convert(Long source) {
-            return source != null ? Duration.ofMillis(source) : null;
+        public Duration convert(@NotNull Long source) {
+            return Duration.ofMillis(source);
         }
     }
 }

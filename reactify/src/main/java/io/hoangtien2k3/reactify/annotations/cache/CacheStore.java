@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,14 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Scheduler;
 import io.hoangtien2k3.reactify.annotations.LocalCache;
+
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.PostConstruct;
+
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
@@ -33,8 +35,13 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-/** @deprecated */
-@Deprecated
+/**
+ * <p>
+ * CacheStore class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 @Slf4j
 @Component
 public class CacheStore {
@@ -54,8 +61,8 @@ public class CacheStore {
         for (Method method : methods) {
             String className = method.getDeclaringClass().getSimpleName();
             LocalCache localCache = method.getAnnotation(LocalCache.class);
-            Integer maxRecord = localCache.maxRecord();
-            Integer durationInMinute = localCache.durationInMinute();
+            int maxRecord = localCache.maxRecord();
+            int durationInMinute = localCache.durationInMinute();
             String cacheName = className + "." + method.getName();
             boolean autoLoad = localCache.autoCache();
             Cache<Object, Object> cache;
@@ -81,18 +88,32 @@ public class CacheStore {
         log.info("Finish initializing {} cache", caches.size());
     }
 
-    public static Cache getCache(String key) {
+    /**
+     * <p>
+     * getCache.
+     * </p>
+     *
+     * @param key a {@link java.lang.String} object
+     * @return a {@link com.github.benmanes.caffeine.cache.Cache} object
+     */
+    public static Cache<Object, Object> getCache(String key) {
         return caches.get(key);
     }
 
+    /**
+     * <p>
+     * autoLoad.
+     * </p>
+     *
+     * @param event a {@link org.springframework.context.event.ContextRefreshedEvent}
+     *              object
+     */
     @Async
     @EventListener
     public void autoLoad(ContextRefreshedEvent event) {
         if (!autoLoadMethods.isEmpty()) {
             log.info("Start auto load {} cache", autoLoadMethods.size());
-            for (Method method : autoLoadMethods) {
-                CacheUtils.invokeMethod(method);
-            }
+            autoLoadMethods.forEach(CacheUtils::invokeMethod);
             log.info("Finish auto load cache");
         }
     }

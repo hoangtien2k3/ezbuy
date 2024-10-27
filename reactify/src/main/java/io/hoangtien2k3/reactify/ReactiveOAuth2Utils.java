@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author Hoàng Anh Tiến
+ * Copyright 2024 the original author Hoàng Anh Tiến.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,31 @@ package io.hoangtien2k3.reactify;
 import org.springframework.security.oauth2.client.*;
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 
+/**
+ * <p>
+ * ReactiveOAuth2Utils class.
+ * </p>
+ *
+ * @author hoangtien2k3
+ */
 public class ReactiveOAuth2Utils {
+    /**
+     * <p>
+     * createAuthorizedClientManager.
+     * </p>
+     *
+     * @param clientRegistrationRepository
+     *            a
+     *            {@link org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository}
+     *            object
+     * @param authorizedClientService
+     *            a
+     *            {@link org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientService}
+     *            object
+     * @return a
+     *         {@link org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientManager}
+     *         object
+     */
     public static ReactiveOAuth2AuthorizedClientManager createAuthorizedClientManager(
             ReactiveClientRegistrationRepository clientRegistrationRepository,
             ReactiveOAuth2AuthorizedClientService authorizedClientService) {

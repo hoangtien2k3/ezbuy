@@ -4,6 +4,7 @@ logging:
   #  config: classpath:log4j2-prod.xml
   level:
     root: INFO
+    org.springdoc: DEBUG
     org.springframework.r2dbc: DEBUG
     io.r2dbc.postgresql.QUERY: DEBUG
     io.r2dbc.postgresql.PARAM: DEBUG
@@ -22,6 +23,13 @@ spring:
   messages:
     basename: messages
 
+  doc:
+    api-docs:
+      path: /v3/api-docs
+    swagger-ui:
+      path: /swagger-ui.html
+
+  #connect db r2dbc
   r2dbc:
     url: r2dbc:postgresql://localhost:5434/auth
     username: admin
@@ -95,6 +103,21 @@ application:
       enable: true
       body: true
   whiteList:
+    - uri: /v1/auth/swagger-ui.html
+      methods:
+        - GET
+    - uri: /v1/auth/swagger-ui/index.html
+      methods:
+        - GET
+    - uri: /v1/auth/v3/api-docs
+      methods:
+        - GET
+    - uri: /v1/auth/swagger-resources
+      methods:
+        - GET
+    - uri: /v1/auth/webjars
+      methods:
+        - GET
     - uri: /actuator/health
       methods:
         - GET
@@ -221,6 +244,21 @@ cache2l:
   enable-global-cache: true
   redis:
     externalMode: true
-    externalCluster: 10.207.59.4:8001,10.207.59.4:8002,10.207.60.5:8003,10.207.60.6:8004
-    username: redis
-    password: Redis@2021
+    externalCluster: 127.0.0.1:6379
+    username: default
+    password: tienha@!@#
+    master:
+      host: 127.0.0.1
+      port: 6379
+    slave:
+      host: 127.0.0.1
+      port: 6379
+
+# swagger-ui custom path
+springdoc:
+  api-docs:
+    path: /v1/auth/v3/api-docs
+  swagger-ui:
+    path: /v1/auth/swagger-ui.html
+    url: /v1/auth/v3/api-docs
+
