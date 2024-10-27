@@ -71,23 +71,21 @@ public class UploadImagesImpl implements UploadImagesService {
         }
 
         return Mono.zip(SecurityUtils.getCurrentUser(), parentInfoMono)
-                .publishOn(Schedulers.boundedElastic())
                 .flatMapMany(zip -> {
                     TokenUser tokenUser = zip.getT1();
                     UploadImages parent = zip.getT2();
 
                     parent.setUpdateAt(LocalDateTime.now());
                     parent.setUpdateBy(tokenUser.getUsername());
-                    return uploadImagesRepository
-                            .save(parent)
-                            .thenMany(Flux.fromIterable(request.getImages())
-                                    .flatMap(fileDTO -> {
-                                        if (DataUtil.isNullOrEmpty(fileDTO.getId())) {
-                                            return createImage(fileDTO, tokenUser, parent);
-                                        }
-                                        return updateImage(fileDTO, tokenUser, parent);
-                                    })
-                                    .map(this::mapToDto));
+                    uploadImagesRepository.save(parent).subscribe();
+
+                    return Flux.fromIterable(request.getImages())
+                            .flatMap(fileDTO -> {
+                                if (DataUtil.isNullOrEmpty(fileDTO.getId())) {
+                                    return createImage(fileDTO, tokenUser, parent);
+                                }
+                                return updateImage(fileDTO, tokenUser, parent);
+                            }).map(this::mapToDto);
                 })
                 .collectList()
                 .map(res -> new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), res));
@@ -110,7 +108,9 @@ public class UploadImagesImpl implements UploadImagesService {
         String filePath = DataUtil.safeToString(parent.getPath()) + fileDTO.getName();
         return validateDuplicateName(parent.getId(), DataUtil.safeTrim(fileDTO.getName()), null)
                 .then(minioUtils.uploadFile(
-                        file, minioUtils.getMinioProperties().getBucket(), filePath))
+                        file,
+                        minioUtils.getMinioProperties().getBucket(),
+                        filePath))
                 .flatMap(objectPath -> Mono.zip(Mono.just(objectPath), Mono.just(fileDTO.getName())))
                 .flatMap(urlAndName -> {
                     UploadImages uploadImages = new UploadImages();
@@ -164,13 +164,12 @@ public class UploadImagesImpl implements UploadImagesService {
                             .uploadFile(file, minioUtils.getMinioProperties().getBucket(), newPath)
                             .doOnNext(uploadResult -> {
                                 if (!oldInfo.getPath().equals(newPath)) {
-                                    minioUtils
-                                            .removeObject(
+                                    minioUtils.removeObject(
                                                     minioUtils
                                                             .getMinioProperties()
                                                             .getBucket(),
-                                                    oldInfo.getPath())
-                                            .subscribe();
+                                                    oldInfo.getPath()
+                                            ).subscribe();
                                 }
                             })
                             .flatMap(uploadResult -> {
@@ -492,7 +491,7 @@ public class UploadImagesImpl implements UploadImagesService {
                 .flatMap(uploadImg -> {
                     UploadImagesDTO dto = mapToDto(uploadImg);
                     return uploadImagesRepository
-                            .findAllByParentId(uploadImg.getId())
+                            .findAllByParentId(uploadImg.getParentId())
                             .map(this::mapToDto)
                             .collectList()
                             .doOnNext(dto::setChildren)

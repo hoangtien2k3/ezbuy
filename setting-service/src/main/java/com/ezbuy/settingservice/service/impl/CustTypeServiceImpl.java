@@ -3,8 +3,9 @@ package com.ezbuy.settingservice.service.impl;
 import com.ezbuy.settingmodel.model.CustType;
 import com.ezbuy.settingservice.repository.CustTypeRepository;
 import com.ezbuy.settingservice.service.CustTypeService;
-import io.hoangtien2k3.reactify.aop.cache.Cache2L;
 import java.util.List;
+
+import io.hoangtien2k3.reactify.annotations.LocalCache;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -15,7 +16,7 @@ public class CustTypeServiceImpl extends BaseServiceHandler implements CustTypeS
     private final CustTypeRepository custTypeRepository;
 
     @Override
-    @Cache2L(durationInMinute = 720)
+    @LocalCache(durationInMinute = 720)
     public Mono<List<CustType>> getAllCustTypeActive() {
         return custTypeRepository.getAllCustTypeActive().collectList();
     }

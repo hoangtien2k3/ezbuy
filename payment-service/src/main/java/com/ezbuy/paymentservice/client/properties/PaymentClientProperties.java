@@ -1,6 +1,6 @@
 package com.ezbuy.paymentservice.client.properties;
 
-import com.viettel.sme.framework.client.properties.WebClientProperties;
+import io.hoangtien2k3.reactify.client.properties.WebClientProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

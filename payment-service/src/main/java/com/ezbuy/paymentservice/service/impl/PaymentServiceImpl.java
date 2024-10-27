@@ -1,5 +1,6 @@
 package com.ezbuy.paymentservice.service.impl;
 
+import com.ezbuy.ordermodel.dto.request.SyncOrderStateRequest;
 import com.ezbuy.paymentmodel.dto.request.*;
 import com.ezbuy.paymentservice.client.*;
 import com.ezbuy.paymentservice.client.properties.PaymentClientProperties;
@@ -7,17 +8,8 @@ import com.ezbuy.paymentservice.repoTemplate.RequestBankingRepositoryTemplate;
 import com.ezbuy.paymentservice.repository.RequestBankingRepository;
 import com.ezbuy.paymentservice.service.OrderFieldConfigService;
 import com.ezbuy.paymentservice.service.PaymentService;
-import com.ezbuy.sme.paymentservice.client.*;
+import com.ezbuy.settingmodel.model.OptionSetValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.viettel.sme.framework.constants.CommonErrorCode;
-import com.viettel.sme.framework.constants.Constants;
-import com.viettel.sme.framework.exception.BusinessException;
-import com.viettel.sme.framework.factory.ObjectMapperFactory;
-import com.viettel.sme.framework.model.response.DataResponse;
-import com.viettel.sme.framework.utils.*;
-import com.viettel.sme.ordermodel.dto.ProductTemplateCharacteristicDTO;
-import com.viettel.sme.ordermodel.dto.ProductTemplateDTO;
-import com.viettel.sme.ordermodel.dto.request.SyncOrderStateRequest;
 import com.ezbuy.paymentmodel.constants.OrderState;
 import com.ezbuy.paymentmodel.constants.PaymentConstants;
 import com.ezbuy.paymentmodel.constants.PaymentState;
@@ -27,21 +19,24 @@ import com.ezbuy.paymentmodel.dto.UpdateOrderStateDTO;
 import com.ezbuy.paymentmodel.dto.response.ProductPaymentResponse;
 import com.ezbuy.paymentmodel.dto.response.SearchPaymentState;
 import com.ezbuy.paymentmodel.model.RequestBanking;
-import com.viettel.sme.paymentservice.client.*;
 import com.ezbuy.paymentservice.client.OrderClient;
 import com.ezbuy.paymentservice.client.PaymentClient;
 import com.ezbuy.paymentservice.repository.OrderItemRepository;
 import com.ezbuy.paymentservice.repository.OrderRepository;
-import com.viettel.sme.productmodel.response.ProductOfferTemplateDTO;
-import com.viettel.sme.settingmodel.model.OptionSetValue;
+import io.hoangtien2k3.reactify.*;
+import io.hoangtien2k3.reactify.constants.CommonErrorCode;
+import io.hoangtien2k3.reactify.constants.Constants;
+import io.hoangtien2k3.reactify.exception.BusinessException;
+import io.hoangtien2k3.reactify.factory.ObjectMapperFactory;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import javax.transaction.Transactional;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.SignatureException;
@@ -50,10 +45,10 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.viettel.sme.framework.constants.CommonErrorCode.INTERNAL_SERVER_ERROR;
-import static com.viettel.sme.framework.constants.MessageConstant.SUCCESS;
-import static com.viettel.sme.ordermodel.constants.Constants.RequestBanking.STATE_DONE;
-import static com.viettel.sme.ordermodel.constants.Constants.RequestBanking.STATE_FAIL;
+import static com.ezbuy.ordermodel.constants.Constants.RequestBanking.STATE_DONE;
+import static com.ezbuy.ordermodel.constants.Constants.RequestBanking.STATE_FAIL;
+import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
+import static io.hoangtien2k3.reactify.constants.CommonErrorCode.INTERNAL_SERVER_ERROR;
 
 @Slf4j
 @Service
@@ -193,7 +188,7 @@ public class PaymentServiceImpl implements PaymentService {
                             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "trans_amount.invalid"));
                         }
                         //update: neu payment_status = 1 => xu ly don hang, neu != 1 => cap nhat request_banking state = -1
-                        if (!com.viettel.sme.ordermodel.constants.Constants.Common.STATUE_ACTIVE.equals(request.getPayment_status())) {
+                        if (!Constants.COMMON.STATUS_ACTIVE.equals(request.getPayment_status())) {
                             log.info("payment_status != 1");
                             return AppUtils.insertData(requestBankingRepository.updateRequestBankingById(request.getOrder_code(), request.getVt_transaction_id(), STATE_FAIL))
                                     .flatMap(rs -> {
@@ -221,7 +216,6 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional
     public Mono<DataResponse> updateOrderState(UpdateOrderStateRequest request) {
-
         return validateUpdateOrderStateRequest(request)
                 .flatMap(validateRequest -> requestBankingRepositoryTemplate.getRequestBankingByListOrderCode(request).collectList())
                 .flatMap(requestBankings -> {
@@ -340,7 +334,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private Mono<Boolean> validatePaymentResultRequest(PaymentResultRequest request) {
 
-        log.info("Request recv from Bank", request);
+        log.info("Request recv from Bank {}", request);
         if (DataUtil.isNullOrEmpty(request.getCheck_sum())) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "check_sum.null"));
         }

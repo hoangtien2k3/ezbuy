@@ -11,7 +11,7 @@ import com.ezbuy.settingservice.service.SettingService;
 import io.hoangtien2k3.reactify.AppUtils;
 import io.hoangtien2k3.reactify.DataUtil;
 import io.hoangtien2k3.reactify.SecurityUtils;
-import io.hoangtien2k3.reactify.aop.cache.Cache2L;
+import io.hoangtien2k3.reactify.annotations.LocalCache;
 import io.hoangtien2k3.reactify.constants.CommonErrorCode;
 import io.hoangtien2k3.reactify.constants.Constants;
 import io.hoangtien2k3.reactify.exception.BusinessException;
@@ -38,7 +38,7 @@ public class SettingServiceImpl implements SettingService {
     private final SettingRepositoryTemplate settingRepositoryTemplate;
 
     @Override
-    @Cache2L(durationInMinute = 30)
+    @LocalCache(durationInMinute = 30)
     public Mono<String> findByCode(String code) {
         return settingRepository.findByCode(code);
     }

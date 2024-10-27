@@ -1,7 +1,7 @@
 package com.ezbuy.paymentservice.repoTemplate.impl;
 
+import com.ezbuy.ordermodel.constants.Constants;
 import com.ezbuy.paymentservice.repoTemplate.RequestBankingRepositoryTemplate;
-import com.viettel.sme.ordermodel.constants.Constants;
 import com.ezbuy.paymentmodel.constants.OrderState;
 import com.ezbuy.paymentmodel.dto.RequestBankingSyncDTO;
 import com.ezbuy.paymentmodel.dto.UpdateOrderStateDTO;
@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.springframework.data.r2dbc.query.Criteria.where;
 import static org.springframework.data.relational.core.query.Query.query;
 
 @Repository

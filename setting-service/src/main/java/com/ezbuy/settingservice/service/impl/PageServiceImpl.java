@@ -23,7 +23,7 @@ import io.hoangtien2k3.reactify.DataUtil;
 import io.hoangtien2k3.reactify.MinioUtils;
 import io.hoangtien2k3.reactify.SecurityUtils;
 import io.hoangtien2k3.reactify.Translator;
-import io.hoangtien2k3.reactify.aop.cache.Cache2L;
+import io.hoangtien2k3.reactify.annotations.LocalCache;
 import io.hoangtien2k3.reactify.constants.CommonErrorCode;
 import io.hoangtien2k3.reactify.exception.BusinessException;
 import io.hoangtien2k3.reactify.factory.ModelMapperFactory;
@@ -60,7 +60,7 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
     private String bucket;
 
     @Override
-    @Cache2L(autoCache = true, maxRecord = 10000)
+    @LocalCache(durationInMinute = 30, maxRecord = 10000, autoCache = true)
     public Mono<DataResponse<PageDTO>> getPage(String code) {
         String safeTrim = DataUtil.safeTrim(code);
         if (DataUtil.isNullOrEmpty(safeTrim)) {

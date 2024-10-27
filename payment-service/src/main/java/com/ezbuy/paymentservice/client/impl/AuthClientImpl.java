@@ -1,14 +1,14 @@
 package com.ezbuy.paymentservice.client.impl;
 
-import com.viettel.sme.framework.client.BaseRestClient;
-import com.viettel.sme.framework.constants.CommonErrorCode;
-import com.viettel.sme.framework.exception.BusinessException;
-import com.viettel.sme.framework.factory.ObjectMapperFactory;
-import com.viettel.sme.framework.model.response.DataResponse;
-import com.viettel.sme.framework.utils.DataUtil;
-import com.viettel.sme.framework.utils.SecurityUtils;
-import com.viettel.sme.framework.utils.Translator;
 import com.ezbuy.paymentservice.client.AuthClient;
+import io.hoangtien2k3.reactify.DataUtil;
+import io.hoangtien2k3.reactify.SecurityUtils;
+import io.hoangtien2k3.reactify.Translator;
+import io.hoangtien2k3.reactify.client.BaseRestClient;
+import io.hoangtien2k3.reactify.constants.CommonErrorCode;
+import io.hoangtien2k3.reactify.exception.BusinessException;
+import io.hoangtien2k3.reactify.factory.ObjectMapperFactory;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;

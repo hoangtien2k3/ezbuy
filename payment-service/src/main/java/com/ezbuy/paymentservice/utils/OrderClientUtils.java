@@ -1,17 +1,11 @@
 package com.ezbuy.paymentservice.utils;
 
-import com.viettel.sme.framework.factory.MarshallerFactory;
-import com.viettel.sme.framework.utils.DataWsUtil;
-import com.viettel.sme.ordermodel.constants.Constants;
-import com.viettel.sme.ordermodel.dto.*;
-import com.viettel.sme.ordermodel.dto.request.PricingProductRequest;
-import com.viettel.sme.ordermodel.dto.ws.CustIdentity;
-import com.viettel.sme.ordermodel.dto.ws.SearchOrderStateRequest;
-import com.viettel.sme.ordermodel.dto.request.CreateOrderPaidRequest;
+import com.ezbuy.ordermodel.dto.request.PricingProductRequest;
+import com.ezbuy.ordermodel.dto.ws.SearchOrderStateRequest;
+import io.hoangtien2k3.reactify.DataWsUtil;
+import io.hoangtien2k3.reactify.factory.MarshallerFactory;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class OrderClientUtils {
@@ -69,6 +63,5 @@ public class OrderClientUtils {
         String body = MessageFormat.format(PRICING_PRODUCT, bodyDataValue);
         return getOrderRequest(username, password, body);
     }
-
 
 }

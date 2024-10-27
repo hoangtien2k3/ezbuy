@@ -46,6 +46,7 @@ public class ProductController {
         return productService.getAllRegisterdTelecomServicesByIdNoList(registeredServiceRequest.getIdNoList())
                 .map(rs -> new DataResponse(Translator.toLocaleVi("success"), rs));
     }
+
     @PostMapping(value = GET_REGISTERED_TELECOM_SERVICE_ALIAS_BY_ID_NO_LIST)
     public Mono<DataResponse> getAllRegisterdTelecomServicesAliasByIdNoList(@RequestBody RegisteredServiceRequest registeredServiceRequest) {
         return productService.getAllRegisterdTelecomServicesAliasByIdNoList(registeredServiceRequest.getIdNoList())

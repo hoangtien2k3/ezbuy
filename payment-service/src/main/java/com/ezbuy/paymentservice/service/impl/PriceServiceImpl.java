@@ -2,12 +2,12 @@ package com.ezbuy.paymentservice.service.impl;
 
 import com.ezbuy.paymentservice.client.ProductClient;
 import com.ezbuy.paymentservice.service.PriceService;
-import com.viettel.sme.framework.constants.CommonErrorCode;
-import com.viettel.sme.framework.exception.BusinessException;
-import com.viettel.sme.framework.utils.DataUtil;
 import com.ezbuy.paymentmodel.dto.request.ProductItem;
 import com.ezbuy.paymentmodel.dto.request.ProductPriceRequest;
 import com.ezbuy.paymentmodel.dto.response.ProductPrice;
+import io.hoangtien2k3.reactify.DataUtil;
+import io.hoangtien2k3.reactify.constants.CommonErrorCode;
+import io.hoangtien2k3.reactify.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -23,9 +23,9 @@ public class PriceServiceImpl implements PriceService {
 
     @Override
     public Mono<ProductPrice> calculatePrices(ProductPriceRequest productPriceRequest) {
-        Long totalPrice = 0l;
+        Long totalPrice = 0L;
         List<ProductItem> productItems = productPriceRequest.getProductItems();
-        if (productItems == null || productItems.size() == 0) {
+        if (productItems == null || productItems.isEmpty()) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.item.null"));
         }
         Map<String, Integer> missingPriceProductIdsMap = new HashMap<>();

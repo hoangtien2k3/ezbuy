@@ -31,7 +31,7 @@ public class ContentSectionController {
 
     @GetMapping(UrlPaths.ContentSection.SEARCH)
     public Mono<ResponseEntity<DataResponse<SearchContentSectionResponse>>> search(
-            SearchContentSectionRequest request) {
+            @RequestBody SearchContentSectionRequest request) {
         return contentSectionService.search(request).map(rs -> ResponseEntity.ok(new DataResponse<>("success", rs)));
     }
 
@@ -72,7 +72,7 @@ public class ContentSectionController {
 
     @GetMapping()
     public Mono<ResponseEntity<DataResponse<List<TreeDataDTO>>>> getAllByTypeAndRefIdAndRefType(
-            GetContentSectionRequest request) {
+            @RequestBody GetContentSectionRequest request) {
         return contentSectionService
                 .getAllByTypeAndRefIdAndRefType(request)
                 .flatMap(contentSection -> Mono.just(ResponseEntity.ok(new DataResponse<>("success", contentSection))));

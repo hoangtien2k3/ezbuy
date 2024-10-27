@@ -5,7 +5,7 @@ import com.ezbuy.settingmodel.model.Area;
 import com.ezbuy.settingservice.repository.AreaRepository;
 import com.ezbuy.settingservice.service.AreaService;
 import io.hoangtien2k3.reactify.DataUtil;
-import io.hoangtien2k3.reactify.aop.cache.Cache2L;
+import io.hoangtien2k3.reactify.annotations.LocalCache;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ public class AreaServiceImpl implements AreaService {
     private final AreaRepository areaRepositoory;
 
     @Override
-    @Cache2L(durationInMinute = 720)
+    @LocalCache(durationInMinute = 720)
     public Mono<DataResponse<List<AreaDTO>>> getArea(String parentCode) {
         return getAreaData(parentCode).flatMap(areas -> {
             if (DataUtil.isNullOrEmpty(areas)) {
@@ -50,7 +50,7 @@ public class AreaServiceImpl implements AreaService {
     }
 
     @Override
-    @Cache2L(durationInMinute = 720)
+    @LocalCache(durationInMinute = 720)
     public Mono<DataResponse<AreaDTO>> getArea(String province, String district, String precinct) {
         return areaRepositoory
                 .getAreaName(province, district, precinct)

@@ -1,16 +1,16 @@
 package com.ezbuy.paymentservice.client.impl;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.viettel.sme.framework.client.BaseRestClient;
-import com.viettel.sme.framework.model.response.DataResponse;
-import com.viettel.sme.framework.utils.DataUtil;
 import com.ezbuy.paymentmodel.constants.ClientUris;
 import com.ezbuy.paymentmodel.dto.response.IdentityProductPrice;
 import com.ezbuy.paymentservice.client.ProductClient;
-import com.viettel.sme.productmodel.dto.FilterProductTemplateDTO;
-import com.viettel.sme.productmodel.model.Subscriber;
-import com.viettel.sme.productmodel.request.FilterGetListSubscriberActive;
-import com.viettel.sme.productmodel.response.ProductOfferTemplateDTO;
+import com.ezbuy.productmodel.dto.FilterProductTemplateDTO;
+import com.ezbuy.productmodel.model.Subscriber;
+import com.ezbuy.productmodel.request.FilterGetListSubscriberActive;
+import com.ezbuy.productmodel.response.ProductOfferTemplateDTO;
+import com.fasterxml.jackson.core.type.TypeReference;
+import io.hoangtien2k3.reactify.DataUtil;
+import io.hoangtien2k3.reactify.client.BaseRestClient;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;

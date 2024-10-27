@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Data
@@ -15,10 +16,8 @@ import org.springframework.data.relational.core.mapping.Table;
 @Table(name = "market_page")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MarketPage extends EntityBase {
-    // Id danh muc market page
-    // @Id
+    @Id
     private String id;
-    // id dich vu lay tu bang telecom service
     private String serviceId;
     private String serviceAlias;
     private String nameService;

@@ -1,7 +1,7 @@
 package com.ezbuy.paymentservice.client;
 
 import com.ezbuy.paymentmodel.dto.TelecomDTO;
-import com.viettel.sme.settingmodel.model.OptionSetValue;
+import com.ezbuy.settingmodel.model.OptionSetValue;
 import reactor.core.publisher.Mono;
 
 import java.util.List;

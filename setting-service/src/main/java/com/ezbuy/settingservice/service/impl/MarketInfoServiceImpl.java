@@ -90,7 +90,6 @@ public class MarketInfoServiceImpl implements MarketInfoService {
                 .map(marketInfoDTOS -> new DataResponse<>(Translator.toLocale("Success"), marketInfoDTOS));
     }
 
-    // TODO: 25/07/2023 lay thong tin ra, convert tu dia chi anh sang base64 de hien
     // thi o man hinh chi tiet or viet
     // them function de load anh tu path ra web de hien thi
     @Override

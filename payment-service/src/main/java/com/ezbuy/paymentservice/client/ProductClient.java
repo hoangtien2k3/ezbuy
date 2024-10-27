@@ -1,8 +1,8 @@
 package com.ezbuy.paymentservice.client;
 
 import com.ezbuy.paymentmodel.dto.response.IdentityProductPrice;
-import com.viettel.sme.productmodel.model.Subscriber;
-import com.viettel.sme.productmodel.response.ProductOfferTemplateDTO;
+import com.ezbuy.productmodel.model.Subscriber;
+import com.ezbuy.productmodel.response.ProductOfferTemplateDTO;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

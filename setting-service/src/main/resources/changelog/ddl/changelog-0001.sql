@@ -1,3 +1,9 @@
+-- database changelog
+-- Date: 2024-10-27
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- UUID PRIMARY KEY DEFAULT gen_random_uuid()
+
 CREATE TABLE area
 (
     area_code    VARCHAR(36) PRIMARY KEY,
@@ -15,6 +21,19 @@ CREATE TABLE area
     create_at    TIMESTAMP,
     update_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+INSERT INTO area (area_code, parent_code, province, district, precinct, street_block, full_name, name, status, center, create_by, update_by, create_at)
+VALUES
+    ('(0)24', NULL, 'Hà Nội', 'Quận Hoàn Kiếm', 'Phường Hàng Bạc', NULL, 'Hà Nội, Quận Hoàn Kiếm, Phường Hàng Bạc', 'Hoàn Kiếm', 1, 'Trung tâm Hà Nội', 'admin', 'admin', CURRENT_TIMESTAMP),
+    ('(0)28', NULL, 'Hồ Chí Minh', 'Quận 1', 'Phường Bến Nghé', NULL, 'Hồ Chí Minh, Quận 1, Phường Bến Nghé', 'Quận 1', 1, 'Trung tâm Hồ Chí Minh', 'admin', 'admin', CURRENT_TIMESTAMP),
+    ('(0)511', NULL, 'Đà Nẵng', 'Quận Hải Châu', 'Phường Thạch Thang', NULL, 'Đà Nẵng, Quận Hải Châu, Phường Thạch Thang', 'Hải Châu', 1, 'Trung tâm Đà Nẵng', 'admin', 'admin', CURRENT_TIMESTAMP),
+    ('(0)225', NULL, 'Hải Phòng', 'Quận Hồng Bàng', 'Phường Hạ Lý', NULL, 'Hải Phòng, Quận Hồng Bàng, Phường Hạ Lý', 'Hồng Bàng', 1, 'Trung tâm Hải Phòng', 'admin', 'admin', CURRENT_TIMESTAMP),
+    ('(0)238', NULL, 'Nghệ An', 'Thành phố Vinh', 'Phường Quang Trung', NULL, 'Nghệ An, Thành phố Vinh, Phường Quang Trung', 'Vinh', 1, 'Trung tâm Nghệ An', 'admin', 'admin', CURRENT_TIMESTAMP),
+    ('(0)234', NULL, 'Thừa Thiên Huế', 'Thành phố Huế', 'Phường Phú Hòa', NULL, 'Thừa Thiên Huế, Thành phố Huế, Phường Phú Hòa', 'Huế', 1, 'Trung tâm Thừa Thiên Huế', 'admin', 'admin', CURRENT_TIMESTAMP),
+    ('(0)235', NULL, 'Quảng Nam', 'Thành phố Tam Kỳ', 'Phường Tân Thạnh', NULL, 'Quảng Nam, Thành phố Tam Kỳ, Phường Tân Thạnh', 'Tam Kỳ', 1, 'Trung tâm Quảng Nam', 'admin', 'admin', CURRENT_TIMESTAMP),
+    ('(0)251', NULL, 'Đồng Nai', 'Thành phố Biên Hòa', 'Phường Bửu Long', NULL, 'Đồng Nai, Thành phố Biên Hòa, Phường Bửu Long', 'Biên Hòa', 1, 'Trung tâm Đồng Nai', 'admin', 'admin', CURRENT_TIMESTAMP),
+    ('(0)274', NULL, 'Bình Dương', 'Thành phố Thủ Dầu Một', 'Phường Phú Hòa', NULL, 'Bình Dương, Thành phố Thủ Dầu Một, Phường Phú Hòa', 'Thủ Dầu Một', 1, 'Trung tâm Bình Dương', 'admin', 'admin', CURRENT_TIMESTAMP),
+    ('(0)239', NULL, 'Hà Tĩnh', 'Thành phố Hà Tĩnh', 'Phường Nam Hà', NULL, 'Hà Tĩnh, Thành phố Hà Tĩnh, Phường Nam Hà', 'Hà Tĩnh', 1, 'Trung tâm Hà Tĩnh', 'admin', 'admin', CURRENT_TIMESTAMP);
+
 
 CREATE TABLE content_display
 (
@@ -92,6 +111,13 @@ CREATE TABLE cust_type
     update_by   VARCHAR(50),
     update_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+INSERT INTO cust_type (cust_type, name, group_type, tax, plan, status, description, create_by, create_at, update_by)
+VALUES
+    ('CUST_PER', 'Khách hàng cá nhân', 'Cá nhân', 10, 'Gói cơ bản', 1, 'Khách hàng thuộc loại cá nhân.', 'admin', CURRENT_TIMESTAMP, 'admin'),
+    ('CUST_BIZ', 'Khách hàng doanh nghiệp', 'Doanh nghiệp', 20, 'Gói nâng cao', 1, 'Khách hàng thuộc loại doanh nghiệp.', 'admin', CURRENT_TIMESTAMP, 'admin'),
+    ('CUST_VIP', 'Khách hàng VIP', 'VIP', 5, 'Gói đặc biệt', 1, 'Khách hàng đặc biệt với ưu đãi riêng.', 'admin', CURRENT_TIMESTAMP, 'admin'),
+    ('CUST_NEW', 'Khách hàng mới', 'Cá nhân', 10, 'Gói khuyến mãi', 1, 'Khách hàng mới tham gia dịch vụ.', 'admin', CURRENT_TIMESTAMP, 'admin'),
+    ('CUST_LOYAL', 'Khách hàng trung thành', 'Cá nhân', 5, 'Gói ưu đãi', 1, 'Khách hàng đã sử dụng dịch vụ lâu dài.', 'admin', CURRENT_TIMESTAMP, 'admin');
 
 CREATE TABLE group_news
 (

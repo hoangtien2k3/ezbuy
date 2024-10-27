@@ -18,7 +18,7 @@ import com.ezbuy.settingservice.service.TelecomService;
 import io.hoangtien2k3.reactify.DataUtil;
 import io.hoangtien2k3.reactify.SecurityUtils;
 import io.hoangtien2k3.reactify.Translator;
-import io.hoangtien2k3.reactify.aop.cache.Cache2L;
+import io.hoangtien2k3.reactify.annotations.LocalCache;
 import io.hoangtien2k3.reactify.constants.CommonErrorCode;
 import io.hoangtien2k3.reactify.exception.BusinessException;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
@@ -46,7 +46,7 @@ public class TelecomServiceImpl extends BaseServiceHandler implements TelecomSer
     private final TelecomServiceConfigRep telecomServiceConfigRep;
 
     @Override
-    @Cache2L(autoCache = true, maxRecord = 10000)
+    @LocalCache(autoCache = true, maxRecord = 10000)
     public Mono<DataResponse<List<TelecomDTO>>> getTelecomService(
             List<String> ids, List<String> aliases, List<String> origins) {
         return this.telecomRepositoryTemplate
@@ -135,7 +135,7 @@ public class TelecomServiceImpl extends BaseServiceHandler implements TelecomSer
     }
 
     @Override
-    @Cache2L(autoCache = true, maxRecord = 10000)
+    @LocalCache(autoCache = true, maxRecord = 10000)
     public Mono<DataResponse<PageResponse>> getPageTelecomService(PageTelecomRequest request) {
         Mono<Long> total = this.telecomRepositoryTemplate.getTotalByRequest(request);
         Mono<List<TelecomDTO>> telecoms =
@@ -156,7 +156,7 @@ public class TelecomServiceImpl extends BaseServiceHandler implements TelecomSer
     }
 
     @Override
-    @Cache2L(autoCache = true, maxRecord = 10000)
+    @LocalCache(autoCache = true, maxRecord = 10000)
     public Mono<List<TelecomResponse>> getAllTelecomServiceActive() {
         return Mono.zip(
                         telecomRepository.getAllTelecomServiceActive().collectList(),

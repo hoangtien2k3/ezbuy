@@ -4,6 +4,7 @@ import com.ezbuy.settingmodel.model.base.EntityBase;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Data
@@ -13,10 +14,10 @@ import org.springframework.data.relational.core.mapping.Table;
 @Table(name = "market_info")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MarketInfo extends EntityBase {
-    // @Id
+    @Id
     private String id;
     private String serviceId;
-    private String serviceAlias; // alias of service PYCXXX/LuongToanTrinhScontract
+    private String serviceAlias;
     private String title;
     private String navigatorUrl;
     private Integer marketOrder;

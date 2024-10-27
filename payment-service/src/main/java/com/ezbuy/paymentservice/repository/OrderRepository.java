@@ -1,7 +1,7 @@
 package com.ezbuy.paymentservice.repository;
 
-import com.viettel.sme.ordermodel.dto.OrderSyncDTO;
-import com.viettel.sme.ordermodel.model.Order;
+import com.ezbuy.ordermodel.dto.OrderSyncDTO;
+import com.ezbuy.ordermodel.model.Order;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Flux;

@@ -193,7 +193,7 @@ public class GatewayContextFilter implements WebFilter, Ordered {
                             BodyInserters.fromValue(formDataBodyString);
                     CachedBodyOutputMessage cachedBodyOutputMessage =
                             new CachedBodyOutputMessage(exchange, httpHeaders);
-                    log.debug("[GatewayContext]Rewrite Form Data :{}", formDataBodyString);
+                    log.debug("[GatewayContext] Rewrite Form Data :{}", formDataBodyString);
                     return bodyInserter
                             .insert(cachedBodyOutputMessage, new BodyInserterContext())
                             .then(Mono.defer(() -> {

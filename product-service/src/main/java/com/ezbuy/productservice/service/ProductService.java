@@ -174,6 +174,7 @@ public interface ProductService {
      * @return
      */
     Mono<GetProductInfoResponse> getProductInfo(GetProductInfoRequest request);
+
     Mono<DataResponse> createSummaryReport(CreateSummaryRequest request);
 
     Mono<Resource> exportReport(QueryReport request);

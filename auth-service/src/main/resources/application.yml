@@ -23,12 +23,6 @@ spring:
   messages:
     basename: messages
 
-  doc:
-    api-docs:
-      path: /v3/api-docs
-    swagger-ui:
-      path: /swagger-ui.html
-
   #connect db r2dbc
   r2dbc:
     url: r2dbc:postgresql://localhost:5434/auth
@@ -91,6 +85,7 @@ client:
     internal-oauth: true
     address: http://localhost:8088/
     name: productClient
+
 # unauthenticated endpoints config
 application:
   http-logging:

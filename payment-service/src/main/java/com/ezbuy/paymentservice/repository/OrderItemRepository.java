@@ -1,6 +1,5 @@
 package com.ezbuy.paymentservice.repository;
 
-import com.viettel.sme.ordermodel.model.OrderItem;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Flux;
@@ -9,7 +8,6 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 public interface OrderItemRepository extends R2dbcRepository<OrderItem, String> {
-
 
     @Query(value = "select ot.product_id, ot.order_id," +
             " ot.name, ot.description, ot.quantity, ot.price, ot.currency" +

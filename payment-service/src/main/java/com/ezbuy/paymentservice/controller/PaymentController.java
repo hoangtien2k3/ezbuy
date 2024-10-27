@@ -1,13 +1,12 @@
 package com.ezbuy.paymentservice.controller;
 
+import com.ezbuy.ordermodel.dto.request.SyncOrderStateRequest;
 import com.ezbuy.paymentmodel.dto.request.PaymentResultRequest;
 import com.ezbuy.paymentmodel.dto.request.ProductPaymentRequest;
 import com.ezbuy.paymentmodel.dto.request.UpdateOrderStateRequest;
 import com.ezbuy.paymentservice.service.PaymentService;
-import com.viettel.sme.framework.model.response.DataResponse;
-import com.viettel.sme.ordermodel.dto.request.CreateOrderPaidRequest;
-import com.viettel.sme.ordermodel.dto.request.SyncOrderStateRequest;
 import com.ezbuy.paymentmodel.constants.UrlPaths;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;

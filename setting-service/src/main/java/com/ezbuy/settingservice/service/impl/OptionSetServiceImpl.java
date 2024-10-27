@@ -13,14 +13,18 @@ import com.ezbuy.settingservice.repositoryTemplate.OptionSetRepositoryTemplate;
 import com.ezbuy.settingservice.service.OptionSetService;
 import io.hoangtien2k3.reactify.DataUtil;
 import io.hoangtien2k3.reactify.SecurityUtils;
-import io.hoangtien2k3.reactify.aop.cache.Cache2L;
+import io.hoangtien2k3.reactify.annotations.LocalCache;
 import io.hoangtien2k3.reactify.constants.CommonErrorCode;
 import io.hoangtien2k3.reactify.constants.Constants;
 import io.hoangtien2k3.reactify.exception.BusinessException;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
+
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,13 +41,13 @@ public class OptionSetServiceImpl extends BaseServiceHandler implements OptionSe
     private final OptionSetValueRepository optionSetValueRepository;
 
     @Override
-    @Cache2L(durationInMinute = 30)
+    @LocalCache(durationInMinute = 30, maxRecord = 10000, autoCache = true)
     public Mono<List<OptionSetValue>> findByOptionSetCode(String optionSetCode) {
         return optionSetValueRepository.findByOptionSetCode(optionSetCode).collectList();
     }
 
     @Override
-    @Cache2L(durationInMinute = 30)
+    @LocalCache(durationInMinute = 30, maxRecord = 10000, autoCache = true)
     public Mono<OptionSetValue> findByOptionSetCodeAndOptionValueCode(String optionSetCode, String optionValueCode) {
         return optionSetValueRepository.findByOptionSetCodeAndOptionValueCode(optionSetCode, optionValueCode);
     }
@@ -56,7 +60,7 @@ public class OptionSetServiceImpl extends BaseServiceHandler implements OptionSe
         var getSysDate = optionSetRepository.getSysDate();
         String code = DataUtil.safeTrim(request.getCode());
         return Mono.zip(
-                        SecurityUtils.getCurrentUser() // get info user
+                        SecurityUtils.getCurrentUser()
                                 .switchIfEmpty(
                                         Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
                         validateDuplicateCode(code),
@@ -66,6 +70,7 @@ public class OptionSetServiceImpl extends BaseServiceHandler implements OptionSe
                     String description = DataUtil.safeTrim(request.getDescription());
                     String userName = tuple.getT1().getUsername();
                     OptionSet optionSet = OptionSet.builder()
+                            .id(UUID.randomUUID().toString())
                             .code(code)
                             .description(description)
                             .status(request.getStatus())
@@ -73,6 +78,7 @@ public class OptionSetServiceImpl extends BaseServiceHandler implements OptionSe
                             .createBy(userName)
                             .updateAt(now)
                             .updateBy(userName)
+                            .isNew(true)
                             .build();
                     return optionSetRepository
                             .save(optionSet)
@@ -161,7 +167,7 @@ public class OptionSetServiceImpl extends BaseServiceHandler implements OptionSe
 
     @Override
     @Transactional
-    @Cache2L(durationInMinute = 30)
+    @LocalCache(durationInMinute = 30, maxRecord = 10000, autoCache = true)
     public Mono<SearchOptionSetResponse> findOptionSet(SearchOptionSetRequest request) {
         // validate request
         int pageIndex = validatePageIndex(request.getPageIndex());

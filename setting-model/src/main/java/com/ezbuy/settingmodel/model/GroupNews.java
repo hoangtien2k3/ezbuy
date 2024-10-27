@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Data
@@ -13,7 +14,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @SuperBuilder
 @Table(name = "group_news")
 public class GroupNews extends EntityBase {
-    // @Id
+    @Id
     private String id;
     private String name; // ten nhom tin tuc
     private String code; // ma nhom tin tuc

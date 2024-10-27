@@ -95,11 +95,11 @@ public class ProductServiceImpl implements ProductService {
     private final TelecomRepository telecomRepository;
     private static final String SYNC_TYPE = "PRODUCT";
     private final SummaryReportRepository summaryReportRepository;
-  private static final String ORGANIZATION = "ORGANIZATION";
-  private static final String NOT_FOUND = "product.input.notFound";
-  private static final String PRODUCT_ID = "product.organization.id";
-  private static final String PRODUCT = "PRODUCT";
-  private static final String COMMON_ERROR="common.error";
+    private static final String ORGANIZATION = "ORGANIZATION";
+    private static final String NOT_FOUND = "product.input.notFound";
+    private static final String PRODUCT_ID = "product.organization.id";
+    private static final String PRODUCT = "PRODUCT";
+    private static final String COMMON_ERROR = "common.error";
 
     @Override
     public Mono<List<ServiceDTO>> getAllServiceGroupAndTelecomServiceActive() {
@@ -210,8 +210,8 @@ public class ProductServiceImpl implements ProductService {
             request.setPageSize(10);
         }
         return Mono.zip(
-                productCustomRepository.countProduct(request, organizationId),
-                productCustomRepository.searchProduct(request, organizationId).collectList())
+                        productCustomRepository.countProduct(request, organizationId),
+                        productCustomRepository.searchProduct(request, organizationId).collectList())
                 .flatMap(searchResult -> Mono.just(ProductSearchResult.builder()
                         .total(searchResult.getT1())
                         .pageIndex(request.getPageIndex())
@@ -242,7 +242,7 @@ public class ProductServiceImpl implements ProductService {
         });
     }
 
-    private CreateSyncHistoryRequest createSyncHistory (String action, String organizationId, Optional<String> opIdNo) {
+    private CreateSyncHistoryRequest createSyncHistory(String action, String organizationId, Optional<String> opIdNo) {
         CreateSyncHistoryRequest request = new CreateSyncHistoryRequest();
         request.setOrgId(organizationId);
         request.setIdNo(opIdNo.isEmpty() ? null : opIdNo.get());
@@ -253,7 +253,7 @@ public class ProductServiceImpl implements ProductService {
         return request;
     }
 
-    private Mono<DataResponse> syncRequestDetail (SyncHistory syncHistory, LocalDateTime now, String targetId, String userName) {
+    private Mono<DataResponse> syncRequestDetail(SyncHistory syncHistory, LocalDateTime now, String targetId, String userName) {
         SyncHistoryDetail detail = SyncHistoryDetail.builder()
                 .id(UUID.randomUUID().toString())
                 .syncHistoryId(syncHistory.getId())
@@ -294,8 +294,8 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public Mono<DataResponse<Product>> handleCreateProduct(Product product, List<OrganizationUnit> unitList, String organizationId) {
         return Mono.zip(
-                SecurityUtils.getCurrentUser(),
-                validateRequestCreateProduct(product, true))
+                        SecurityUtils.getCurrentUser(),
+                        validateRequestCreateProduct(product, true))
                 .flatMap(userValidate -> {
                     String username = userValidate.getT1().getUsername();
                     //lay don vi dau tien
@@ -312,9 +312,9 @@ public class ProductServiceImpl implements ProductService {
                     product.setUpdateBy(username);
                     product.setOrganizationId(organizationId);
                     return productRepository.save(product)
-                        .map(rsp -> new DataResponse<>(AuthConstants.SUCCESS, rsp))
-                        .onErrorReturn(new DataResponse<>(CommonErrorCode.INTERNAL_SERVER_ERROR, Translator.toLocaleVi(COMMON_ERROR), new Product()))
-                        .doOnError(throwable -> log.error("Save product error: {}", throwable.getMessage()));
+                            .map(rsp -> new DataResponse<>(AuthConstants.SUCCESS, rsp))
+                            .onErrorReturn(new DataResponse<>(CommonErrorCode.INTERNAL_SERVER_ERROR, Translator.toLocaleVi(COMMON_ERROR), new Product()))
+                            .doOnError(throwable -> log.error("Save product error: {}", throwable.getMessage()));
 
                 });
     }
@@ -378,16 +378,16 @@ public class ProductServiceImpl implements ProductService {
             }
             // lay ma so thue doanh nghiep
             return Mono.zip(
-                    SecurityUtils.getCurrentUser(),
-                    authClient.getIdNoOrganization("MST", ORGANIZATION, organizationId),
-                    productRepository.findAllByIdIn(request.getProductIdList()).collectList()
-                            .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "product.error.not.exist"))))
+                            SecurityUtils.getCurrentUser(),
+                            authClient.getIdNoOrganization("MST", ORGANIZATION, organizationId),
+                            productRepository.findAllByIdIn(request.getProductIdList()).collectList()
+                                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "product.error.not.exist"))))
                     .flatMap(tuple1 -> {
                         String userName = tuple1.getT1().getUsername();
                         CreateSyncHistoryRequest createSyncHistoryRequest = createSyncHistory("UPDATE", organizationId, tuple1.getT2());
                         return Mono.zip(
-                                syncHistoryService.createSyncHistoryTrans(createSyncHistoryRequest), // goi api lay transaction id
-                                productRepository.getSysDate())
+                                        syncHistoryService.createSyncHistoryTrans(createSyncHistoryRequest), // goi api lay transaction id
+                                        productRepository.getSysDate())
                                 .flatMap(tuple -> {
                                     SyncHistory syncHistory = tuple.getT1().getData();
                                     LocalDateTime now = tuple.getT2();
@@ -533,7 +533,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private void buildRowWithProduct(Sheet sheet, int i, ProductImportDTO item) {
-        var row = sheet.createRow(i+ 3);
+        var row = sheet.createRow(i + 3);
         row.createCell(0).setCellValue(i + 1);
         row.createCell(1).setCellValue(Optional.ofNullable(item.getCode()).orElse(StringUtils.EMPTY));
         row.createCell(2).setCellValue(Optional.ofNullable(item.getName()).orElse(StringUtils.EMPTY));
@@ -573,6 +573,7 @@ public class ProductServiceImpl implements ProductService {
 
     /**
      * validate import item
+     *
      * @param request request
      * @return
      */
@@ -584,10 +585,10 @@ public class ProductServiceImpl implements ProductService {
                     return request;
                 })
                 .onErrorResume(error -> {
-                        request.setErrMsg(Translator.toLocaleVi(error.getMessage()));
-                        request.setResult(false);
-                        return Mono.just(request);
-                    });
+                    request.setErrMsg(Translator.toLocaleVi(error.getMessage()));
+                    request.setResult(false);
+                    return Mono.just(request);
+                });
     }
 
     private Mono<Boolean> validateImportProduct(ProductImportDTO product) {
@@ -668,13 +669,13 @@ public class ProductServiceImpl implements ProductService {
                             String revenueRatioTemplateRow = DataUtil.safeTrim(this.getValueInCell(row, formatter, i++));
 
                             if (!(Translator.toLocaleVi(ROW_TEMPLATE_NAME.CODE) + ROW_TEMPLATE_NAME.OBLIGATORY).equals(DataUtil.safeTrim(codeTemplateRow)) ||
-                                !(Translator.toLocaleVi(ROW_TEMPLATE_NAME.NAME) + ROW_TEMPLATE_NAME.OBLIGATORY).equals(DataUtil.safeTrim(nameTemplateRow)) ||
-                                !Translator.toLocaleVi(ROW_TEMPLATE_NAME.PRICE_IMPORT).equals(DataUtil.safeTrim(priceImportTemplateRow)) ||
-                                !Translator.toLocaleVi(ROW_TEMPLATE_NAME.PRICE_EXPORT).equals(DataUtil.safeTrim(priceExportTemplateRow)) ||
-                                !Translator.toLocaleVi(ROW_TEMPLATE_NAME.UNIT).equals(DataUtil.safeTrim(unitTemplateRow)) ||
-                                !(Translator.toLocaleVi(ROW_TEMPLATE_NAME.TAX_RATIO) + ROW_TEMPLATE_NAME.OBLIGATORY).equals(DataUtil.safeTrim(taxRatioRow)) ||
-                                !Translator.toLocaleVi(ROW_TEMPLATE_NAME.DISCOUNT).equals(DataUtil.safeTrim(discountTemplateRow)) ||
-                                !Translator.toLocaleVi(ROW_TEMPLATE_NAME.REVENUE_RATIO).equals(DataUtil.safeTrim(revenueRatioTemplateRow))
+                                    !(Translator.toLocaleVi(ROW_TEMPLATE_NAME.NAME) + ROW_TEMPLATE_NAME.OBLIGATORY).equals(DataUtil.safeTrim(nameTemplateRow)) ||
+                                    !Translator.toLocaleVi(ROW_TEMPLATE_NAME.PRICE_IMPORT).equals(DataUtil.safeTrim(priceImportTemplateRow)) ||
+                                    !Translator.toLocaleVi(ROW_TEMPLATE_NAME.PRICE_EXPORT).equals(DataUtil.safeTrim(priceExportTemplateRow)) ||
+                                    !Translator.toLocaleVi(ROW_TEMPLATE_NAME.UNIT).equals(DataUtil.safeTrim(unitTemplateRow)) ||
+                                    !(Translator.toLocaleVi(ROW_TEMPLATE_NAME.TAX_RATIO) + ROW_TEMPLATE_NAME.OBLIGATORY).equals(DataUtil.safeTrim(taxRatioRow)) ||
+                                    !Translator.toLocaleVi(ROW_TEMPLATE_NAME.DISCOUNT).equals(DataUtil.safeTrim(discountTemplateRow)) ||
+                                    !Translator.toLocaleVi(ROW_TEMPLATE_NAME.REVENUE_RATIO).equals(DataUtil.safeTrim(revenueRatioTemplateRow))
                             ) {
                                 return Mono.error(new BusinessException(String.valueOf(HttpStatus.BAD_REQUEST.value()), Translator.toLocaleVi("product.import.error.template.invalid")));
                             }
@@ -744,9 +745,9 @@ public class ProductServiceImpl implements ProductService {
                 String userName = tuple1.getT1().getUsername();
                 CreateSyncHistoryRequest createSyncHistoryRequest = createSyncHistory("INSERT", organizationId, tuple1.getT2());
                 return Mono.zip(
-                        syncHistoryService.createSyncHistoryTrans(createSyncHistoryRequest), // goi api lay transaction id
-                        productRepository.getSysDate(),
-                        SecurityUtils.getCurrentUser().flatMap(user -> authClient.findAllActiveOrganizationUnitsByOrganizationId(user.getId(), organizationId))) // lay danh sach don vi cua user
+                                syncHistoryService.createSyncHistoryTrans(createSyncHistoryRequest), // goi api lay transaction id
+                                productRepository.getSysDate(),
+                                SecurityUtils.getCurrentUser().flatMap(user -> authClient.findAllActiveOrganizationUnitsByOrganizationId(user.getId(), organizationId))) // lay danh sach don vi cua user
                         .flatMap(tuple -> {
                             SyncHistory syncHistory = tuple.getT1().getData();
                             LocalDateTime now = tuple.getT2();
@@ -868,7 +869,7 @@ public class ProductServiceImpl implements ProductService {
                     productDb.setNew(false);
                     productDb.setStatus(STATUS_ACTIVE);
                     return productRepository.save(productDb).map(rsp -> DataResponse.success(true))
-                    .onErrorResume(throwable -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, COMMON_ERROR)));
+                            .onErrorResume(throwable -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, COMMON_ERROR)));
                 })
         );
     }
@@ -980,7 +981,7 @@ public class ProductServiceImpl implements ProductService {
             List<Product> productDbList = productListUser.getT1();
             productDbList.forEach(product -> {
                 product.setNew(false);
-                product.setLockStatus(DataUtil.safeEqual(product.getLockStatus(),LOCK_STATUS_LOCK) ? LOCK_STATUS_UNLOCK : LOCK_STATUS_LOCK);
+                product.setLockStatus(DataUtil.safeEqual(product.getLockStatus(), LOCK_STATUS_LOCK) ? LOCK_STATUS_UNLOCK : LOCK_STATUS_LOCK);
                 product.setUpdateAt(LocalDateTime.now());
                 product.setUpdateBy(productListUser.getT2().getUsername());
             });
@@ -1026,124 +1027,129 @@ public class ProductServiceImpl implements ProductService {
     }
 
     //Ghi vao file excel
-  private ByteArrayResource writeExcel(Workbook workbook) {
-    try (ByteArrayOutputStream os = new ByteArrayOutputStream(); workbook) {
-      workbook.write(os);
-      return new ByteArrayResource(os.toByteArray()) {
-        @Override
-        public String getFilename() {
-          return "BaoCao.xlsx";
+    private ByteArrayResource writeExcel(Workbook workbook) {
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream(); workbook) {
+            workbook.write(os);
+            return new ByteArrayResource(os.toByteArray()) {
+                @Override
+                public String getFilename() {
+                    return "BaoCao.xlsx";
+                }
+            };
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "export.error");
         }
-      };
-    } catch (IOException e) {
-      log.error(e.getMessage(), e);
-      throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "export.error");
     }
-  }
-  // Convert dinh dang currency
-  public static String formatCurrency(double price) {
-    try {
-      DecimalFormat formatter = new DecimalFormat("#,###.#######");
-      DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-      dfs.setDecimalSeparator('.');
-      dfs.setGroupingSeparator(',');
-      formatter.setDecimalFormatSymbols(dfs);
-      return formatter.format(price);
-    } catch (Exception ex) {
-      log.error("formatCurrency error: ", ex);
-      return "";
-    }
-  }
-      //set style va data vao file exel
-  private Workbook writeReport(QueryReport queryReport) {
-    try (InputStream templateInputStream = new ClassPathResource(
-        "template/template_export_report.xlsx")
-        .getInputStream()) {
 
-      Workbook workbook = new XSSFWorkbook(templateInputStream);
-      Sheet sheet = workbook.getSheetAt(0);
-      //fill fromDate to column 5 row 1
-      String fromDate = DataUtil.formatDate(queryReport.getFromDateParse(),
-          Constants.DateTimePattern.DMY, "");
-      Cell exportFromDateCell = sheet.getRow(1).getCell(5);
-      exportFromDateCell.setCellValue(
-          exportFromDateCell.getStringCellValue().replace("${date}", fromDate));
-      //fill toDate to column 6 row 1
-      String toDate = DataUtil.formatDate(queryReport.getToDateParse(),
-          Constants.DateTimePattern.DMY, "");
-      Cell exportToDateCell = sheet.getRow(1).getCell(6);
-      exportToDateCell.setCellValue(
-          exportToDateCell.getStringCellValue().replace("${date}", toDate));
-      int rowCount = 5;//bat dau fill du lieu tu dong thu 5
-      int index = 1;//index bat dau tu 1
-      // tao number format de dinh dang tien te
-      Row row = sheet.createRow(rowCount);
-      CellStyle style = workbook.createCellStyle();
-      style.setBorderBottom(BorderStyle.THIN);
-      style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-      style.setBorderRight(BorderStyle.THIN);
-      style.setRightBorderColor(IndexedColors.BLUE.getIndex());
-      style.setBorderTop(BorderStyle.THIN);
-      style.setTopBorderColor(IndexedColors.BLACK.getIndex());
-      style.setBorderLeft(BorderStyle.THIN);
-      style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-      writeRow(row,style,0,Arrays.asList(
-          String .valueOf(index),
-          formatCurrency(DataUtil.safeToDouble(queryReport.getAccess())),
-          formatCurrency(DataUtil.safeToDouble(queryReport.getTotalProducts())) ,
-          formatCurrency(DataUtil.safeToDouble(queryReport.getNewProducts())) ,
-          formatCurrency(DataUtil.safeToDouble(queryReport.getTotalOrders())) ,
-          formatCurrency(DataUtil.safeToDouble(queryReport.getSuccessfulOrders())) ,
-          formatCurrency(DataUtil.safeToDouble(queryReport.getFailedOrders())) ,
-          formatCurrency(DataUtil.safeToDouble(queryReport.getTransactionValue()))
-      ));
-      return workbook;
-    } catch (IOException e) {
-      log.error(e.getMessage(), e);
-      throw new RuntimeException(e);
+    // Convert dinh dang currency
+    public static String formatCurrency(double price) {
+        try {
+            DecimalFormat formatter = new DecimalFormat("#,###.#######");
+            DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+            dfs.setDecimalSeparator('.');
+            dfs.setGroupingSeparator(',');
+            formatter.setDecimalFormatSymbols(dfs);
+            return formatter.format(price);
+        } catch (Exception ex) {
+            log.error("formatCurrency error: ", ex);
+            return "";
+        }
     }
-  }
-  private void writeRow(Row row, CellStyle cellStyle, int startIndex, List<String> rowData) {
-    int cellIndex = startIndex;
-    for (String data : rowData) {
-      Cell cell = row.createCell(cellIndex++);
-      cell.setCellValue(data);
-      cell.setCellStyle(cellStyle);
+
+    //set style va data vao file exel
+    private Workbook writeReport(QueryReport queryReport) {
+        try (InputStream templateInputStream = new ClassPathResource(
+                "template/template_export_report.xlsx")
+                .getInputStream()) {
+
+            Workbook workbook = new XSSFWorkbook(templateInputStream);
+            Sheet sheet = workbook.getSheetAt(0);
+            //fill fromDate to column 5 row 1
+            String fromDate = DataUtil.formatDate(queryReport.getFromDateParse(),
+                    Constants.DateTimePattern.DMY, "");
+            Cell exportFromDateCell = sheet.getRow(1).getCell(5);
+            exportFromDateCell.setCellValue(
+                    exportFromDateCell.getStringCellValue().replace("${date}", fromDate));
+            //fill toDate to column 6 row 1
+            String toDate = DataUtil.formatDate(queryReport.getToDateParse(),
+                    Constants.DateTimePattern.DMY, "");
+            Cell exportToDateCell = sheet.getRow(1).getCell(6);
+            exportToDateCell.setCellValue(
+                    exportToDateCell.getStringCellValue().replace("${date}", toDate));
+            int rowCount = 5;//bat dau fill du lieu tu dong thu 5
+            int index = 1;//index bat dau tu 1
+            // tao number format de dinh dang tien te
+            Row row = sheet.createRow(rowCount);
+            CellStyle style = workbook.createCellStyle();
+            style.setBorderBottom(BorderStyle.THIN);
+            style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+            style.setBorderRight(BorderStyle.THIN);
+            style.setRightBorderColor(IndexedColors.BLUE.getIndex());
+            style.setBorderTop(BorderStyle.THIN);
+            style.setTopBorderColor(IndexedColors.BLACK.getIndex());
+            style.setBorderLeft(BorderStyle.THIN);
+            style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+            writeRow(row, style, 0, Arrays.asList(
+                    String.valueOf(index),
+                    formatCurrency(DataUtil.safeToDouble(queryReport.getAccess())),
+                    formatCurrency(DataUtil.safeToDouble(queryReport.getTotalProducts())),
+                    formatCurrency(DataUtil.safeToDouble(queryReport.getNewProducts())),
+                    formatCurrency(DataUtil.safeToDouble(queryReport.getTotalOrders())),
+                    formatCurrency(DataUtil.safeToDouble(queryReport.getSuccessfulOrders())),
+                    formatCurrency(DataUtil.safeToDouble(queryReport.getFailedOrders())),
+                    formatCurrency(DataUtil.safeToDouble(queryReport.getTransactionValue()))
+            ));
+            return workbook;
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
     }
-  }
-  //xuat excel
-  public Mono<Resource> exportReport(QueryReport request) {
-    Workbook workbook = writeReport(request);
-    return Mono.just(writeExcel(workbook));
-  }
 
-  public Mono<QueryReport> getDataReport(QueryReport request) {
-    var fromDate = getFromDate(request.getFromDateParse());
-    var toDate = getToDate(request.getToDateParse());
-    //Lay tong so dich vu
-    var totalProduct = telecomRepository.countAllProduct();
-    //Lay ra summary cac truong fromDate -> toDate
-    var summaryReport = summaryReportRepository.getSummaryReport(fromDate,
-        toDate);
-    return Mono.zip(
-        DataUtil.optional(totalProduct),
-        DataUtil.optional(summaryReport)
-    ).flatMap(data -> {
-      QueryReport queryReport = data.getT2().get();
-      Integer countProducts = data.getT1().get();
-      queryReport.setTotalProducts(String.valueOf(countProducts));
-      queryReport.setFromDateParse(request.getFromDateParse());
-      queryReport.setToDateParse(request.getToDateParse());
-      return Mono.just(queryReport);
-    });
-  }
-  private LocalDateTime getFromDate(LocalDate fromDate) {
-    return fromDate == null ? LocalDateTime.from(LocalDate.now().atStartOfDay().minusDays(30)) : fromDate.atTime(0, 0, 0);
-  }
+    private void writeRow(Row row, CellStyle cellStyle, int startIndex, List<String> rowData) {
+        int cellIndex = startIndex;
+        for (String data : rowData) {
+            Cell cell = row.createCell(cellIndex++);
+            cell.setCellValue(data);
+            cell.setCellStyle(cellStyle);
+        }
+    }
 
-  private LocalDateTime getToDate(LocalDate toDate) {
-    return toDate == null ? LocalDateTime.from(LocalDate.now().atTime(LocalTime.MAX)) : toDate.atTime(23, 59, 59);
-  }
+    //xuat excel
+    public Mono<Resource> exportReport(QueryReport request) {
+        Workbook workbook = writeReport(request);
+        return Mono.just(writeExcel(workbook));
+    }
+
+    public Mono<QueryReport> getDataReport(QueryReport request) {
+        var fromDate = getFromDate(request.getFromDateParse());
+        var toDate = getToDate(request.getToDateParse());
+        //Lay tong so dich vu
+        var totalProduct = telecomRepository.countAllProduct();
+        //Lay ra summary cac truong fromDate -> toDate
+        var summaryReport = summaryReportRepository.getSummaryReport(fromDate,
+                toDate);
+        return Mono.zip(
+                DataUtil.optional(totalProduct),
+                DataUtil.optional(summaryReport)
+        ).flatMap(data -> {
+            QueryReport queryReport = data.getT2().get();
+            Integer countProducts = data.getT1().get();
+            queryReport.setTotalProducts(String.valueOf(countProducts));
+            queryReport.setFromDateParse(request.getFromDateParse());
+            queryReport.setToDateParse(request.getToDateParse());
+            return Mono.just(queryReport);
+        });
+    }
+
+    private LocalDateTime getFromDate(LocalDate fromDate) {
+        return fromDate == null ? LocalDateTime.from(LocalDate.now().atStartOfDay().minusDays(30)) : fromDate.atTime(0, 0, 0);
+    }
+
+    private LocalDateTime getToDate(LocalDate toDate) {
+        return toDate == null ? LocalDateTime.from(LocalDate.now().atTime(LocalTime.MAX)) : toDate.atTime(23, 59, 59);
+    }
 
     @Override
     public Mono<DataResponse> createSummaryReport(CreateSummaryRequest request) {

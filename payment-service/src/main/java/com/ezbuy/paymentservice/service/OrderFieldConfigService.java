@@ -1,8 +1,8 @@
 package com.ezbuy.paymentservice.service;
 
-import com.viettel.sme.framework.model.response.DataResponse;
-import com.viettel.sme.ordermodel.dto.OrderFieldConfigDTO;
-import com.viettel.sme.ordermodel.dto.request.GetOrderFieldConfigRequest;
+import com.ezbuy.ordermodel.dto.OrderFieldConfigDTO;
+import com.ezbuy.ordermodel.dto.request.GetOrderFieldConfigRequest;
+import io.hoangtien2k3.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 
 public interface OrderFieldConfigService {

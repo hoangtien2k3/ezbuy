@@ -8,6 +8,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
@@ -18,12 +19,14 @@ public class AreaController {
     private final AreaService areaService;
 
     @GetMapping()
-    public Mono<DataResponse<List<AreaDTO>>> getArea(String parentCode) {
+    public Mono<DataResponse<List<AreaDTO>>> getArea(@RequestParam("parent_code") String parentCode) {
         return this.areaService.getArea(parentCode);
     }
 
     @GetMapping("/get-area-name")
-    public Mono<DataResponse<AreaDTO>> getAreaName(String province, String district, String precinct) {
+    public Mono<DataResponse<AreaDTO>> getAreaName(@RequestParam("province") String province,
+                                                   @RequestParam("district") String district,
+                                                   @RequestParam("precinct") String precinct) {
         return this.areaService.getArea(province, district, precinct);
     }
 }

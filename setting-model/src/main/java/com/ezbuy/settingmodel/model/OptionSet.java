@@ -17,10 +17,9 @@ import org.springframework.data.relational.core.mapping.Table;
 @Table(name = "option_set")
 public class OptionSet extends EntityBase implements Persistable<String> {
     @Id
-    private String id; // id cau hinh nhom
-
-    private String code; // ma cau hinh nhom
-    private String description; // mo ta cau hinh nhom
+    private String id;
+    private String code;
+    private String description;
 
     @Transient
     private boolean isNew = false;
