@@ -18,7 +18,6 @@ package io.hoangtien2k3.reactify.filter.webclient;
 import io.hoangtien2k3.reactify.filter.properties.RetryProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ClientResponse;
@@ -41,28 +40,18 @@ public class WebClientRetryHandler implements ExchangeFilterFunction {
     private final RetryProperties properties;
 
     /** {@inheritDoc} */
-    @NotNull
     @Override
-    public Mono<ClientResponse> filter(@NotNull ClientRequest request, ExchangeFunction next) {
-        Retry retry = createRetry(request);
+    public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
+        Retry retry = Retry.max(properties.count())
+                .filter(e -> properties.methods().contains(request.method())
+                        && properties.exceptions().stream()
+                                .anyMatch(clazz ->
+                                        clazz.isInstance(e) || clazz.isInstance(NestedExceptionUtils.getRootCause(e))))
+                .doBeforeRetry(retrySignal -> {
+                    log.warn("Retrying: {}; Cause: {}.", retrySignal.totalRetries(), retrySignal.failure());
+                })
+                .onRetryExhaustedThrow(((retrySpec, retrySignal) -> retrySignal.failure()));
+
         return next.exchange(request).retryWhen(retry);
     }
-
-    private Retry createRetry(ClientRequest request) {
-        return Retry.max(properties.getCount())
-                .filter(e -> shouldRetry(request, e))
-                .doBeforeRetry(this::logRetryAttempt)
-                .onRetryExhaustedThrow((retrySpec, retrySignal) -> retrySignal.failure());
-    }
-
-    private boolean shouldRetry(ClientRequest request, Throwable e) {
-        return properties.getMethods().contains(request.method())
-                && properties.getExceptions().stream().anyMatch(clazz ->
-                clazz.isInstance(e) || clazz.isInstance(NestedExceptionUtils.getRootCause(e)));
-    }
-
-    private void logRetryAttempt(Retry.RetrySignal retrySignal) {
-        log.warn("Retrying: {}; Cause: {}.", retrySignal.totalRetries(), retrySignal.failure());
-    }
-
 }

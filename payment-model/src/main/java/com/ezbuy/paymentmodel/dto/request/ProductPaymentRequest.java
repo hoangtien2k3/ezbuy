@@ -1,10 +1,9 @@
 package com.ezbuy.paymentmodel.dto.request;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -16,6 +15,6 @@ public class ProductPaymentRequest {
     private String returnUrl;
     private Long totalFee;
     private String orderType;
-    private String telecomServiceAlias; //alias theo dich vu
+    private String telecomServiceAlias; // alias theo dich vu
     private List<PaymentOrderDetailDTO> lstPaymentOrderDetail;
 }

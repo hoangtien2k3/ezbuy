@@ -13,5 +13,4 @@ public class PartnerLicenseKeyDTO {
     private String serviceAlias;
     private Long telecomServiceId;
     private String licenceKey;
-
 }

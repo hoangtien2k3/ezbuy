@@ -10,4 +10,4 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "client.payment", ignoreInvalidFields = true)
 @Data
 @AllArgsConstructor
-public class PaymentProperties extends WebClientProperties { }
+public class PaymentProperties extends WebClientProperties {}

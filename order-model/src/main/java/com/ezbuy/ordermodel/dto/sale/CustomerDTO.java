@@ -1,20 +1,17 @@
-
 package com.ezbuy.ordermodel.dto.sale;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
 import javax.xml.bind.annotation.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CustomerDTO extends LocationInfoDTO
-{
+public class CustomerDTO extends LocationInfoDTO {
 
     protected String actionCheckUpdateNiceNumber;
     protected String actionCode;
@@ -51,12 +48,12 @@ public class CustomerDTO extends LocationInfoDTO
     protected CustContactDTO custContactEmail;
     protected CustContactDTO custContactTelephone;
     protected Long custId;
-//    protected CustIdentityDTO custIdentityDTO;
+    // protected CustIdentityDTO custIdentityDTO;
     protected String custType;
     protected CustTypeDTO custTypeDTO;
     protected String custTypeName;
-//    @XmlElement(nillable = true)
-//    protected List<UploadedFileDTO> customerFile;
+    // @XmlElement(nillable = true)
+    // protected List<UploadedFileDTO> customerFile;
     protected String description;
     protected boolean disibleIdNo;
     protected boolean exactlyCustomer;
@@ -75,11 +72,11 @@ public class CustomerDTO extends LocationInfoDTO
     protected boolean isdnBeforeConnect;
     protected String isdnCheckRedis;
     protected List<CustContactDTO> listCustContact;
-//    protected List<CustIdentityDTO> listCustIdentity;
-//    protected List<CustIdentityDTO> listCustIdentityExist;
-//    protected List<SubAttDTO> listSubAttDTO;
-//    protected List<SubscriberDTO> listSubscriber;
-//    protected List<ActionDetailDTO> lstActionDetail;
+    // protected List<CustIdentityDTO> listCustIdentity;
+    // protected List<CustIdentityDTO> listCustIdentityExist;
+    // protected List<SubAttDTO> listSubAttDTO;
+    // protected List<SubscriberDTO> listSubscriber;
+    // protected List<ActionDetailDTO> lstActionDetail;
     protected List<String> lstBankCode;
     protected List<String> lstBankView;
     protected List<CustContactDTO> lstCustContactInfo;
@@ -96,7 +93,7 @@ public class CustomerDTO extends LocationInfoDTO
     protected String notCompleteOrder;
     protected Long numSub;
     protected CustomerDTO oldInfo;
-//    protected OmniOrder omniOrder;
+    // protected OmniOrder omniOrder;
     protected String omniOrderType;
     protected String omniProcessId;
     protected String omniTaskId;
@@ -105,7 +102,7 @@ public class CustomerDTO extends LocationInfoDTO
     protected String popNo;
     protected String postCode;
     protected String postCodeName;
-//    protected ProfileDocumentDTO profileDocumentDTO;
+    // protected ProfileDocumentDTO profileDocumentDTO;
     protected Long reasonId;
     protected CustomerDTO receiverCust;
     protected Long referCustId;
@@ -120,13 +117,13 @@ public class CustomerDTO extends LocationInfoDTO
     protected boolean runValidate;
     protected String sex;
     protected String sexName;
-//    @XmlSchemaType(name = "dateTime")
+    // @XmlSchemaType(name = "dateTime")
     protected Date signDate;
     protected String staffApprove;
-//    protected SaleStaffDTO staffDTO;
+    // protected SaleStaffDTO staffDTO;
     protected String status;
     protected String street;
-//    protected SubscriberDTO subscriberDTO;
+    // protected SubscriberDTO subscriberDTO;
     protected String systemType;
     protected String telFax;
     protected String telMobile;
@@ -135,16 +132,17 @@ public class CustomerDTO extends LocationInfoDTO
     protected String tranferCustAction;
     protected String typeCustomer;
     protected boolean updateCustIdentity;
-//    @XmlSchemaType(name = "dateTime")
+    // @XmlSchemaType(name = "dateTime")
     protected Date updateDatetime;
     protected String updateMode;
     protected String updateUser;
     protected CustomerDTO urgencyCust;
     protected CustomerDTO userInfoDTO;
-//    @XmlElement(nillable = true)
-//    protected List<SubExtDTO> usingCustomerInfo;
+    // @XmlElement(nillable = true)
+    // protected List<SubExtDTO> usingCustomerInfo;
     @XmlElement(name = "VNTT")
     protected boolean vntt;
+
     protected String vip;
     protected String website;
     protected int workMode;

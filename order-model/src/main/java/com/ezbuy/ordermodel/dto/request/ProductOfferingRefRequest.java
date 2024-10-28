@@ -1,12 +1,11 @@
 package com.ezbuy.ordermodel.dto.request;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 
 @Data
 @NoArgsConstructor
@@ -16,5 +15,5 @@ import javax.xml.bind.annotation.XmlAccessorType;
 public class ProductOfferingRefRequest {
     private String id;
     private Long telecomServiceId;
-    private String telecomServiceAlias; //Bo sung alias PYCXXX/LuongToanTrinh
+    private String telecomServiceAlias; // Bo sung alias PYCXXX/LuongToanTrinh
 }

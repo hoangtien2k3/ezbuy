@@ -1,4 +1,3 @@
 package com.ezbuy.paymentmodel.constants;
 
-public final class ErrorCode {
-}
+public final class ErrorCode {}

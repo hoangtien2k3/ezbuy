@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class InvoiceInfoDTO {
-    private String fullName; //ho ten
-    private String taxCode; //ma so thue
-    private String phoneNumber; //so dien thoai
-    private String email; //email
-    private AddressDTO addressDTO; //thong tin dia chi
+    private String fullName; // ho ten
+    private String taxCode; // ma so thue
+    private String phoneNumber; // so dien thoai
+    private String email; // email
+    private AddressDTO addressDTO; // thong tin dia chi
 }

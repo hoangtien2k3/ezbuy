@@ -1,23 +1,19 @@
-
 package com.ezbuy.ordermodel.dto.sale;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.xml.bind.annotation.*;
 import javax.xml.datatype.XMLGregorianCalendar;
-
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GroupsMemberDTO extends BaseDTO
-{
+public class GroupsMemberDTO extends BaseDTO {
 
     protected String accountId;
     protected String accountNo;
@@ -43,8 +39,10 @@ public class GroupsMemberDTO extends BaseDTO
     protected Long dataMainSuport;
     protected String dataQuota;
     protected String dateCameraGD;
+
     @XmlSchemaType(name = "dateTime")
     protected Date dateReceiveOTP;
+
     protected BigDecimal debit;
     protected String description;
     protected boolean disablehotline;
@@ -54,7 +52,7 @@ public class GroupsMemberDTO extends BaseDTO
     protected String exchangeMainText;
     protected String extendDesc;
     protected boolean fellowChanged;
-//    protected List<GroupsFellowNumberDTO> fellowNumbers;
+    // protected List<GroupsFellowNumberDTO> fellowNumbers;
     protected Long groupId;
     protected Long groupMemberId;
     protected String groupType;
@@ -72,9 +70,9 @@ public class GroupsMemberDTO extends BaseDTO
     protected String isdn;
     protected String isdnMainDataShare;
     protected List<SubAttDTO> listSubAttDTO;
-//    protected List<SubGoodsDTO> listSubGoods;
+    // protected List<SubGoodsDTO> listSubGoods;
     protected List<Long> listSubIdAddGroup;
-//    protected List<PromotionTypeDTO> lstPromotion;
+    // protected List<PromotionTypeDTO> lstPromotion;
     protected String main;
     protected boolean mainDataShare;
     protected boolean mainOTP;
@@ -90,12 +88,12 @@ public class GroupsMemberDTO extends BaseDTO
     protected String newPayMethod;
     protected int numErrorEnterOTP;
     protected Long offerId;
-//    protected List<GroupsFellowNumberDTO> oldFellowNumbers;
+    // protected List<GroupsFellowNumberDTO> oldFellowNumbers;
     protected boolean oldHotline;
     protected boolean oldMain;
     protected Long oldPayLimit;
     protected String oldPayMethod;
-//    protected OmniOrder omniOrder;
+    // protected OmniOrder omniOrder;
     protected Long orderNum;
     protected String otp;
     protected String otpCodeToCompare;

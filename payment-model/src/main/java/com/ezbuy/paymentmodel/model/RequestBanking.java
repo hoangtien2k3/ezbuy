@@ -1,12 +1,11 @@
 package com.ezbuy.paymentmodel.model;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.relational.core.mapping.Table;
-
-import java.time.LocalDateTime;
 
 @Table(name = "request_banking")
 @NoArgsConstructor

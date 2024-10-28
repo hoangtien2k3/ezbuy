@@ -1,15 +1,9 @@
-
 package com.ezbuy.ordermodel.dto.sale;
 
 import lombok.Data;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
 @Data
-public class FullAddressDTO extends BaseDTO
-{
+public class FullAddressDTO extends BaseDTO {
     protected String address2FirstLevel;
     protected String areaCode;
     protected LocationDTO district;

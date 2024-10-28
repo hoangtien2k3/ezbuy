@@ -42,7 +42,7 @@ public class ObjectMapperFactory {
      * getInstance.
      * </p>
      *
-     * @return a {@link com.fasterxml.jackson.databind.ObjectMapper} object
+     * @return a {@link ObjectMapper} object
      */
     public static ObjectMapper getInstance() {
         if (objectMapper == null) {
@@ -64,7 +64,7 @@ public class ObjectMapperFactory {
      * getInstance2.
      * </p>
      *
-     * @return a {@link com.fasterxml.jackson.databind.ObjectMapper} object
+     * @return a {@link ObjectMapper} object
      */
     public static ObjectMapper getInstance2() {
         objectMapperV2.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -77,7 +77,7 @@ public class ObjectMapperFactory {
      * defaultGetInstance.
      * </p>
      *
-     * @return a {@link com.fasterxml.jackson.databind.ObjectMapper} object
+     * @return a {@link ObjectMapper} object
      */
     public static ObjectMapper defaultGetInstance() {
         defaultGetInstance.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);

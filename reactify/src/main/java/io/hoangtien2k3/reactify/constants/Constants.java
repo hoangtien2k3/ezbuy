@@ -29,19 +29,36 @@ import org.springframework.http.MediaType;
  * @author hoangtien2k3
  */
 public final class Constants {
+    /**
+     * Constant
+     * <code>NAME_PATTERN="^[a-zA-Z&agrave;&aacute;&atilde;ạảăắằẳẵ"{trunked}</code>
+     */
     public static final String NAME_PATTERN =
             "^[a-zA-ZàáãạảăắằẳẵặâấầẩẫậèéẹẻẽêềếểễệđìíĩỉịòóõọỏôốồổỗộơớờởỡợùúũụủưứừửữựỳỵỷỹýÀÁÃẠẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẺẼÊỀẾỂỄỆĐÌÍĨỈỊÒÓÕỌỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝ\\s]+$";
+    /**
+     * Constant
+     * <code>EMAIL_PATTERN="^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+["{trunked}</code>
+     */
     public static final String EMAIL_PATTERN = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
+    /** Constant <code>DATE_PATTERN="\\d{2}[/]\\d{2}[/]\\d{4}"</code> */
     public static final String DATE_PATTERN = "\\d{2}[/]\\d{2}[/]\\d{4}";
+    /** Constant <code>ID_NO_PATTERN="^[0-9\\-]+$"</code> */
     public static final String ID_NO_PATTERN = "^[0-9\\-]+$";
+    /** Constant <code>NUMBER_PATTERN="^[0-9]+$"</code> */
     public static final String NUMBER_PATTERN = "^[0-9]+$";
+    /** Constant <code>USERNAME_PATTERN="^[A-Za-z0-9_-]+$"</code> */
     public static final String USERNAME_PATTERN = "^[A-Za-z0-9_-]+$";
+    /** Constant <code>IMAGE_EXTENSION_LIST</code> */
     public static final List<String> IMAGE_EXTENSION_LIST =
             Arrays.asList("jpg", "jpeg", "png", "gif", "bmp", "tiff", "tif", "svg", "raw", "psd", "ai", "eps");
+    /** Constant <code>MAX_FILE_SIZE_MB=3</code> */
     public static final int MAX_FILE_SIZE_MB = 3;
+    /** Constant <code>EMPLOYEE_CODE_LENGTH=6</code> */
     public static final int EMPLOYEE_CODE_LENGTH = 6;
+    /** Constant <code>EMPLOYEE_CODE_MIN="000001"</code> */
     public static final String EMPLOYEE_CODE_MIN = "000001";
 
+    /** Constant <code>VISIBLE_TYPES</code> */
     public static final List<MediaType> VISIBLE_TYPES = Arrays.asList(
             MediaType.TEXT_XML,
             MediaType.APPLICATION_XML,
@@ -59,7 +76,7 @@ public final class Constants {
      * getSensitiveHeaders.
      * </p>
      *
-     * @return a {@link java.util.List} object
+     * @return a {@link List} object
      */
     public static List<String> getSensitiveHeaders() {
         return SENSITIVE_HEADERS;

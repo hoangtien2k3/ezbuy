@@ -26,18 +26,20 @@ public class UrlPaths {
     public static final String GET_TELECOM_SERVICE_CONNECT = "/telecom-service-connect";
     public static final String GET_TELECOM_SERVICE_RELATED = "/telecom-service-related";
     public static final String GET_REGISTERED_TELECOM_SERVICE_BY_ID_NO_LIST = "/subscriber/registered-services";
-    public static final String GET_REGISTERED_TELECOM_SERVICE_ALIAS_BY_ID_NO_LIST = "/subscriber/registered-services-alias";
+    public static final String GET_REGISTERED_TELECOM_SERVICE_ALIAS_BY_ID_NO_LIST =
+            "/subscriber/registered-services-alias";
     public static final String GET_LIST_PRODUCT_OFFERING_COMBO = "/get-list-product-offering-combo";
     public static final String GET_LIST_PRODUCT_OFFERING_COMBO_V2 = "/get-list-product-offering-combo-v2";
     public static final String GET_LIST_TEMPLATE_COMBO = "/get-list-template-combo";
 
     public static final String TELECOM_SERVICE_INFO = "/telecom-service-info";
     public static final String GET_SUBSCRIBER_SME_INFO = "/get-subscriber-sme-info/{telecomServiceId}";
-    public static final String GET_PRODUCT_OFFERING_SPECIFICATION_FOR_MBCCS = "/get-product-offering-specification-for-mbccs";
+    public static final String GET_PRODUCT_OFFERING_SPECIFICATION_FOR_MBCCS =
+            "/get-product-offering-specification-for-mbccs";
     public static final String GET_PRODUCT_FOR_MEGA_MENU = "/mega-menu";
     public static final String GET_PRODUCT_TEMPLATE_DETAIL = "/product-template-detail";
-    public static  final String EXPORT_REPORT = "/export-report";
-    public static  final String GET_DATA_REPORT = "/data-report";
+    public static final String EXPORT_REPORT = "/export-report";
+    public static final String GET_DATA_REPORT = "/data-report";
 
     public interface ServiceGroup {
         String PREFIX = "/v1/service-group";
@@ -51,6 +53,7 @@ public class UrlPaths {
         String GET_BY_ALIAS = "/get-by-alias";
         String GET_BY_LST_ALIAS = "/get-by-lst-alias";
     }
+
     public interface ACTIVATE_TELECOM {
         String PREFIX = DEFAULT_V1_PREFIX + "/active-telecom";
     }

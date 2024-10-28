@@ -1,10 +1,8 @@
 package com.ezbuy.authservice.repository;
 
 import com.ezbuy.authmodel.model.PermissionPolicy;
-
 import java.util.List;
 import java.util.UUID;
-
 import org.springframework.data.r2dbc.repository.Modifying;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;

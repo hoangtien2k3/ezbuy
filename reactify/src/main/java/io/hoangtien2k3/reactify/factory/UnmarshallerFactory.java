@@ -15,7 +15,8 @@
  */
 package io.hoangtien2k3.reactify.factory;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -31,29 +32,29 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UnmarshallerFactory {
 
-    private static final ConcurrentHashMap<Class<?>, Unmarshaller> instance = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, Unmarshaller> instance = new HashMap<>();
 
     /**
-     * Returns an Unmarshaller instance for the specified class.
+     * <p>
+     * Getter for the field <code>instance</code>.
+     * </p>
      *
-     * @param clz the class for which an Unmarshaller is required
-     * @return the Unmarshaller instance for the specified class
+     * @param clz
+     *            a {@link Class} object
+     * @return a {@link Unmarshaller} object
      */
     public static Unmarshaller getInstance(Class<?> clz) {
-        Unmarshaller unmarshaller = instance.get(clz);
-        if (unmarshaller != null) return unmarshaller;
-        synchronized (instance) {
-            unmarshaller = instance.get(clz);
-            if (unmarshaller == null) {
-                try {
-                    JAXBContext jaxbContext = JAXBContext.newInstance(clz);
-                    unmarshaller = jaxbContext.createUnmarshaller();
-                    instance.put(clz, unmarshaller);
-                } catch (JAXBException e) {
-                    throw new RuntimeException("Failed to create Unmarshaller for " + clz.getName(), e);
-                }
-            }
+        Unmarshaller obj = instance.get(clz);
+        if (obj != null) return obj;
+
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(clz);
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            instance.put(clz, unmarshaller);
+            return unmarshaller;
+        } catch (JAXBException e) {
+            log.error("Init Unmarshaller error", e);
+            return null;
         }
-        return unmarshaller;
     }
 }

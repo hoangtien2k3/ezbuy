@@ -15,6 +15,7 @@ import org.springframework.data.relational.core.mapping.Table;
 public class PageComponent extends EntityBase {
     @Id
     private String id;
+
     private String pageId;
     private String componentId;
 }

@@ -16,6 +16,7 @@
 package io.hoangtien2k3.reactify.annotations.cache;
 
 import com.github.benmanes.caffeine.cache.Cache;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -40,6 +41,7 @@ import reactor.core.publisher.Signal;
 @Configuration
 @Slf4j
 public class CacheAspect {
+
     @Pointcut("@annotation(io.hoangtien2k3.reactify.annotations.LocalCache)")
     private void processAnnotation() {}
 
@@ -49,9 +51,9 @@ public class CacheAspect {
      * </p>
      *
      * @param joinPoint
-     *            a {@link org.aspectj.lang.ProceedingJoinPoint} object
-     * @return a {@link java.lang.Object} object
-     * @throws java.lang.Throwable
+     *            a {@link ProceedingJoinPoint} object
+     * @return a {@link Object} object
+     * @throws Throwable
      *             if any.
      */
     @Around("processAnnotation()")
@@ -61,13 +63,15 @@ public class CacheAspect {
         String name = ClassUtils.getUserClass(joinPoint.getTarget().getClass()).getSimpleName() + "."
                 + joinPoint.getSignature().getName();
         Cache<Object, Object> cache = CacheStore.getCache(name);
-
+        // return cached mono
         return CacheMono.lookup(k -> Mono.justOrEmpty(cache.getIfPresent(key)).map(Signal::next), key)
-                .onCacheMissResume( (Mono<Object>) joinPoint.proceed(args))
+                .onCacheMissResume((Mono<Object>) joinPoint.proceed(args))
                 .andWriteWith((k, sig) -> Mono.fromRunnable(() -> {
-                    Object result = sig != null ? sig.get() : null;
-                    if (result != null && !(result instanceof Optional && ((Optional<?>) result).isEmpty())) {
-                        cache.put(k, result);
+                    if (sig != null && sig.get() != null) {
+                        if (!(sig.get() instanceof Optional
+                                && ((Optional<?>) Objects.requireNonNull(sig.get())).isEmpty())) {
+                            cache.put(k, sig.get());
+                        }
                     }
                 }));
     }

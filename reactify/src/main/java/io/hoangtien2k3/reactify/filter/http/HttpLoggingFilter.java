@@ -23,17 +23,12 @@ import io.hoangtien2k3.reactify.TruncateUtils;
 import io.hoangtien2k3.reactify.constants.Constants;
 import io.hoangtien2k3.reactify.filter.properties.HttpLogProperties;
 import io.hoangtien2k3.reactify.model.GatewayContext;
-
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.reactivestreams.Publisher;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -58,6 +53,7 @@ import reactor.core.publisher.Mono;
  * headers, query parameters, and body content. It is designed to be used with
  * Spring WebFlux.
  *
+ * @author: hoangtien2k3
  * @author hoangtien2k3
  */
 @Component
@@ -68,7 +64,7 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
 
     /**
      * {@inheritDoc}
-     * <p>
+     *
      * Returns the order of the filter.
      */
     @Override
@@ -78,18 +74,16 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
 
     /**
      * {@inheritDoc}
-     * <p>
+     *
      * Filters the HTTP request and response, logging the details.
      */
-    @NotNull
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpResponseDecorator loggingServerHttpResponseDecorator =
                 new ServerHttpResponseDecorator(exchange.getResponse()) {
-                    @NotNull
                     @Override
-                    public Mono<Void> writeWith(@NotNull Publisher<? extends DataBuffer> body) {
-                        if (httpLogProperties.getResponse().isEnable()) {
+                    public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
+                        if (httpLogProperties.getResponse().enable()) {
                             final MediaType contentType = super.getHeaders().getContentType();
                             if (Constants.VISIBLE_TYPES.contains(contentType)) {
                                 if (body instanceof Mono) {
@@ -115,25 +109,26 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
         return chain.filter(exchange.mutate()
                         .response(loggingServerHttpResponseDecorator)
                         .build())
-                .doOnSuccess(o -> {
-                })
-                .doOnError(err -> {
-                })
-                .then(Mono.fromRunnable(() -> logReqResponse(exchange)));
+                .doOnSuccess(o -> {})
+                .doOnError(err -> {})
+                .then(Mono.fromRunnable(() -> {
+                    logReqResponse(exchange);
+                }));
     }
 
     /**
      * Logs the HTTP request and response details.
      *
-     * @param exchange the current server exchange
+     * @param exchange
+     *            the current server exchange
      */
     private void logReqResponse(ServerWebExchange exchange) {
         if (Constants.EXCLUDE_LOGGING_ENDPOINTS.contains(
                 exchange.getRequest().getPath().toString())) {
             return;
         }
-        boolean enableRequest = httpLogProperties.getRequest().isEnable();
-        boolean enableResponse = httpLogProperties.getResponse().isEnable();
+        boolean enableRequest = httpLogProperties.getRequest().enable();
+        boolean enableResponse = httpLogProperties.getResponse().enable();
         if (!enableRequest && !enableResponse) {
             return;
         }
@@ -151,8 +146,10 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
     /**
      * Logs the HTTP request details.
      *
-     * @param exchange the current server exchange
-     * @param logs     the list of log messages
+     * @param exchange
+     *            the current server exchange
+     * @param logs
+     *            the list of log messages
      */
     private void logRequest(ServerWebExchange exchange, List<String> logs) {
         ServerHttpRequest request = exchange.getRequest();
@@ -188,15 +185,18 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
         }
         MediaType contentType = headers.getContentType();
         long length = headers.getContentLength();
-        String requestBody;
-        if (length > 0 && null != contentType && (contentType.includes(MediaType.APPLICATION_JSON)
-                || contentType.includes(MediaType.APPLICATION_JSON))
-                && Objects.requireNonNull(gatewayContext).getRequestBody() != null) {
+        String requestBody = null;
+        if (length > 0
+                && null != contentType
+                && (contentType.includes(MediaType.APPLICATION_JSON)
+                        || contentType.includes(MediaType.APPLICATION_JSON))
+                && gatewayContext.getRequestBody() != null) {
             requestBody = TruncateUtils.truncateBody(gatewayContext.getRequestBody());
             logs.add(String.format("%s", TruncateUtils.truncate(requestBody, MAX_BYTE)));
-        } else if (length > 0 && null != contentType
+        } else if (length > 0
+                && null != contentType
                 && (contentType.includes(MediaType.APPLICATION_FORM_URLENCODED))
-                && Objects.requireNonNull(gatewayContext).getFormData() != null) {
+                && gatewayContext.getFormData() != null) {
             requestBody = TruncateUtils.truncateBody(gatewayContext.getFormData());
             logs.add(String.format("%s", TruncateUtils.truncate(requestBody, MAX_BYTE)));
         } else {
@@ -207,46 +207,51 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
     /**
      * Calculates the duration of the request.
      *
-     * @param exchange the current server exchange
+     * @param exchange
+     *            the current server exchange
      * @return the duration of the request in milliseconds
      */
     private Long takeDuration(ServerWebExchange exchange) {
         GatewayContext gatewayContext = exchange.getAttribute(GatewayContext.CACHE_GATEWAY_CONTEXT);
-        return Optional.ofNullable(gatewayContext)
-                .map(GatewayContext::getStartTime)
-                .map(startTime -> System.currentTimeMillis() - startTime)
-                .orElse(null);
+        return gatewayContext.getStartTime() != null
+                ? System.currentTimeMillis() - gatewayContext.getStartTime()
+                : null;
     }
 
     /**
      * Logs the HTTP response details.
      *
-     * @param exchange the current server exchange
-     * @param logs     the list of log messages
+     * @param exchange
+     *            the current server exchange
+     * @param logs
+     *            the list of log messages
+     * @return a Mono that indicates when response logging is complete
      */
-    private void logResponse(ServerWebExchange exchange, List<String> logs) {
+    private Mono<Void> logResponse(ServerWebExchange exchange, List<String> logs) {
         ServerHttpResponse response = exchange.getResponse();
-        logs.add(String.format("%s", Objects.requireNonNull(response.getStatusCode()).value()));
+        logs.add(String.format("%s", response.getStatusCode().value()));
         GatewayContext gatewayContext = exchange.getAttribute(GatewayContext.CACHE_GATEWAY_CONTEXT);
-        if (gatewayContext != null && gatewayContext.getReadResponseData()) {
+        if (gatewayContext.getReadResponseData()) {
             String body = TruncateUtils.truncateBody(gatewayContext.getResponseBody());
             logs.add(String.format("%s", TruncateUtils.truncate(body, MAX_BYTE)));
         }
+        return Mono.empty();
     }
 
     /**
      * Logs the HTTP response body.
      *
-     * @param buffer   the data buffer containing the response body
-     * @param exchange the current server exchange
+     * @param buffer
+     *            the data buffer containing the response body
+     * @param exchange
+     *            the current server exchange
+     * @return the data buffer
      */
-    private void logResponseBody(DataBuffer buffer, ServerWebExchange exchange) {
+    private DataBuffer logResponseBody(DataBuffer buffer, ServerWebExchange exchange) {
         StringBuilder msg = new StringBuilder();
-        int capacity = buffer.capacity();
+        Integer capacity = buffer.capacity();
         if (capacity < Constants.LoggingTitle.BODY_SIZE_RESPONSE_MAX) {
-            byte[] content = new byte[capacity];
-            buffer.read(content);
-            msg.append(new String(content, StandardCharsets.UTF_8));
+            msg.append(String.format("%s", StandardCharsets.UTF_8.decode(buffer.asByteBuffer())));
         } else {
             msg.append(String.format("%s", "response too log to log"));
         }
@@ -254,24 +259,29 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
         if (gatewayContext != null) {
             gatewayContext.setResponseBody(msg);
         }
+        return buffer;
     }
 
     /**
      * Logs the HTTP request body.
      *
-     * @param dataBuffer the data buffer containing the request body
-     * @param prefix     the prefix to be added to the log message
-     * @param msg        the StringBuilder to append the log message to
+     * @param dataBuffer
+     *            the data buffer containing the request body
+     * @param prefix
+     *            the prefix to be added to the log message
+     * @param msg
+     *            the StringBuilder to append the log message to
      */
     private void logRequestBody(DataBuffer dataBuffer, String prefix, StringBuilder msg) {
         msg.append(Constants.LoggingTitle.REQUEST_BODY);
         String message = "body request too long to log";
         try {
-            int capacity = dataBuffer.capacity();
+            Integer capacity = dataBuffer.capacity();
             if (capacity < Constants.LoggingTitle.BODY_SIZE_REQUEST_MAX) {
-                byte[] bytes = new byte[capacity];
-                dataBuffer.read(bytes);
-                message = new String(bytes, StandardCharsets.UTF_8).replaceAll("\\s", "");
+                message = StandardCharsets.UTF_8
+                        .decode(dataBuffer.asByteBuffer())
+                        .toString()
+                        .replaceAll("\\s", "");
             }
         } catch (Exception ex) {
             log.error("Convert body request to string error ", ex);
@@ -282,12 +292,15 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
     /**
      * Truncates the body of the message list.
      *
-     * @param messageList the list of messages to be truncated
+     * @param messageList
+     *            the list of messages to be truncated
      * @return the truncated body as a string
      */
     private String truncateBody(List<String> messageList) {
         StringBuilder response = new StringBuilder();
-        messageList.forEach(item -> response.append(TruncateUtils.truncateBody(item, MAX_BYTE)).append(","));
+        messageList.forEach(item -> {
+            response.append(TruncateUtils.truncateBody(item, MAX_BYTE)).append(",");
+        });
         return response.toString();
     }
 }

@@ -1,24 +1,24 @@
 package com.ezbuy.orderservice.utils;
 
+import java.io.StringReader;
+import java.util.Optional;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import lombok.extern.log4j.Log4j2;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import reactor.core.publisher.Mono;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.StringReader;
-import java.util.Optional;
-
 @Log4j2
 public class CommonUtils {
 
-    //Convert Mono<T> to Mono<Optional<T>>
+    // Convert Mono<T> to Mono<Optional<T>>
     public static <T> Mono<Optional<T>> optional(Mono<T> mono) {
         return mono.map(Optional::of).defaultIfEmpty(Optional.empty());
     }
 
-    public static String getValueFromXml(String xml, String startSpecial, String endSpecial, String splitChar, String replaceChar, String tagName) {
+    public static String getValueFromXml(
+            String xml, String startSpecial, String endSpecial, String splitChar, String replaceChar, String tagName) {
         xml = xml.replace(startSpecial, "");
         xml = xml.replace(endSpecial, "");
         xml = xml.replace(splitChar, replaceChar);
@@ -35,5 +35,4 @@ public class CommonUtils {
             return null;
         }
     }
-
 }

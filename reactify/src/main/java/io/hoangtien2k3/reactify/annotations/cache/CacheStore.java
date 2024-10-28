@@ -19,14 +19,12 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Scheduler;
 import io.hoangtien2k3.reactify.annotations.LocalCache;
-
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.PostConstruct;
-
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
@@ -61,8 +59,8 @@ public class CacheStore {
         for (Method method : methods) {
             String className = method.getDeclaringClass().getSimpleName();
             LocalCache localCache = method.getAnnotation(LocalCache.class);
-            int maxRecord = localCache.maxRecord();
-            int durationInMinute = localCache.durationInMinute();
+            Integer maxRecord = localCache.maxRecord();
+            Integer durationInMinute = localCache.durationInMinute();
             String cacheName = className + "." + method.getName();
             boolean autoLoad = localCache.autoCache();
             Cache<Object, Object> cache;
@@ -93,8 +91,9 @@ public class CacheStore {
      * getCache.
      * </p>
      *
-     * @param key a {@link java.lang.String} object
-     * @return a {@link com.github.benmanes.caffeine.cache.Cache} object
+     * @param key
+     *            a {@link String} object
+     * @return a {@link Cache} object
      */
     public static Cache<Object, Object> getCache(String key) {
         return caches.get(key);
@@ -105,15 +104,17 @@ public class CacheStore {
      * autoLoad.
      * </p>
      *
-     * @param event a {@link org.springframework.context.event.ContextRefreshedEvent}
-     *              object
+     * @param event
+     *            a {@link ContextRefreshedEvent} object
      */
     @Async
     @EventListener
     public void autoLoad(ContextRefreshedEvent event) {
         if (!autoLoadMethods.isEmpty()) {
             log.info("Start auto load {} cache", autoLoadMethods.size());
-            autoLoadMethods.forEach(CacheUtils::invokeMethod);
+            for (Method method : autoLoadMethods) {
+                CacheUtils.invokeMethod(method);
+            }
             log.info("Finish auto load cache");
         }
     }

@@ -1,15 +1,14 @@
 package com.ezbuy.productmodel.dto.ws;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -23,16 +22,22 @@ public class SubscriberCMResponse {
 
     @XmlElement(name = "subId")
     private String subscriberId;
+
     @XmlElement(name = "offerId")
     private String productId;
+
     @XmlElement(name = "productCode")
     private String productCode;
+
     @XmlElement(name = "staDatetime")
     private String staDatetime;
+
     @XmlElement(name = "productName")
     private String productName;
+
     @XmlElement(name = "status")
     private Integer status;
+
     @XmlElement(name = "accountId")
     private Long accountId;
 
@@ -47,5 +52,4 @@ public class SubscriberCMResponse {
 
     @XmlElement(name = "telecomServiceAlias")
     private String telecomServiceAlias;
-
 }

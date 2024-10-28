@@ -19,8 +19,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import org.jetbrains.annotations.NotNull;
 import org.springframework.http.codec.HttpMessageWriter;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.reactive.function.BodyInserter;
@@ -51,30 +49,25 @@ public class BodyInserterContext implements BodyInserter.Context {
      * </p>
      *
      * @param exchangeStrategies
-     *            a
-     *            {@link org.springframework.web.reactive.function.client.ExchangeStrategies}
-     *            object
+     *            a {@link ExchangeStrategies} object
      */
     public BodyInserterContext(ExchangeStrategies exchangeStrategies) {
         this.exchangeStrategies = exchangeStrategies;
     }
 
     /** {@inheritDoc} */
-    @NotNull
     @Override
     public List<HttpMessageWriter<?>> messageWriters() {
         return exchangeStrategies.messageWriters();
     }
 
     /** {@inheritDoc} */
-    @NotNull
     @Override
     public Optional<ServerHttpRequest> serverRequest() {
         return Optional.empty();
     }
 
     /** {@inheritDoc} */
-    @NotNull
     @Override
     public Map<String, Object> hints() {
         return Collections.emptyMap();

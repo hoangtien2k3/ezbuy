@@ -40,19 +40,21 @@ public class CacheUtils {
      * </p>
      *
      * @param method
-     *            a {@link java.lang.reflect.Method} object
+     *            a {@link Method} object
      */
     public static void invokeMethod(Method method) {
         try {
-            Class<?> declaringClass = method.getDeclaringClass();
-            Object rs = method.invoke(ApplicationContextProvider.getApplicationContext().getBean(declaringClass));
-            if (rs != null) {
-                log.info("Method {} invoked successfully with result: {}", method.getName(), rs);
-            } else {
-                log.warn("Method {} returned null.", method.getName());
-            }
-        } catch (Exception e) {
-            log.error("General error when autoload cache {}.{}: {}", method.getDeclaringClass().getSimpleName(), method.getName(), e.getMessage(), e);
+            Class declaringClass = method.getDeclaringClass();
+            Object t = ApplicationContextProvider.getApplicationContext().getBean(declaringClass);
+            Mono<Object> rs = (Mono<Object>) method.invoke(t);
+            rs.subscribe();
+        } catch (Exception exception) {
+            log.error(
+                    "Error when autoload cache {}.{}",
+                    method.getDeclaringClass().getSimpleName(),
+                    method.getName(),
+                    exception.getMessage(),
+                    exception);
         }
     }
 }

@@ -11,6 +11,6 @@ public class OrderFileDTO {
     private String url;
     private String server;
     private String base64; // file upload dinh dang base64
-    private String telecomServiceId; //id dich vu
-    private String productOfferingCode; //ma goi cuoc
+    private String telecomServiceId; // id dich vu
+    private String productOfferingCode; // ma goi cuoc
 }

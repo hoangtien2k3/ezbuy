@@ -1,5 +1,6 @@
 package com.ezbuy.productmodel.model;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,8 +10,6 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.time.LocalDateTime;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,9 +18,10 @@ import java.time.LocalDateTime;
 public class SyncHistoryDetail implements Persistable<String> {
     @Id
     private String id;
-    private String syncTransId; //ma transId do databus tra ve de dinh danh luong dong bo
-    private String syncHistoryId; //ma bang syncHistory
-    private String targetId; //id cua khach hang
+
+    private String syncTransId; // ma transId do databus tra ve de dinh danh luong dong bo
+    private String syncHistoryId; // ma bang syncHistory
+    private String targetId; // id cua khach hang
     private Integer status;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;

@@ -50,9 +50,9 @@ public class CachedBodyOutputMessage implements ReactiveHttpOutputMessage {
      * </p>
      *
      * @param exchange
-     *            a {@link org.springframework.web.server.ServerWebExchange} object
+     *            a {@link ServerWebExchange} object
      * @param httpHeaders
-     *            a {@link org.springframework.http.HttpHeaders} object
+     *            a {@link HttpHeaders} object
      */
     public CachedBodyOutputMessage(ServerWebExchange exchange, HttpHeaders httpHeaders) {
         this.bufferFactory = exchange.getResponse().bufferFactory();
@@ -61,7 +61,7 @@ public class CachedBodyOutputMessage implements ReactiveHttpOutputMessage {
 
     /** {@inheritDoc} */
     @Override
-    public void beforeCommit(@NotNull Supplier<? extends Mono<Void>> action) {}
+    public void beforeCommit(Supplier<? extends Mono<Void>> action) {}
 
     /** {@inheritDoc} */
     @Override
@@ -89,7 +89,7 @@ public class CachedBodyOutputMessage implements ReactiveHttpOutputMessage {
 
     /** {@inheritDoc} */
     @NotNull
-    public Mono<Void> writeWith(@NotNull Publisher<? extends DataBuffer> body) {
+    public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
         this.body = Flux.from(body);
         this.cached = true;
         return Mono.empty();
@@ -98,7 +98,7 @@ public class CachedBodyOutputMessage implements ReactiveHttpOutputMessage {
     /** {@inheritDoc} */
     @NotNull
     @Override
-    public Mono<Void> writeAndFlushWith(@NotNull Publisher<? extends Publisher<? extends DataBuffer>> body) {
+    public Mono<Void> writeAndFlushWith(Publisher<? extends Publisher<? extends DataBuffer>> body) {
         return writeWith(Flux.from(body).flatMap(p -> p));
     }
 

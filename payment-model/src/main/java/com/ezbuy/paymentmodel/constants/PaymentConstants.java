@@ -20,8 +20,7 @@ public class PaymentConstants {
                 SELFCARE_CONNECT_SINVOICE,
                 SELFCARE_CONNECT_VCONTRACT,
                 SELFCARE_CONNECT_VBHXH,
-                COMBO_SME_HUB
-        );
+                COMBO_SME_HUB);
     }
 
     public static class PaymentStatus {
@@ -34,7 +33,7 @@ public class PaymentConstants {
     }
 
     public static class TelecomServiceAlias {
-        public static final String CA = "CA"; //dich vu CA
-        public static final String EASYBOOKS = "EASYBOOKS"; //dich vu easyBook
+        public static final String CA = "CA"; // dich vu CA
+        public static final String EASYBOOKS = "EASYBOOKS"; // dich vu easyBook
     }
 }

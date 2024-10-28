@@ -1,5 +1,6 @@
 package com.ezbuy.ordermodel.model;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,8 +10,6 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.time.LocalDateTime;
-
 @Table(name = "order_ext")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,6 +18,7 @@ import java.time.LocalDateTime;
 public class OrderExt implements Persistable<String> {
     @Id
     private String id;
+
     private String orderId; // id bang order
     private String code;
     private String value;
@@ -27,7 +27,6 @@ public class OrderExt implements Persistable<String> {
     private String createBy;
     private LocalDateTime updateAt;
     private String updateBy;
-
 
     @Transient
     private boolean isNew = false;

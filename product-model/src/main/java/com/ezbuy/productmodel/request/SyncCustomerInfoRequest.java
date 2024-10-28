@@ -1,9 +1,8 @@
 package com.ezbuy.productmodel.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-
 import java.time.LocalDateTime;
+import lombok.Data;
 
 @Data
 public class SyncCustomerInfoRequest {
@@ -15,12 +14,12 @@ public class SyncCustomerInfoRequest {
     @JsonIgnore
     private Integer limit;
 
-
     @JsonIgnore
     private int runCount = 100;
 
     @JsonIgnore
     private LocalDateTime startDate;
+
     @JsonIgnore
     private LocalDateTime endDate;
 

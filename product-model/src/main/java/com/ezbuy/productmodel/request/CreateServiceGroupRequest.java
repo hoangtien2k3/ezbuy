@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CreateServiceGroupRequest {
-    private String name; //ten nhom dich vu
-    private String code; //ma nhom dich vu
-    private Integer displayOrder; //thu tu hien thi
-    private Integer status; //trang thai
+    private String name; // ten nhom dich vu
+    private String code; // ma nhom dich vu
+    private Integer displayOrder; // thu tu hien thi
+    private Integer status; // trang thai
 }

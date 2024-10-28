@@ -15,4 +15,3 @@ public class RecordTypeDTO {
     private String serviceTypeName;
     private String recordType;
 }
-

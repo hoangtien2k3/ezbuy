@@ -8,7 +8,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-//@MappedSuperclass
+// @MappedSuperclass
 @SuperBuilder
 public class TelecomDTO {
     private String id;

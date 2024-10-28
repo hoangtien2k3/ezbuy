@@ -2,11 +2,10 @@ package com.ezbuy.orderservice.repository;
 
 import com.ezbuy.ordermodel.model.OrderFieldConfig;
 import com.ezbuy.orderservice.repository.query.OrderFieldConfigQuery;
+import java.util.List;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Flux;
-
-import java.util.List;
 
 public interface OrderFieldConfigRepository extends R2dbcRepository<OrderFieldConfig, Long> {
 

@@ -1,22 +1,17 @@
-
 package com.ezbuy.ordermodel.dto.sale;
 
+import java.util.Date;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
-import java.util.Date;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SubAttDetailDTO extends BaseDTO
-{
+public class SubAttDetailDTO extends BaseDTO {
     protected String attDetailCode;
     protected String attDetailName;
     protected String attDetailType;

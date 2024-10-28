@@ -1,5 +1,6 @@
 package com.ezbuy.productmodel.model;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,8 +10,6 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.time.LocalDateTime;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,6 +18,7 @@ import java.time.LocalDateTime;
 public class Product implements Persistable<String> {
     @Id
     private String id;
+
     private String code; // ma hang hoa
     private String name; // ten hang hoa
     private Double priceImport; // don gia nhap

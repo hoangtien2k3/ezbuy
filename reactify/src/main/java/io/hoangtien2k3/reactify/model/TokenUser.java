@@ -39,7 +39,9 @@ public class TokenUser {
     private String name;
     private String username;
     private String email;
+
     @JsonProperty("individual_id")
     private String individualId;
+
     private String organizationId;
 }

@@ -16,6 +16,5 @@ public class UrlPaths {
         String ORDER_STATE = "/order-state";
 
         String SYNC_PAYMENT = "/sync-payment";
-
     }
 }

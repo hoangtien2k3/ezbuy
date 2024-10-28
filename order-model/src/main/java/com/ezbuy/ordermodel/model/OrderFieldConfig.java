@@ -1,12 +1,11 @@
 package com.ezbuy.ordermodel.model;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.relational.core.mapping.Table;
-
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -35,8 +34,8 @@ public class OrderFieldConfig {
     private LocalDateTime updateAt;
 
     private String updateBy;
-    private Integer fromStaff; //nhan vien moi gioi
+    private Integer fromStaff; // nhan vien moi gioi
     private String serviceId; // originalId cua dich vu bo sung PYCXXX/LuongToanTrinhScontract
     private String serviceAlias; // alias cua dich vu PYCXXX/LuongToanTrinhScontract
-    private Integer amStaff; //ma am ho tro
+    private Integer amStaff; // ma am ho tro
 }

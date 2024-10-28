@@ -1,12 +1,11 @@
 package com.ezbuy.ordermodel.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -26,7 +25,7 @@ public class ProductTemplateDTO {
 
     private List<ProductTemplateCharacteristicDTO> productCharacteristic;
 
-    private List<OrderFileDTO> fileUpload; //danh sach ho so thue bao
+    private List<OrderFileDTO> fileUpload; // danh sach ho so thue bao
 
     @JsonIgnore
     private String templateId;

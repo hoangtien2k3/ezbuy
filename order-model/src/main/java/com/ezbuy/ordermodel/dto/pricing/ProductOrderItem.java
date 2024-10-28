@@ -3,12 +3,11 @@ package com.ezbuy.ordermodel.dto.pricing;
 import com.ezbuy.ordermodel.dto.Product;
 import com.ezbuy.ordermodel.dto.ProductOfferingRef;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -29,6 +28,5 @@ public class ProductOrderItem {
     private Long priceDailyMain;
     private ProductOfferingRef productOffering;
     private Product product;
-    private String telecomServiceName; //ten dich vu dau noi
-
+    private String telecomServiceName; // ten dich vu dau noi
 }

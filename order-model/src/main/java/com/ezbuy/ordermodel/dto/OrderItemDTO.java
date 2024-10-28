@@ -33,11 +33,9 @@ public class OrderItemDTO {
     private String currency; // don vi tien
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-
     private Integer quantity; // so luong
 
     private String duration; // thoi han dich vu
 
     private String telecomServiceAlias; // alias dich vu
-
 }

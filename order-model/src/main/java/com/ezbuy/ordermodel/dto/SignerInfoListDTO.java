@@ -9,6 +9,4 @@ public class SignerInfoListDTO {
     private String processType;
     private String order;
     private String requiredCa;
-
 }
-

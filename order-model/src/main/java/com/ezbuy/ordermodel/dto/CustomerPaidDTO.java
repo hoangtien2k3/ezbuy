@@ -1,11 +1,10 @@
 package com.ezbuy.ordermodel.dto;
 
 import com.ezbuy.ordermodel.dto.ws.CustIdentity;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -28,12 +27,11 @@ public class CustomerPaidDTO extends CustomerDTO {
 
     private String systemType;
 
-    private String contactTitle; //chuc vu
+    private String contactTitle; // chuc vu
 
-    private AddressDTO addressDTO; //thong tin dia chi
+    private AddressDTO addressDTO; // thong tin dia chi
 
-    private Long issueCompany; //ngay thanh lap doanh nghiep lay tu thong tin bang tenant_identify
+    private Long issueCompany; // ngay thanh lap doanh nghiep lay tu thong tin bang tenant_identify
 
-    private CustomerPaidDTO userInfoDTO; //thong tin nguoi dai dien
-
+    private CustomerPaidDTO userInfoDTO; // thong tin nguoi dai dien
 }

@@ -19,15 +19,17 @@ public class OrderFieldController {
     private final OrderFieldConfigService orderFieldConfigService;
 
     /**
-     * Order-007
-     * Ham bo sung alias PYCXXX/LuongToanTrinhScontract
+     * Order-007 Ham bo sung alias PYCXXX/LuongToanTrinhScontract
+     *
      * @param request
      * @return
      */
     @GetMapping
     @PreAuthorize("hasAnyAuthority('user')")
-    public Mono<ResponseEntity<DataResponse<OrderFieldConfigDTO>>> getConfigByServiceTypeAndOrderType(GetOrderFieldConfigRequest request) {
-        return orderFieldConfigService.getConfigByServiceTypeAndOrderType(request)
+    public Mono<ResponseEntity<DataResponse<OrderFieldConfigDTO>>> getConfigByServiceTypeAndOrderType(
+            GetOrderFieldConfigRequest request) {
+        return orderFieldConfigService
+                .getConfigByServiceTypeAndOrderType(request)
                 .map(ResponseEntity::ok);
     }
 }

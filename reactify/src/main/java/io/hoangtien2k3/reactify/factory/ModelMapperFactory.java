@@ -16,8 +16,6 @@
 package io.hoangtien2k3.reactify.factory;
 
 import org.modelmapper.ModelMapper;
-import org.modelmapper.config.Configuration;
-import org.modelmapper.convention.MatchingStrategies;
 
 /**
  * <p>
@@ -27,29 +25,17 @@ import org.modelmapper.convention.MatchingStrategies;
  * @author hoangtien2k3
  */
 public class ModelMapperFactory {
-    private static volatile ModelMapper modelMapper;
 
-    private ModelMapperFactory() {}
+    private static final ModelMapper modelMapper = new ModelMapper();
 
     /**
      * <p>
      * getInstance.
      * </p>
      *
-     * @return a {@link org.modelmapper.ModelMapper} object
+     * @return a {@link ModelMapper} object
      */
     public static ModelMapper getInstance() {
-        if (modelMapper == null) {
-            synchronized (ModelMapperFactory.class) {
-                if (modelMapper == null) {
-                    modelMapper = new ModelMapper();
-                    modelMapper.getConfiguration()
-                            .setFieldMatchingEnabled(true)
-                            .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
-                            .setMatchingStrategy(MatchingStrategies.STRICT);
-                }
-            }
-        }
         return modelMapper;
     }
 }

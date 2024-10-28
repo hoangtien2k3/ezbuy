@@ -17,12 +17,10 @@ package io.hoangtien2k3.reactify.filter.webclient;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
-import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.Timer;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
@@ -45,50 +43,41 @@ public class WebClientMonitoringFilter implements ExchangeFilterFunction {
     private static final String METRICS_WEBCLIENT_START_TIME =
             WebClientMonitoringFilter.class.getName() + ".START_TIME";
     private final MeterRegistry meterRegistry;
+//    private WebClientExchangeTagsProvider tagsProvider = new DefaultWebClientExchangeTagsProvider();
 
     /**
      * {@inheritDoc}
      */
-    @NotNull
     @Override
-    public Mono<ClientResponse> filter(@NotNull ClientRequest clientRequest, ExchangeFunction exchangeFunction) {
-        long startTime = System.nanoTime();
+    public Mono<ClientResponse> filter(ClientRequest clientRequest, ExchangeFunction exchangeFunction) {
         return exchangeFunction
                 .exchange(clientRequest)
                 .doOnEach(signal -> {
                     if (!signal.isOnComplete()) {
+                        Long startTime = signal.getContextView().get(METRICS_WEBCLIENT_START_TIME);
                         ClientResponse clientResponse = signal.get();
                         Throwable throwable = signal.getThrowable();
+                        if (throwable != null) {
+                            log.error("WebClient request to {} failed: {}", clientRequest.url(), throwable.getMessage());
+                        } else {
+                            assert clientResponse != null;
+                            log.info("WebClient request to {} completed with status code: {}", clientRequest.url(), clientResponse.statusCode());
+                        }
+
+//                        Iterable<Tag> tags = tagsProvider.tags(clientRequest, clientResponse, throwable);
+
+                        // record the execution time
                         long duration = System.nanoTime() - startTime;
-                        logMonitoringMetrics(clientRequest, clientResponse, throwable, duration);
+                        Timer.builder("http.client.requests")
+//                                 .tags(tags)
+                                .description("Timer for WebClient operations")
+                                .publishPercentiles(0.95, 0.99)
+                                .register(meterRegistry)
+                                .record(duration, TimeUnit.NANOSECONDS);
+
+                        log.info("Monitoring WebClient API {}: {} s", clientRequest.url(), (double) duration / Math.pow(10, 9));
                     }
                 })
                 .contextWrite((contextView) -> contextView.put(METRICS_WEBCLIENT_START_TIME, System.nanoTime()));
-    }
-
-    private void logMonitoringMetrics(ClientRequest clientRequest, ClientResponse clientResponse, Throwable throwable, long duration) {
-        Iterable<Tag> tags = createTags(clientRequest, clientResponse, throwable);
-        Timer.builder("http.client.requests")
-                .tags(tags)
-                .description("Timer of WebClient operation")
-                .publishPercentiles(0.95, 0.99)
-                .register(meterRegistry)
-                .record(duration, TimeUnit.NANOSECONDS);
-        log.info("Monitoring WebClient API {}: {} s", tags, (double) duration / Math.pow(10, 9));
-    }
-
-    private Tags createTags(ClientRequest clientRequest, ClientResponse clientResponse, Throwable throwable) {
-        // Tạo thẻ từ request, response và throwable
-        Tags tags = Tags.of(
-                "method", clientRequest.method().name(),
-                "uri", clientRequest.url().toString()
-        );
-        if (clientResponse != null) {
-            tags = tags.and("status", String.valueOf(clientResponse.statusCode().value()));
-        }
-        if (throwable != null) {
-            tags = tags.and("error", throwable.getClass().getSimpleName());
-        }
-        return tags;
     }
 }

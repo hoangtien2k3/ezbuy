@@ -19,31 +19,31 @@ import org.springframework.data.relational.core.mapping.Table;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SummaryReport implements Persistable<String> {
 
-  @Id
-  private String id;
+    @Id
+    private String id;
 
-  private Integer loginCount;//so luong truy cap
+    private Integer loginCount; // so luong truy cap
 
-  private Integer orderCount;//tong so don hang
+    private Integer orderCount; // tong so don hang
 
-  private Integer successOrderCount;//tong so don hang thanh cong
+    private Integer successOrderCount; // tong so don hang thanh cong
 
-  private Integer failOrderCount;//tong so don hang khong thanh cong
+    private Integer failOrderCount; // tong so don hang khong thanh cong
 
-  private Long feeCount;//tong so tien giao dich
+    private Long feeCount; // tong so tien giao dich
 
-  private LocalDate createAt;//ngay tao
+    private LocalDate createAt; // ngay tao
 
-  private Integer newServiceCount;//so san pham dang ban moi
+    private Integer newServiceCount; // so san pham dang ban moi
 
-  private Integer status;//trang thai
+    private Integer status; // trang thai
 
-  @Transient
-  private boolean isNew = false;
+    @Transient
+    private boolean isNew = false;
 
-  @Transient
-  @Override
-  public boolean isNew() {
-    return this.isNew || id == null;
-  }
+    @Transient
+    @Override
+    public boolean isNew() {
+        return this.isNew || id == null;
+    }
 }

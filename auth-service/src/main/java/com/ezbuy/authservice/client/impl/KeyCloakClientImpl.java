@@ -12,10 +12,10 @@ import com.ezbuy.authservice.client.properties.KeycloakClientProperties;
 import com.ezbuy.authservice.config.KeycloakProvider;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import io.hoangtien2k3.reactify.DataUtil;
 import io.hoangtien2k3.reactify.constants.CommonErrorCode;
 import io.hoangtien2k3.reactify.constants.Constants;
 import io.hoangtien2k3.reactify.exception.BusinessException;
-import io.hoangtien2k3.reactify.DataUtil;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -56,12 +56,16 @@ public class KeyCloakClientImpl implements KeyCloakClient {
 
     @Value("${keycloak.serverUrl}")
     private String keycloakUrl;
+
     @Value("${keycloak.realm}")
     public String realm;
+
     @Value("${keycloak.clientId}")
     public String clientID;
+
     @Value("${keycloak.clientSecret}")
     public String clientSecret;
+
     @Value("${keycloak.host}")
     private String hostKeycloak;
 
@@ -84,9 +88,9 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                             Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "client.id.not.valid")));
         } else {
             formParameters.add(
-                    OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().getClientId());
+                    OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().clientId());
             formParameters.add(
-                    OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().getClientSecret());
+                    OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().clientSecret());
         }
         return requestToken(formParameters);
     }
@@ -135,9 +139,9 @@ public class KeyCloakClientImpl implements KeyCloakClient {
         formParameters.add(OAuth2ParameterNames.CODE, providerLogin.getCode());
         formParameters.add(OAuth2ParameterNames.REDIRECT_URI, AuthConstants.OAuth.REDIRECT_URI);
         formParameters.add(
-                OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().getClientId());
+                OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().clientId());
         formParameters.add(
-                OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().getClientSecret());
+                OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().clientSecret());
         return requestToken(formParameters);
     }
 
@@ -145,7 +149,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
     public Mono<Optional<AccessToken>> refreshToken(RefreshTokenRequest refreshTokenRequest) {
         String clientId = refreshTokenRequest.getClientId();
         if (DataUtil.isNullOrEmpty(clientId)) {
-            clientId = keyCloakConfig.getAuth().getClientId();
+            clientId = keyCloakConfig.getAuth().clientId();
         }
         return keycloakProvider.getClientWithSecret(clientId).flatMap(clientRepresentation -> {
             MultiValueMap<String, String> formParameters = new LinkedMultiValueMap<>();

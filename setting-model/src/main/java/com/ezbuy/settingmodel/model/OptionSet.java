@@ -18,6 +18,7 @@ import org.springframework.data.relational.core.mapping.Table;
 public class OptionSet extends EntityBase implements Persistable<String> {
     @Id
     private String id;
+
     private String code;
     private String description;
 

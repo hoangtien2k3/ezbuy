@@ -32,7 +32,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class MarshallerFactory {
-    private static Map<Class, Marshaller> instance = new HashMap<>();
+
+    private static final Map<Class<?>, Marshaller> instance = new HashMap<>();
 
     /**
      * <p>
@@ -40,30 +41,34 @@ public class MarshallerFactory {
      * </p>
      *
      * @param obj
-     *            a {@link java.lang.Object} object
+     *            a {@link Object} object
      * @param cls
-     *            a {@link java.lang.Class} object
-     * @return a {@link java.lang.String} object
+     *            a {@link Class} object
+     * @return a {@link String} object
      */
-    public static String convertObjectToXML(Object obj, Class cls) {
+    public static String convertObjectToXML(Object obj, Class<?> cls) {
         Marshaller marshaller = instance.get(cls);
         String xmlTxt = "";
         try {
+            // create an instance of `JAXBContext`
+            // create an instance of `Marshaller`
             if (marshaller == null) {
                 marshaller = JAXBContext.newInstance(cls).createMarshaller();
                 // enable pretty-print XML output
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
                 instance.put(cls, marshaller);
             }
+
             // write XML to `StringWriter`
             StringWriter sw = new StringWriter();
+
             // convert book object to XML
             marshaller.marshal(obj, sw);
+
             xmlTxt = sw.toString();
+
         } catch (JAXBException ex) {
             log.error("Convert Object To XML  fail: ", ex);
-        } catch (RuntimeException e) {
-            log.error("Unexpected error during marshaller creation for class {}: {}", cls.getName(), e.getMessage(), e);
         }
         return xmlTxt;
     }

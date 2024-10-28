@@ -18,6 +18,7 @@ import org.springframework.data.relational.core.mapping.Table;
 public class MarketPage extends EntityBase {
     @Id
     private String id;
+
     private String serviceId;
     private String serviceAlias;
     private String nameService;

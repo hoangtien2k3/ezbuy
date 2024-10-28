@@ -1,14 +1,13 @@
 package com.ezbuy.ordermodel.dto.sale;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -37,8 +36,10 @@ public class ResponseCM {
     protected boolean checkPolice;
     protected boolean checkSecurity;
     protected String code;
+
     @XmlElement(name = "continue")
     protected boolean _continue;
+
     protected boolean custHasFtth;
     protected String description;
     protected boolean disableCancelApnDefault;
@@ -74,7 +75,6 @@ public class ResponseCM {
     protected boolean trunkPstn;
     protected boolean verifyOwnerSub;
     protected List<GroupsDTO> groupsDTOList;
-    protected Long numberGroupAll;// tong so luong nhom theo giay to
+    protected Long numberGroupAll; // tong so luong nhom theo giay to
     protected Long numberSubAll; // tong so luong thanh vien theo dieu kien truyen vao
-
 }

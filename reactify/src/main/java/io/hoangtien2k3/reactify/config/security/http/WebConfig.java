@@ -18,9 +18,7 @@ package io.hoangtien2k3.reactify.config.security.http;
 import io.hoangtien2k3.reactify.DataUtil;
 import io.hoangtien2k3.reactify.config.WhiteListProperties;
 import io.hoangtien2k3.reactify.model.WhiteList;
-
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -60,14 +58,11 @@ public class WebConfig {
      * springSecurityFilterChain.
      * </p>
      *
-     * @param http a
-     * {@link org.springframework.security.config.web.server.ServerHttpSecurity}
-     * object
-     * @param jwtAuthenticationConverter a {@link org.springframework.core.convert.converter.Converter}
-     * object
-     * @return a
-     * {@link org.springframework.security.web.server.SecurityWebFilterChain}
-     * object
+     * @param http
+     *            a {@link ServerHttpSecurity} object
+     * @param jwtAuthenticationConverter
+     *            a {@link Converter} object
+     * @return a {@link SecurityWebFilterChain} object
      */
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(
@@ -77,9 +72,9 @@ public class WebConfig {
         List<WhiteList> whiteListList = whiteListProperties.getWhiteList();
         if (!DataUtil.isNullOrEmpty(whiteListList)) {
             for (WhiteList whiteList : whiteListList) {
-                String uri = whiteList.getUri();
+                String uri = whiteList.uri();
                 log.info("whitelist: {}", uri);
-                List<String> methods = whiteList.getMethods();
+                List<String> methods = whiteList.methods();
                 if (!DataUtil.isNullOrEmpty(methods)) {
                     for (String method : methods) {
                         HttpMethod convertedMethod = HttpMethod.valueOf(method);

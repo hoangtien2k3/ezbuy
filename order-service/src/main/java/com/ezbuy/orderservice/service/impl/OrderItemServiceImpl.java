@@ -7,12 +7,12 @@ import io.hoangtien2k3.reactify.AppUtils;
 import io.hoangtien2k3.reactify.DataUtil;
 import io.hoangtien2k3.reactify.SecurityUtils;
 import io.hoangtien2k3.reactify.Translator;
+import io.hoangtien2k3.reactify.ValidateUtils;
 import io.hoangtien2k3.reactify.constants.CommonErrorCode;
 import io.hoangtien2k3.reactify.constants.Constants;
 import io.hoangtien2k3.reactify.constants.MessageConstant;
 import io.hoangtien2k3.reactify.exception.BusinessException;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
-import io.hoangtien2k3.reactify.ValidateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -45,10 +45,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         }
 
         return SecurityUtils.getCurrentUser()
-                .flatMap(user -> Mono.zip(
-                        checkExistItem(orderId, user.getId()),
-                        Mono.just(user.getUsername())
-                ))
+                .flatMap(user -> Mono.zip(checkExistItem(orderId, user.getId()), Mono.just(user.getUsername())))
                 .flatMap(existGroupData -> {
                     if (!existGroupData.getT1()) {
                         return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "order.item.not.found"));
@@ -65,7 +62,8 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
     private Mono<Boolean> checkExistItem(String orderItem, String userId) {
-        return orderItemRepository.checkOrderItemExist(orderItem, userId)
+        return orderItemRepository
+                .checkOrderItemExist(orderItem, userId)
                 .map(rs -> DataUtil.safeEqual(rs, Constants.Activation.ACTIVE))
                 .switchIfEmpty(Mono.just(false));
     }

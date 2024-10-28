@@ -1,9 +1,7 @@
 package com.ezbuy.ordermodel.dto;
 
-
-import lombok.Data;
-
 import java.util.List;
+import lombok.Data;
 
 @Data
 public class PartnerDTO {
@@ -22,6 +20,5 @@ public class PartnerDTO {
         this.signFree = signFree;
     }
 
-    public PartnerDTO() {
-    }
+    public PartnerDTO() {}
 }

@@ -1,6 +1,5 @@
 package com.ezbuy.ordermodel.dto;
 
-
 import java.util.List;
 
 public class ProfileForBusinessCustDTO {

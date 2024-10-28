@@ -24,8 +24,7 @@ public class OrderPrice {
     String priceTypeCode;
     String valueCharacteristic;
     String productOrderItemId;
-    String type; //phan loai gia de len hoa don
+    String type; // phan loai gia de len hoa don
     String notDisplay;
     Long priceDay;
-
 }

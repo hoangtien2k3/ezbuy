@@ -1,12 +1,11 @@
 package com.ezbuy.ordermodel.dto;
 
 import com.ezbuy.ordermodel.dto.ws.ProductOrderItemWsDTO;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -58,11 +57,11 @@ public class PlacePaidOrderData {
 
     private Boolean selfCare;
 
-    private InvoiceInfoDTO invoiceInfo; //thong tin xuat hoa don
+    private InvoiceInfoDTO invoiceInfo; // thong tin xuat hoa don
 
-    private String extCode; //Thong tin orderId cua HUB gui sang bccs_order de doi xoat
+    private String extCode; // Thong tin orderId cua HUB gui sang bccs_order de doi xoat
 
-    private Boolean revenueForAm; //bien check len cong no
+    private Boolean revenueForAm; // bien check len cong no
 
     private Boolean needCompleteProfile; // flag thuc hien luong xac minh CA khi tao don order
 }

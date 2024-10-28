@@ -18,6 +18,7 @@ public class ProductSpecCharValue implements Persistable<String> {
 
     @Id
     private String id;
+
     private String productSpecCharId;
     private String value;
     private String name;
@@ -25,6 +26,7 @@ public class ProductSpecCharValue implements Persistable<String> {
     private Integer displayOrder;
 
     private Integer state;
+
     @Transient
     private boolean isNew = false;
 

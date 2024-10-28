@@ -48,7 +48,7 @@ public class BaseTemplateRepository {
      * </p>
      */
     public BaseTemplateRepository() {
-        this.objectMapper = JsonMapper.builder()
+        objectMapper = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
                 .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
                 .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
@@ -61,17 +61,18 @@ public class BaseTemplateRepository {
      * </p>
      *
      * @param sql
-     *            a {@link java.lang.String} object
+     *            a {@link String} object
      * @param params
-     *            a {@link java.util.Map} object
+     *            a {@link Map} object
      * @param type
-     *            a {@link java.lang.Class} object
+     *            a {@link Class} object
      * @param <T>
      *            a T class
-     * @return a {@link reactor.core.publisher.Flux} object
+     * @return a {@link Flux} object
      */
     protected <T> Flux<T> listQuery(String sql, Map<String, Object> params, Class<T> type) {
-        DatabaseClient.GenericExecuteSpec spec = entityTemplate.getDatabaseClient().sql(sql);
+        DatabaseClient.GenericExecuteSpec spec =
+                entityTemplate.getDatabaseClient().sql(sql);
         if (!DataUtil.isNullOrEmpty(params)) {
             for (String param : params.keySet()) {
                 spec = spec.bind(param, params.get(param));
@@ -86,10 +87,10 @@ public class BaseTemplateRepository {
      * </p>
      *
      * @param sql
-     *            a {@link java.lang.String} object
+     *            a {@link String} object
      * @param params
-     *            a {@link java.util.Map} object
-     * @return a {@link reactor.core.publisher.Mono} object
+     *            a {@link Map} object
+     * @return a {@link Mono} object
      */
     protected Mono<Long> countQuery(String sql, Map<String, Object> params) {
         String query = "select count(*) as common_count_col from (" + sql + ") as common_count_alias";
@@ -112,9 +113,9 @@ public class BaseTemplateRepository {
      * </p>
      *
      * @param raw
-     *            a {@link java.util.Map} object
+     *            a {@link Map} object
      * @param type
-     *            a {@link java.lang.Class} object
+     *            a {@link Class} object
      * @param <T>
      *            a T class
      * @return a T object

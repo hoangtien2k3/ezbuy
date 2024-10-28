@@ -6,6 +6,9 @@ import io.hoangtien2k3.reactify.DataUtil;
 import io.hoangtien2k3.reactify.client.BaseRestClient;
 import io.hoangtien2k3.reactify.factory.ObjectMapperFactory;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,10 +16,6 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -43,8 +42,10 @@ public class SettingClientImpl implements SettingClient {
                     }
                     List<CartTelecomDTO> cartTelecomDTOList = new ArrayList<>();
                     List list = (List) dataResponseOptional.get().getData();
-                    list.forEach(x -> cartTelecomDTOList.add(ObjectMapperFactory.getInstance().convertValue(x, CartTelecomDTO.class)));
+                    list.forEach(x -> cartTelecomDTOList.add(
+                            ObjectMapperFactory.getInstance().convertValue(x, CartTelecomDTO.class)));
                     return cartTelecomDTOList;
-                }).onErrorResume(throwable -> Mono.just(new ArrayList()));
+                })
+                .onErrorResume(throwable -> Mono.just(new ArrayList()));
     }
 }

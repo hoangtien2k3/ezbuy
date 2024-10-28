@@ -19,13 +19,17 @@ public class InvoiceInfoHistoryController {
     private final InvoiceInfoHistoryService invoiceInfoHistoryService;
 
     @PostMapping
-    public Mono<DataResponse<InvoiceInfoHistory>> createInvoiceInfoHistory(@RequestBody CreateInvoiceInfoHistoryRequest request) {
-        return invoiceInfoHistoryService.createInvoiceInfoHistory(request).map(rs -> new DataResponse(Translator.toLocaleVi("success"), rs));
+    public Mono<DataResponse<InvoiceInfoHistory>> createInvoiceInfoHistory(
+            @RequestBody CreateInvoiceInfoHistoryRequest request) {
+        return invoiceInfoHistoryService
+                .createInvoiceInfoHistory(request)
+                .map(rs -> new DataResponse(Translator.toLocaleVi("success"), rs));
     }
 
     @GetMapping(UrlPaths.InvoiceInfoHisTory.GET)
     public Mono<DataResponse<DataResponse>> findInvoiceInfoHistory(GetInvoiceInfoHistoryRequest request) {
-        return invoiceInfoHistoryService.findInvoiceInfoHistory(request).map(rs -> new DataResponse(Translator.toLocaleVi("success"), rs));
+        return invoiceInfoHistoryService
+                .findInvoiceInfoHistory(request)
+                .map(rs -> new DataResponse(Translator.toLocaleVi("success"), rs));
     }
-
 }

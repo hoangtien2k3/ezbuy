@@ -16,6 +16,7 @@ import org.springframework.data.relational.core.mapping.Table;
 public class TelecomServiceConfig extends EntityBase {
     @Id
     private String id;
+
     private String config;
     private String telecomServiceId;
 }

@@ -2,9 +2,9 @@ package com.viettel.sme.cartservice.controller;
 
 import com.ezbuy.cartmodel.constants.UrlPaths;
 import com.ezbuy.cartmodel.dto.DeleteUserProductCartDTO;
-import com.ezbuy.cartmodel.model.CartItem;
-import com.ezbuy.cartmodel.dto.response.PageCart;
 import com.ezbuy.cartmodel.dto.request.Product;
+import com.ezbuy.cartmodel.dto.response.PageCart;
+import com.ezbuy.cartmodel.model.CartItem;
 import com.viettel.sme.cartservice.service.CartItemService;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
 import jakarta.validation.Valid;
@@ -23,9 +23,7 @@ public class CartItemController {
 
     @DeleteMapping(value = UrlPaths.CartItem.DELETE)
     @PreAuthorize("hasAnyAuthority('user')")
-    public Mono<DataResponse<CartItem>> deleteCartItem(
-            @RequestParam(defaultValue = "") String cartItemId
-    ) {
+    public Mono<DataResponse<CartItem>> deleteCartItem(@RequestParam(defaultValue = "") String cartItemId) {
         return cartItemService.deleteCartItem(cartItemId);
     }
 
@@ -38,9 +36,7 @@ public class CartItemController {
     @PutMapping(value = UrlPaths.CartItem.UPDATE)
     @PreAuthorize("hasAnyAuthority('user')")
     public Mono<DataResponse<CartItem>> updateQuantity(
-            @RequestParam(defaultValue = "") String cartItemId,
-            @RequestParam(defaultValue = "") Long quantity
-    ) {
+            @RequestParam(defaultValue = "") String cartItemId, @RequestParam(defaultValue = "") Long quantity) {
         return cartItemService.updateQuantity(cartItemId, quantity);
     }
 
@@ -48,8 +44,7 @@ public class CartItemController {
     @PreAuthorize("hasAnyAuthority('user')")
     public Mono<DataResponse<PageCart>> getListCartItem(
             @RequestParam(required = false, defaultValue = "20") Integer pageSize,
-            @RequestParam(required = false, defaultValue = "1") Integer pageIndex
-    ) {
+            @RequestParam(required = false, defaultValue = "1") Integer pageIndex) {
         return cartItemService.getListCartItem(pageSize, pageIndex);
     }
 

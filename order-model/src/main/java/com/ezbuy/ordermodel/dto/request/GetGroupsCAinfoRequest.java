@@ -13,6 +13,6 @@ public class GetGroupsCAinfoRequest {
     private String groupIDOCS;
     private String groupTypeOCS;
     private String mainIsdnOCS;
-    private Integer rowNum;//so luong ban ghi
-    private Integer startAt;//bat dau tu ban ghi
+    private Integer rowNum; // so luong ban ghi
+    private Integer startAt; // bat dau tu ban ghi
 }

@@ -1,9 +1,8 @@
 package com.ezbuy.ordermodel.dto;
 
-import lombok.Data;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Data;
 
 @Data
 public class PayInfoDTO {
@@ -16,5 +15,4 @@ public class PayInfoDTO {
         immediatePay = false;
         cardRecords = new ArrayList<>();
     }
-
 }

@@ -23,7 +23,6 @@ public class OrderItemController {
     @PostMapping(UrlPaths.OrderItem.REVIEW)
     @PreAuthorize("hasAnyAuthority('user')")
     public Mono<ResponseEntity<DataResponse>> review(@RequestBody ReviewOrderItemRequest request) {
-        return orderItemService.review(request)
-                .map(ResponseEntity::ok);
+        return orderItemService.review(request).map(ResponseEntity::ok);
     }
 }

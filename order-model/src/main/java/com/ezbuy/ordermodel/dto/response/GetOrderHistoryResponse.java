@@ -1,11 +1,10 @@
 package com.ezbuy.ordermodel.dto.response;
 
+import java.util.List;
+import javax.xml.bind.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.xml.bind.annotation.*;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -16,6 +15,7 @@ public class GetOrderHistoryResponse {
 
     @XmlElement(name = "order")
     private OrderDTO order; // thong tin don hang
+
     @XmlElement(name = "orderItem")
     private List<OrderItemDTO> orderItem; // thong tin san pham don hang
 
@@ -24,7 +24,7 @@ public class GetOrderHistoryResponse {
         private String orderCode; // ma don hang
         private String createDate; // ngay tao
         private Integer state; // trang thai don hang (chua hoan thanh, da hoan thanh, da huy)
-        private Boolean isPreOrder; //true: don tu van, false: khong phai don tu van
+        private Boolean isPreOrder; // true: don tu van, false: khong phai don tu van
     }
 
     @Data

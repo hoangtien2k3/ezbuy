@@ -11,25 +11,25 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CustomerDTO {
 
-    private String name; //x
+    private String name; // x
 
-    private String contactEmail; //x
+    private String contactEmail; // x
 
-    private String telMobile; //x
+    private String telMobile; // x
 
-    private String areaCode; //x
+    private String areaCode; // x
 
-    private String district; //x
+    private String district; // x
 
-    private String precinct; //x
+    private String precinct; // x
 
-    private String address; //x
+    private String address; // x
 
-    private String province; //x
+    private String province; // x
 
     private String portalAccountId; // không có thông tin này
 
     // thiếu thông tin giấy phép kinh doanh, mã số thuế, ngày cấp, nơi cấp
 
-    private String position; //chuc vu
+    private String position; // chuc vu
 }

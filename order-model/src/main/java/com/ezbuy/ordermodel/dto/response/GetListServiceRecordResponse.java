@@ -1,13 +1,12 @@
 package com.ezbuy.ordermodel.dto.response;
 
-import com.ezbuy.ordermodel.dto.ServiceInfo;
 import com.ezbuy.ordermodel.dto.RecordTypeInfo;
+import com.ezbuy.ordermodel.dto.ServiceInfo;
+import java.util.List;
+import javax.xml.bind.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.xml.bind.annotation.*;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -17,6 +16,7 @@ import java.util.List;
 public class GetListServiceRecordResponse {
     @XmlElement(name = "responseCode")
     private Integer responseCode;
+
     @XmlElement
     private List<lst> lst;
 

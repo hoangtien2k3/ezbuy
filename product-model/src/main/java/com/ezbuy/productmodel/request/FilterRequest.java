@@ -1,13 +1,12 @@
 package com.ezbuy.productmodel.request;
 
 import com.ezbuy.productmodel.constants.enumeration.Operator;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 
 @Data
 @NoArgsConstructor

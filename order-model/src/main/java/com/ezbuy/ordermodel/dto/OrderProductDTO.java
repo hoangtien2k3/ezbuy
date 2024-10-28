@@ -20,5 +20,4 @@ public class OrderProductDTO {
     private String telecomServiceAlias; // alias cua dich vu (CA, VCONTRACT) PYCXXX/LuongToanTrinhScontract
 
     private Integer quantity;
-
 }

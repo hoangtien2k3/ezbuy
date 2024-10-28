@@ -27,5 +27,5 @@ public class AddressDTO {
 
     private String fullName;
 
-    private String address; //dia chi chi tiet
+    private String address; // dia chi chi tiet
 }

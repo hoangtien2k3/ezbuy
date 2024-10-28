@@ -20,8 +20,8 @@ public class UrlPaths {
         String CA_ADD_GROUP_MEMBER = "/ca/add-group-member";
         String SERVICE_GET_DATA_PROFILE = "ca/service-get-data-profile";
         String CA_CONNECT_SELFCARE = "/ca/connect-selfcare";
-        String CA_GET_TOTAL_SIGN = "/ca/get-total-sign";//lay tong so luong ky
-        String CA_GET_NUMBER_SIGN = "/ca/get-number-sign";//lay so luong da ky
+        String CA_GET_TOTAL_SIGN = "/ca/get-total-sign"; // lay tong so luong ky
+        String CA_GET_NUMBER_SIGN = "/ca/get-number-sign"; // lay so luong da ky
         String ORDER_HISTORY = "/history";
         String GET_ADVICE = "/get-advice";
         String VALIDATE_DATA_ORDER = "/validate-data-order";
@@ -30,7 +30,7 @@ public class UrlPaths {
         String SERVICE_GET_DOC_DATA_POLICY = "ca/doc-data-policy";
         String SEARCH_ORDER_HISTORY = "/order-history";
         String SEARCH_ORDER_V2 = "/search-order-v2";
-        String FILE_CONTRACT_TO_VIEW = "/file-contract-to-view"; //api view file hsdt v2
+        String FILE_CONTRACT_TO_VIEW = "/file-contract-to-view"; // api view file hsdt v2
         String CREATE_ORDER_CTS = "/cts"; // api tao don cts luong xac minh
         String CA_GROUP_MEMBER_TEMPLATE = "/ca/group-member/template";
         String CA_GROUP_MEMBER_VALIDATE_IMPORT = "/ca/group-member/validate-import";
@@ -61,5 +61,4 @@ public class UrlPaths {
 
         String GET = "/get-history";
     }
-
 }

@@ -24,14 +24,15 @@ public class GroupMemberImportDTO {
         this.result = result;
     }
 
-//    public GroupMemberImportDTO(String subIsdn, String status, String addGroupDate, String numberOfSign, boolean result) {
-//        this.subIsdn = product.getId();
-//        this.status = product.getCode();
-//        this.addGroupDate = product.getName();
-//        this.numberOfSign = product.getPriceImport();
-//        this.errMsg = errMsg;
-//        this.result = result;
-//    }
+    // public GroupMemberImportDTO(String subIsdn, String status, String
+    // addGroupDate, String numberOfSign, boolean result) {
+    // this.subIsdn = product.getId();
+    // this.status = product.getCode();
+    // this.addGroupDate = product.getName();
+    // this.numberOfSign = product.getPriceImport();
+    // this.errMsg = errMsg;
+    // this.result = result;
+    // }
 
     public void trim() {
         if (this.subIsdn != null) {

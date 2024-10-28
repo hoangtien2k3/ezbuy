@@ -16,6 +16,7 @@ import org.springframework.data.relational.core.mapping.Table;
 public class GroupNews extends EntityBase {
     @Id
     private String id;
+
     private String name; // ten nhom tin tuc
     private String code; // ma nhom tin tuc
     private Integer displayOrder; // thu tu sap xep

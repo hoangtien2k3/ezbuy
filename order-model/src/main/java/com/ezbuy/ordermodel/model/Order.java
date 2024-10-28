@@ -1,12 +1,11 @@
 package com.ezbuy.ordermodel.model;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.relational.core.mapping.Table;
-
-import java.time.LocalDateTime;
 
 @Table(name = "order")
 @NoArgsConstructor
@@ -59,7 +58,7 @@ public class Order {
 
     private String detailAddress;
 
-    private String individualId;//ma ca nhan tao don hang
+    private String individualId; // ma ca nhan tao don hang
 
-    private String logs; //thong tin loi khi goi order tao don hang
+    private String logs; // thong tin loi khi goi order tao don hang
 }

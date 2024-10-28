@@ -1,11 +1,10 @@
 package com.ezbuy.paymentmodel.dto.request;
 
 import com.ezbuy.paymentmodel.dto.CustomerDTO;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @AllArgsConstructor

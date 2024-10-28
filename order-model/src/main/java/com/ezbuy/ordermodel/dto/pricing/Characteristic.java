@@ -1,4 +1,3 @@
-
 package com.ezbuy.ordermodel.dto.pricing;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -17,5 +16,4 @@ public class Characteristic {
     protected String value;
     protected String valueType;
     protected Long quantity;
-
 }

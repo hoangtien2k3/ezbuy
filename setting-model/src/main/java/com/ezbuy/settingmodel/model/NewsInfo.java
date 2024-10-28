@@ -16,6 +16,7 @@ import org.springframework.data.relational.core.mapping.Table;
 public class NewsInfo extends EntityBase {
     @Id
     private String id;
+
     private String title; // tieu de
     private String code; // ma thong tin
     private Integer displayOrder; // thu tu sap xep

@@ -15,5 +15,4 @@ public class ServiceDTO {
     private Integer order;
     private String originId;
     private String telecomServiceAlias; // bo sung alias cho PYC Scontract
-
 }

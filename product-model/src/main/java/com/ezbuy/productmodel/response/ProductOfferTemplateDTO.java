@@ -1,19 +1,17 @@
 package com.ezbuy.productmodel.response;
 
-
 import com.ezbuy.productmodel.constants.Constants;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ezbuy.productmodel.dto.BaseProductSpecDTO;
 import com.ezbuy.productmodel.dto.PriceTemplateDTO;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.List;
+import java.util.Optional;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import java.util.List;
-import java.util.Optional;
 
 @Data
 @NoArgsConstructor
@@ -38,7 +36,7 @@ public class ProductOfferTemplateDTO extends BaseProductSpecDTO {
     private String templateCode;
     private String templateName;
     private Long totalPrice;
-    private String serviceAlias; //alias do product tra them 04/04
+    private String serviceAlias; // alias do product tra them 04/04
 
     private String durationValue;
 
@@ -46,7 +44,8 @@ public class ProductOfferTemplateDTO extends BaseProductSpecDTO {
         if (lstSpecTemplate == null || lstSpecTemplate.isEmpty()) {
             return;
         }
-        if(Constants.ServiceId.VBHXH.equals(telecomServiceId) || Constants.TelecomServiceAlias.VBHXH.equals(telecomServiceAlias)){
+        if (Constants.ServiceId.VBHXH.equals(telecomServiceId)
+                || Constants.TelecomServiceAlias.VBHXH.equals(telecomServiceAlias)) {
             Optional<ProductSpecCharDTO> productSpecCharOptional = lstSpecTemplate.stream()
                     .filter(prod -> "MONTH_USE".equals(prod.getCode()))
                     .findFirst();

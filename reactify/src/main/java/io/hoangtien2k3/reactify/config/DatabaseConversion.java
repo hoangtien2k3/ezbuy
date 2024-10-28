@@ -21,7 +21,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.*;
 import java.util.*;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
@@ -29,7 +28,6 @@ import org.springframework.data.r2dbc.convert.MappingR2dbcConverter;
 import org.springframework.data.r2dbc.convert.R2dbcCustomConversions;
 import org.springframework.data.r2dbc.dialect.MySqlDialect;
 import org.springframework.data.r2dbc.mapping.R2dbcMappingContext;
-import org.springframework.data.relational.core.mapping.DefaultNamingStrategy;
 import org.springframework.data.relational.core.mapping.NamingStrategy;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -49,9 +47,7 @@ public class DatabaseConversion {
      * getR2dbcConverter.
      * </p>
      *
-     * @return a
-     *         {@link org.springframework.data.r2dbc.convert.MappingR2dbcConverter}
-     *         object
+     * @return a {@link MappingR2dbcConverter} object
      */
     public MappingR2dbcConverter getR2dbcConverter() {
         R2dbcMappingContext mappingContext = getR2dbcMappingContext();
@@ -60,7 +56,7 @@ public class DatabaseConversion {
     }
 
     private R2dbcMappingContext getR2dbcMappingContext() {
-        NamingStrategy namingStrategy = DefaultNamingStrategy.INSTANCE;
+        NamingStrategy namingStrategy = NamingStrategy.INSTANCE;
         R2dbcCustomConversions r2dbcCustomConversions = getR2dbcCustomConversions();
         R2dbcMappingContext context = new R2dbcMappingContext(namingStrategy);
         context.setSimpleTypeHolder(r2dbcCustomConversions.getSimpleTypeHolder());
@@ -76,7 +72,7 @@ public class DatabaseConversion {
      * getListConverters.
      * </p>
      *
-     * @return a {@link java.util.List} object
+     * @return a {@link List} object
      */
     public List<Object> getListConverters() {
         List<Object> converters = new ArrayList<>();
@@ -98,7 +94,7 @@ public class DatabaseConversion {
     public enum InstantWriteConverter implements Converter<Instant, LocalDateTime> {
         INSTANCE;
 
-        public LocalDateTime convert(@NotNull Instant source) {
+        public LocalDateTime convert(Instant source) {
             return LocalDateTime.ofInstant(source, ZoneOffset.UTC);
         }
     }
@@ -108,7 +104,7 @@ public class DatabaseConversion {
         INSTANCE;
 
         @Override
-        public String convert(@NotNull Blob source) {
+        public String convert(Blob source) {
             try {
                 return Mono.from(source.stream())
                         .map(bb -> StandardCharsets.UTF_8.decode(bb).toString())
@@ -139,7 +135,7 @@ public class DatabaseConversion {
         INSTANCE;
 
         @Override
-        public UUID convert(@NotNull byte[] source) {
+        public UUID convert(byte[] source) {
             ByteBuffer byteBuffer = ByteBuffer.wrap(source);
             long high = byteBuffer.getLong();
             long low = byteBuffer.getLong();
@@ -172,7 +168,7 @@ public class DatabaseConversion {
         INSTANCE;
 
         @Override
-        public ZonedDateTime convert(@NotNull LocalDateTime localDateTime) {
+        public ZonedDateTime convert(LocalDateTime localDateTime) {
             // Be aware - we are using the UTC timezone
             return ZonedDateTime.of(localDateTime, ZoneOffset.UTC);
         }
@@ -193,8 +189,8 @@ public class DatabaseConversion {
         INSTANCE;
 
         @Override
-        public Long convert(@NotNull Duration source) {
-            return source.toMillis();
+        public Long convert(Duration source) {
+            return source != null ? source.toMillis() : null;
         }
     }
 
@@ -206,7 +202,8 @@ public class DatabaseConversion {
         public Date convert(LocalDateTime localDateTime) {
             // Be aware - we are using the UTC timezone
             Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
-            return Date.from(instant);
+            Date date = Date.from(instant);
+            return date;
         }
     }
 
@@ -215,8 +212,8 @@ public class DatabaseConversion {
         INSTANCE;
 
         @Override
-        public Duration convert(@NotNull Long source) {
-            return Duration.ofMillis(source);
+        public Duration convert(Long source) {
+            return source != null ? Duration.ofMillis(source) : null;
         }
     }
 }

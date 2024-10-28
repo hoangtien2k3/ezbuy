@@ -23,23 +23,40 @@ package io.hoangtien2k3.reactify.constants;
  * @author hoangtien2k3
  */
 public class CommonConstant {
+    /** Constant <code>MSISDN_TOKEN="msisdn"</code> */
     public static final String MSISDN_TOKEN = "msisdn";
+    /** Constant <code>NAME_PARAM="name"</code> */
     public static final String NAME_PARAM = "name";
+    /** Constant <code>PATH_PARAM="path"</code> */
     public static final String PATH_PARAM = "path";
+    /** Constant <code>REQUEST_ID="requestId"</code> */
     public static final String REQUEST_ID = "requestId";
 
+    /** Constant <code>DATE_FORMAT="yyyy-MM-dd HH:mm:ss"</code> */
     public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    /** Constant <code>DATE_FORMAT_MILI="yyyy-MM-dd HH:mm:ss.S"</code> */
     public static final String DATE_FORMAT_MILI = "yyyy-MM-dd HH:mm:ss.S";
+    /** Constant <code>DATE_FORMAT_2="HH:mm:ss dd-MM-yyyy"</code> */
     public static final String DATE_FORMAT_2 = "HH:mm:ss dd-MM-yyyy";
+    /** Constant <code>DATE_FORMAT_3="HH:mm:ss dd/MM/yyyy"</code> */
     public static final String DATE_FORMAT_3 = "HH:mm:ss dd/MM/yyyy";
+    /** Constant <code>DATE_FORMAT_SHORT="y-M-d H:m:s"</code> */
     public static final String DATE_FORMAT_SHORT = "y-M-d H:m:s";
+    /** Constant <code>DATE_FORMAT_SHORT_Y_M_D="y-M-d"</code> */
     public static final String DATE_FORMAT_SHORT_Y_M_D = "y-M-d";
+    /** Constant <code>DATE_FORMAT_SHORT_Y_M="y-M-"</code> */
     public static final String DATE_FORMAT_SHORT_Y_M = "y-M-";
+    /** Constant <code>DATE_FORMAT_SHORT_M="M"</code> */
     public static final String DATE_FORMAT_SHORT_M = "M";
+    /** Constant <code>DATE_FORMAT_SHORT_Y="y"</code> */
     public static final String DATE_FORMAT_SHORT_Y = "y";
+    /** Constant <code>DATE_FORMAT_SHORT_YYYY="yyyy"</code> */
     public static final String DATE_FORMAT_SHORT_YYYY = "yyyy";
+    /** Constant <code>DATE_FORMAT_SHORT_MM="MM"</code> */
     public static final String DATE_FORMAT_SHORT_MM = "MM";
+    /** Constant <code>DATE_FORMAT_SHORT_DD="dd"</code> */
     public static final String DATE_FORMAT_SHORT_DD = "dd";
+    /** Constant <code>DATE_FORMAT_NO_TIME="MM/dd/yyyy"</code> */
     public static final String DATE_FORMAT_NO_TIME = "MM/dd/yyyy";
     /** Constant <code>DATE_FORMAT_YMD="yyyy-MM-dd"</code> */
     public static final String DATE_FORMAT_YMD = "yyyy-MM-dd";

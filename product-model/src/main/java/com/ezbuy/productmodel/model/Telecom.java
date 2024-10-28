@@ -1,6 +1,7 @@
 package com.ezbuy.productmodel.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,8 +10,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
-
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -21,6 +20,7 @@ import java.time.LocalDateTime;
 public class Telecom implements Persistable<String> {
     @Id
     private String id;
+
     private String name;
     private String serviceAlias;
     private String description;
@@ -41,5 +41,4 @@ public class Telecom implements Persistable<String> {
     public boolean isNew() {
         return this.isNew || id == null;
     }
-
 }

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ProductTemplateCharacteristicPaidDTO {
 
-    //    private String code;
+    // private String code;
     private String desc;
     private String name;
     private String value;

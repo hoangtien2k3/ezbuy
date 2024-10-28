@@ -16,6 +16,7 @@ import org.springframework.data.relational.core.mapping.Table;
 public class NewsContent extends EntityBase {
     @Id
     private String id;
+
     private String content; // noi dung
     private String newsInfoId; // id thong tin tin tuc
 }

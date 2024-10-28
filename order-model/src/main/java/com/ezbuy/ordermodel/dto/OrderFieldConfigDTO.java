@@ -15,7 +15,7 @@ public class OrderFieldConfigDTO {
 
     private Integer detailAddress;
 
-    private Integer fromStaff; //nhan vien moi gioi
+    private Integer fromStaff; // nhan vien moi gioi
 
     private Integer amStaff; // ma AM ho tro
 }

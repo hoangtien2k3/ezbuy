@@ -14,5 +14,4 @@ public class OrderProductDTO {
     private String templateId;
 
     private Integer quantity;
-
 }

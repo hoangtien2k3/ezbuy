@@ -1,13 +1,12 @@
 package com.ezbuy.ordermodel.dto.ws;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -19,8 +18,8 @@ public class RepresentativeCustDTO {
     private Long custId;
     private String custType;
 
-//    @XmlElement(name = "custTypeDTO")
-//    private CustTypeDTO custTypeDTO;
+    // @XmlElement(name = "custTypeDTO")
+    // private CustTypeDTO custTypeDTO;
 
     private String name;
     private String birthDate;

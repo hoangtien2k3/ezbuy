@@ -1,11 +1,10 @@
 package com.ezbuy.cartmodel.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -18,5 +17,5 @@ public class Product {
     private String telecomServiceId;
 
     @NotEmpty(message = "telecom.alias.not.null")
-    private String telecomServiceAlias; //Bo sung Alias PYCXXX/LuongToanTrinh
+    private String telecomServiceAlias; // Bo sung Alias PYCXXX/LuongToanTrinh
 }

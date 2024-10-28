@@ -1,12 +1,11 @@
 package com.ezbuy.ordermodel.dto.response;
 
 import com.ezbuy.ordermodel.dto.ProfileForBusinessCustDTO;
-import lombok.Data;
-
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
+import lombok.Data;
 
 @XmlRootElement(name = "return")
 @XmlAccessorType(XmlAccessType.PROPERTY)

@@ -12,5 +12,4 @@ public class TelecomServiceResponse {
     private String clientId;
     private String telecomServiceAlias;
     private String serviceAlias;
-
 }

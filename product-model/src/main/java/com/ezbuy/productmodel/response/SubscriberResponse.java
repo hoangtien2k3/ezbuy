@@ -1,12 +1,11 @@
 package com.ezbuy.productmodel.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor

@@ -33,6 +33,7 @@ import lombok.NoArgsConstructor;
 public class UserDTO {
     @JsonProperty("sub")
     private String id;
+
     @JsonProperty("preferred_username")
     private String username;
 }

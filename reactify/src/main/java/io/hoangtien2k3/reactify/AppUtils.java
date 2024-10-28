@@ -35,7 +35,7 @@ public class AppUtils {
      * @param functionMono
      *            the Mono stream to be executed
      */
-    public static void runHiddenStream(Mono<?> functionMono) {
+    public static void runHiddenStream(Mono functionMono) {
         functionMono
                 .subscribeOn(Schedulers.boundedElastic())
                 .timeout(Duration.ofMinutes(2))
@@ -52,7 +52,7 @@ public class AppUtils {
      * @param timeout
      *            the timeout duration in minutes
      */
-    public static void runHiddenStreamTimeout(Mono<?> functionMono, int timeout) {
+    public static void runHiddenStreamTimeout(Mono functionMono, int timeout) {
         functionMono
                 .subscribeOn(Schedulers.boundedElastic())
                 .timeout(Duration.ofMinutes(timeout))
@@ -67,7 +67,7 @@ public class AppUtils {
      * @param functionMono
      *            the Mono stream to be executed
      */
-    public static void runHiddenStreamWithoutTimeout(Mono<?> functionMono) {
+    public static void runHiddenStreamWithoutTimeout(Mono functionMono) {
         functionMono
                 .subscribeOn(Schedulers.boundedElastic())
                 .doOnError(e -> log.error("runHiddenStream ex: ", e))
@@ -83,7 +83,7 @@ public class AppUtils {
      *            the Mono stream to be executed
      * @return a Mono of Boolean indicating the result of the operation
      */
-    public static Mono<Boolean> insertData(Mono<?> functionMono) {
+    public static Mono<Boolean> insertData(Mono functionMono) {
         return functionMono.map(rs -> true).switchIfEmpty(Mono.just(true)).onErrorResume(throwable -> Mono.just(false));
     }
 }

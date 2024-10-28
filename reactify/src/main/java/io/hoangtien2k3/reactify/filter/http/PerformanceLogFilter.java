@@ -22,15 +22,12 @@ import io.hoangtien2k3.reactify.DataUtil;
 import io.hoangtien2k3.reactify.RequestUtils;
 import io.hoangtien2k3.reactify.constants.CommonConstant;
 import io.hoangtien2k3.reactify.model.GatewayContext;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
-
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -64,12 +61,9 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
     private static final int MAX_BYTE = 800; // Max byte allow to print
     private final Environment environment;
 
-    /**
-     * {@inheritDoc}
-     */
-    @NotNull
+    /** {@inheritDoc} */
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, @NotNull WebFilterChain chain) {
+    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         long startMillis = System.currentTimeMillis();
         String name =
                 exchange.getRequest().getPath().pathWithinApplication().value().substring(1);
@@ -119,7 +113,21 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
             MDC.put(CommonConstant.REQUEST_ID, !DataUtil.isNullOrEmpty(requestId) ? requestId : "-");
         }
 
-        logPerf.info("{} {} {} A2 {}", name, duration, result, o == null ? "-" : o.getMessage());
+        logPerf.info(new StringBuilder(name)
+                .append(" ")
+                .append(duration)
+                .append(" ")
+                .append(result)
+                .append(" A2 ") // M1:
+                // tu
+                // backend
+                // Java1,
+                // M2
+                // tu
+                // backend
+                // Java2
+                .append(o == null ? "-" : o.getMessage())
+                .toString());
     }
 
     private void logPerf(
@@ -136,7 +144,21 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
             else MDC.put(CommonConstant.MSISDN_TOKEN, "-");
         }
 
-        logPerf.info("{} {} {} A2 {}", name, duration, result, o == null ? "-" : o.getMessage());
+        logPerf.info(new StringBuilder(name)
+                .append(" ")
+                .append(duration)
+                .append(" ")
+                .append(result)
+                .append(" A2 ") // M1:
+                // tu
+                // backend
+                // Java1,
+                // M2
+                // tu
+                // backend
+                // Java2
+                .append(o == null ? "-" : o.getMessage())
+                .toString());
     }
 
     private void logReqResponse(ServerWebExchange exchange) {
@@ -189,10 +211,10 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
         }
         MediaType contentType = headers.getContentType();
         long length = headers.getContentLength();
-        if (length > 0 && null != contentType
+        if (length > 0
+                && null != contentType
                 && (contentType.includes(MediaType.APPLICATION_JSON)
-                || contentType.includes(MediaType.APPLICATION_JSON))
-        ) {
+                        || contentType.includes(MediaType.APPLICATION_JSON))) {
             logs.add(String.format("%s", truncateBody(gatewayContext.getRequestBody())));
         } else if (length > 0 && null != contentType && (contentType.includes(MediaType.APPLICATION_FORM_URLENCODED))) {
             logs.add(String.format("%s", truncateBody(gatewayContext.getFormData())));
@@ -205,7 +227,7 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
         StringBuilder messageResponse = new StringBuilder();
         Set<String> keys = formData.keySet();
         for (String key : keys) {
-            messageResponse.append(key).append(":").append(truncateBody(formData.get(key)));
+            messageResponse.append(key + ":" + truncateBody(formData.get(key)));
         }
         return messageResponse.toString();
     }
@@ -222,6 +244,8 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
         int b = 0;
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
+
+            // ranges from http://en.wikipedia.org/wiki/UTF-8
             int skip = 0;
             int more;
             if (c <= 0x007f) {
@@ -284,13 +308,14 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
      * @param exchange
      * @param logs
      */
-    private void logResponse(ServerWebExchange exchange, List<String> logs) {
+    private Mono<Void> logResponse(ServerWebExchange exchange, List<String> logs) {
         ServerHttpResponse response = exchange.getResponse();
         logs.add(String.format("%s", response.getStatusCode().value()));
         GatewayContext gatewayContext = exchange.getAttribute(GatewayContext.CACHE_GATEWAY_CONTEXT);
         if (gatewayContext.getReadResponseData()) {
             logs.add(String.format("%s", truncateBody(gatewayContext.getResponseBody())));
         }
+        return Mono.empty();
     }
 
     private String truncateBody(Object responseBody) {
@@ -313,9 +338,7 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
         setTraceIdInMDC(traceId);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int getOrder() {
         return 7;

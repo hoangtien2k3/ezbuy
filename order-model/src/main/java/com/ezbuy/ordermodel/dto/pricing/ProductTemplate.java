@@ -14,5 +14,4 @@ import lombok.experimental.SuperBuilder;
 public class ProductTemplate {
     String templateCode;
     Long quantity;
-
 }

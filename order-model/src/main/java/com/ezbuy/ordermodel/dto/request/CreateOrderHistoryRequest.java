@@ -2,9 +2,8 @@ package com.ezbuy.ordermodel.dto.request;
 
 import com.ezbuy.ordermodel.dto.OrderDTO;
 import com.ezbuy.ordermodel.model.OrderItem;
-import lombok.Data;
-
 import java.util.List;
+import lombok.Data;
 
 @Data
 public class CreateOrderHistoryRequest {

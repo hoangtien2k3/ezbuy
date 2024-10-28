@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class PartnerLicenseKeyRequest {
     private String serviceAlias;
-    private String userId; //id user dang nhap
-    private String organizationId; //id doanh nghiep
+    private String userId; // id user dang nhap
+    private String organizationId; // id doanh nghiep
 }

@@ -18,7 +18,6 @@ package io.hoangtien2k3.reactify.filter.webclient;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
@@ -40,12 +39,11 @@ public class WebClientLoggingFilter implements ExchangeFilterFunction {
     private final List<String> obfuscateHeader;
 
     /** {@inheritDoc} */
-    @NotNull
     @Override
-    public Mono<ClientResponse> filter(ClientRequest request, @NotNull ExchangeFunction next) {
+    public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
         log.info("Start Call API - Method: {} {}", request.method(), request.url());
         if (request.headers().getContentLength() > 0) {
-            log.info("body {}", request.body());
+            log.info("body ", request.body());
         }
         if (log.isDebugEnabled()) {
             request.headers()

@@ -1,9 +1,8 @@
 package com.ezbuy.productmodel.response;
 
 import com.ezbuy.productmodel.model.Product;
-import lombok.Data;
-
 import java.util.List;
+import lombok.Data;
 
 @Data
 public class GetProductInfoResponse {

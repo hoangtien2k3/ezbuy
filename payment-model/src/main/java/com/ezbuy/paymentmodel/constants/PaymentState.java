@@ -1,7 +1,6 @@
 package com.ezbuy.paymentmodel.constants;
 
 public enum PaymentState {
-
     NEW(0),
     DONE(1);
 
@@ -10,7 +9,6 @@ public enum PaymentState {
     PaymentState(int value) {
         this.value = value;
     }
-
 
     public int getValue() {
         return value;

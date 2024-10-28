@@ -4,19 +4,19 @@ import com.ezbuy.ordermodel.dto.request.GetInvoiceInfoHistoryRequest;
 import com.ezbuy.ordermodel.model.InvoiceInfoHistory;
 import com.ezbuy.orderservice.repoTemplate.InvoiceInfoHistoryRepositoryTemplate;
 import io.hoangtien2k3.reactify.DataUtil;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-import reactor.core.publisher.Flux;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 
 @Repository
 @RequiredArgsConstructor
-public class InvoiceInfoHistoryRepositoryTemplateImpl extends BaseRepositoryTemplate implements InvoiceInfoHistoryRepositoryTemplate {
+public class InvoiceInfoHistoryRepositoryTemplateImpl extends BaseRepositoryTemplate
+        implements InvoiceInfoHistoryRepositoryTemplate {
     private void buildQuery(StringBuilder builder, Map<String, Object> params, GetInvoiceInfoHistoryRequest request) {
         builder.append("select * from invoice_info_history \n");
         builder.append("where 1 = 1 \n");
@@ -41,6 +41,7 @@ public class InvoiceInfoHistoryRepositoryTemplateImpl extends BaseRepositoryTemp
     private LocalDateTime getFromDate(LocalDate fromDate) {
         return fromDate.atTime(0, 0, 0);
     }
+
     private LocalDateTime getToDate(LocalDate toDate) {
         return toDate.atTime(23, 59, 59);
     }
@@ -51,10 +52,8 @@ public class InvoiceInfoHistoryRepositoryTemplateImpl extends BaseRepositoryTemp
         Map<String, Object> params = new HashMap<>();
         StringBuilder query = new StringBuilder();
         buildQuery(query, params, request);
-        query.append("ORDER BY ").append(sorting).append(" \n")
-                .append(" LIMIT :pageSize");
+        query.append("ORDER BY ").append(sorting).append(" \n").append(" LIMIT :pageSize");
         params.put("pageSize", 5);
         return listQuery(query.toString(), params, InvoiceInfoHistory.class);
     }
-
 }
