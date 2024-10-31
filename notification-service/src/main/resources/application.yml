@@ -49,6 +49,8 @@ keycloak:
   realm: ezbuy-server
   serverUrl: http://localhost:8080
   host: localhost
+
+#client
 client:
   auth:
     internal-oauth: true

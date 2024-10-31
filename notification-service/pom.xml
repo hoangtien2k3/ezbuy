@@ -50,8 +50,8 @@
 		</dependency>
 		<dependency>
 			<groupId>com.ezbuy.platform</groupId>
-			<artifactId>noti-model</artifactId>
-			<version>${revision}</version>
+			<artifactId>notification-model</artifactId>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 
 		<!--Send mail with thymeleaf-->

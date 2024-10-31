@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping(TRANSMISSION_PATH)
 class TransmissionController(
     private val transmissionService: TransmissionService

@@ -8,8 +8,7 @@ interface TransmissionQuery {
             INNER JOIN notification n ON tr.notification_id = n.id
             INNER JOIN notification_category c on n.category_id = c.id
             INNER JOIN channel c2 on tr.channel_id = c2.id
-            WHERE
-            state IN ('NEW')
+            WHERE state IN ('NEW')
             AND c2.type = 'REST'
             AND tr.receiver = :receiver
             AND tr.status = 1

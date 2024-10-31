@@ -62,10 +62,9 @@
         <module>shipping</module>
         <module>system</module>
         <module>tax</module>
-        <module>noti-send</module>
+        <module>notification-model</module>
         <module>notification-send</module>
-        <module>noti-model</module>
-        <module>noti-service</module>
+        <module>notification-service</module>
         <module>rating-model</module>
         <module>rating-service</module>
         <module>setting-model</module>

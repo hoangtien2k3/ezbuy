@@ -38,7 +38,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.ezbuy.platform</groupId>
-			<artifactId>noti-model</artifactId>
+			<artifactId>notification-model</artifactId>
 			<version>${revision}</version>
 		</dependency>
 		<dependency>
