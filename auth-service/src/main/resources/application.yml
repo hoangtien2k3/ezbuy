@@ -5,9 +5,9 @@ logging:
   level:
     root: INFO
     org.springdoc: DEBUG
-    org.springframework.r2dbc: DEBUG
-    io.r2dbc.postgresql.QUERY: DEBUG
-    io.r2dbc.postgresql.PARAM: DEBUG
+#    org.springframework.r2dbc: DEBUG
+#    io.r2dbc.postgresql.QUERY: DEBUG
+#    io.r2dbc.postgresql.PARAM: DEBUG
 
 dotenv:
   enabled: true
@@ -257,3 +257,11 @@ springdoc:
     path: /v1/auth/swagger-ui.html
     url: /v1/auth/v3/api-docs
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"  # Bật tất cả các endpoint
+  endpoint:
+    health:
+      show-details: always  # Hiển thị chi tiết health status

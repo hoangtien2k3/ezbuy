@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class TransmissionNotiDTO {
-
     private String id;
     private String receiver;
     private String email;

@@ -154,7 +154,7 @@ public class MailServiceImpl implements MailService {
     private Mono<Boolean> sendEmail(String sender, String receiver, String subject, String content, boolean isHtml) {
         return Mono.fromCallable(() -> {
                     if (DataUtil.isNullOrEmpty(content)) {
-                        logger.error("Content null can not be send to {0}", receiver);
+                        logger.error("Content null can not be send to {}", receiver);
                         return false;
                     }
                     MimeMessage mimeMessage = javaMailSender.createMimeMessage();

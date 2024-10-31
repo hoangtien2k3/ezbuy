@@ -52,7 +52,7 @@
         <module>cart-model</module>
         <module>cart-service</module>
         <module>customer</module>
-        <module>reactify</module>
+        <module>reactify-core</module>
         <module>order-model</module>
         <module>order-service</module>
         <module>payment-model</module>
@@ -63,6 +63,7 @@
         <module>system</module>
         <module>tax</module>
         <module>noti-send</module>
+        <module>notification-send</module>
         <module>noti-model</module>
         <module>noti-service</module>
         <module>rating-model</module>

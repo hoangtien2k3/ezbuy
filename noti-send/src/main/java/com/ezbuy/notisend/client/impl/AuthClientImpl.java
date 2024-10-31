@@ -6,6 +6,7 @@ import io.hoangtien2k3.reactify.client.BaseRestClient;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,8 @@ import reactor.core.publisher.Mono;
 public class AuthClientImpl implements AuthClient {
 
     private final BaseRestClient<ContactResponse> baseRestClient;
+
+    @Qualifier("auth")
     private final WebClient auth;
 
     @Override
