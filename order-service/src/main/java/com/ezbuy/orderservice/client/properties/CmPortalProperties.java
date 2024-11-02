@@ -10,5 +10,4 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "client.cmportal", ignoreInvalidFields = true)
 @Data
 @AllArgsConstructor
-public class CmPortalProperties extends WebClientProperties {
-}
+public class CmPortalProperties extends WebClientProperties {}

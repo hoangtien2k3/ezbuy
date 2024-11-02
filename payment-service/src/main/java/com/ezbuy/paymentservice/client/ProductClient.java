@@ -3,11 +3,10 @@ package com.ezbuy.paymentservice.client;
 import com.ezbuy.paymentmodel.dto.response.IdentityProductPrice;
 import com.ezbuy.productmodel.model.Subscriber;
 import com.ezbuy.productmodel.response.ProductOfferTemplateDTO;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import java.util.List;
 import java.util.Set;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface ProductClient {
     Flux<IdentityProductPrice> getExProductPrices(Set<String> templateIds);

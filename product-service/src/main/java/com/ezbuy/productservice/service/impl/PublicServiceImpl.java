@@ -1,5 +1,7 @@
 package com.ezbuy.productservice.service.impl;
 
+import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
+
 import com.ezbuy.productmodel.request.GetListProductOfferingComboForHubSmeRequest;
 import com.ezbuy.productmodel.request.GetProductTemplateDetailRequest;
 import com.ezbuy.productservice.client.ProductClient;
@@ -12,8 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -22,22 +22,29 @@ public class PublicServiceImpl implements PublicService {
 
     @Override
     @LocalCache(durationInMinute = 30)
-    public Mono<DataResponse> getListProductOfferingComboForHubSme(GetListProductOfferingComboForHubSmeRequest request) {
-        return productClient.getListProductOfferingComboForHubSme(request)
-                .flatMap(productOfferingComboForHubSme -> Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), productOfferingComboForHubSme)));
+    public Mono<DataResponse> getListProductOfferingComboForHubSme(
+            GetListProductOfferingComboForHubSmeRequest request) {
+        return productClient
+                .getListProductOfferingComboForHubSme(request)
+                .flatMap(productOfferingComboForHubSme ->
+                        Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), productOfferingComboForHubSme)));
     }
 
     @Override
     @LocalCache(durationInMinute = 30)
     public Mono<DataResponse> getListTemplateComboForHubSme(String productOfferingId) {
-        return productClient.getListTemplateComboForHubSme(productOfferingId)
-                .flatMap(productTemplateComboForHubSme -> Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), productTemplateComboForHubSme)));
+        return productClient
+                .getListTemplateComboForHubSme(productOfferingId)
+                .flatMap(productTemplateComboForHubSme ->
+                        Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), productTemplateComboForHubSme)));
     }
 
     @Override
     @LocalCache(durationInMinute = 30)
-    public Mono<DataResponse> getProductTemplateDetail(GetProductTemplateDetailRequest getProductTemplateDetailRequest) {
-        return productClient.getProductTemplateDetail(getProductTemplateDetailRequest)
+    public Mono<DataResponse> getProductTemplateDetail(
+            GetProductTemplateDetailRequest getProductTemplateDetailRequest) {
+        return productClient
+                .getProductTemplateDetail(getProductTemplateDetailRequest)
                 .map(response -> {
                     if (response.isEmpty()) {
                         return new DataResponse<>(Translator.toLocaleVi(SUCCESS), null);

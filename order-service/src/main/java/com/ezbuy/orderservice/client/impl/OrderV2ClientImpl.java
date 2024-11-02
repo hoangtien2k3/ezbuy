@@ -14,17 +14,16 @@ import io.hoangtien2k3.reactify.DataWsUtil;
 import io.hoangtien2k3.reactify.Translator;
 import io.hoangtien2k3.reactify.constants.CommonErrorCode;
 import io.hoangtien2k3.reactify.exception.BusinessException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -37,36 +36,47 @@ public class OrderV2ClientImpl implements OrderV2Client {
 
     private final OrderV2Properties orderV2Properties;
 
-    public OrderV2ClientImpl(BaseSoapClient soapClient,
-                             @Qualifier("orderV2Client") WebClient orderV2Client,
-                             OrderV2Properties orderV2Properties) {
+    public OrderV2ClientImpl(
+            BaseSoapClient soapClient,
+            @Qualifier("orderV2Client") WebClient orderV2Client,
+            OrderV2Properties orderV2Properties) {
         this.soapClient = soapClient;
         this.orderV2Client = orderV2Client;
         this.orderV2Properties = orderV2Properties;
     }
 
     @Override
-    public Mono<ProfileForBusinessCustDTO> getProfileKHDN(String data, Long telecomServiceId, HashMap<String, Object> metaData) {
-        String payload = OrderClientUtils.getProfileKHDNRequest(data, orderV2Properties.getUsername(), orderV2Properties.getPassword());
-        return soapClient.callApiGetProfileKHDN(orderV2Client, null, payload, CreateProfileKHDNResponse.class)
+    public Mono<ProfileForBusinessCustDTO> getProfileKHDN(
+            String data, Long telecomServiceId, HashMap<String, Object> metaData) {
+        String payload = OrderClientUtils.getProfileKHDNRequest(
+                data, orderV2Properties.getUsername(), orderV2Properties.getPassword());
+        return soapClient
+                .callApiGetProfileKHDN(orderV2Client, null, payload, CreateProfileKHDNResponse.class)
                 .flatMap(response -> {
                     if (response == Optional.empty()) {
                         return new CreateProfileKHDNResponse();
                     }
-                    CreateProfileKHDNResponse createProfileKHDNResponse = (CreateProfileKHDNResponse)((Optional) response).get();
-                    if (createProfileKHDNResponse == null || DataUtil.isNullOrEmpty(createProfileKHDNResponse.getLstProfileForBusinessCust())) {
+                    CreateProfileKHDNResponse createProfileKHDNResponse =
+                            (CreateProfileKHDNResponse) ((Optional) response).get();
+                    if (createProfileKHDNResponse == null
+                            || DataUtil.isNullOrEmpty(createProfileKHDNResponse.getLstProfileForBusinessCust())) {
                         return new ProfileForBusinessCustDTO();
                     }
-                    ProfileForBusinessCustDTO profile = createProfileKHDNResponse.getLstProfileForBusinessCust().get(0);
+                    ProfileForBusinessCustDTO profile = createProfileKHDNResponse
+                            .getLstProfileForBusinessCust()
+                            .get(0);
                     return Mono.just(profile);
                 })
-                .onErrorResume(throwable -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, ((BusinessException) throwable).getMessage())));
+                .onErrorResume(throwable -> Mono.error(new BusinessException(
+                        CommonErrorCode.INTERNAL_SERVER_ERROR, ((BusinessException) throwable).getMessage())));
     }
 
     @Override
     public Mono<Optional<CreateOrderResponse>> createOrder(String orderType, String data) {
-        String payload = OrderClientUtils.createOrder(orderType, data, orderV2Properties.getUsername(), orderV2Properties.getPassword());
-        return soapClient.callV2(orderV2Client, null, payload, CreateOrderResponse.class)
+        String payload = OrderClientUtils.createOrder(
+                orderType, data, orderV2Properties.getUsername(), orderV2Properties.getPassword());
+        return soapClient
+                .callV2(orderV2Client, null, payload, CreateOrderResponse.class)
                 .doOnError(err -> log.error("Exception when call soap: ", err))
                 .onErrorResume(throwable -> {
                     log.error("Exception when call soap: ", throwable);
@@ -76,42 +86,61 @@ public class OrderV2ClientImpl implements OrderV2Client {
 
     @Override
     public Mono<ProfileForBusinessCustDTO> getProfileXNDLKH(String data) {
-        String payload = OrderClientUtils.getProfileXNDLKHRequest(data, orderV2Properties.getUsername(), orderV2Properties.getPassword());
+        String payload = OrderClientUtils.getProfileXNDLKHRequest(
+                data, orderV2Properties.getUsername(), orderV2Properties.getPassword());
         return handleGetProfileOrder(payload);
     }
 
     public Mono<ProfileForBusinessCustDTO> handleGetProfileOrder(String payload) {
-        return soapClient.call(orderV2Client, null, payload, CreateProfileKHDNResponse.class)
+        return soapClient
+                .call(orderV2Client, null, payload, CreateProfileKHDNResponse.class)
                 .flatMap(response -> {
                     if (response == Optional.empty()) {
                         return new CreateProfileKHDNResponse();
                     }
-                    CreateProfileKHDNResponse createProfileKHDNResponse = (CreateProfileKHDNResponse)((Optional) response).get();
-                    if (createProfileKHDNResponse == null || DataUtil.isNullOrEmpty(createProfileKHDNResponse.getLstProfileForBusinessCust())) {
+                    CreateProfileKHDNResponse createProfileKHDNResponse =
+                            (CreateProfileKHDNResponse) ((Optional) response).get();
+                    if (createProfileKHDNResponse == null
+                            || DataUtil.isNullOrEmpty(createProfileKHDNResponse.getLstProfileForBusinessCust())) {
                         return new ProfileForBusinessCustDTO();
                     }
-                    ProfileForBusinessCustDTO profile = createProfileKHDNResponse.getLstProfileForBusinessCust().get(0);
+                    ProfileForBusinessCustDTO profile = createProfileKHDNResponse
+                            .getLstProfileForBusinessCust()
+                            .get(0);
                     return Mono.just(profile);
                 })
                 .onErrorResume(throwable -> {
                     log.error(throwable.toString());
-                    return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, Translator.toLocaleVi("call.soap.order.error")));
+                    return Mono.error(new BusinessException(
+                            CommonErrorCode.INTERNAL_SERVER_ERROR, Translator.toLocaleVi("call.soap.order.error")));
                 });
     }
 
     @Override
-    public Mono<Optional<List<GetOrderHistoryResponse>>> getOrderHistoryHub(SearchOrderRequest request, List<String> systemTypeList, List<String> orderTypeList) {
-        String payload = OrderV2ClientUtils.getOrderHistoryHubPayload(null, request.getIndividualId(), systemTypeList, orderTypeList,
-                request.getPageSize(), request.getPageIndex(), request.getState(), orderV2Properties.getUsername(), orderV2Properties.getPassword());
-        return soapClient.callRaw(orderV2Client, null, payload)
+    public Mono<Optional<List<GetOrderHistoryResponse>>> getOrderHistoryHub(
+            SearchOrderRequest request, List<String> systemTypeList, List<String> orderTypeList) {
+        String payload = OrderV2ClientUtils.getOrderHistoryHubPayload(
+                null,
+                request.getIndividualId(),
+                systemTypeList,
+                orderTypeList,
+                request.getPageSize(),
+                request.getPageIndex(),
+                request.getState(),
+                orderV2Properties.getUsername(),
+                orderV2Properties.getPassword());
+        return soapClient
+                .callRaw(orderV2Client, null, payload)
                 .map(response -> {
                     if (DataUtil.isNullOrEmpty(response)) {
                         return Optional.empty();
                     }
-                    List<String> realData = getListDataByTag(DataUtil.safeToString(response), TAG_OPEN_RETURN, TAG_CLOSE_RETURN);
+                    List<String> realData =
+                            getListDataByTag(DataUtil.safeToString(response), TAG_OPEN_RETURN, TAG_CLOSE_RETURN);
                     if (!DataUtil.isNullOrEmpty(realData)) {
                         List<GetOrderHistoryResponse> result = new ArrayList<>();
-                        realData.forEach(dataItem -> result.add(DataWsUtil.xmlToObj(TAG_OPEN_RETURN + dataItem + TAG_CLOSE_RETURN, GetOrderHistoryResponse.class)));
+                        realData.forEach(dataItem -> result.add(DataWsUtil.xmlToObj(
+                                TAG_OPEN_RETURN + dataItem + TAG_CLOSE_RETURN, GetOrderHistoryResponse.class)));
                         return Optional.of(result);
                     } else {
                         return Optional.empty();
@@ -141,19 +170,26 @@ public class OrderV2ClientImpl implements OrderV2Client {
 
     @Override
     public Mono<ProfileForBusinessCustDTO> getFileContractToView(String orderType, String data) {
-        String payload = OrderClientUtils.getFileContractToView(data, orderType, orderV2Properties.getUsername(), orderV2Properties.getPassword());
-        return soapClient.callApiGetProfileKHDN(orderV2Client, null, payload, CreateProfileKHDNResponse.class)
+        String payload = OrderClientUtils.getFileContractToView(
+                data, orderType, orderV2Properties.getUsername(), orderV2Properties.getPassword());
+        return soapClient
+                .callApiGetProfileKHDN(orderV2Client, null, payload, CreateProfileKHDNResponse.class)
                 .flatMap(response -> {
                     if (response == Optional.empty()) {
                         return new CreateProfileKHDNResponse();
                     }
-                    CreateProfileKHDNResponse createProfileKHDNResponse = (CreateProfileKHDNResponse)((Optional) response).get();
-                    if (createProfileKHDNResponse == null || DataUtil.isNullOrEmpty(createProfileKHDNResponse.getLstProfileForBusinessCust())) {
+                    CreateProfileKHDNResponse createProfileKHDNResponse =
+                            (CreateProfileKHDNResponse) ((Optional) response).get();
+                    if (createProfileKHDNResponse == null
+                            || DataUtil.isNullOrEmpty(createProfileKHDNResponse.getLstProfileForBusinessCust())) {
                         return new ProfileForBusinessCustDTO();
                     }
-                    ProfileForBusinessCustDTO profile = createProfileKHDNResponse.getLstProfileForBusinessCust().get(0);
+                    ProfileForBusinessCustDTO profile = createProfileKHDNResponse
+                            .getLstProfileForBusinessCust()
+                            .get(0);
                     return Mono.just(profile);
                 })
-                .onErrorResume(throwable -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, ((BusinessException) throwable).getMessage())));
+                .onErrorResume(throwable -> Mono.error(new BusinessException(
+                        CommonErrorCode.INTERNAL_SERVER_ERROR, ((BusinessException) throwable).getMessage())));
     }
 }

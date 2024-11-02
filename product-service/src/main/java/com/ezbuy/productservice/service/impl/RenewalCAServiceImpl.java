@@ -1,5 +1,8 @@
 package com.ezbuy.productservice.service.impl;
 
+import static com.ezbuy.authmodel.constants.AuthConstants.MySign.SIGH_HASH_SUCCESS;
+import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
+
 import com.ezbuy.authmodel.dto.response.TenantIdentifyDTO;
 import com.ezbuy.ordermodel.dto.request.*;
 import com.ezbuy.ordermodel.dto.response.PricingProductItemResponse;
@@ -22,6 +25,10 @@ import io.hoangtien2k3.reactify.constants.CommonErrorCode;
 import io.hoangtien2k3.reactify.constants.Constants;
 import io.hoangtien2k3.reactify.exception.BusinessException;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,14 +36,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static com.ezbuy.authmodel.constants.AuthConstants.MySign.SIGH_HASH_SUCCESS;
-import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
 
 @Data
 @Service
@@ -53,7 +52,8 @@ public class RenewalCAServiceImpl implements RenewalCAService {
     private final OrderClient orderClient;
     private final TelecomRepository telecomRepository;
 
-    // TODO: kiểm tra lại logic hàm này, nếu user cố tình truyền lên 1 organizationId bất kỳ thì đang lấy được thông tin
+    // TODO: kiểm tra lại logic hàm này, nếu user cố tình truyền lên 1
+    // organizationId bất kỳ thì đang lấy được thông tin
     @Override
     public Mono<DataResponse> getStatisticSubscriber(String organizationId, Integer time) {
         if (DataUtil.isNullOrEmpty(organizationId)) {
@@ -70,79 +70,107 @@ public class RenewalCAServiceImpl implements RenewalCAService {
                             .map(TelecomDTO::getServiceAlias)
                             .filter(serviceAlias -> !DataUtil.isNullOrEmpty(serviceAlias))
                             .collect(Collectors.toList());
-                    return subscriberRepository.getStatisticSubscriber(data.getT2(), lstTelecomServiceAlias, time)
+                    return subscriberRepository
+                            .getStatisticSubscriber(data.getT2(), lstTelecomServiceAlias, time)
                             .map(statisticSubscriber -> {
                                 for (TelecomDTO telecomDTO : data.getT1()) {
-                                    if (statisticSubscriber.getTelecomServiceId().toString().equals(telecomDTO.getOriginId())) {
+                                    if (statisticSubscriber
+                                            .getTelecomServiceId()
+                                            .toString()
+                                            .equals(telecomDTO.getOriginId())) {
                                         statisticSubscriber.setImage(telecomDTO.getImage());
                                     }
                                 }
                                 return statisticSubscriber;
                             })
                             .collectList();
-                }).map(response -> new DataResponse<>(Translator.toLocaleVi(SUCCESS), response));
+                })
+                .map(response -> new DataResponse<>(Translator.toLocaleVi(SUCCESS), response));
     }
 
-    public Mono<List<SubscriberResponse>> getSubscriberSmeInfo(Long telecomServiceId, String idNo, String isdn, String telecomServiceAlias) {
+    public Mono<List<SubscriberResponse>> getSubscriberSmeInfo(
+            Long telecomServiceId, String idNo, String isdn, String telecomServiceAlias) {
 
-        return cmClient.getCustomerSubscriberSmeInfo(telecomServiceId, idNo, isdn).map(rspn -> {
-            List<SubscriberResponse> listSubscriberResponse = new ArrayList<>();
-            if (CollectionUtils.isEmpty(rspn.getListSubscriber())) {
-                return new ArrayList<>();
-            }
-            for (SubscriberCMResponse subscriberCM : rspn.getListSubscriber()) {
-                SubscriberResponse subscriberResponse = new SubscriberResponse();
-                subscriberResponse.setSubscriberId(subscriberCM.getSubscriberId());
-                subscriberResponse.setStatus(subscriberCM.getStatus());
-                subscriberResponse.setProductId(subscriberCM.getProductId());
-                subscriberResponse.setProductCode(subscriberCM.getProductCode());
-                subscriberResponse.setProductName(subscriberCM.getProductName());
-                subscriberResponse.setActivationDate(LocalDate.parse(subscriberCM.getStaDatetime().split("T")[0]));
-                subscriberResponse.setIsdn(isdn);
-                subscriberResponse.setIdNo(idNo);
-                subscriberResponse.setTelecomServiceId(telecomServiceId);
-                subscriberResponse.setTelecomServiceAlias(telecomServiceAlias);
-                subscriberResponse.setAccountId(subscriberCM.getAccountId());
-                subscriberResponse.setAddress(subscriberCM.getUserInfoDTO() != null ? subscriberCM.getUserInfoDTO().getAddress() : null);
-                subscriberResponse.setGroupType(rspn.getCustTypeDTO() != null ? rspn.getCustTypeDTO().getGroupType() : null);
-                if (!CollectionUtils.isEmpty(subscriberCM.getListSubAttDTO())) {
-                    subscriberCM.getListSubAttDTO().forEach(subAtt -> {
-                        // TODO: đưa EXPIRED_DATE_DURATION ra constant
-                        if ("EXPIRED_DATE_DURATION".equalsIgnoreCase(subAtt.getAttCode()) && subAtt.getListSubAttDetailDTO() != null
-                                && !subAtt.getListSubAttDetailDTO().isEmpty() && !DataUtil.isNullOrEmpty(subAtt.getListSubAttDetailDTO().getFirst().getAttDetailValue())) {
-                            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                            subscriberResponse.setExpiredDate(LocalDate.parse(subAtt.getListSubAttDetailDTO().getFirst().getAttDetailValue(), dateTimeFormatter));
+        return cmClient.getCustomerSubscriberSmeInfo(telecomServiceId, idNo, isdn)
+                .map(rspn -> {
+                    List<SubscriberResponse> listSubscriberResponse = new ArrayList<>();
+                    if (CollectionUtils.isEmpty(rspn.getListSubscriber())) {
+                        return new ArrayList<>();
+                    }
+                    for (SubscriberCMResponse subscriberCM : rspn.getListSubscriber()) {
+                        SubscriberResponse subscriberResponse = new SubscriberResponse();
+                        subscriberResponse.setSubscriberId(subscriberCM.getSubscriberId());
+                        subscriberResponse.setStatus(subscriberCM.getStatus());
+                        subscriberResponse.setProductId(subscriberCM.getProductId());
+                        subscriberResponse.setProductCode(subscriberCM.getProductCode());
+                        subscriberResponse.setProductName(subscriberCM.getProductName());
+                        subscriberResponse.setActivationDate(
+                                LocalDate.parse(subscriberCM.getStaDatetime().split("T")[0]));
+                        subscriberResponse.setIsdn(isdn);
+                        subscriberResponse.setIdNo(idNo);
+                        subscriberResponse.setTelecomServiceId(telecomServiceId);
+                        subscriberResponse.setTelecomServiceAlias(telecomServiceAlias);
+                        subscriberResponse.setAccountId(subscriberCM.getAccountId());
+                        subscriberResponse.setAddress(
+                                subscriberCM.getUserInfoDTO() != null
+                                        ? subscriberCM.getUserInfoDTO().getAddress()
+                                        : null);
+                        subscriberResponse.setGroupType(
+                                rspn.getCustTypeDTO() != null
+                                        ? rspn.getCustTypeDTO().getGroupType()
+                                        : null);
+                        if (!CollectionUtils.isEmpty(subscriberCM.getListSubAttDTO())) {
+                            subscriberCM.getListSubAttDTO().forEach(subAtt -> {
+                                // TODO: đưa EXPIRED_DATE_DURATION ra constant
+                                if ("EXPIRED_DATE_DURATION".equalsIgnoreCase(subAtt.getAttCode())
+                                        && subAtt.getListSubAttDetailDTO() != null
+                                        && !subAtt.getListSubAttDetailDTO().isEmpty()
+                                        && !DataUtil.isNullOrEmpty(subAtt.getListSubAttDetailDTO()
+                                                .getFirst()
+                                                .getAttDetailValue())) {
+                                    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                                    subscriberResponse.setExpiredDate(LocalDate.parse(
+                                            subAtt.getListSubAttDetailDTO()
+                                                    .getFirst()
+                                                    .getAttDetailValue(),
+                                            dateTimeFormatter));
+                                }
+                            });
                         }
-                    });
-                }
-                listSubscriberResponse.add(subscriberResponse);
-            }
+                        listSubscriberResponse.add(subscriberResponse);
+                    }
 
-            return listSubscriberResponse;
-        });
+                    return listSubscriberResponse;
+                });
     }
 
-    //    TODO: kiểm tra lại logic hàm này, nếu user cố tình truyền lên 1 organizationId bất kỳ thì đang lấy được thông tin
+    // TODO: kiểm tra lại logic hàm này, nếu user cố tình truyền lên 1
+    // organizationId bất kỳ thì đang lấy được thông tin
     @Override
-    public Mono<DataResponse> getListSubscriber(Long telecomServiceId, String telecomServiceAlias ,String organizationId) {
+    public Mono<DataResponse> getListSubscriber(
+            Long telecomServiceId, String telecomServiceAlias, String organizationId) {
         boolean isTelecomServiceId = DataUtil.isNullOrEmpty(telecomServiceId);
         boolean isTelecomServiceAlias = DataUtil.isNullOrEmpty(telecomServiceAlias);
 
-        if(isTelecomServiceAlias && isTelecomServiceId){
+        if (isTelecomServiceAlias && isTelecomServiceId) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.invalid"));
         }
         if (DataUtil.isNullOrEmpty(organizationId)) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "organization.id.required"));
         }
 
-            return getIdNo(organizationId).flatMap(idNo -> subscriberRepository.findByIdnoAndTelecomServiceIdAndTelecomServiceAlias(idNo, telecomServiceId, telecomServiceAlias)
-                            .map(this::modelToDto).collectList())
-                    .map(rspn -> new DataResponse(Translator.toLocaleVi(SUCCESS), rspn));
-
+        return getIdNo(organizationId)
+                .flatMap(idNo -> subscriberRepository
+                        .findByIdnoAndTelecomServiceIdAndTelecomServiceAlias(
+                                idNo, telecomServiceId, telecomServiceAlias)
+                        .map(this::modelToDto)
+                        .collectList())
+                .map(rspn -> new DataResponse(Translator.toLocaleVi(SUCCESS), rspn));
     }
 
     private SubscriberResponse modelToDto(Subscriber subscriber) {
-        return SubscriberResponse.builder().subscriberId(subscriber.getId())
+        return SubscriberResponse.builder()
+                .subscriberId(subscriber.getId())
                 .idNo(subscriber.getIdNo())
                 .isdn(subscriber.getIsdn())
                 .address(subscriber.getAddress())
@@ -177,17 +205,21 @@ public class RenewalCAServiceImpl implements RenewalCAService {
                 .build();
     }
 
-    // TODO: ham nay se duoc xoa khi  nang cap xong ham sync-subscriber-order
-    // TODO: ham nay se phai off di neu co scontract vi response tra ve CM khong co alias
+    // TODO: ham nay se duoc xoa khi nang cap xong ham sync-subscriber-order
+    // TODO: ham nay se phai off di neu co scontract vi response tra ve CM khong co
+    // alias
     @Override
     public Mono<DataResponse> syncListSubscriber() {
         return authClient.getUsersTrusted().flatMap(idNos -> {
             log.info("idNos when call authClient {}", idNos);
             Flux<Boolean> isSuccess = Flux.fromIterable(idNos.stream()
-                            .filter(idNo -> !DataUtil.isNullOrEmpty(idNo)).collect(Collectors.toList()))
-                    // TODO: sao lại dùng hàm isSuccess.subscribe() ở đây; hạn chế dùng subscribe() vì đội myViettel đã gặp nhiều su co voi ham nay
+                            .filter(idNo -> !DataUtil.isNullOrEmpty(idNo))
+                            .collect(Collectors.toList()))
+                    // TODO: sao lại dùng hàm isSuccess.subscribe() ở đây; hạn chế dùng subscribe()
+                    // vì đội myViettel đã gặp nhiều su co voi ham nay
                     .map(this::syncSubscriber);
-            return Mono.just(new DataResponse(Translator.toLocaleVi(SUCCESS), isSuccess.subscribe().isDisposed()));
+            return Mono.just(new DataResponse(
+                    Translator.toLocaleVi(SUCCESS), isSuccess.subscribe().isDisposed()));
         });
     }
 
@@ -195,28 +227,43 @@ public class RenewalCAServiceImpl implements RenewalCAService {
     private boolean syncSubscriber(String idNo) {
         return cmClient.getListSubscriberByIdNo(idNo)
                 .flatMap(listSubscriber -> Flux.fromIterable(listSubscriber)
-                        .flatMap(subscriber -> telecomRepository.getByOriginId(String.valueOf(subscriber.getTelecomServiceId()))
+                        .flatMap(subscriber -> telecomRepository
+                                .getByOriginId(String.valueOf(subscriber.getTelecomServiceId()))
                                 .flatMap(telecom -> {
-                                    subscriber.setTelecomServiceAlias(telecom.getServiceAlias());  // bo sung alias vi CM khong tra ve alias
-                                    return getSubscriberSmeInfo(subscriber.getTelecomServiceId(), idNo, subscriber.getIsdn(), subscriber.getTelecomServiceAlias());
-                                })).collectList())
-                .map(data -> data.stream().flatMap(Collection::stream).map(this::dtoToModel).collect(Collectors.toList()))
+                                    subscriber.setTelecomServiceAlias(
+                                            telecom.getServiceAlias()); // bo sung alias vi CM khong
+                                    // tra ve alias
+                                    return getSubscriberSmeInfo(
+                                            subscriber.getTelecomServiceId(),
+                                            idNo,
+                                            subscriber.getIsdn(),
+                                            subscriber.getTelecomServiceAlias());
+                                }))
+                        .collectList())
+                .map(data -> data.stream()
+                        .flatMap(Collection::stream)
+                        .map(this::dtoToModel)
+                        .collect(Collectors.toList()))
                 .map(models -> {
                     for (Subscriber subscriber : models) {
-                        subscriberRepository.findById(subscriber.getId())
+                        subscriberRepository
+                                .findById(subscriber.getId())
                                 .map(data -> {
-
                                     log.info("subscriberRepository before save {}", data);
-                                    subscriber.setTelecomServiceAlias(data.getTelecomServiceAlias()); // khong doi alias voi co so du lieu
+                                    subscriber.setTelecomServiceAlias(
+                                            data.getTelecomServiceAlias()); // khong doi alias voi co
+                                    // so du lieu
                                     subscriber.setNew(false);
                                     subscriberRepository.save(subscriber).subscribe();
                                     return subscriber;
                                 })
                                 .switchIfEmpty(subscriberRepository.save(subscriber))
-                                .subscribe(); // TODO: khong dung ham subscribe
+                                .subscribe(); // TODO: khong dung ham
+                        // subscribe
                     }
                     return models;
-                }).map(subscribers -> {
+                })
+                .map(subscribers -> {
                     List<ActiveTelecom> activeTelecoms = new ArrayList<>();
                     for (Subscriber subscriberSave : subscribers) {
                         if (!checkExistActiveTelecom(activeTelecoms, subscriberSave)) {
@@ -230,12 +277,19 @@ public class RenewalCAServiceImpl implements RenewalCAService {
                         }
                     }
                     return activeTelecoms;
-                }).subscribe(activeTelecoms -> {
+                })
+                .subscribe(activeTelecoms -> {
                     for (ActiveTelecom activeTelecom : activeTelecoms) {
-                        activeTelecomRepository.count(activeTelecom.getTelecomServiceId(), activeTelecom.getIdNo(), activeTelecom.getAlias()) // bo sung dieu kien alias
+                        activeTelecomRepository
+                                .count(
+                                        activeTelecom.getTelecomServiceId(),
+                                        activeTelecom.getIdNo(),
+                                        activeTelecom.getAlias()) // bo sung dieu kien alias
                                 .subscribe(count -> {
                                     if (count == 0) {
-                                        activeTelecomRepository.save(activeTelecom).subscribe();
+                                        activeTelecomRepository
+                                                .save(activeTelecom)
+                                                .subscribe();
                                     }
                                 });
                     }
@@ -244,8 +298,9 @@ public class RenewalCAServiceImpl implements RenewalCAService {
     }
 
     private boolean checkExistActiveTelecom(List<ActiveTelecom> activeTelecoms, Subscriber subscriberSave) {
-        return activeTelecoms.stream().anyMatch(item -> item.getTelecomServiceId().equals(subscriberSave.getTelecomServiceId())
-                && item.getIdNo().equals(subscriberSave.getIdNo()));
+        return activeTelecoms.stream()
+                .anyMatch(item -> item.getTelecomServiceId().equals(subscriberSave.getTelecomServiceId())
+                        && item.getIdNo().equals(subscriberSave.getIdNo()));
     }
 
     @Override
@@ -265,57 +320,68 @@ public class RenewalCAServiceImpl implements RenewalCAService {
         Mono<String> idNoMono = getIdNo(request.getOrganizationId());
         Flux<ProductSpecificationCAResponse> fluxProducts = Flux.concat(request.getProductIds().stream()
                 .filter(productId -> !DataUtil.isNullOrEmpty(productId))
-                .map(this::getProductTemplate).collect(Collectors.toList()));
+                .map(this::getProductTemplate)
+                .collect(Collectors.toList()));
 
         Mono<String> telecoService = this.telecomRepository.getTelecomServiceId(request.getTelecomServiceAlias());
-        return idNoMono.flatMapMany(idNo ->
-                        fluxProducts.flatMap(product ->
-                                telecoService.flatMap(serviceId ->
-                                        getPricingProduct(product, request.getGroupType(), idNo, product.getProductId(), Long.valueOf(serviceId),request.getTelecomServiceAlias()))))
-                                        .collectList()
-                                        .map(data -> new DataResponse<>(Translator.toLocaleVi(SUCCESS), data));
+        return idNoMono.flatMapMany(
+                        idNo -> fluxProducts.flatMap(product -> telecoService.flatMap(serviceId -> getPricingProduct(
+                                product,
+                                request.getGroupType(),
+                                idNo,
+                                product.getProductId(),
+                                Long.valueOf(serviceId),
+                                request.getTelecomServiceAlias()))))
+                .collectList()
+                .map(data -> new DataResponse<>(Translator.toLocaleVi(SUCCESS), data));
     }
 
     private Mono<ProductSpecificationCAResponse> getProductTemplate(String productId) {
-        return productClient.getProductOfferingSpecification(productId)
-                .map(respOptional -> {
-                    ProductSpecificationCAResponse productSpecification = new ProductSpecificationCAResponse();
-                    productSpecification.setProductId(productId);
-                    if (respOptional.isEmpty()
-                            || DataUtil.isNullOrEmpty(respOptional.get().getLstProductSpecCharUseDTO())) {
-                        productSpecification.setProductPrices(new ArrayList<>());
-                        return productSpecification;
+        return productClient.getProductOfferingSpecification(productId).map(respOptional -> {
+            ProductSpecificationCAResponse productSpecification = new ProductSpecificationCAResponse();
+            productSpecification.setProductId(productId);
+            if (respOptional.isEmpty()
+                    || DataUtil.isNullOrEmpty(respOptional.get().getLstProductSpecCharUseDTO())) {
+                productSpecification.setProductPrices(new ArrayList<>());
+                return productSpecification;
+            }
+            List<ProductSpecCharDTO> productSpecCharDTOS = respOptional.get().getLstProductSpecCharUseDTO().stream()
+                    .map(ProductSpecCharUseDTO::getProductSpecCharDTO)
+                    .toList();
+            List<PriceProductDTO> priceProductList = new ArrayList<>();
+            for (ProductSpecCharDTO productSpecCharDTO : productSpecCharDTOS) {
+                if (ProductClientUtils.CA_PREPAID_DURATION.equals(productSpecCharDTO.getCode())) {
+                    for (ProductSpecCharValueDTO value : productSpecCharDTO.getProductSpecCharValueDTOList()) {
+                        priceProductList.add(PriceProductDTO.builder()
+                                .type(productSpecCharDTO.getCode())
+                                .dataType(productSpecCharDTO.getDataType())
+                                .value(Integer.valueOf(value.getValue()))
+                                .build());
                     }
-                    List<ProductSpecCharDTO> productSpecCharDTOS = respOptional.get().getLstProductSpecCharUseDTO().stream()
-                            .map(ProductSpecCharUseDTO::getProductSpecCharDTO)
-                            .toList();
-                    List<PriceProductDTO> priceProductList = new ArrayList<>();
-                    for (ProductSpecCharDTO productSpecCharDTO : productSpecCharDTOS) {
-                        if (ProductClientUtils.CA_PREPAID_DURATION.equals(productSpecCharDTO.getCode())) {
-                            for (ProductSpecCharValueDTO value : productSpecCharDTO.getProductSpecCharValueDTOList()) {
-                                priceProductList.add(PriceProductDTO.builder()
-                                        .type(productSpecCharDTO.getCode())
-                                        .dataType(productSpecCharDTO.getDataType())
-                                        .value(Integer.valueOf(value.getValue())).build());
-                            }
-                        }
-                        if (ProductClientUtils.CA_PREPAID_DURATION_DAY.equals(productSpecCharDTO.getCode())) {
-                            for (ProductSpecCharValueDTO value : productSpecCharDTO.getProductSpecCharValueDTOList()) {
-                                priceProductList.add(PriceProductDTO.builder()
-                                        .dataType(productSpecCharDTO.getDataType())
-                                        .type(productSpecCharDTO.getCode())
-                                        .value(Integer.valueOf(value.getValue())).build());
-                            }
-                        }
+                }
+                if (ProductClientUtils.CA_PREPAID_DURATION_DAY.equals(productSpecCharDTO.getCode())) {
+                    for (ProductSpecCharValueDTO value : productSpecCharDTO.getProductSpecCharValueDTOList()) {
+                        priceProductList.add(PriceProductDTO.builder()
+                                .dataType(productSpecCharDTO.getDataType())
+                                .type(productSpecCharDTO.getCode())
+                                .value(Integer.valueOf(value.getValue()))
+                                .build());
                     }
+                }
+            }
 
-                    productSpecification.setProductPrices(priceProductList);
-                    return productSpecification;
-                });
+            productSpecification.setProductPrices(priceProductList);
+            return productSpecification;
+        });
     }
 
-    private Mono<ProductSpecificationCAResponse> getPricingProduct(ProductSpecificationCAResponse product, Integer groupType,
-                                                                   String idNo, String productId, Long telecomServiceId, String telecomServiceAlias) {
+    private Mono<ProductSpecificationCAResponse> getPricingProduct(
+            ProductSpecificationCAResponse product,
+            Integer groupType,
+            String idNo,
+            String productId,
+            Long telecomServiceId,
+            String telecomServiceAlias) {
         if (DataUtil.isNullOrEmpty(product.getProductPrices())) {
             return Mono.just(product);
         }
@@ -348,26 +414,29 @@ public class RenewalCAServiceImpl implements RenewalCAService {
         }
         pricingRequest.setProductOrderItem(productOrderItems);
 
-        return orderClient.getPricingProduct(pricingRequest).map(
-                pricingResponse -> {
-                    if (DataUtil.isNullOrEmpty(pricingResponse) || DataUtil.isNullOrEmpty(pricingResponse.getPricingProductItems())) {
-                        product.setProductPrices(new ArrayList<>());
-                        return product;
-                    }
-                    List<PricingProductItemResponse> productOrderItemResponse = pricingResponse.getPricingProductItems();
-                    for (int i = 0; i < product.getProductPrices().size(); i++) {
-                        product.getProductPrices().get(i).setPrice(productOrderItemResponse.get(i).getItemPrice().getPrice());
-                    }
-                    return product;
-                }
-        );
+        return orderClient.getPricingProduct(pricingRequest).map(pricingResponse -> {
+            if (DataUtil.isNullOrEmpty(pricingResponse)
+                    || DataUtil.isNullOrEmpty(pricingResponse.getPricingProductItems())) {
+                product.setProductPrices(new ArrayList<>());
+                return product;
+            }
+            List<PricingProductItemResponse> productOrderItemResponse = pricingResponse.getPricingProductItems();
+            for (int i = 0; i < product.getProductPrices().size(); i++) {
+                product.getProductPrices()
+                        .get(i)
+                        .setPrice(productOrderItemResponse.get(i).getItemPrice().getPrice());
+            }
+            return product;
+        });
     }
 
-    // TODO: ham nay phai kiem tra them xem user goi api co thuoc organizationId khong? truyen them thong tin user_id sang.
+    // TODO: ham nay phai kiem tra them xem user goi api co thuoc organizationId
+    // khong? truyen them thong tin user_id sang.
     private Mono<String> getIdNo(String organizationId) {
         return authClient.getTenantIdentify(organizationId).map(tenantIdentifies -> {
             Optional<TenantIdentifyDTO> primaryIdentify = tenantIdentifies.stream()
-                    .filter(tenantIdentifyDTO -> Constants.Activation.ACTIVE.equals(tenantIdentifyDTO.getPrimaryIdentify()))
+                    .filter(tenantIdentifyDTO ->
+                            Constants.Activation.ACTIVE.equals(tenantIdentifyDTO.getPrimaryIdentify()))
                     .findFirst();
             if (primaryIdentify.isEmpty()) {
                 throw new BusinessException(ErrorCode.ReNew.TRUST_MST_01, "organization.primary.empty");

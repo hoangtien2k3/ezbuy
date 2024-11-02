@@ -7,19 +7,18 @@ import com.ezbuy.productservice.repository.repoTemplate.ProductCustomRepository;
 import io.hoangtien2k3.reactify.DataUtil;
 import io.hoangtien2k3.reactify.SQLUtils;
 import io.r2dbc.spi.Row;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
-import org.springframework.r2dbc.core.DatabaseClient;
-import org.springframework.stereotype.Repository;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
+import org.springframework.r2dbc.core.DatabaseClient;
+import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Repository
 @RequiredArgsConstructor
@@ -64,7 +63,8 @@ public class ProductCustomRepositoryImpl extends BaseRepositoryTemplate implemen
                 .build();
     }
 
-    private DatabaseClient.GenericExecuteSpec handleSearchProduct(SearchProductRequest request, String organizationId, boolean isCount) {
+    private DatabaseClient.GenericExecuteSpec handleSearchProduct(
+            SearchProductRequest request, String organizationId, boolean isCount) {
         StringBuilder query;
         if (!isCount) {
             query = new StringBuilder("select * from product where status = 1");
@@ -93,11 +93,14 @@ public class ProductCustomRepositoryImpl extends BaseRepositoryTemplate implemen
                 query.deleteCharAt(query.length() - 1);
             }
             if (request.getPageIndex() != null && request.getPageSize() != null) {
-                query.append(" limit ").append((request.getPageIndex() - 1) * request.getPageSize())
-                        .append(", ").append(request.getPageSize());
+                query.append(" limit ")
+                        .append((request.getPageIndex() - 1) * request.getPageSize())
+                        .append(", ")
+                        .append(request.getPageSize());
             }
         }
-        DatabaseClient.GenericExecuteSpec executeSpec = template.getDatabaseClient().sql(query.toString());
+        DatabaseClient.GenericExecuteSpec executeSpec =
+                template.getDatabaseClient().sql(query.toString());
         executeSpec = executeSpec.bind("organizationId", organizationId);
         if (!DataUtil.isNullOrEmpty(request.getCode())) {
             executeSpec = executeSpec.bind("code", request.getCode());
@@ -115,15 +118,13 @@ public class ProductCustomRepositoryImpl extends BaseRepositoryTemplate implemen
     }
 
     @Override
-    public Flux<Product> getProductByIdAndOrganizationIdAndTransId(List<String> ids, UUID organizationId, Integer offset, Integer limit, String transactionId) {
+    public Flux<Product> getProductByIdAndOrganizationIdAndTransId(
+            List<String> ids, UUID organizationId, Integer offset, Integer limit, String transactionId) {
         Map<String, Object> params = new HashMap<>();
         StringBuilder query = new StringBuilder();
-        query.append(
-                "select p.* " +
-                        "from sme_product.product p " +
-                        "inner join sme_product.sync_history_detail d on p.id = d.target_id " +
-                        "inner join sme_product.sync_history s on d.sync_history_id = s.id " +
-                        "where 1 = 1 ");
+        query.append("select p.* " + "from sme_product.product p "
+                + "inner join sme_product.sync_history_detail d on p.id = d.target_id "
+                + "inner join sme_product.sync_history s on d.sync_history_id = s.id " + "where 1 = 1 ");
         if (!DataUtil.isNullOrEmpty(ids)) {
             query.append(" and p.id in (:ids) ");
             params.put("ids", ids);
@@ -138,8 +139,7 @@ public class ProductCustomRepositoryImpl extends BaseRepositoryTemplate implemen
         }
         query.append(" ORDER BY d.create_at desc ").append(" \n");
         if (offset != null && limit != null) {
-            query.append(" LIMIT :pageSize  \n" +
-                    "OFFSET :index ");
+            query.append(" LIMIT :pageSize  \n" + "OFFSET :index ");
             params.put("pageSize", limit);
             BigDecimal index = (new BigDecimal(offset)).multiply(new BigDecimal(limit));
             params.put("index", index);
@@ -154,8 +154,6 @@ public class ProductCustomRepositoryImpl extends BaseRepositoryTemplate implemen
                 spec = spec.bind(param, params.get(param));
             }
         }
-        return spec.fetch()
-                .all()
-                .map(raw -> convert(raw, type));
+        return spec.fetch().all().map(raw -> convert(raw, type));
     }
 }

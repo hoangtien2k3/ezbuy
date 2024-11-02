@@ -1,10 +1,10 @@
 package com.ezbuy.notificationservice.service
 
-import com.ezbuy.notimodel.dto.request.CreateNotificationDTO
-import com.ezbuy.notimodel.dto.response.CountNoticeResponseDTO
-import com.ezbuy.notimodel.dto.response.NotificationHeader
-import com.ezbuy.notimodel.model.NotificationContent
-import io.hoangtien2k3.reactify.model.response.DataResponse
+import com.ezbuy.notificationmodel.dto.request.CreateNotificationDTO
+import com.ezbuy.notificationmodel.dto.response.CountNoticeResponseDTO
+import com.ezbuy.notificationmodel.dto.response.NotificationHeader
+import com.ezbuy.notificationmodel.model.NotificationContent
+import com.ezbuy.reactify.model.response.DataResponse
 import reactor.core.publisher.Mono
 
 interface TransmissionService {

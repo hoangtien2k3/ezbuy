@@ -1,5 +1,7 @@
 package com.ezbuy.productservice.controller;
 
+import static com.ezbuy.productmodel.constants.UrlPaths.*;
+
 import com.ezbuy.productmodel.dto.GetServiceConnectDTO;
 import com.ezbuy.productmodel.dto.ProductSpecCharAndValDTO;
 import com.ezbuy.productmodel.dto.UpdateAccountServiceInfoDTO;
@@ -12,14 +14,11 @@ import com.ezbuy.productmodel.request.GetListSubscriberActive;
 import com.ezbuy.productservice.service.ProductSpecService;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
-
-import static com.ezbuy.productmodel.constants.UrlPaths.*;
 
 @Slf4j
 @RestController
@@ -64,7 +63,8 @@ public class ProductSpecController {
     }
 
     @PostMapping(value = GET_LIST_SUBSCRIBER_ACTIVE_BY_ALIAS)
-    public Mono<DataResponse> getListSubscriberActiveByAlias(@Valid @RequestBody FilterGetListSubscriberActiveByAlias request) {
+    public Mono<DataResponse> getListSubscriberActiveByAlias(
+            @Valid @RequestBody FilterGetListSubscriberActiveByAlias request) {
         return productSpecService.getListSubscriberActiveByAlias(request);
     }
 
@@ -72,6 +72,7 @@ public class ProductSpecController {
     public Mono<DataResponse> getListSubscribersActive(@Valid @RequestBody GetListSubscriberActive request) {
         return productSpecService.getListSubscriberActiveByListIdNoAndListAlias(request);
     }
+
     @PostMapping(value = SYNC_SUBSCRIBER_ORDER)
     public Mono<DataResponse> syncSubscriberOrder(@RequestBody UpdateAccountServiceInfoDTO request) {
         return productSpecService.syncSubscriberOrder(request);
@@ -83,7 +84,9 @@ public class ProductSpecController {
     }
 
     @GetMapping(value = GET_TELECOM_SERVICE_RELATED)
-    public Mono<DataResponse<List<Telecom>>> getTelecomServiceRelated(@RequestParam(name = "telecomServiceId", required = false) String telecomServiceId, @RequestParam(name = "telecomServiceAlias", required = false) String telecomServiceAlias) {
+    public Mono<DataResponse<List<Telecom>>> getTelecomServiceRelated(
+            @RequestParam(name = "telecomServiceId", required = false) String telecomServiceId,
+            @RequestParam(name = "telecomServiceAlias", required = false) String telecomServiceAlias) {
         return productSpecService.getTelecomServiceRelated(telecomServiceId, telecomServiceAlias);
     }
 
@@ -96,9 +99,11 @@ public class ProductSpecController {
     public Mono<DataResponse> editFilter(@Valid @RequestBody ProductSpecCharAndValDTO request) {
         return productSpecService.editFilter(request);
     }
+
     @PostMapping(value = DELETE_FILTER)
-    public Mono<DataResponse> deleteFilter(@RequestParam(name = "telecomServiceId") String telecomServiceId,
-                                           @RequestParam(name = "filterId") String filterId) {
+    public Mono<DataResponse> deleteFilter(
+            @RequestParam(name = "telecomServiceId") String telecomServiceId,
+            @RequestParam(name = "filterId") String filterId) {
         return productSpecService.deleteFilter(telecomServiceId, filterId);
     }
 }

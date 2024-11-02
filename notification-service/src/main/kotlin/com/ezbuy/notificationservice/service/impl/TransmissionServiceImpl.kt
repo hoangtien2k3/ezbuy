@@ -3,32 +3,32 @@ package com.ezbuy.notificationservice.service.impl
 import com.ezbuy.notificationservice.client.AuthClient
 import com.ezbuy.notificationservice.repository.*
 import com.ezbuy.notificationservice.service.TransmissionService
-import com.ezbuy.notimodel.common.ConstValue
-import com.ezbuy.notimodel.common.ConstValue.Channel.*
-import com.ezbuy.notimodel.common.ConstValue.CommonMessageNoti.INVALID_FORMAT_SPEC
-import com.ezbuy.notimodel.common.ConstValue.ContentTypeConstant.HTML
-import com.ezbuy.notimodel.common.ConstValue.ContentTypeConstant.TEXT
-import com.ezbuy.notimodel.common.ConstValue.NotiServerity.CRITICAL
-import com.ezbuy.notimodel.common.ConstValue.NotiServerity.NORMAL
-import com.ezbuy.notimodel.common.ConstValue.NotificationConstant.ANNOUNCEMENT
-import com.ezbuy.notimodel.common.ConstValue.NotificationConstant.NEWS
-import com.ezbuy.notimodel.common.ConstValue.TransmissionState.*
-import com.ezbuy.notimodel.dto.request.CreateNotificationDTO
-import com.ezbuy.notimodel.dto.request.NotiContentDTO
-import com.ezbuy.notimodel.dto.request.ReceiverDataDTO
-import com.ezbuy.notimodel.dto.response.CountNoticeDTO
-import com.ezbuy.notimodel.dto.response.CountNoticeResponseDTO
-import com.ezbuy.notimodel.dto.response.NotificationHeader
-import com.ezbuy.notimodel.model.NotificationContent
-import com.ezbuy.notimodel.model.Transmission
-import com.ezbuy.notimodel.model.Notification
-import io.hoangtien2k3.reactify.*
-import io.hoangtien2k3.reactify.constants.CommonErrorCode.*
-import io.hoangtien2k3.reactify.constants.Constants.DateTimePattern.LOCAL_DATE_TIME_PATTERN
-import io.hoangtien2k3.reactify.exception.BusinessException
-import io.hoangtien2k3.reactify.model.TokenUser
-import io.hoangtien2k3.reactify.model.response.DataResponse
-import io.hoangtien2k3.reactify.constants.Regex
+import com.ezbuy.notificationmodel.common.ConstValue
+import com.ezbuy.notificationmodel.common.ConstValue.Channel.*
+import com.ezbuy.notificationmodel.common.ConstValue.CommonMessageNoti.INVALID_FORMAT_SPEC
+import com.ezbuy.notificationmodel.common.ConstValue.ContentTypeConstant.HTML
+import com.ezbuy.notificationmodel.common.ConstValue.ContentTypeConstant.TEXT
+import com.ezbuy.notificationmodel.common.ConstValue.NotiServerity.CRITICAL
+import com.ezbuy.notificationmodel.common.ConstValue.NotiServerity.NORMAL
+import com.ezbuy.notificationmodel.common.ConstValue.NotificationConstant.ANNOUNCEMENT
+import com.ezbuy.notificationmodel.common.ConstValue.NotificationConstant.NEWS
+import com.ezbuy.notificationmodel.common.ConstValue.TransmissionState.*
+import com.ezbuy.notificationmodel.dto.request.CreateNotificationDTO
+import com.ezbuy.notificationmodel.dto.request.NotiContentDTO
+import com.ezbuy.notificationmodel.dto.request.ReceiverDataDTO
+import com.ezbuy.notificationmodel.dto.response.CountNoticeDTO
+import com.ezbuy.notificationmodel.dto.response.CountNoticeResponseDTO
+import com.ezbuy.notificationmodel.dto.response.NotificationHeader
+import com.ezbuy.notificationmodel.model.NotificationContent
+import com.ezbuy.notificationmodel.model.Transmission
+import com.ezbuy.notificationmodel.model.Notification
+import com.ezbuy.reactify.*
+import com.ezbuy.reactify.constants.CommonErrorCode.*
+import com.ezbuy.reactify.constants.Constants.DateTimePattern.LOCAL_DATE_TIME_PATTERN
+import com.ezbuy.reactify.exception.BusinessException
+import com.ezbuy.reactify.model.TokenUser
+import com.ezbuy.reactify.model.response.DataResponse
+import com.ezbuy.reactify.constants.Regex
 import io.r2dbc.spi.Row
 import lombok.RequiredArgsConstructor
 import org.springframework.beans.factory.annotation.Value
@@ -62,12 +62,18 @@ class TransmissionServiceImpl(
                     val total = totalMap.values.sum()
                     val details = totalMap.map { CountNoticeDTO(it.key, it.value) }
                     val countNoticeResponseDTO = CountNoticeResponseDTO(total, details)
-                    DataResponse(null, Translator.toLocaleVi(SUCCESS), countNoticeResponseDTO)
+                    DataResponse(
+                        null,
+                        Translator.toLocaleVi(SUCCESS),
+                        countNoticeResponseDTO
+                    )
                 }
                 .switchIfEmpty(
                     Mono.just(
                         DataResponse(
-                            null, Translator.toLocaleVi(SUCCESS), CountNoticeResponseDTO(0, emptyList())
+                            null,
+                            Translator.toLocaleVi(SUCCESS),
+                            CountNoticeResponseDTO(0, emptyList())
                         )
                     )
                 )
@@ -83,17 +89,32 @@ class TransmissionServiceImpl(
             when {
                 DataUtil.isNullOrEmpty(DataUtil.safeTrim(notificationContentId)) &&
                         DataUtil.isNullOrEmpty(DataUtil.safeTrim(transmissionId)) -> {
-                    Mono.error(BusinessException(BAD_REQUEST, "params.notificationContentId.transmissionId.notnull"))
+                    Mono.error(
+                        BusinessException(
+                            BAD_REQUEST,
+                            "params.notificationContentId.transmissionId.notnull"
+                        )
+                    )
                 }
 
                 DataUtil.isNullOrEmpty(state) -> {
-                    Mono.error(BusinessException(BAD_REQUEST, "params.state.null"))
+                    Mono.error(
+                        BusinessException(
+                            BAD_REQUEST,
+                            "params.state.null"
+                        )
+                    )
                 }
 
                 DataUtil.isNullOrEmpty(DataUtil.safeTrim(notificationContentId)) &&
                         !DataUtil.isNullOrEmpty(DataUtil.safeTrim(transmissionId)) -> {
                     if (!DataUtil.isUUID(transmissionId)) {
-                        return@flatMap Mono.error(BusinessException(INVALID_PARAMS, "params.invalid.format"))
+                        return@flatMap Mono.error(
+                            BusinessException(
+                                INVALID_PARAMS,
+                                "params.invalid.format"
+                            )
+                        )
                     }
                     if (DataUtil.safeTrim(state) in listOf(READ, UNREAD, PENDING, FAILED, NEW, SENT)) {
                         return@flatMap transmissionRepository
@@ -107,20 +128,51 @@ class TransmissionServiceImpl(
                                 transmissionRepository
                                     .updateTransmissionStateById(transmission.id, transmission.state)
                                     .flatMap {
-                                        Mono.just(DataResponse<Any>(null, Translator.toLocaleVi(SUCCESS), null))
+                                        Mono.just(
+                                            DataResponse<Any>(
+                                                null,
+                                                Translator.toLocaleVi(
+                                                    SUCCESS
+                                                ),
+                                                null
+                                            )
+                                        )
                                     }.switchIfEmpty(
-                                        Mono.just(DataResponse<Any>(null, Translator.toLocaleVi(SUCCESS), null))
+                                        Mono.just(
+                                            DataResponse<Any>(
+                                                null,
+                                                Translator.toLocaleVi(
+                                                    SUCCESS
+                                                ),
+                                                null
+                                            )
+                                        )
                                     )
                             }.switchIfEmpty(
-                                Mono.error(BusinessException(NOT_FOUND, "transmission.findById.not.found"))
+                                Mono.error(
+                                    BusinessException(
+                                        NOT_FOUND,
+                                        "transmission.findById.not.found"
+                                    )
+                                )
                             )
                     } else {
-                        Mono.error(BusinessException(INVALID_PARAMS, "params.state.invalid"))
+                        Mono.error(
+                            BusinessException(
+                                INVALID_PARAMS,
+                                "params.state.invalid"
+                            )
+                        )
                     }
                 }
 
                 !DataUtil.isUUID(notificationContentId) -> {
-                    Mono.error(BusinessException(INVALID_PARAMS, "params.invalid.format"))
+                    Mono.error(
+                        BusinessException(
+                            INVALID_PARAMS,
+                            "params.invalid.format"
+                        )
+                    )
                 }
 
                 DataUtil.safeTrim(state) in listOf(READ, UNREAD, PENDING, FAILED, NEW, SENT) -> {
@@ -129,7 +181,12 @@ class TransmissionServiceImpl(
                         .collectList()
                         .flatMap { listId ->
                             if (DataUtil.isNullOrEmpty(listId)) {
-                                Mono.error(BusinessException(NOT_FOUND, "transmission.not.found"))
+                                Mono.error(
+                                    BusinessException(
+                                        NOT_FOUND,
+                                        "transmission.not.found"
+                                    )
+                                )
                             } else {
                                 transmissionRepository
                                     .changeStateTransmissionByNotiIdAndReceiver(
@@ -138,17 +195,38 @@ class TransmissionServiceImpl(
                                         DataUtil.safeTrim(notificationContentId)
                                     ).then(
                                         Mono.defer {
-                                            Mono.just(DataResponse<Any>(null, Translator.toLocaleVi(SUCCESS), null))
+                                            Mono.just(
+                                                DataResponse<Any>(
+                                                    null,
+                                                    Translator.toLocaleVi(
+                                                        SUCCESS
+                                                    ),
+                                                    null
+                                                )
+                                            )
                                         }
                                     ).switchIfEmpty(
-                                        Mono.just(DataResponse<Any>(null, Translator.toLocaleVi(SUCCESS), null))
+                                        Mono.just(
+                                            DataResponse<Any>(
+                                                null,
+                                                Translator.toLocaleVi(
+                                                    SUCCESS
+                                                ),
+                                                null
+                                            )
+                                        )
                                     )
                             }
                         }
                 }
 
                 else -> {
-                    Mono.error(BusinessException(INVALID_PARAMS, "params.state.invalid"))
+                    Mono.error(
+                        BusinessException(
+                            INVALID_PARAMS,
+                            "params.state.invalid"
+                        )
+                    )
                 }
             }
         }
@@ -201,7 +279,12 @@ class TransmissionServiceImpl(
     ): Mono<Notification> {
         return notificationCategoryRepository
             .findCategoryIdByType(DataUtil.safeTrim(createNotificationDTO.categoryType))
-            .switchIfEmpty(Mono.error(BusinessException(INTERNAL_SERVER_ERROR, "category.not.found")))
+            .switchIfEmpty(Mono.error(
+                BusinessException(
+                    INTERNAL_SERVER_ERROR,
+                    "category.not.found"
+                )
+            ))
             .flatMap { categoryId ->
                 val notification =
                     buildNotification(createNotificationDTO, tokenUser, notiContentId, notiId, categoryId)
@@ -234,7 +317,12 @@ class TransmissionServiceImpl(
         createNotificationDTO: CreateNotificationDTO, tokenUser: TokenUser, notiId: String
     ): Mono<List<Transmission>> {
         if (DataUtil.isNullOrEmpty(createNotificationDTO.receiverList)) {
-            return Mono.error(BusinessException(NOT_FOUND, Translator.toLocaleVi("no.receiver")))
+            return Mono.error(
+                BusinessException(
+                    NOT_FOUND,
+                    Translator.toLocaleVi("no.receiver")
+                )
+            )
         }
 
         val invalidReceiver = createNotificationDTO.receiverList.stream()
@@ -244,16 +332,31 @@ class TransmissionServiceImpl(
             }
 
         if (invalidReceiver) {
-            return Mono.error(BusinessException(INVALID_PARAMS, Translator.toLocaleVi("receiver.string.invalid")))
+            return Mono.error(
+                BusinessException(
+                    INVALID_PARAMS,
+                    Translator.toLocaleVi("receiver.string.invalid")
+                )
+            )
         }
 
         return channelRepository
             .findChannelIdByType(DataUtil.safeTrim(createNotificationDTO.channelType))
-            .switchIfEmpty(Mono.error(BusinessException(INTERNAL_SERVER_ERROR, "params.channelId.notExist")))
+            .switchIfEmpty(Mono.error(
+                BusinessException(
+                    INTERNAL_SERVER_ERROR,
+                    "params.channelId.notExist"
+                )
+            ))
             .flatMap { channelId ->
                 val transmissionList = createTransmissionList(createNotificationDTO, tokenUser, notiId, channelId)
                 if (DataUtil.isNullOrEmpty(transmissionList)) {
-                    return@flatMap Mono.error(BusinessException(INVALID_PARAMS, "no.receiver"))
+                    return@flatMap Mono.error(
+                        BusinessException(
+                            INVALID_PARAMS,
+                            "no.receiver"
+                        )
+                    )
                 }
                 transmissionRepository.saveAll(transmissionList).collectList()
             }
@@ -279,23 +382,31 @@ class TransmissionServiceImpl(
             .updateBy(tokenUser.username)
             .createBy(tokenUser.username)
             .build()
-
         if (DataUtil.isUUID(receiver.userId.trim())) {
             transmission.receiver = receiver.userId.trim()
             transmission.email = DataUtil.safeTrim(receiver.email)
         } else if (ValidateUtils.validateRegex(receiver.email, Regex.EMAIL_REGEX)) {
             transmission.email = DataUtil.safeTrim(receiver.email)
         }
-
         return transmission
     }
 
     override fun getNewNotiWhenOnline(newestNotiTime: String): Mono<DataResponse<List<NotificationContent>>> {
         if (DataUtil.isNullOrEmpty(newestNotiTime)) {
-            return Mono.error(BusinessException(INVALID_PARAMS, "params.newestNotiTime.notnull"))
+            return Mono.error(
+                BusinessException(
+                    INVALID_PARAMS,
+                    "params.newestNotiTime.notnull"
+                )
+            )
         }
         if (DataUtil.isNullOrEmpty(DataUtil.convertStringToLocalDateTime(newestNotiTime, LOCAL_DATE_TIME_PATTERN))) {
-            return Mono.error(BusinessException(INVALID_PARAMS, "params.invalid.format"))
+            return Mono.error(
+                BusinessException(
+                    INVALID_PARAMS,
+                    "params.invalid.format"
+                )
+            )
         }
         return SecurityUtils.getCurrentUser().flatMap { tokenUser ->
             transmissionRepository.getAllNotificationContentByCreateAtAfter(
@@ -304,9 +415,21 @@ class TransmissionServiceImpl(
             )
                 .collectList()
                 .flatMap { listNotiContent ->
-                    Mono.just(DataResponse(null, Translator.toLocaleVi(SUCCESS), listNotiContent))
+                    Mono.just(
+                        DataResponse(
+                            null,
+                            Translator.toLocaleVi(SUCCESS),
+                            listNotiContent
+                        )
+                    )
                 }
-                .switchIfEmpty(Mono.just(DataResponse(null, Translator.toLocaleVi(SUCCESS), emptyList())))
+                .switchIfEmpty(Mono.just(
+                    DataResponse(
+                        null,
+                        Translator.toLocaleVi(SUCCESS),
+                        emptyList()
+                    )
+                ))
         }
     }
 
@@ -317,10 +440,20 @@ class TransmissionServiceImpl(
         sort: String?
     ): Mono<DataResponse<List<NotificationHeader>>> {
         if (pageIndex?.let { it < 1 } == true) {
-            return Mono.error(BusinessException(INVALID_PARAMS, "params.pageIndex.invalid"))
+            return Mono.error(
+                BusinessException(
+                    INVALID_PARAMS,
+                    "params.pageIndex.invalid"
+                )
+            )
         }
         if (pageSize?.let { it < 1 } == true) {
-            return Mono.error(BusinessException(INVALID_PARAMS, "params.pageSize.invalid"))
+            return Mono.error(
+                BusinessException(
+                    INVALID_PARAMS,
+                    "params.pageSize.invalid"
+                )
+            )
         }
         return SecurityUtils.getCurrentUser().flatMap { user ->
             var sortingString = SortingUtils.parseSorting(sort, NotificationHeader::class.java)
@@ -357,9 +490,21 @@ class TransmissionServiceImpl(
                 .all()
                 .collectList()
                 .flatMap { notificationContent ->
-                    Mono.just(DataResponse(null, SUCCESS, notificationContent))
+                    Mono.just(
+                        DataResponse(
+                            null,
+                            SUCCESS,
+                            notificationContent
+                        )
+                    )
                 }
-                .switchIfEmpty(Mono.just(DataResponse(null, SUCCESS, emptyList())))
+                .switchIfEmpty(Mono.just(
+                    DataResponse(
+                        null,
+                        SUCCESS,
+                        emptyList()
+                    )
+                ))
         }
     }
 
@@ -369,25 +514,49 @@ class TransmissionServiceImpl(
         }
         // NORMAL or CRITICAL
         if (DataUtil.safeTrim(createNotificationDTO.severity) != NORMAL && DataUtil.safeTrim(createNotificationDTO.severity) != CRITICAL) {
-            return Mono.error(BusinessException(INVALID_PARAMS, INVALID_FORMAT_SPEC, "Severity"))
+            return Mono.error(
+                BusinessException(
+                    INVALID_PARAMS,
+                    INVALID_FORMAT_SPEC,
+                    "Severity"
+                )
+            )
         }
         // ANNOUNCEMENT or NEWS
         if (DataUtil.safeTrim(createNotificationDTO.categoryType) != ANNOUNCEMENT && DataUtil.safeTrim(
                 createNotificationDTO.categoryType
             ) != NEWS
         ) {
-            return Mono.error(BusinessException(INVALID_PARAMS, INVALID_FORMAT_SPEC, "CategoryType"))
+            return Mono.error(
+                BusinessException(
+                    INVALID_PARAMS,
+                    INVALID_FORMAT_SPEC,
+                    "CategoryType"
+                )
+            )
         }
         // text/plain or html/plain
         if (DataUtil.safeTrim(createNotificationDTO.contentType) != TEXT && DataUtil.safeTrim(createNotificationDTO.contentType) != HTML) {
-            return Mono.error(BusinessException(INVALID_PARAMS, INVALID_FORMAT_SPEC, "ContentType"))
+            return Mono.error(
+                BusinessException(
+                    INVALID_PARAMS,
+                    INVALID_FORMAT_SPEC,
+                    "ContentType"
+                )
+            )
         }
         // SMS or EMAIL or REST
         if (DataUtil.safeTrim(createNotificationDTO.channelType) != CHANNEL_SMS &&
             DataUtil.safeTrim(createNotificationDTO.channelType) != CHANNEL_EMAIL &&
             createNotificationDTO.channelType != CHANNEL_REST
         ) {
-            return Mono.error(BusinessException(INVALID_PARAMS, INVALID_FORMAT_SPEC, "ChannelType"))
+            return Mono.error(
+                BusinessException(
+                    INVALID_PARAMS,
+                    INVALID_FORMAT_SPEC,
+                    "ChannelType"
+                )
+            )
         }
         // validate: NotiContentDTO
         notiContentDTOIsValid(createNotificationDTO.notiContentDTO)
@@ -402,19 +571,41 @@ class TransmissionServiceImpl(
         return if (createNotificationDTO.sendAll == true) {
             authClient.getAllUserId().flatMap { list ->
                 if (DataUtil.isNullOrEmpty(list)) {
-                    return@flatMap Mono.error(BusinessException(NOT_FOUND, "no.receiver"))
+                    return@flatMap Mono.error(
+                        BusinessException(
+                            NOT_FOUND,
+                            "no.receiver"
+                        )
+                    )
                 }
                 val receiverDataDTOList = createNotificationDTO.receiverList
                 receiverDataDTOList.addAll(list.map { ReceiverDataDTO(it, null) })
                 createNotificationDTO.receiverList = receiverDataDTOList
-                Mono.just(DataResponse(null, SUCCESS, createNotificationDTO))
+                Mono.just(
+                    DataResponse(
+                        null,
+                        SUCCESS,
+                        createNotificationDTO
+                    )
+                )
             }
         } else {
             if (!DataUtil.isNullOrEmpty(createNotificationDTO.receiverList)) {
                 createNotificationDTO.receiverList.forEach { this.isReceiverDataDTOValid(it) }
-                Mono.just(DataResponse(null, SUCCESS, createNotificationDTO))
+                Mono.just(
+                    DataResponse(
+                        null,
+                        SUCCESS,
+                        createNotificationDTO
+                    )
+                )
             } else {
-                Mono.error(BusinessException(NOT_FOUND, "no.receiver"))
+                Mono.error(
+                    BusinessException(
+                        NOT_FOUND,
+                        "no.receiver"
+                    )
+                )
             }
         }
     }
@@ -430,41 +621,71 @@ class TransmissionServiceImpl(
             )
         }
         if (DataUtil.isNullOrEmpty(notiContentDTO.title)) {
-            throw BusinessException(INVALID_PARAMS, "params.title.null")
+            throw BusinessException(
+                INVALID_PARAMS,
+                "params.title.null"
+            )
         } else if (notiContentDTO.title.length > 500) {
-            throw BusinessException(INVALID_PARAMS, "params.title.outOfLength")
+            throw BusinessException(
+                INVALID_PARAMS,
+                "params.title.outOfLength"
+            )
         }
         if (DataUtil.isNullOrEmpty(notiContentDTO.subTitle)) {
-            throw BusinessException(INVALID_PARAMS, "params.subTitle.null")
+            throw BusinessException(
+                INVALID_PARAMS,
+                "params.subTitle.null"
+            )
         } else if (notiContentDTO.subTitle.length > 5000) {
-            throw BusinessException(INVALID_PARAMS, "params.subTitle.outOfLength")
+            throw BusinessException(
+                INVALID_PARAMS,
+                "params.subTitle.outOfLength"
+            )
         }
         if (DataUtil.safeTrim(notiContentDTO.imageUrl).length > 500 && !DataUtil.isNullOrEmpty(notiContentDTO.imageUrl)) {
-            throw BusinessException(INVALID_PARAMS, "params.imageUrl.outOfLength")
+            throw BusinessException(
+                INVALID_PARAMS,
+                "params.imageUrl.outOfLength"
+            )
         }
         if (DataUtil.safeTrim(notiContentDTO.url).length > 300 && !DataUtil.isNullOrEmpty(notiContentDTO.url)) {
-            throw BusinessException(INVALID_PARAMS, "params.url.outOfLength")
+            throw BusinessException(
+                INVALID_PARAMS,
+                "params.url.outOfLength"
+            )
         }
     }
 
     private fun isReceiverDataDTOValid(receiverDataDTO: ReceiverDataDTO) {
         if (DataUtil.isNullOrEmpty(receiverDataDTO.userId) && DataUtil.isNullOrEmpty(receiverDataDTO.email)) {
-            throw BusinessException(INVALID_PARAMS, "params.receiverDataDTO.notAllNull")
+            throw BusinessException(
+                INVALID_PARAMS,
+                "params.receiverDataDTO.notAllNull"
+            )
         }
         if (!DataUtil.isNullOrEmpty(receiverDataDTO.userId) &&
             !DataUtil.isUUID(receiverDataDTO.userId) &&
             (DataUtil.isNullOrEmpty(receiverDataDTO.email) ||
                     !ValidateUtils.validateRegex(receiverDataDTO.email, Regex.EMAIL_REGEX))
         ) {
-            throw BusinessException(INVALID_PARAMS, "receiver.string.invalid")
+            throw BusinessException(
+                INVALID_PARAMS,
+                "receiver.string.invalid"
+            )
         }
         if (DataUtil.safeTrim(receiverDataDTO.email).length > 200) {
-            throw BusinessException(INVALID_PARAMS, "params.email.outOfLength")
+            throw BusinessException(
+                INVALID_PARAMS,
+                "params.email.outOfLength"
+            )
         }
         if (DataUtil.isNullOrEmpty(receiverDataDTO.userId) &&
             !ValidateUtils.validateRegex(receiverDataDTO.email, Regex.EMAIL_REGEX)
         ) {
-            throw BusinessException(INVALID_PARAMS, "receiver.email.invalid")
+            throw BusinessException(
+                INVALID_PARAMS,
+                "receiver.email.invalid"
+            )
         }
     }
 

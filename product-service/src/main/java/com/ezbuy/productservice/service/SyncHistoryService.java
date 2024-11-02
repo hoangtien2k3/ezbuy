@@ -9,6 +9,7 @@ import reactor.core.publisher.Mono;
 public interface SyncHistoryService {
     /**
      * Tao tranId dong bo thong tin hang hoa
+     *
      * @param request
      * @return
      */
@@ -16,6 +17,7 @@ public interface SyncHistoryService {
 
     /**
      * Tao tranId dong bo thong tin hang hoa
+     *
      * @param detail
      * @return
      */

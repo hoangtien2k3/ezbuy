@@ -1,8 +1,8 @@
 package com.ezbuy.paymentservice.controller;
 
-import com.ezbuy.paymentservice.service.PriceService;
 import com.ezbuy.paymentmodel.constants.UrlPaths;
 import com.ezbuy.paymentmodel.dto.request.ProductPriceRequest;
+import com.ezbuy.paymentservice.service.PriceService;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,8 @@ public class PriceController {
 
     @PostMapping("/calculate")
     public Mono<ResponseEntity<DataResponse>> estimatePrice(@RequestBody ProductPriceRequest productPriceRequest) {
-        return priceService.calculatePrices(productPriceRequest)
+        return priceService
+                .calculatePrices(productPriceRequest)
                 .map(rs -> ResponseEntity.ok(new DataResponse("common.success", rs)));
     }
 }

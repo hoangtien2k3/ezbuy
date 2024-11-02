@@ -1,5 +1,7 @@
 package com.ezbuy.productservice.service.impl;
 
+import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
+
 import com.ezbuy.productmodel.dto.FilterProductTemplateDTO;
 import com.ezbuy.productmodel.request.ApiUtils;
 import com.ezbuy.productmodel.response.ListProductOfferResponse;
@@ -14,14 +16,11 @@ import io.hoangtien2k3.reactify.annotations.LocalCache;
 import io.hoangtien2k3.reactify.constants.CommonErrorCode;
 import io.hoangtien2k3.reactify.exception.BusinessException;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
-
-import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
 
 @Service
 @RequiredArgsConstructor
@@ -49,42 +48,61 @@ public class ProductOfferTemplateServiceImpl implements ProductOfferTemplateServ
                     return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "pageSize.error"));
                 }
             }
-            return settingClient.getTelecomService(filterProductTemplateDTO.getTelecomServiceAlias()).flatMap(listTelecomService -> {
-                if (DataUtil.isNullOrEmpty(listTelecomService)) {
-                    return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "telecomServiceAlias.error"));
-                }
-                if (listTelecomService.stream().noneMatch(x -> x.getServiceAlias().equalsIgnoreCase(DataUtil.safeTrim(filterProductTemplateDTO.getTelecomServiceAlias())))) {
-                    return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "telecomServiceAlias.error"));
-                }
-                return getLstTemplateOfferByFilters(listTelecomService.stream().filter(x -> x.getServiceAlias().equalsIgnoreCase(DataUtil.safeTrim(filterProductTemplateDTO.getTelecomServiceAlias()))).findFirst().get().getOriginId(), filterProductTemplateDTO.getUtils(), filterProductTemplateDTO.getPriceTypes(), filterProductTemplateDTO.getTelecomServiceAlias());
-
-            });
-
+            return settingClient
+                    .getTelecomService(filterProductTemplateDTO.getTelecomServiceAlias())
+                    .flatMap(listTelecomService -> {
+                        if (DataUtil.isNullOrEmpty(listTelecomService)) {
+                            return Mono.error(
+                                    new BusinessException(CommonErrorCode.BAD_REQUEST, "telecomServiceAlias.error"));
+                        }
+                        if (listTelecomService.stream().noneMatch(x -> x.getServiceAlias()
+                                .equalsIgnoreCase(
+                                        DataUtil.safeTrim(filterProductTemplateDTO.getTelecomServiceAlias())))) {
+                            return Mono.error(
+                                    new BusinessException(CommonErrorCode.BAD_REQUEST, "telecomServiceAlias.error"));
+                        }
+                        return getLstTemplateOfferByFilters(
+                                listTelecomService.stream()
+                                        .filter(x -> x.getServiceAlias()
+                                                .equalsIgnoreCase(DataUtil.safeTrim(
+                                                        filterProductTemplateDTO.getTelecomServiceAlias())))
+                                        .findFirst()
+                                        .get()
+                                        .getOriginId(),
+                                filterProductTemplateDTO.getUtils(),
+                                filterProductTemplateDTO.getPriceTypes(),
+                                filterProductTemplateDTO.getTelecomServiceAlias());
+                    });
         }
     }
 
     @Override
     public Mono<DataResponse> getProductsForMegaMenu() {
-        return telecomServiceRepository.getProductsForMegaMenu().collectList().map((item) -> new DataResponse<>(Translator.toLocaleVi(SUCCESS), item));
+        return telecomServiceRepository
+                .getProductsForMegaMenu()
+                .collectList()
+                .map((item) -> new DataResponse<>(Translator.toLocaleVi(SUCCESS), item));
     }
 
     private Mono<DataResponse> getProductInfoByIds(List<String> ids) {
-        return productClient.getListProductOfferTemplateByListIds(ids)
-                .map(respOptional -> {
-                    if (respOptional.isEmpty()
-                            || DataUtil.isNullOrEmpty(respOptional.get().getData())) {
-                        return new DataResponse<>(Translator.toLocaleVi(SUCCESS), null);
-                    }
-                    ListProductOfferResponse response = respOptional.get();
-                    response.getData().forEach(ProductOfferTemplateDTO::handleDataGetByIds);
-                    return new DataResponse<>(Translator.toLocaleVi(SUCCESS), response);
-                });
+        return productClient.getListProductOfferTemplateByListIds(ids).map(respOptional -> {
+            if (respOptional.isEmpty()
+                    || DataUtil.isNullOrEmpty(respOptional.get().getData())) {
+                return new DataResponse<>(Translator.toLocaleVi(SUCCESS), null);
+            }
+            ListProductOfferResponse response = respOptional.get();
+            response.getData().forEach(ProductOfferTemplateDTO::handleDataGetByIds);
+            return new DataResponse<>(Translator.toLocaleVi(SUCCESS), response);
+        });
     }
 
-    private Mono<DataResponse> getLstTemplateOfferByFilters(String telecomServiceId, ApiUtils utils, List<String> priceTypes, String telecomServiceAlias) {
+    private Mono<DataResponse> getLstTemplateOfferByFilters(
+            String telecomServiceId, ApiUtils utils, List<String> priceTypes, String telecomServiceAlias) {
         ProductOfferTemplateDTO productOfferTemplateDTO = new ProductOfferTemplateDTO();
-        // danh gia khong can sua vi ham nay phia PRODUCT dang chi filter theo telecomServiceId
-        return productClient.getLstTemplateOffer(telecomServiceId, utils, priceTypes)
+        // danh gia khong can sua vi ham nay phia PRODUCT dang chi filter theo
+        // telecomServiceId
+        return productClient
+                .getLstTemplateOffer(telecomServiceId, utils, priceTypes)
                 .map(respOptional -> {
                     if (respOptional.isEmpty()
                             || DataUtil.isNullOrEmpty(respOptional.get().getData())) {

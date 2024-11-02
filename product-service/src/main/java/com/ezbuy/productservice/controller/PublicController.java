@@ -1,5 +1,7 @@
 package com.ezbuy.productservice.controller;
 
+import static com.ezbuy.productmodel.constants.UrlPaths.*;
+
 import com.ezbuy.productmodel.dto.FilterProductTemplateDTO;
 import com.ezbuy.productmodel.request.GetListProductOfferingComboForHubSmeRequest;
 import com.ezbuy.productmodel.request.GetProductTemplateDetailRequest;
@@ -12,8 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-import static com.ezbuy.productmodel.constants.UrlPaths.*;
-
 /**
  * author duclv
  */
@@ -23,11 +23,11 @@ import static com.ezbuy.productmodel.constants.UrlPaths.*;
 @RequestMapping(DEFAULT_V1_PREFIX)
 public class PublicController {
 
-    //inject
+    // inject
     private final ProductSpecService productSpecService;
     private final ProductOfferTemplateService productOfferTemplateService;
     private final PublicService publicService;
-    //inject
+    // inject
 
     /**
      * get filter for filter product template
@@ -74,18 +74,21 @@ public class PublicController {
     }
 
     @PostMapping(value = GET_LIST_PRODUCT_OFFERING_COMBO_V2)
-    public Mono<DataResponse> getListProductOfferingComboForHubSmeV2(@RequestBody GetListProductOfferingComboForHubSmeRequest request) {
+    public Mono<DataResponse> getListProductOfferingComboForHubSmeV2(
+            @RequestBody GetListProductOfferingComboForHubSmeRequest request) {
         return publicService.getListProductOfferingComboForHubSme(request);
     }
 
     /**
      * lay danh sach chi tiet goi combo
      *
-     * @param productOfferingId id goi cuoc
+     * @param productOfferingId
+     *            id goi cuoc
      * @return
      */
     @GetMapping(value = GET_LIST_TEMPLATE_COMBO)
-    public Mono<DataResponse> getListTemplateComboForHubSme(@RequestParam(value = "productOfferingId", required = false) String productOfferingId) {
+    public Mono<DataResponse> getListTemplateComboForHubSme(
+            @RequestParam(value = "productOfferingId", required = false) String productOfferingId) {
         return publicService.getListTemplateComboForHubSme(productOfferingId);
     }
 
@@ -96,7 +99,8 @@ public class PublicController {
      * @return
      */
     @PostMapping(value = GET_PRODUCT_TEMPLATE_DETAIL)
-    public Mono<DataResponse> getProductTemplateDetail(@RequestBody GetProductTemplateDetailRequest getProductTemplateDetailRequest) {
+    public Mono<DataResponse> getProductTemplateDetail(
+            @RequestBody GetProductTemplateDetailRequest getProductTemplateDetailRequest) {
         return publicService.getProductTemplateDetail(getProductTemplateDetailRequest);
     }
 }

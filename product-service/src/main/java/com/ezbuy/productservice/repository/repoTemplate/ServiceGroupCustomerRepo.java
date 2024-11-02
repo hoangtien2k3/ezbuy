@@ -8,6 +8,8 @@ import reactor.core.publisher.Mono;
 
 public interface ServiceGroupCustomerRepo {
     Flux<ServiceGroupDTO> findServiceGroup(SearchServiceGroupRequest request);
+
     Mono<Long> countServiceGroup(SearchServiceGroupRequest request);
+
     Flux<ServiceDTO> getAllServiceGroupAndTelecomServiceActive();
 }

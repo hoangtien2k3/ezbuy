@@ -1,42 +1,39 @@
 package com.ezbuy.paymentservice.service.impl;
 
+import static com.ezbuy.ordermodel.constants.Constants.RequestBanking.STATE_DONE;
+import static com.ezbuy.ordermodel.constants.Constants.RequestBanking.STATE_FAIL;
+import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
+import static io.hoangtien2k3.reactify.constants.CommonErrorCode.INTERNAL_SERVER_ERROR;
+
 import com.ezbuy.ordermodel.dto.request.SyncOrderStateRequest;
-import com.ezbuy.paymentmodel.dto.request.*;
-import com.ezbuy.paymentservice.client.*;
-import com.ezbuy.paymentservice.client.properties.PaymentClientProperties;
-import com.ezbuy.paymentservice.repoTemplate.RequestBankingRepositoryTemplate;
-import com.ezbuy.paymentservice.repository.RequestBankingRepository;
-import com.ezbuy.paymentservice.service.OrderFieldConfigService;
-import com.ezbuy.paymentservice.service.PaymentService;
-import com.ezbuy.settingmodel.model.OptionSetValue;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ezbuy.paymentmodel.constants.OrderState;
 import com.ezbuy.paymentmodel.constants.PaymentConstants;
 import com.ezbuy.paymentmodel.constants.PaymentState;
 import com.ezbuy.paymentmodel.dto.ConfigPaymentDTO;
 import com.ezbuy.paymentmodel.dto.RequestBankingSyncDTO;
 import com.ezbuy.paymentmodel.dto.UpdateOrderStateDTO;
+import com.ezbuy.paymentmodel.dto.request.*;
 import com.ezbuy.paymentmodel.dto.response.ProductPaymentResponse;
 import com.ezbuy.paymentmodel.dto.response.SearchPaymentState;
 import com.ezbuy.paymentmodel.model.RequestBanking;
+import com.ezbuy.paymentservice.client.*;
 import com.ezbuy.paymentservice.client.OrderClient;
 import com.ezbuy.paymentservice.client.PaymentClient;
+import com.ezbuy.paymentservice.client.properties.PaymentClientProperties;
+import com.ezbuy.paymentservice.repoTemplate.RequestBankingRepositoryTemplate;
 import com.ezbuy.paymentservice.repository.OrderItemRepository;
 import com.ezbuy.paymentservice.repository.OrderRepository;
+import com.ezbuy.paymentservice.repository.RequestBankingRepository;
+import com.ezbuy.paymentservice.service.OrderFieldConfigService;
+import com.ezbuy.paymentservice.service.PaymentService;
+import com.ezbuy.settingmodel.model.OptionSetValue;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.hoangtien2k3.reactify.*;
 import io.hoangtien2k3.reactify.constants.CommonErrorCode;
 import io.hoangtien2k3.reactify.constants.Constants;
 import io.hoangtien2k3.reactify.exception.BusinessException;
 import io.hoangtien2k3.reactify.factory.ObjectMapperFactory;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.SignatureException;
@@ -44,11 +41,13 @@ import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.ezbuy.ordermodel.constants.Constants.RequestBanking.STATE_DONE;
-import static com.ezbuy.ordermodel.constants.Constants.RequestBanking.STATE_FAIL;
-import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
-import static io.hoangtien2k3.reactify.constants.CommonErrorCode.INTERNAL_SERVER_ERROR;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
@@ -89,7 +88,7 @@ public class PaymentServiceImpl implements PaymentService {
             if (DataUtil.isNullOrEmpty(telecomServiceAlias)) {
                 merchantCode = paymentProperties.getMerchantCode();
             } else {
-                //lay thong tin cau hinh merchantCode
+                // lay thong tin cau hinh merchantCode
                 List<OptionSetValue> lstOptionSetValue = tuple.getT2();
                 if (!DataUtil.isNullOrEmpty(lstOptionSetValue)) {
                     for (OptionSetValue optionSetValue : lstOptionSetValue) {
@@ -104,9 +103,12 @@ public class PaymentServiceImpl implements PaymentService {
             String cancelUrl = request.getCancelUrl();
             String returnUrl = request.getReturnUrl();
 
-            var getListPaymentOptionSet = settingClient.findByOptionSetCode(PaymentConstants.OptionSet.MERCHANT_CODE_PAYGATE);
+            var getListPaymentOptionSet =
+                    settingClient.findByOptionSetCode(PaymentConstants.OptionSet.MERCHANT_CODE_PAYGATE);
             String finalMerchantCode = merchantCode;
-            return Mono.zip(saveRequestBanking(id, orderType, orderCode, totalFee, finalMerchantCode), getListPaymentOptionSet)
+            return Mono.zip(
+                            saveRequestBanking(id, orderType, orderCode, totalFee, finalMerchantCode),
+                            getListPaymentOptionSet)
                     .flatMap(savers -> {
                         String accessCode = paymentProperties.getAccessCode();
                         String hashCode = paymentProperties.getHashCode();
@@ -114,26 +116,33 @@ public class PaymentServiceImpl implements PaymentService {
                         if (!DataUtil.isNullOrEmpty(lstOptionSetValue)) {
                             for (OptionSetValue optionSetValue : lstOptionSetValue) {
                                 if (optionSetValue.getCode().equals(finalMerchantCode)) {
-                                    ConfigPaymentDTO configPaymentDTO = objectMapperUtil.convertStringToObject(optionSetValue.getValue(), ConfigPaymentDTO.class);
+                                    ConfigPaymentDTO configPaymentDTO = objectMapperUtil.convertStringToObject(
+                                            optionSetValue.getValue(), ConfigPaymentDTO.class);
                                     accessCode = configPaymentDTO.getAccessCode();
                                     hashCode = configPaymentDTO.getHashCode();
                                     break;
                                 }
                             }
                         }
-                        String data = DataUtil.sumListString(accessCode, finalMerchantCode, id.toString(), String.valueOf(totalFee).replace(",", ""));
+                        String data = DataUtil.sumListString(
+                                accessCode,
+                                finalMerchantCode,
+                                id.toString(),
+                                String.valueOf(totalFee).replace(",", ""));
 
                         String checksum = createChecksum(data, hashCode);
-                        Integer isCombo = Constants.COMMON.STATUS_INACTIVE;//khong phai luong combo
+                        Integer isCombo = Constants.COMMON.STATUS_INACTIVE; // khong phai luong combo
                         if (!DataUtil.isNullOrEmpty(request.getLstPaymentOrderDetail())) {
-                            isCombo = Constants.COMMON.STATUS_ACTIVE;//luong combo
+                            isCombo = Constants.COMMON.STATUS_ACTIVE; // luong combo
                             for (PaymentOrderDetailDTO paymentOrderDetailDTO : request.getLstPaymentOrderDetail()) {
                                 paymentOrderDetailDTO.setOrderCode(id.toString());
                             }
                         }
                         String lstPaymentDetail = null;
                         try {
-                            lstPaymentDetail = URLEncoder.encode(mapperObject.writeValueAsString(request.getLstPaymentOrderDetail()), StandardCharsets.UTF_8.toString());
+                            lstPaymentDetail = URLEncoder.encode(
+                                    mapperObject.writeValueAsString(request.getLstPaymentOrderDetail()),
+                                    StandardCharsets.UTF_8.toString());
                         } catch (Exception e) {
                             log.error(e.getMessage());
                         }
@@ -141,7 +150,16 @@ public class PaymentServiceImpl implements PaymentService {
                         if (Constants.COMMON.STATUS_ACTIVE.equals(isCombo)) {
                             templateCheckoutLink = paymentProperties.getTemplateCheckoutComboLink();
                         }
-                        String checkoutLink = MessageFormat.format(templateCheckoutLink, finalMerchantCode, checksum, id.toString(), String.valueOf(totalFee).replace(",", ""), cancelUrl, returnUrl, isCombo, lstPaymentDetail);
+                        String checkoutLink = MessageFormat.format(
+                                templateCheckoutLink,
+                                finalMerchantCode,
+                                checksum,
+                                id.toString(),
+                                String.valueOf(totalFee).replace(",", ""),
+                                cancelUrl,
+                                returnUrl,
+                                isCombo,
+                                lstPaymentDetail);
                         ProductPaymentResponse productPaymentResponse = new ProductPaymentResponse();
                         productPaymentResponse.setCheckoutLink(checkoutLink);
                         productPaymentResponse.setRequestBankingId(id.toString());
@@ -154,62 +172,77 @@ public class PaymentServiceImpl implements PaymentService {
     public Mono<DataResponse> getResultFromMyViettel(PaymentResultRequest request) {
         var getListOptionSet = settingClient.findByOptionSetCode(PaymentConstants.OptionSet.MERCHANT_CODE_PAYGATE);
         return Mono.zip(validatePaymentResultRequest(request), getListOptionSet).flatMap(tuple -> {
-
             String accessCode = paymentProperties.getAccessCode();
             String hashCode = paymentProperties.getHashCode();
             List<OptionSetValue> lstOptionSetValue = tuple.getT2();
             if (!DataUtil.isNullOrEmpty(lstOptionSetValue)) {
                 for (OptionSetValue optionSetValue : lstOptionSetValue) {
                     if (optionSetValue.getCode().equals(request.getMerchant_code())) {
-                        ConfigPaymentDTO configPaymentDTO = objectMapperUtil.convertStringToObject(optionSetValue.getValue(), ConfigPaymentDTO.class);
+                        ConfigPaymentDTO configPaymentDTO = objectMapperUtil.convertStringToObject(
+                                optionSetValue.getValue(), ConfigPaymentDTO.class);
                         accessCode = configPaymentDTO.getAccessCode();
                         hashCode = configPaymentDTO.getHashCode();
                         break;
                     }
                 }
             }
-            String data = DataUtil.sumListString(accessCode, request.getError_code(), request.getMerchant_code(), request.getOrder_code(),
+            String data = DataUtil.sumListString(
+                    accessCode,
+                    request.getError_code(),
+                    request.getMerchant_code(),
+                    request.getOrder_code(),
                     String.valueOf(request.getTrans_amount()));
-
 
             String checkSum = createChecksum(data, hashCode);
             if (!checkSum.equals(request.getCheck_sum())) {
                 return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "check_sum.invalid"));
             }
 
-            return requestBankingRepository.findRequestBankingByIdAndStatus(request.getOrder_code())
-                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "request.banking.not.exist")))
+            return requestBankingRepository
+                    .findRequestBankingByIdAndStatus(request.getOrder_code())
+                    .switchIfEmpty(Mono.error(
+                            new BusinessException(CommonErrorCode.INVALID_PARAMS, "request.banking.not.exist")))
                     .flatMap(requestBanking -> {
                         if (requestBanking.getState() >= PAYMENT_STATUS) {
-                            log.info("Đơn hàng đã được thực hiện từ trước. Trạng thái là: {}", requestBanking.getState());
+                            log.info(
+                                    "Đơn hàng đã được thực hiện từ trước. Trạng thái là: {}",
+                                    requestBanking.getState());
                             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "state.invalid"));
                         }
                         if (!request.getTrans_amount().equals(requestBanking.getTotalFee())) {
-                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "trans_amount.invalid"));
+                            return Mono.error(
+                                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "trans_amount.invalid"));
                         }
-                        //update: neu payment_status = 1 => xu ly don hang, neu != 1 => cap nhat request_banking state = -1
+                        // update: neu payment_status = 1 => xu ly don hang, neu != 1 => cap nhat
+                        // request_banking state = -1
                         if (!Constants.COMMON.STATUS_ACTIVE.equals(request.getPayment_status())) {
                             log.info("payment_status != 1");
-                            return AppUtils.insertData(requestBankingRepository.updateRequestBankingById(request.getOrder_code(), request.getVt_transaction_id(), STATE_FAIL))
+                            return AppUtils.insertData(requestBankingRepository.updateRequestBankingById(
+                                            request.getOrder_code(), request.getVt_transaction_id(), STATE_FAIL))
                                     .flatMap(rs -> {
                                         if (Boolean.FALSE.equals(rs)) {
-                                            return Mono.error(new BusinessException(INTERNAL_SERVER_ERROR, "request_banking.update.failed"));
+                                            return Mono.error(new BusinessException(
+                                                    INTERNAL_SERVER_ERROR, "request_banking.update.failed"));
                                         }
-                                        return Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), request.getVt_transaction_id()));
+                                        return Mono.just(new DataResponse<>(
+                                                Translator.toLocaleVi(SUCCESS), request.getVt_transaction_id()));
                                     });
                         }
-                        return AppUtils.insertData(requestBankingRepository.updateRequestBankingById(request.getOrder_code(), request.getVt_transaction_id(), STATE_DONE))
+                        return AppUtils.insertData(requestBankingRepository.updateRequestBankingById(
+                                        request.getOrder_code(), request.getVt_transaction_id(), STATE_DONE))
                                 .flatMap(rs -> {
                                     if (Boolean.FALSE.equals(rs)) {
-                                        return Mono.error(new BusinessException(INTERNAL_SERVER_ERROR, "request_banking.update.failed"));
+                                        return Mono.error(new BusinessException(
+                                                INTERNAL_SERVER_ERROR, "request_banking.update.failed"));
                                     }
                                     log.info("Before call order-service for updateStateOrder");
-                                    //update: updateStatusOrder truyen orderState = request.payment_status
-                                    AppUtils.runHiddenStream(orderClient.updateStatusOrder(requestBanking.getOrderId(), request.getPayment_status()));
-                                    return Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), request.getVt_transaction_id()));
+                                    // update: updateStatusOrder truyen orderState = request.payment_status
+                                    AppUtils.runHiddenStream(orderClient.updateStatusOrder(
+                                            requestBanking.getOrderId(), request.getPayment_status()));
+                                    return Mono.just(new DataResponse<>(
+                                            Translator.toLocaleVi(SUCCESS), request.getVt_transaction_id()));
                                 });
                     });
-
         });
     }
 
@@ -217,32 +250,44 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional
     public Mono<DataResponse> updateOrderState(UpdateOrderStateRequest request) {
         return validateUpdateOrderStateRequest(request)
-                .flatMap(validateRequest -> requestBankingRepositoryTemplate.getRequestBankingByListOrderCode(request).collectList())
+                .flatMap(validateRequest -> requestBankingRepositoryTemplate
+                        .getRequestBankingByListOrderCode(request)
+                        .collectList())
                 .flatMap(requestBankings -> {
                     if (DataUtil.isNullOrEmpty(requestBankings)) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.code.not_exist"));
+                        return Mono.error(
+                                new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.code.not_exist"));
                     }
                     if (request.getUpdateOrderStateDTOList().size() > requestBankings.size()) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.code.not_exist"));
+                        return Mono.error(
+                                new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.code.not_exist"));
                     }
-                    return settingClient.findByOptionSetCode(PaymentConstants.OptionSet.MERCHANT_CODE_PAYGATE).flatMap(lstSetting -> {
-                        return buildOrderIdUpdateStateMap(requestBankings, lstSetting)
-                                .flatMap(orderIdUpdateStateMap -> {
-                                    if (DataUtil.isNullOrEmpty(orderIdUpdateStateMap)) {
-                                        return Mono.error(new BusinessException(INTERNAL_SERVER_ERROR, "order.state.internal"));
-                                    }
-                                    return AppUtils.insertData(requestBankingRepositoryTemplate.updateRequestBankingBatch(orderIdUpdateStateMap).collectList());
-                                })
-                                .flatMap(updateRequestBanking -> {
-                                    if (DataUtil.isNullOrEmpty(updateRequestBanking) || Boolean.FALSE.equals(updateRequestBanking)) {
-                                        return Mono.error(new BusinessException(INTERNAL_SERVER_ERROR, "order.state.internal"));
-                                    }
-                                    return Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), request.getUpdateOrderStateDTOList().size()));
-                                });
-                    });
-
+                    return settingClient
+                            .findByOptionSetCode(PaymentConstants.OptionSet.MERCHANT_CODE_PAYGATE)
+                            .flatMap(lstSetting -> {
+                                return buildOrderIdUpdateStateMap(requestBankings, lstSetting)
+                                        .flatMap(orderIdUpdateStateMap -> {
+                                            if (DataUtil.isNullOrEmpty(orderIdUpdateStateMap)) {
+                                                return Mono.error(new BusinessException(
+                                                        INTERNAL_SERVER_ERROR, "order.state.internal"));
+                                            }
+                                            return AppUtils.insertData(requestBankingRepositoryTemplate
+                                                    .updateRequestBankingBatch(orderIdUpdateStateMap)
+                                                    .collectList());
+                                        })
+                                        .flatMap(updateRequestBanking -> {
+                                            if (DataUtil.isNullOrEmpty(updateRequestBanking)
+                                                    || Boolean.FALSE.equals(updateRequestBanking)) {
+                                                return Mono.error(new BusinessException(
+                                                        INTERNAL_SERVER_ERROR, "order.state.internal"));
+                                            }
+                                            return Mono.just(new DataResponse<>(
+                                                    Translator.toLocaleVi(SUCCESS),
+                                                    request.getUpdateOrderStateDTOList()
+                                                            .size()));
+                                        });
+                            });
                 });
-
     }
 
     @Override
@@ -253,38 +298,49 @@ public class PaymentServiceImpl implements PaymentService {
         if (endDate != null) {
             endDate = endDate.plusDays(1);
         }
-        if (startDate != null && endDate != null
-                && !startDate.isBefore(endDate)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.start.time.before.end.time"));
+        if (startDate != null && endDate != null && !startDate.isBefore(endDate)) {
+            return Mono.error(
+                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.start.time.before.end.time"));
         }
         request.setStartDate(startDate);
         request.setEndDate(endDate);
         request.setLimit(DataUtil.safeToInt(limit));
-        return syncData(request, new ArrayList<>())
-                .flatMap(rs -> {
-                    var updateRequestBanking = AppUtils.insertData(requestBankingRepositoryTemplate.updateRequestBankingBatchForSync(rs).collectList());
-                    List<RequestBankingSyncDTO> requestBankingSyncDTOList = rs.stream().filter(r -> !DataUtil.isNullOrEmpty(r.getVtTransactionId())).collect(Collectors.toList());
-                    var updateOrderState = Flux.fromIterable(requestBankingSyncDTOList)
-                            .flatMap(r -> {
-                                //update check payment_status = 1 => update status order
-                                if (!DataUtil.safeEqual(r.getPaymentStatus(), SUCCESS)) {
-                                    return Mono.empty();
-                                }
-                                return orderClient.updateStatusOrder(r.getOrderCode(), r.getPaymentStatus());
-                            }).collectList();
-                    return Mono.zip(updateRequestBanking, updateOrderState)
-                            .flatMap(update -> Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), update.getT1().toString())));
-                });
+        return syncData(request, new ArrayList<>()).flatMap(rs -> {
+            var updateRequestBanking = AppUtils.insertData(requestBankingRepositoryTemplate
+                    .updateRequestBankingBatchForSync(rs)
+                    .collectList());
+            List<RequestBankingSyncDTO> requestBankingSyncDTOList = rs.stream()
+                    .filter(r -> !DataUtil.isNullOrEmpty(r.getVtTransactionId()))
+                    .collect(Collectors.toList());
+            var updateOrderState = Flux.fromIterable(requestBankingSyncDTOList)
+                    .flatMap(r -> {
+                        // update check payment_status = 1 => update status order
+                        if (!DataUtil.safeEqual(r.getPaymentStatus(), SUCCESS)) {
+                            return Mono.empty();
+                        }
+                        return orderClient.updateStatusOrder(r.getOrderCode(), r.getPaymentStatus());
+                    })
+                    .collectList();
+            return Mono.zip(updateRequestBanking, updateOrderState)
+                    .flatMap(update -> Mono.just(new DataResponse<>(
+                            Translator.toLocaleVi(SUCCESS), update.getT1().toString())));
+        });
     }
 
-    private Mono<Boolean> saveRequestBanking(UUID id, String orderType, String orderCode,
-                                             Long totalFee, String merchantCode) {
-        var saveRequestBanking = requestBankingRepository.insertRequestBanking(id.toString(),
-                orderType, orderCode, PaymentState.NEW.getValue(), OrderState.NEW.getValue(), totalFee, merchantCode, Constants.RoleName.SYSTEM, Constants.RoleName.SYSTEM);
+    private Mono<Boolean> saveRequestBanking(
+            UUID id, String orderType, String orderCode, Long totalFee, String merchantCode) {
+        var saveRequestBanking = requestBankingRepository.insertRequestBanking(
+                id.toString(),
+                orderType,
+                orderCode,
+                PaymentState.NEW.getValue(),
+                OrderState.NEW.getValue(),
+                totalFee,
+                merchantCode,
+                Constants.RoleName.SYSTEM,
+                Constants.RoleName.SYSTEM);
 
-        return saveRequestBanking
-                .map(rs -> true)
-                .switchIfEmpty(Mono.just(true));
+        return saveRequestBanking.map(rs -> true).switchIfEmpty(Mono.just(true));
     }
 
     private Mono<Boolean> validateRequest(ProductPaymentRequest request) {
@@ -401,16 +457,22 @@ public class PaymentServiceImpl implements PaymentService {
         return Mono.just(true);
     }
 
-    private Mono<List<RequestBankingSyncDTO>> syncData(SyncOrderStateRequest request, List<RequestBankingSyncDTO> currentList) {
+    private Mono<List<RequestBankingSyncDTO>> syncData(
+            SyncOrderStateRequest request, List<RequestBankingSyncDTO> currentList) {
         if (request.getRunCount() == 0) {
             return Mono.just(currentList);
         }
 
         long offset = request.getOffSet();
         log.info("run sync request_banking offset: {}, limit: {}", offset, request.getLimit());
-        return requestBankingRepository.findAllByStataAndTime(PaymentState.NEW.getValue(),
-                        request.getStartDate(), request.getEndDate(),
-                        request.getLimit(), offset).collectList()
+        return requestBankingRepository
+                .findAllByStataAndTime(
+                        PaymentState.NEW.getValue(),
+                        request.getStartDate(),
+                        request.getEndDate(),
+                        request.getLimit(),
+                        offset)
+                .collectList()
                 .flatMap(requestBankings -> {
                     if (DataUtil.isNullOrEmpty(requestBankings)) {
                         return Mono.just(currentList);
@@ -418,10 +480,15 @@ public class PaymentServiceImpl implements PaymentService {
 
                     return Flux.fromIterable(requestBankings)
                             .flatMap(requestBanking -> {
-                                String data = DataUtil.sumListString(paymentProperties.getAccessCode(), paymentProperties.getMerchantCode(), requestBanking.getId());
+                                String data = DataUtil.sumListString(
+                                        paymentProperties.getAccessCode(),
+                                        paymentProperties.getMerchantCode(),
+                                        requestBanking.getId());
 
                                 String check_sum = createChecksum(data, paymentProperties.getAccessCode());
-                                return paymentClient.searchPaymentState(check_sum, requestBanking.getId(), paymentProperties.getMerchantCode())
+                                return paymentClient
+                                        .searchPaymentState(
+                                                check_sum, requestBanking.getId(), paymentProperties.getMerchantCode())
                                         .flatMap(search -> {
                                             RequestBankingSyncDTO requestBankingSyncDTO = new RequestBankingSyncDTO();
                                             if (search.isEmpty()) {
@@ -432,7 +499,8 @@ public class PaymentServiceImpl implements PaymentService {
                                                 requestBankingSyncDTO.setOrderCode(requestBanking.getOrderId());
                                                 return Mono.just(requestBankingSyncDTO);
                                             }
-                                            if (DataUtil.isNullOrEmpty(search.get().getData())) {
+                                            if (DataUtil.isNullOrEmpty(
+                                                    search.get().getData())) {
                                                 requestBankingSyncDTO.setUpdateState(0);
                                                 requestBankingSyncDTO.setPaymentStatus(0);
                                                 requestBankingSyncDTO.setVtTransactionId(null);
@@ -441,22 +509,29 @@ public class PaymentServiceImpl implements PaymentService {
                                                 return Mono.just(requestBankingSyncDTO);
                                             }
 
-                                            SearchPaymentState searchPaymentState = search.get().getData();
-                                            if (searchPaymentState.getPayment_status() == 1 && check_sum.equals(searchPaymentState.getCheck_sum())) {
+                                            SearchPaymentState searchPaymentState =
+                                                    search.get().getData();
+                                            if (searchPaymentState.getPayment_status() == 1
+                                                    && check_sum.equals(searchPaymentState.getCheck_sum())) {
                                                 requestBankingSyncDTO.setUpdateState(1);
                                                 requestBankingSyncDTO.setPaymentStatus(1);
-                                                requestBankingSyncDTO.setVtTransactionId(searchPaymentState.getVt_transaction_id());
+                                                requestBankingSyncDTO.setVtTransactionId(
+                                                        searchPaymentState.getVt_transaction_id());
                                             }
-                                            if (searchPaymentState.getPayment_status() != 1 && check_sum.equals(searchPaymentState.getCheck_sum())) {
+                                            if (searchPaymentState.getPayment_status() != 1
+                                                    && check_sum.equals(searchPaymentState.getCheck_sum())) {
                                                 requestBankingSyncDTO.setUpdateState(1);
-                                                requestBankingSyncDTO.setPaymentStatus(searchPaymentState.getPayment_status());
-                                                requestBankingSyncDTO.setVtTransactionId(searchPaymentState.getVt_transaction_id());
+                                                requestBankingSyncDTO.setPaymentStatus(
+                                                        searchPaymentState.getPayment_status());
+                                                requestBankingSyncDTO.setVtTransactionId(
+                                                        searchPaymentState.getVt_transaction_id());
                                             }
                                             requestBankingSyncDTO.setId(requestBanking.getId());
                                             requestBankingSyncDTO.setOrderCode(requestBanking.getOrderId());
                                             return Mono.just(requestBankingSyncDTO);
                                         });
-                            }).collectList()
+                            })
+                            .collectList()
                             .flatMap(rs -> {
                                 rs.addAll(currentList);
                                 request.reduceCount();
@@ -465,7 +540,8 @@ public class PaymentServiceImpl implements PaymentService {
                 });
     }
 
-    private Mono<Map<String, Integer>> buildOrderIdUpdateStateMap(List<RequestBanking> requestBankings, List<OptionSetValue> lstSettingPayment) {
+    private Mono<Map<String, Integer>> buildOrderIdUpdateStateMap(
+            List<RequestBanking> requestBankings, List<OptionSetValue> lstSettingPayment) {
         return Flux.fromIterable(requestBankings)
                 .flatMap(requestBanking -> {
                     String accessCode = paymentProperties.getAccessCode();
@@ -478,19 +554,25 @@ public class PaymentServiceImpl implements PaymentService {
                     if (!DataUtil.isNullOrEmpty(lstSettingPayment)) {
                         for (OptionSetValue optionSetValue : lstSettingPayment) {
                             if (DataUtil.safeEqual(optionSetValue.getCode(), (merchantCode))) {
-                                ConfigPaymentDTO configPaymentDTO = objectMapperUtil.convertStringToObject(optionSetValue.getValue(), ConfigPaymentDTO.class);
+                                ConfigPaymentDTO configPaymentDTO = objectMapperUtil.convertStringToObject(
+                                        optionSetValue.getValue(), ConfigPaymentDTO.class);
                                 accessCode = configPaymentDTO.getAccessCode();
                                 hashCode = configPaymentDTO.getHashCode();
                                 break;
                             }
                         }
                     }
-                    String data = DataUtil.sumListString(accessCode, merchantCode, requestBanking.getOrderId(),
-                            String.valueOf(OrderState.COMPLETED.getValue()), requestBanking.getVtTransactionId());
+                    String data = DataUtil.sumListString(
+                            accessCode,
+                            merchantCode,
+                            requestBanking.getOrderId(),
+                            String.valueOf(OrderState.COMPLETED.getValue()),
+                            requestBanking.getVtTransactionId());
 
                     String check_sum = createChecksum(data, hashCode);
 
-                    UpdateOrderStateMyViettelRequest updateOrderStateMyViettelRequest = new UpdateOrderStateMyViettelRequest();
+                    UpdateOrderStateMyViettelRequest updateOrderStateMyViettelRequest =
+                            new UpdateOrderStateMyViettelRequest();
                     updateOrderStateMyViettelRequest.setTransaction_id(requestBanking.getVtTransactionId());
                     updateOrderStateMyViettelRequest.setMerchant_code(paymentProperties.getMerchantCode());
                     updateOrderStateMyViettelRequest.setCheck_sum(check_sum);
@@ -498,9 +580,11 @@ public class PaymentServiceImpl implements PaymentService {
                     updateOrderStateMyViettelRequest.setPayment_status(requestBanking.getState());
                     updateOrderStateMyViettelRequest.setOrder_code(requestBanking.getOrderId());
 
-                    return paymentClient.updateOrderStateForMyViettel(updateOrderStateMyViettelRequest)
+                    return paymentClient
+                            .updateOrderStateForMyViettel(updateOrderStateMyViettelRequest)
                             .map(updateOrderStateMyViettel -> {
-                                if (DataUtil.isNullOrEmpty(updateOrderStateMyViettel) || updateOrderStateMyViettel.isEmpty()) {
+                                if (DataUtil.isNullOrEmpty(updateOrderStateMyViettel)
+                                        || updateOrderStateMyViettel.isEmpty()) {
                                     return Map.entry(requestBanking.getId(), 0);
                                 }
 
@@ -509,7 +593,6 @@ public class PaymentServiceImpl implements PaymentService {
                                 }
                                 return Map.entry(requestBanking.getId(), 1);
                             });
-
                 })
                 .collectMap(Map.Entry::getKey, Map.Entry::getValue)
                 .map(Collections::unmodifiableMap);

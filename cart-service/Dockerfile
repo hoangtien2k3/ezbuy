@@ -4,7 +4,7 @@ ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
 FROM  openjdk:11.0.12-oracle
-LABEL com.viettel.ecom.order.version="1.0.0"
+LABEL com.ezbuy.ecom.order.version="1.0.0"
 LABEL version="1.0.0"
 LABEL description="cart service"
 LABEL author="Viettel Company"

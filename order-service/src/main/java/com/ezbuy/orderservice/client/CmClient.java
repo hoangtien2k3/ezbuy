@@ -1,11 +1,13 @@
-//package com.ezbuy.orderservice.client;
+// package com.ezbuy.orderservice.client;
 //
-//import com.ezbuy.ordermodel.dto.ws.GetCustomerSubscriberSmeInfoResponse;
-//import reactor.core.publisher.Mono;
+// import com.ezbuy.ordermodel.dto.ws.GetCustomerSubscriberSmeInfoResponse;
+// import reactor.core.publisher.Mono;
 //
-//import java.util.Optional;
+// import java.util.Optional;
 //
-//public interface CmClient {
+// public interface CmClient {
 //
-//    Mono<Optional<GetCustomerSubscriberSmeInfoResponse>> getCustomerSubscriberSmeInfo(String idNo, String isdn, String telecomServiceId);
-//}
+// Mono<Optional<GetCustomerSubscriberSmeInfoResponse>>
+// getCustomerSubscriberSmeInfo(String idNo, String isdn, String
+// telecomServiceId);
+// }

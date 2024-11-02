@@ -1,9 +1,8 @@
 package com.ezbuy.notificationsend.client.impl
 
 import com.ezbuy.notificationsend.client.AuthClient
-import com.ezbuy.notimodel.dto.response.ContactResponse
-import io.hoangtien2k3.reactify.client.BaseRestClient
-import lombok.RequiredArgsConstructor
+import com.ezbuy.notificationmodel.dto.response.ContactResponse
+import com.ezbuy.reactify.client.BaseRestClient
 import lombok.extern.slf4j.Slf4j
 import org.reflections.Reflections.log
 import org.springframework.beans.factory.annotation.Qualifier

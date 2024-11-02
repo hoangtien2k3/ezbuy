@@ -4,13 +4,13 @@ import com.ezbuy.notificationsend.client.AuthClient
 import com.ezbuy.notificationsend.repository.TransmissionRepository
 import com.ezbuy.notificationsend.service.MailService
 import com.ezbuy.notificationsend.service.TransmissionService
-import com.ezbuy.notimodel.dto.EmailResultDTO
-import com.ezbuy.notimodel.dto.TransmissionNotiDTO
-import io.hoangtien2k3.reactify.AppUtils
-import io.hoangtien2k3.reactify.DataUtil
-import io.hoangtien2k3.reactify.ValidateUtils
-import io.hoangtien2k3.reactify.model.response.DataResponse
-import io.hoangtien2k3.reactify.constants.Regex
+import com.ezbuy.notificationmodel.dto.EmailResultDTO
+import com.ezbuy.notificationmodel.dto.TransmissionNotiDTO
+import com.ezbuy.reactify.AppUtils
+import com.ezbuy.reactify.DataUtil
+import com.ezbuy.reactify.ValidateUtils
+import com.ezbuy.reactify.model.response.DataResponse
+import com.ezbuy.reactify.constants.Regex
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -39,7 +39,12 @@ class TransmissionServiceImpl(
             .flatMap { transmissionNotis ->
                 if (DataUtil.isNullOrEmpty(transmissionNotis)) {
                     log.info("transmissionList is empty")
-                    return@flatMap Mono.just(DataResponse(null, "success"))
+                    return@flatMap Mono.just(
+                        DataResponse(
+                            null,
+                            "success"
+                        )
+                    )
                 }
 
                 val successIds = mutableListOf<String>()
@@ -72,7 +77,8 @@ class TransmissionServiceImpl(
                         }
 
                         val receiverIds = emailTransmissions.filter {
-                            !DataUtil.isNullOrEmpty(it.receiver) && (DataUtil.isNullOrEmpty(DataUtil.safeTrim(it.email))
+                            !DataUtil.isNullOrEmpty(it.receiver) && (DataUtil.isNullOrEmpty(
+                                DataUtil.safeTrim(it.email))
                                     || !ValidateUtils.validateRegex(
                                 DataUtil.safeTrim(it.email),
                                 Regex.EMAIL_REGEX
@@ -134,7 +140,12 @@ class TransmissionServiceImpl(
         } else {
             transmissionRepository.updateTransmissionFailedState(failedIds)
         }
-        return Mono.zip(successUpdateMono, failedUpdateMono).map { DataResponse(null, "success") }
+        return Mono.zip(successUpdateMono, failedUpdateMono).map {
+            DataResponse(
+                null,
+                "success"
+            )
+        }
     }
 
     private fun partitionList(list: List<String>, size: Int): List<List<String>> {

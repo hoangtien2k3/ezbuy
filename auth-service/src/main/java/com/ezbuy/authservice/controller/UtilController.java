@@ -3,7 +3,7 @@ package com.ezbuy.authservice.controller;
 import com.ezbuy.authmodel.constants.UrlPaths;
 import com.ezbuy.authmodel.dto.request.JobAddRoleAdminForOldUserRequest;
 import com.ezbuy.authservice.service.UtilService;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
+import com.ezbuy.reactify.model.response.DataResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

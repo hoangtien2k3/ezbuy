@@ -5,7 +5,7 @@ import com.ezbuy.customer.model.dto.request.AuthenticationRequest;
 import com.ezbuy.customer.model.dto.request.CreateCustomerRequest;
 import com.ezbuy.customer.model.dto.response.AuthenticationResponse;
 import com.ezbuy.customer.service.CustomerService;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
+import com.ezbuy.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

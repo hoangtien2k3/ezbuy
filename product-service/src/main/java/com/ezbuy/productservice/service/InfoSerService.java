@@ -1,9 +1,8 @@
 package com.ezbuy.productservice.service;
 
 import com.ezbuy.settingmodel.dto.TelecomDTO;
-import reactor.core.publisher.Mono;
-
 import java.util.List;
+import reactor.core.publisher.Mono;
 
 public interface InfoSerService {
 
@@ -12,5 +11,4 @@ public interface InfoSerService {
     Mono<List<String>> getActiveTelecomServiceIdByOrgId(String idNo);
 
     Mono<List<String>> getActiveTelecomServiceAlilasByIdNo(String idNo);
-
 }

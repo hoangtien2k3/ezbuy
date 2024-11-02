@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: bu-order
+  name: ezbuy-search-service
+  labels:
+    app: sme-search-service
+    environment: development
+    release: stable
+    tier: service
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: ezbuy-search-service
+  type: ClusterIP

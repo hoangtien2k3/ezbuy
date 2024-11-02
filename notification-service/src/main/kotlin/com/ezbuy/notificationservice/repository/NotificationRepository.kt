@@ -1,6 +1,6 @@
 package com.ezbuy.notificationservice.repository
 
-import com.ezbuy.notimodel.model.Notification
+import com.ezbuy.notificationmodel.model.Notification
 import com.ezbuy.notificationservice.repository.query.NotificationQuery
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.r2dbc.repository.R2dbcRepository

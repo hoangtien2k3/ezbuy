@@ -10,5 +10,4 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "client.auth", ignoreInvalidFields = true)
 @Data
 @AllArgsConstructor
-public class AuthClientProperties extends WebClientProperties {
-}
+public class AuthClientProperties extends WebClientProperties {}

@@ -4,12 +4,11 @@ import com.ezbuy.productmodel.constants.UrlPaths;
 import com.ezbuy.productmodel.model.Telecom;
 import com.ezbuy.productservice.service.TelecomService;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -30,7 +29,8 @@ public class TelecomController {
     }
 
     @GetMapping(value = UrlPaths.Service.GET_BY_ALIAS)
-    public Mono<DataResponse<Telecom>> getTelecomByAlias(@RequestParam(name = "telecomServiceAlias") String telecomServiceAlias) {
+    public Mono<DataResponse<Telecom>> getTelecomByAlias(
+            @RequestParam(name = "telecomServiceAlias") String telecomServiceAlias) {
         return this.telecomService.getByAlias(telecomServiceAlias);
     }
 

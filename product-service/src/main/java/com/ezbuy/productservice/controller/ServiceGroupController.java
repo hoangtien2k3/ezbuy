@@ -9,12 +9,11 @@ import com.ezbuy.productservice.service.ServiceGroupService;
 import io.hoangtien2k3.reactify.Translator;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -29,7 +28,8 @@ public class ServiceGroupController {
     }
 
     @PutMapping(value = UrlPaths.ServiceGroup.UPDATE)
-    public Mono<DataResponse<ServiceGroup>> editServiceGroup(@PathVariable String id, @Valid @RequestBody CreateServiceGroupRequest request) {
+    public Mono<DataResponse<ServiceGroup>> editServiceGroup(
+            @PathVariable String id, @Valid @RequestBody CreateServiceGroupRequest request) {
         return serviceGroupService.editServiceGroup(id, request);
     }
 
@@ -40,7 +40,8 @@ public class ServiceGroupController {
 
     @GetMapping(UrlPaths.ServiceGroup.ALL)
     public Mono<DataResponse<List<ServiceGroup>>> getAllServiceGroupActive() {
-        return this.serviceGroupService.getAllServiceGroupActive()
+        return this.serviceGroupService
+                .getAllServiceGroupActive()
                 .map(rs -> new DataResponse(Translator.toLocaleVi("success"), rs));
     }
 }

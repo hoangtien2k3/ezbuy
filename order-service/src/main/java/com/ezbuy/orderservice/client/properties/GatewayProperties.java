@@ -10,5 +10,4 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "client.gateway", ignoreInvalidFields = true)
 @Data
 @AllArgsConstructor
-public class GatewayProperties extends WebClientProperties {
-}
+public class GatewayProperties extends WebClientProperties {}

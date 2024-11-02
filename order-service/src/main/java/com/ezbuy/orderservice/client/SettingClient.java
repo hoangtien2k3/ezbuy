@@ -5,18 +5,16 @@ import com.ezbuy.settingmodel.dto.AreaDTO;
 import com.ezbuy.settingmodel.dto.OptionSetValueDTO;
 import com.ezbuy.settingmodel.dto.TelecomDTO;
 import com.ezbuy.settingmodel.model.OptionSetValue;
-import reactor.core.publisher.Mono;
-
 import java.util.List;
+import reactor.core.publisher.Mono;
 
 public interface SettingClient {
 
-    Mono<List<TelecomDTO>> getTelecomData(List<String> ids,
-                                          List<String> aliases,
-                                          List<String> origins);
+    Mono<List<TelecomDTO>> getTelecomData(List<String> ids, List<String> aliases, List<String> origins);
 
     /**
      * Ham lay danh sach dieu khoan trong DB
+     *
      * @param code
      * @return
      */
@@ -24,6 +22,7 @@ public interface SettingClient {
 
     /**
      * Ham lay danh sach tat ca dich vu
+     *
      * @return
      */
     Mono<List<Telecom>> getAllTelecomService();
@@ -32,6 +31,7 @@ public interface SettingClient {
 
     /**
      * lay ten tinh, huyen, xa
+     *
      * @param province
      * @param district
      * @param precinct

@@ -38,8 +38,7 @@ public class OptionSetController {
 
     @PostMapping
     public Mono<ResponseEntity<DataResponse<OptionSet>>> createOptionSet(@RequestBody CreateOptionSetRequest request) {
-        return optionSetService.createOptionSet(request)
-                .map(ResponseEntity::ok);
+        return optionSetService.createOptionSet(request).map(ResponseEntity::ok);
     }
 
     @PutMapping(value = UrlPaths.OptionSet.UPDATE)

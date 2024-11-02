@@ -10,7 +10,8 @@ import reactor.core.publisher.Mono;
 public interface ActiveTelecomRepository extends R2dbcRepository<ActiveTelecom, String> {
 
     // bo sung them dieu kien alias
-    @Query(value = "select count(id) from active_telecom where telecom_service_id = :telecomServiceId and id_no = :idNo and (alias = :alias or alias is null)")
+    @Query(
+            value =
+                    "select count(id) from active_telecom where telecom_service_id = :telecomServiceId and id_no = :idNo and (alias = :alias or alias is null)")
     Mono<Long> count(Long telecomServiceId, String idNo, String alias);
-
 }

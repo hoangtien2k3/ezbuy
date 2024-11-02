@@ -7,6 +7,9 @@ import com.ezbuy.paymentservice.client.PaymentClient;
 import io.hoangtien2k3.reactify.DataUtil;
 import io.hoangtien2k3.reactify.client.BaseRestClient;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,10 +20,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Optional;
-
 @Slf4j
 @Service
 @DependsOn("webClientFactory")
@@ -29,6 +28,7 @@ public class PaymentClientImpl implements PaymentClient {
 
     @Qualifier("paymentClient")
     private final WebClient paymentClient;
+
     private final BaseRestClient baseRestClient;
 
     @Override
@@ -44,7 +44,8 @@ public class PaymentClientImpl implements PaymentClient {
         if (!DataUtil.isNullOrEmpty(merchantCode)) {
             formData.put("merchant_code", Collections.singletonList(merchantCode));
         }
-        return baseRestClient.postFormData(paymentClient, "/check-transaction", null, formData, MyViettelDTO.class)
+        return baseRestClient
+                .postFormData(paymentClient, "/check-transaction", null, formData, MyViettelDTO.class)
                 .map(response -> {
                     Optional<MyViettelDTO> myViettelDTO = (Optional<MyViettelDTO>) response;
                     return myViettelDTO;
@@ -74,7 +75,8 @@ public class PaymentClientImpl implements PaymentClient {
             formData.put("order_code", Collections.singletonList(request.getOrder_code()));
         }
 
-        return baseRestClient.postFormData(paymentClient, "/updateOrderStatus", null, formData, MyViettelDTO.class)
+        return baseRestClient
+                .postFormData(paymentClient, "/updateOrderStatus", null, formData, MyViettelDTO.class)
                 .map(response -> {
                     Optional<MyViettelDTO> myViettelDTO = (Optional<MyViettelDTO>) response;
                     return myViettelDTO;
@@ -83,14 +85,17 @@ public class PaymentClientImpl implements PaymentClient {
 
     @Override
     public Mono<Optional<Long>> getTotalFee(ProductPriceRequest request) {
-        return baseRestClient.post(paymentClient, "/v1/price/calculate", null, request, DataResponse.class)
+        return baseRestClient
+                .post(paymentClient, "/v1/price/calculate", null, request, DataResponse.class)
                 .flatMap(responseOptional -> {
                     Optional<DataResponse> dataResponseOptional = (Optional<DataResponse>) responseOptional;
-                    if (dataResponseOptional.isEmpty() || dataResponseOptional.get().getData() == null) {
+                    if (dataResponseOptional.isEmpty()
+                            || dataResponseOptional.get().getData() == null) {
                         return Mono.just(Optional.empty());
                     }
 
-                    LinkedHashMap<String, Object> dataMap = (LinkedHashMap<String, Object>) dataResponseOptional.get().getData();
+                    LinkedHashMap<String, Object> dataMap = (LinkedHashMap<String, Object>)
+                            dataResponseOptional.get().getData();
                     Long totalPrice = DataUtil.safeToLong(dataMap.get("totalPrice"));
                     return Mono.just(Optional.ofNullable(totalPrice));
                 })

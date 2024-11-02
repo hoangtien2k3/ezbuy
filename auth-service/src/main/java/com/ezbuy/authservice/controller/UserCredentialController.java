@@ -2,7 +2,7 @@ package com.ezbuy.authservice.controller;
 
 import com.ezbuy.authmodel.constants.UrlPaths;
 import com.ezbuy.authservice.service.UserCredentialService;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
+import com.ezbuy.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

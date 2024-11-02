@@ -7,6 +7,8 @@ import reactor.core.publisher.Mono;
 
 public interface PublicService {
     Mono<DataResponse> getListProductOfferingComboForHubSme(GetListProductOfferingComboForHubSmeRequest request);
+
     Mono<DataResponse> getListTemplateComboForHubSme(String productOfferingId);
+
     Mono<DataResponse> getProductTemplateDetail(GetProductTemplateDetailRequest getProductTemplateDetailRequest);
 }

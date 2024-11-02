@@ -1,8 +1,7 @@
 package com.ezbuy.paymentservice.client;
 
-import reactor.core.publisher.Mono;
-
 import java.util.List;
+import reactor.core.publisher.Mono;
 
 public interface AuthClient {
 

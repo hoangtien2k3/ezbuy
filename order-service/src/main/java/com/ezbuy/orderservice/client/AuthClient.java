@@ -4,10 +4,9 @@ import com.ezbuy.authmodel.dto.request.UpdateTenantTrustStatusRequest;
 import com.ezbuy.authmodel.dto.response.TenantIdentifyDTO;
 import com.ezbuy.authmodel.model.Organization;
 import com.ezbuy.authmodel.model.TenantIdentify;
-import reactor.core.publisher.Mono;
-
 import java.util.List;
 import java.util.Optional;
+import reactor.core.publisher.Mono;
 
 public interface AuthClient {
 
@@ -23,6 +22,7 @@ public interface AuthClient {
 
     /**
      * Ham lay individual id theo user dang nhap
+     *
      * @param userId
      * @param organizationId
      * @return
@@ -31,18 +31,19 @@ public interface AuthClient {
 
     /**
      * Ham update tenant trust status theo id
+     *
      * @param request
      * @return
      */
     Mono<String> updateTrustStatusByTenantId(UpdateTenantTrustStatusRequest request);
 
-    Mono<List<TenantIdentify>>getByTypeAndTenantIdAndTrustStatus(String type, String tenantId, String trustStatus);
+    Mono<List<TenantIdentify>> getByTypeAndTenantIdAndTrustStatus(String type, String tenantId, String trustStatus);
 
     /**
      * Ham update tenant trust status not sign va gui mail
+     *
      * @param request
      * @return
      */
     Mono<String> updateTrustStatusNotSign(UpdateTenantTrustStatusRequest request);
-
 }

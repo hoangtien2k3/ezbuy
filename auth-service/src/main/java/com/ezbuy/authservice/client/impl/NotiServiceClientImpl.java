@@ -2,10 +2,10 @@ package com.ezbuy.authservice.client.impl;
 
 import com.ezbuy.authmodel.constants.UrlPaths;
 import com.ezbuy.authservice.client.NotiServiceClient;
-import com.ezbuy.notimodel.dto.request.CreateNotificationDTO;
-import io.hoangtien2k3.reactify.SecurityUtils;
-import io.hoangtien2k3.reactify.client.BaseRestClient;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
+import com.ezbuy.notificationmodel.dto.request.CreateNotificationDTO;
+import com.ezbuy.reactify.SecurityUtils;
+import com.ezbuy.reactify.client.BaseRestClient;
+import com.ezbuy.reactify.model.response.DataResponse;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

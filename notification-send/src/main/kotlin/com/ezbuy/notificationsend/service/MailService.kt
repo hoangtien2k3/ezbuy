@@ -1,7 +1,7 @@
 package com.ezbuy.notificationsend.service
 
-import com.ezbuy.notimodel.dto.EmailResultDTO
-import com.ezbuy.notimodel.dto.TransmissionNotiDTO
+import com.ezbuy.notificationmodel.dto.EmailResultDTO
+import com.ezbuy.notificationmodel.dto.TransmissionNotiDTO
 import reactor.core.publisher.Mono
 
 interface MailService {

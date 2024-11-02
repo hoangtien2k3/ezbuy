@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.hoangtien2k3.reactify.DataUtil;
 import io.hoangtien2k3.reactify.client.BaseRestClient;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
+import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
@@ -18,8 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.*;
 
 @Slf4j
 @Service
@@ -29,15 +28,15 @@ public class ProductClientImpl implements ProductClient {
     private final WebClient webClient;
     private final BaseRestClient baseRestClient;
 
-    public ProductClientImpl(BaseRestClient baseRestClient,
-                             @Qualifier("product") WebClient product) {
+    public ProductClientImpl(BaseRestClient baseRestClient, @Qualifier("product") WebClient product) {
         this.baseRestClient = baseRestClient;
         this.webClient = product;
     }
 
     @Override
     public Flux<IdentityProductPrice> getExProductPrices(Set<String> templateIds) {
-        return webClient.get()
+        return webClient
+                .get()
                 .uri(ClientUris.Product.GET_PRODUCT_PRICES)
                 .retrieve()
                 .bodyToFlux(IdentityProductPrice.class)
@@ -51,18 +50,21 @@ public class ProductClientImpl implements ProductClient {
         FilterProductTemplateDTO filterProductTemplateDTO = new FilterProductTemplateDTO();
         filterProductTemplateDTO.setListId(templateIds);
 
-        return baseRestClient.post(webClient, "/v1/filter-product-template", null, filterProductTemplateDTO, DataResponse.class)
+        return baseRestClient
+                .post(webClient, "/v1/filter-product-template", null, filterProductTemplateDTO, DataResponse.class)
                 .map(resp -> {
                     Optional<DataResponse> respOptional = (Optional<DataResponse>) resp;
                     if (respOptional.isEmpty() || respOptional.get().getData() == null) {
                         return new ArrayList<>();
                     }
 
-                    Map<String, Object> dataMap = (Map<String, Object>) respOptional.get().getData();
+                    Map<String, Object> dataMap =
+                            (Map<String, Object>) respOptional.get().getData();
                     String dataJson = DataUtil.parseObjectToString(dataMap.get("data"));
-                    return DataUtil.parseStringToObject(dataJson, new TypeReference<List<ProductOfferTemplateDTO>>() {
-                    }, new ArrayList<>());
-                }).onErrorResume(throwable -> Mono.just(new ArrayList<>()));
+                    return DataUtil.parseStringToObject(
+                            dataJson, new TypeReference<List<ProductOfferTemplateDTO>>() {}, new ArrayList<>());
+                })
+                .onErrorResume(throwable -> Mono.just(new ArrayList<>()));
     }
 
     @Override
@@ -71,17 +73,25 @@ public class ProductClientImpl implements ProductClient {
         filterGetListSubscriberActive.setIdNo(idNo);
         filterGetListSubscriberActive.setLstTelecomServiceId(lstTelecomServiceId);
 
-        return baseRestClient.post(webClient, "/v1/get-list-subscriber-active", null, filterGetListSubscriberActive, DataResponse.class)
+        return baseRestClient
+                .post(
+                        webClient,
+                        "/v1/get-list-subscriber-active",
+                        null,
+                        filterGetListSubscriberActive,
+                        DataResponse.class)
                 .map(resp -> {
                     Optional<DataResponse> respOptional = (Optional<DataResponse>) resp;
                     if (respOptional.isEmpty() || respOptional.get().getData() == null) {
                         return new ArrayList<>();
                     }
 
-                    Map<String, Object> dataMap = (Map<String, Object>) respOptional.get().getData();
+                    Map<String, Object> dataMap =
+                            (Map<String, Object>) respOptional.get().getData();
                     String dataJson = DataUtil.parseObjectToString(dataMap.get("data"));
-                    return DataUtil.parseStringToObject(dataJson, new TypeReference<List<Subscriber>>() {
-                    }, new ArrayList<>());
-                }).onErrorResume(throwable -> Mono.just(new ArrayList<>()));
+                    return DataUtil.parseStringToObject(
+                            dataJson, new TypeReference<List<Subscriber>>() {}, new ArrayList<>());
+                })
+                .onErrorResume(throwable -> Mono.just(new ArrayList<>()));
     }
 }

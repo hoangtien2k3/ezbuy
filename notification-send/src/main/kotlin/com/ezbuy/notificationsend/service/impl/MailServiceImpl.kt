@@ -10,10 +10,10 @@ import com.ezbuy.notificationsend.constants.CommonConstants.TemplateMail.NOTI_VE
 import com.ezbuy.notificationsend.constants.CommonConstants.TemplateMail.SIGN_UP
 import com.ezbuy.notificationsend.constants.CommonConstants.TemplateMail.SIGN_UP_PASSWORD
 import com.ezbuy.notificationsend.service.MailService
-import com.ezbuy.notimodel.dto.EmailResultDTO
-import com.ezbuy.notimodel.dto.TransmissionNotiDTO
-import io.hoangtien2k3.reactify.DataUtil
-import io.hoangtien2k3.reactify.constants.Constants.TemplateMail.VERIFY_ACCOUNT_SUCESS
+import com.ezbuy.notificationmodel.dto.EmailResultDTO
+import com.ezbuy.notificationmodel.dto.TransmissionNotiDTO
+import com.ezbuy.reactify.DataUtil
+import com.ezbuy.reactify.constants.Constants.TemplateMail.VERIFY_ACCOUNT_SUCESS
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.javamail.JavaMailSender

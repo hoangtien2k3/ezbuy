@@ -1,7 +1,7 @@
 package com.ezbuy.notificationsend.client.config
 
 import com.ezbuy.notificationsend.client.properties.AuthProperties
-import io.hoangtien2k3.reactify.client.WebClientFactory
+import com.ezbuy.reactify.client.WebClientFactory
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -17,7 +17,10 @@ class WebClientFactoryConfig(
         applicationContext: ApplicationContext,
         authorizedClientManager: ReactiveOAuth2AuthorizedClientManager
     ): WebClientFactory {
-        val factory = WebClientFactory(applicationContext, authorizedClientManager)
+        val factory = WebClientFactory(
+            applicationContext,
+            authorizedClientManager
+        )
         factory.setWebClients(listOf(authProperties))
         return factory
     }

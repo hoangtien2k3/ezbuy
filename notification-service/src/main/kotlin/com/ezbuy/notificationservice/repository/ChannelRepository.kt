@@ -1,7 +1,7 @@
 package com.ezbuy.notificationservice.repository
 
 import com.ezbuy.notificationservice.repository.query.ChannelQuery
-import com.ezbuy.notimodel.model.Channel
+import com.ezbuy.notificationmodel.model.Channel
 import org.springframework.data.r2dbc.repository.R2dbcRepository
 import org.springframework.data.r2dbc.repository.Query
 import reactor.core.publisher.Mono

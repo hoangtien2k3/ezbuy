@@ -11,10 +11,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(
         exclude = {
-                DataSourceAutoConfiguration.class,
-                DataSourceTransactionManagerAutoConfiguration.class,
-                HibernateJpaAutoConfiguration.class,
-                SecurityAutoConfiguration.class,
+            DataSourceAutoConfiguration.class,
+            DataSourceTransactionManagerAutoConfiguration.class,
+            HibernateJpaAutoConfiguration.class,
+            SecurityAutoConfiguration.class,
         })
 @ComponentScan(basePackages = {"com.ezbuy", "io.hoangtien2k3.reactify"})
 @EnableScheduling

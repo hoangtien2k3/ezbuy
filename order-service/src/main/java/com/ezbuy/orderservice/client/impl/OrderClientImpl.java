@@ -12,6 +12,8 @@ import com.ezbuy.orderservice.client.utils.OrderClientUtils;
 import io.hoangtien2k3.reactify.DataUtil;
 import io.hoangtien2k3.reactify.DataWsUtil;
 import io.hoangtien2k3.reactify.constants.Constants;
+import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,9 +21,6 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -34,9 +33,10 @@ public class OrderClientImpl implements OrderClient {
 
     private final OrderProperties orderProperties;
 
-    public OrderClientImpl(BaseSoapClient soapClient,
-                           @Qualifier("orderClient") WebClient orderClient,
-                           OrderProperties orderProperties) {
+    public OrderClientImpl(
+            BaseSoapClient soapClient,
+            @Qualifier("orderClient") WebClient orderClient,
+            OrderProperties orderProperties) {
         this.soapClient = soapClient;
         this.orderClient = orderClient;
         this.orderProperties = orderProperties;
@@ -44,8 +44,10 @@ public class OrderClientImpl implements OrderClient {
 
     @Override
     public Mono<Optional<PlaceOrderResponse>> placeOrder(String type, String dataJson) {
-        String payload = OrderClientUtils.getPlaceOrderPayload(type, dataJson, orderProperties.getUsername(), orderProperties.getPassword());
-        return soapClient.call(orderClient, null, payload, PlaceOrderResponse.class)
+        String payload = OrderClientUtils.getPlaceOrderPayload(
+                type, dataJson, orderProperties.getUsername(), orderProperties.getPassword());
+        return soapClient
+                .call(orderClient, null, payload, PlaceOrderResponse.class)
                 .doOnSuccess(rs -> {
                     log.info("ORDER SOAP {}", rs);
                 })
@@ -58,15 +60,18 @@ public class OrderClientImpl implements OrderClient {
 
     @Override
     public Mono<Optional<SearchOrderStateResponse>> searchOrderState(List<String> orderCodeList) {
-        String payload = OrderClientUtils.getSearchOrderStatePayload(orderCodeList, orderProperties.getUsername(), orderProperties.getPassword());
-        return soapClient.callRaw(orderClient, null, payload)
+        String payload = OrderClientUtils.getSearchOrderStatePayload(
+                orderCodeList, orderProperties.getUsername(), orderProperties.getPassword());
+        return soapClient
+                .callRaw(orderClient, null, payload)
                 .map(response -> {
                     if (DataUtil.isNullOrEmpty(response)) {
                         return "";
                     }
                     String formattedSOAPResponse = DataWsUtil.formatXML(DataUtil.safeToString(response));
                     String realData = DataWsUtil.getDataByTag(
-                            formattedSOAPResponse.replaceAll(Constants.XmlConst.AND_LT_SEMICOLON, Constants.XmlConst.LT_CHARACTER)
+                            formattedSOAPResponse
+                                    .replaceAll(Constants.XmlConst.AND_LT_SEMICOLON, Constants.XmlConst.LT_CHARACTER)
                                     .replaceAll(Constants.XmlConst.AND_GT_SEMICOLON, Constants.XmlConst.GT_CHARACTER),
                             "<ns2:searchOrderStateByBpIdResponse xmlns:ns2=\"http://service.order.bccs.viettel.com/\">",
                             "</ns2:searchOrderStateByBpIdResponse>");
@@ -85,15 +90,18 @@ public class OrderClientImpl implements OrderClient {
 
     @Override
     public Mono<Optional<PricingProductWSResponse>> getPricingProduct(PricingProductRequest request) {
-        String payload = OrderClientUtils.getPricingProduct(request, orderProperties.getUsername(), orderProperties.getPassword());
-        return soapClient.callRaw(orderClient, null, payload)
+        String payload = OrderClientUtils.getPricingProduct(
+                request, orderProperties.getUsername(), orderProperties.getPassword());
+        return soapClient
+                .callRaw(orderClient, null, payload)
                 .map(response -> {
                     if (DataUtil.isNullOrEmpty(response)) {
                         return "";
                     }
                     String formattedSOAPResponse = DataWsUtil.formatXML(DataUtil.safeToString(response));
                     String realData = DataWsUtil.getDataByTag(
-                            formattedSOAPResponse.replaceAll(Constants.XmlConst.AND_LT_SEMICOLON, Constants.XmlConst.LT_CHARACTER)
+                            formattedSOAPResponse
+                                    .replaceAll(Constants.XmlConst.AND_LT_SEMICOLON, Constants.XmlConst.LT_CHARACTER)
                                     .replaceAll(Constants.XmlConst.AND_GT_SEMICOLON, Constants.XmlConst.GT_CHARACTER),
                             "<ns2:pricingProductsWithViewModeExtResponse xmlns:ns2=\"http://service.order.bccs.viettel.com/\">",
                             "</ns2:pricingProductsWithViewModeExtResponse>");
@@ -110,9 +118,15 @@ public class OrderClientImpl implements OrderClient {
     }
 
     @Override
-    public Mono<Optional<ValidateDataOrderResponse>> validateDataOrder(String orderType, String dataJson, List<ExtKeyDTO> lstExtKey) {
-        String payload = OrderClientUtils.getValidateDataOrderRequest(orderType, StringEscapeUtils.escapeXml(dataJson), orderProperties.getUsername(), orderProperties.getPassword());
-        return soapClient.call(orderClient, null, payload, ValidateDataOrderResponse.class)
+    public Mono<Optional<ValidateDataOrderResponse>> validateDataOrder(
+            String orderType, String dataJson, List<ExtKeyDTO> lstExtKey) {
+        String payload = OrderClientUtils.getValidateDataOrderRequest(
+                orderType,
+                StringEscapeUtils.escapeXml(dataJson),
+                orderProperties.getUsername(),
+                orderProperties.getPassword());
+        return soapClient
+                .call(orderClient, null, payload, ValidateDataOrderResponse.class)
                 .doOnError(err -> log.error("Exception when call soap: ", err))
                 .onErrorResume(throwable -> {
                     log.error("Exception when call soap: ", throwable);

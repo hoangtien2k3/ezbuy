@@ -15,6 +15,7 @@ public interface ProductSpecCharValueRepository extends R2dbcRepository<ProductS
      * @param productSpecCharId
      * @return
      */
-    @Query("select ps.* from product_spec_char_value ps where ps.product_spec_char_id = :productSpecCharId and ps.status = 1 and (:state is null or state = :state) order by display_order ")
+    @Query(
+            "select ps.* from product_spec_char_value ps where ps.product_spec_char_id = :productSpecCharId and ps.status = 1 and (:state is null or state = :state) order by display_order ")
     Flux<ProductSpecCharValueDTO> findByProductSpecCharId(String productSpecCharId, Boolean state);
 }

@@ -3,12 +3,11 @@ package com.ezbuy.productservice.repository.repoTemplate.impl;
 import com.ezbuy.productmodel.response.StatisticSubscriberResponse;
 import com.ezbuy.productservice.repository.repoTemplate.SubscriberCustomRepo;
 import io.hoangtien2k3.reactify.DataUtil;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
-
-import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -20,11 +19,11 @@ public class SubscriberCustomRepoImpl implements SubscriberCustomRepo {
     public Flux<StatisticSubscriberResponse> getStatisticSubscriber(String idNo, List<Long> telecomServiceIds) {
 
         return template.getDatabaseClient()
-                .sql("select telecom_service_id as telecomServiceId, COUNT(1) as totalSubscriber," +
-                        " sum(case when status = 1 and expired_date < CURDATE() then 1 else 0 end) as totalExpiredSubscriber," +
-                        " sum(case when status = 2 and expired_date <= CURDATE() + INTERVAL 30 DAY then 1 else 0 end) as totalAboutExpiredSubscriber" +
-                        " from subscriber s where id_no = :idNo and telecom_service_id in (:telecomServiceIds)" +
-                        " group by telecom_service_id")
+                .sql("select telecom_service_id as telecomServiceId, COUNT(1) as totalSubscriber,"
+                        + " sum(case when status = 1 and expired_date < CURDATE() then 1 else 0 end) as totalExpiredSubscriber,"
+                        + " sum(case when status = 2 and expired_date <= CURDATE() + INTERVAL 30 DAY then 1 else 0 end) as totalAboutExpiredSubscriber"
+                        + " from subscriber s where id_no = :idNo and telecom_service_id in (:telecomServiceIds)"
+                        + " group by telecom_service_id")
                 .bind("idNo", idNo)
                 .bind("telecomServiceIds", telecomServiceIds)
                 .map((row) -> StatisticSubscriberResponse.builder()
@@ -35,5 +34,4 @@ public class SubscriberCustomRepoImpl implements SubscriberCustomRepo {
                         .build())
                 .all();
     }
-
 }

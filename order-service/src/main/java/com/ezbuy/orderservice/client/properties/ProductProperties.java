@@ -10,5 +10,4 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "client.product", ignoreInvalidFields = true)
 @Data
 @AllArgsConstructor
-public class ProductProperties extends WebClientProperties {
-}
+public class ProductProperties extends WebClientProperties {}

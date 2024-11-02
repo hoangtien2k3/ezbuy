@@ -6,5 +6,6 @@ import reactor.core.publisher.Flux;
 
 public interface TelecomServiceRepository {
     Flux<MegaMenuResponse> getProductsForMegaMenu();
+
     Flux<TelecomServiceResponse> getTelecomServices();
 }

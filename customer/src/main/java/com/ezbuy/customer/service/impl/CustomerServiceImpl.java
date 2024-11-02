@@ -1,7 +1,7 @@
 package com.ezbuy.customer.service.impl;
 
-import static io.hoangtien2k3.reactify.constants.CommonErrorCode.*;
-import static io.hoangtien2k3.reactify.constants.Regex.*;
+import static com.ezbuy.reactify.constants.CommonErrorCode.*;
+import static com.ezbuy.reactify.constants.Regex.*;
 
 import com.ezbuy.customer.client.NotiServiceClient;
 import com.ezbuy.customer.constants.Const;
@@ -22,13 +22,13 @@ import com.ezbuy.customer.repository.CustomerRepository;
 import com.ezbuy.customer.repository.ShopUserRepository;
 import com.ezbuy.customer.service.CustomerService;
 import com.ezbuy.customer.service.TokenService;
-import io.hoangtien2k3.reactify.AppUtils;
-import io.hoangtien2k3.reactify.DataUtil;
-import io.hoangtien2k3.reactify.PasswordGenerator;
-import io.hoangtien2k3.reactify.Translator;
-import io.hoangtien2k3.reactify.constants.CommonErrorCode;
-import io.hoangtien2k3.reactify.exception.BusinessException;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
+import com.ezbuy.reactify.AppUtils;
+import com.ezbuy.reactify.DataUtil;
+import com.ezbuy.reactify.PasswordGenerator;
+import com.ezbuy.reactify.Translator;
+import com.ezbuy.reactify.constants.CommonErrorCode;
+import com.ezbuy.reactify.exception.BusinessException;
+import com.ezbuy.reactify.model.response.DataResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

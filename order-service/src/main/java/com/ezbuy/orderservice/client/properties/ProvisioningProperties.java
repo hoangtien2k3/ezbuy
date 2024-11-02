@@ -10,5 +10,4 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "client.provisioning", ignoreInvalidFields = true)
 @Data
 @AllArgsConstructor
-public class ProvisioningProperties extends WebClientProperties {
-}
+public class ProvisioningProperties extends WebClientProperties {}

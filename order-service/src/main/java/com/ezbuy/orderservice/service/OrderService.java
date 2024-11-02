@@ -8,12 +8,11 @@ import com.ezbuy.ordermodel.dto.request.*;
 import com.ezbuy.ordermodel.dto.response.GetGroupCAInfoResponse;
 import com.ezbuy.ordermodel.dto.response.GetOrderReportResponse;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
+import java.util.List;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.multipart.FilePart;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 public interface OrderService {
 
@@ -39,6 +38,7 @@ public interface OrderService {
 
     /**
      * Ham lay thong tin nhom
+     *
      * @param request
      * @return
      */
@@ -50,6 +50,7 @@ public interface OrderService {
 
     /**
      * Them thue bao vao nhom
+     *
      * @param request
      * @return
      */
@@ -57,6 +58,7 @@ public interface OrderService {
 
     /**
      * Cap nhat thue bao nhom
+     *
      * @param request
      * @return
      */
@@ -64,6 +66,7 @@ public interface OrderService {
 
     /**
      * Xoa thue bao khoi nhom
+     *
      * @param request
      * @return
      */
@@ -71,13 +74,17 @@ public interface OrderService {
 
     /**
      * Ham tao don hang khong mat phi
+     *
      * @param orderType
      * @param orderData
-     * @param userId lay tu token
-     * @param username lay tu token
+     * @param userId
+     *            lay tu token
+     * @param username
+     *            lay tu token
      * @return
      */
-    Mono<DataResponse> createNotPaidOrder(String orderType, PlaceOrderData orderData, String userId, String username, String individualId);
+    Mono<DataResponse> createNotPaidOrder(
+            String orderType, PlaceOrderData orderData, String userId, String username, String individualId);
 
     Mono<DataResponse> connectCASelfcare(CreateOrderPaidRequest request);
 
@@ -85,6 +92,7 @@ public interface OrderService {
 
     /**
      * Ham lay so luong da ky cua thue bao
+     *
      * @param request
      * @return
      */
@@ -92,6 +100,7 @@ public interface OrderService {
 
     /**
      * Ham lay so luong chu ky con lai cua thue bao
+     *
      * @param request
      * @return
      */
@@ -103,6 +112,7 @@ public interface OrderService {
 
     /**
      * Ham cap nhat trang thai don hang PreOrder
+     *
      * @param request
      * @return
      */
@@ -110,6 +120,7 @@ public interface OrderService {
 
     /**
      * Ham tao don hang di tu man selfCare SME_HUB
+     *
      * @param request
      * @return
      */
@@ -119,6 +130,7 @@ public interface OrderService {
 
     /**
      * Ham tim kiem lich su don hang
+     *
      * @param request
      * @return
      */
@@ -128,6 +140,7 @@ public interface OrderService {
 
     /**
      * Lay thong tin thue bao thanh vien nhom CA
+     *
      * @param request
      * @return
      */
@@ -135,6 +148,7 @@ public interface OrderService {
 
     /**
      * api view file hsdt v2
+     *
      * @param createOrderPaidRequest
      * @return
      */
@@ -142,12 +156,14 @@ public interface OrderService {
 
     /**
      * Ham tai file import mau cho import thue bao nhom CA
+     *
      * @return
      */
     Mono<ResponseEntity<Resource>> getImportGroupMemberTemplate();
 
     /**
      * Ham validate thong tin import
+     *
      * @param filePart
      * @return
      */
@@ -155,21 +171,26 @@ public interface OrderService {
 
     /**
      * Ham import thanh vien nhom CA
+     *
      * @param filePart
      * @return
      */
-    Mono<GroupMemberImportListDTO> importGroupMember(FilePart filePart, String groupCode, String organizationId, String groupId, String totalSign);
+    Mono<GroupMemberImportListDTO> importGroupMember(
+            FilePart filePart, String groupCode, String organizationId, String groupId, String totalSign);
 
     /**
      * Ham tra ve ket qua import file
+     *
      * @param items
      * @return
      */
     Mono<ResponseEntity<byte[]>> downloadImportResult(List<GroupMemberImportDTO> items);
+
     Mono<DataResponse<GetOrderReportResponse>> getOrderReport(OrderReportRequest request);
 
     /**
      * Ham tao don xac thuc doanh nghiep
+     *
      * @param request
      * @return
      */

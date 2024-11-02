@@ -1,9 +1,9 @@
 package com.ezbuy.paymentservice.client.impl;
 
 import com.ezbuy.ordermodel.dto.request.UpdateOrderStateForOrderRequest;
-import com.ezbuy.paymentservice.client.properties.OrderClientProperties;
 import com.ezbuy.paymentmodel.constants.ClientUris;
 import com.ezbuy.paymentservice.client.OrderClient;
+import com.ezbuy.paymentservice.client.properties.OrderClientProperties;
 import io.hoangtien2k3.reactify.client.BaseRestClient;
 import io.hoangtien2k3.reactify.constants.MessageConstant;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
@@ -22,9 +22,10 @@ public class OrderClientImpl implements OrderClient {
     private final WebClient orderClient;
     private final OrderClientProperties orderProperties;
 
-    public OrderClientImpl(BaseRestClient baseRestClient,
-                           @Qualifier("orderClient") WebClient orderClient,
-                           OrderClientProperties orderProperties) {
+    public OrderClientImpl(
+            BaseRestClient baseRestClient,
+            @Qualifier("orderClient") WebClient orderClient,
+            OrderClientProperties orderProperties) {
         this.baseRestClient = baseRestClient;
         this.orderClient = orderClient;
         this.orderProperties = orderProperties;
@@ -35,10 +36,17 @@ public class OrderClientImpl implements OrderClient {
         UpdateOrderStateForOrderRequest updateOrderStateForOrderRequest = new UpdateOrderStateForOrderRequest();
         updateOrderStateForOrderRequest.setOrderCode(orderCode);
         updateOrderStateForOrderRequest.setPaymentStatus(orderState);
-        return baseRestClient.post(orderClient, ClientUris.Order.UPDATE_PAYMENT_RESULT, null, updateOrderStateForOrderRequest, DataResponse.class)
-                .map(response ->{
-                        log.info("CM response ", response);
-                        return new DataResponse<>(MessageConstant.SUCCESS, null);})
+        return baseRestClient
+                .post(
+                        orderClient,
+                        ClientUris.Order.UPDATE_PAYMENT_RESULT,
+                        null,
+                        updateOrderStateForOrderRequest,
+                        DataResponse.class)
+                .map(response -> {
+                    log.info("CM response ", response);
+                    return new DataResponse<>(MessageConstant.SUCCESS, null);
+                })
                 .onErrorResume(throwable -> {
                     log.error("call api updateOrderState error: {}", throwable);
                     return Mono.just(new DataResponse<>(MessageConstant.SUCCESS, null));

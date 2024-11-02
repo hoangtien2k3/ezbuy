@@ -4,15 +4,14 @@ import com.ezbuy.orderservice.client.PaymentClient;
 import io.hoangtien2k3.reactify.DataUtil;
 import io.hoangtien2k3.reactify.client.BaseRestClient;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
+import java.util.LinkedHashMap;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
-import java.util.LinkedHashMap;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -23,23 +22,24 @@ public class PaymentClientImpl implements PaymentClient {
 
     private final WebClient paymentClient;
 
-
-    public PaymentClientImpl(BaseRestClient baseRestClient,
-                             @Qualifier("paymentClient") WebClient paymentClient) {
+    public PaymentClientImpl(BaseRestClient baseRestClient, @Qualifier("paymentClient") WebClient paymentClient) {
         this.baseRestClient = baseRestClient;
         this.paymentClient = paymentClient;
     }
 
     @Override
     public Mono<Optional<Long>> getTotalFee(ProductPriceRequest request) {
-        return baseRestClient.post(paymentClient, "/v1/price/calculate", null, request, DataResponse.class)
+        return baseRestClient
+                .post(paymentClient, "/v1/price/calculate", null, request, DataResponse.class)
                 .flatMap(responseOptional -> {
                     Optional<DataResponse> dataResponseOptional = (Optional<DataResponse>) responseOptional;
-                    if (dataResponseOptional.isEmpty() || dataResponseOptional.get().getData() == null) {
+                    if (dataResponseOptional.isEmpty()
+                            || dataResponseOptional.get().getData() == null) {
                         return Mono.just(Optional.empty());
                     }
 
-                    LinkedHashMap<String, Object> dataMap = (LinkedHashMap<String, Object>) dataResponseOptional.get().getData();
+                    LinkedHashMap<String, Object> dataMap = (LinkedHashMap<String, Object>)
+                            dataResponseOptional.get().getData();
                     Long totalPrice = DataUtil.safeToLong(dataMap.get("totalPrice"));
                     return Mono.just(Optional.ofNullable(totalPrice));
                 })
@@ -51,7 +51,8 @@ public class PaymentClientImpl implements PaymentClient {
 
     @Override
     public Mono<Optional<ProductPaymentResponse>> getLinkCheckOut(ProductPaymentRequest request) {
-        return baseRestClient.post(paymentClient, "/v1/payment/create-link-checkout", null, request, DataResponse.class)
+        return baseRestClient
+                .post(paymentClient, "/v1/payment/create-link-checkout", null, request, DataResponse.class)
                 .flatMap(response -> {
                     Optional<DataResponse> responseOptional = (Optional<DataResponse>) response;
                     if (responseOptional.isEmpty() || responseOptional.get().getData() == null) {
@@ -59,8 +60,10 @@ public class PaymentClientImpl implements PaymentClient {
                     }
 
                     String data = DataUtil.safeToString(responseOptional.get().getData());
-                    String dataJson = DataUtil.parseObjectToString(responseOptional.get().getData());
-                    ProductPaymentResponse paymentResponse = DataUtil.parseStringToObject(dataJson, ProductPaymentResponse.class);
+                    String dataJson =
+                            DataUtil.parseObjectToString(responseOptional.get().getData());
+                    ProductPaymentResponse paymentResponse =
+                            DataUtil.parseStringToObject(dataJson, ProductPaymentResponse.class);
                     return Mono.just(Optional.ofNullable(paymentResponse));
                 })
                 .onErrorResume(throwable -> {
@@ -75,7 +78,8 @@ public class PaymentClientImpl implements PaymentClient {
     }
 
     private Mono<Optional<String>> getDataFromPost(String uri, Object request) {
-        return baseRestClient.post(paymentClient, uri, null, request, DataResponse.class)
+        return baseRestClient
+                .post(paymentClient, uri, null, request, DataResponse.class)
                 .flatMap(response -> {
                     Optional<DataResponse> responseOptional = (Optional<DataResponse>) response;
                     if (responseOptional.isEmpty() || responseOptional.get().getData() == null) {

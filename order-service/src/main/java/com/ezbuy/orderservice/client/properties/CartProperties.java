@@ -10,5 +10,4 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "client.cart", ignoreInvalidFields = true)
 @Data
 @AllArgsConstructor
-public class CartProperties extends WebClientProperties {
-}
+public class CartProperties extends WebClientProperties {}

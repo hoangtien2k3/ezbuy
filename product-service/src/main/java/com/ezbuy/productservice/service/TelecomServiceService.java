@@ -6,5 +6,4 @@ import reactor.core.publisher.Flux;
 public interface TelecomServiceService {
 
     Flux<TelecomServiceResponse> getTelecomServices();
-
 }

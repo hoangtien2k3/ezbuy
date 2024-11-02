@@ -1,19 +1,18 @@
 package com.ezbuy.productservice.service.impl;
 
+import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
+
+import com.ezbuy.productmodel.model.Telecom;
 import com.ezbuy.productservice.repository.TelecomRepository;
 import com.ezbuy.productservice.service.TelecomService;
 import io.hoangtien2k3.reactify.Translator;
 import io.hoangtien2k3.reactify.constants.MessageConstant;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
-import com.ezbuy.productmodel.model.Telecom;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
-
-import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
 
 @Slf4j
 @Service
@@ -23,25 +22,36 @@ public class TelecomServiceImpl implements TelecomService {
 
     @Override
     public Mono<DataResponse<Telecom>> getByOriginId(String originId) {
-        return this.telecomRepository.getByOriginId(originId).switchIfEmpty(Mono.just(new Telecom()))
-                .flatMap(telecom -> Mono.just(new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), telecom)));
+        return this.telecomRepository
+                .getByOriginId(originId)
+                .switchIfEmpty(Mono.just(new Telecom()))
+                .flatMap(telecom ->
+                        Mono.just(new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), telecom)));
     }
 
     @Override
     public Mono<DataResponse<List<Telecom>>> getAllActive() {
-        return this.telecomRepository.getAllActive().collectList()
+        return this.telecomRepository
+                .getAllActive()
+                .collectList()
                 .flatMap(lstService -> Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), lstService)));
     }
 
     @Override
     public Mono<DataResponse<Telecom>> getByAlias(String telecomServiceAlias) {
-        return this.telecomRepository.getByAlias(telecomServiceAlias).switchIfEmpty(Mono.just(new Telecom()))
-                .flatMap(telecom -> Mono.just(new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), telecom)));
+        return this.telecomRepository
+                .getByAlias(telecomServiceAlias)
+                .switchIfEmpty(Mono.just(new Telecom()))
+                .flatMap(telecom ->
+                        Mono.just(new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), telecom)));
     }
 
     @Override
     public Mono<DataResponse<List<Telecom>>> getByLstAlias(List<String> lstTelecomServiceAlias) {
-        return this.telecomRepository.getByLstAlias(lstTelecomServiceAlias).collectList()
-                .flatMap(lstTelecom -> Mono.just(new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), lstTelecom)));
+        return this.telecomRepository
+                .getByLstAlias(lstTelecomServiceAlias)
+                .collectList()
+                .flatMap(lstTelecom ->
+                        Mono.just(new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), lstTelecom)));
     }
 }

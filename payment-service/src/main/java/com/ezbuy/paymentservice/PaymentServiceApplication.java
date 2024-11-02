@@ -9,9 +9,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class,
-        DataSourceTransactionManagerAutoConfiguration.class,
-        HibernateJpaAutoConfiguration.class})
+@SpringBootApplication(
+        exclude = {
+            DataSourceAutoConfiguration.class,
+            DataSourceTransactionManagerAutoConfiguration.class,
+            HibernateJpaAutoConfiguration.class
+        })
 @ComponentScan(basePackages = {"com.ezbuy", "io.hoangtien2k3.reactify"})
 @ImportResource({"classpath*:applicationContext.xml"})
 @EnableScheduling

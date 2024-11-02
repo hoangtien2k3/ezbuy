@@ -6,11 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table(name = "credential")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
+@Table(name = "credential")
 public class Credential {
     private String id;
     private String type;

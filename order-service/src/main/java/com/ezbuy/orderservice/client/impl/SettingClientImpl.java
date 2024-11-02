@@ -14,6 +14,10 @@ import io.hoangtien2k3.reactify.constants.CommonErrorCode;
 import io.hoangtien2k3.reactify.exception.BusinessException;
 import io.hoangtien2k3.reactify.factory.ObjectMapperFactory;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
@@ -22,11 +26,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -37,8 +36,7 @@ public class SettingClientImpl implements SettingClient {
 
     private final WebClient settingClient;
 
-    public SettingClientImpl(BaseRestClient baseRestClient,
-                             @Qualifier("settingClient") WebClient settingClient) {
+    public SettingClientImpl(BaseRestClient baseRestClient, @Qualifier("settingClient") WebClient settingClient) {
         this.baseRestClient = baseRestClient;
         this.settingClient = settingClient;
     }
@@ -56,7 +54,8 @@ public class SettingClientImpl implements SettingClient {
             paramMap.set("origins", joinStringList(origins));
         }
 
-        return baseRestClient.get(settingClient, "/v1/telecom-services", null, paramMap, DataResponse.class)
+        return baseRestClient
+                .get(settingClient, "/v1/telecom-services", null, paramMap, DataResponse.class)
                 .flatMap(dataResponse -> {
                     if (DataUtil.isNullOrEmpty(dataResponse)) {
                         return Mono.just(new ArrayList<>());
@@ -66,14 +65,11 @@ public class SettingClientImpl implements SettingClient {
                         return Mono.just(new ArrayList<>());
                     }
 
-                    String dataJson = DataUtil.parseObjectToString(dataResponseOptional.get().getData());
+                    String dataJson = DataUtil.parseObjectToString(
+                            dataResponseOptional.get().getData());
 
-                    List<TelecomDTO> telecomList = DataUtil.parseStringToObject(
-                            dataJson,
-                            new TypeReference<>() {
-                            },
-                            new ArrayList<>()
-                    );
+                    List<TelecomDTO> telecomList =
+                            DataUtil.parseStringToObject(dataJson, new TypeReference<>() {}, new ArrayList<>());
                     return Mono.just(telecomList);
                 })
                 .onErrorResume(throwable -> {
@@ -86,16 +82,15 @@ public class SettingClientImpl implements SettingClient {
         if (DataUtil.isNullOrEmpty(inputList)) {
             return "";
         }
-        return inputList.stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(","));
+        return inputList.stream().map(String::valueOf).collect(Collectors.joining(","));
     }
 
     @Override
     public Mono<List<OptionSetValueDTO>> getConfDataPolicy(String code) {
         MultiValueMap<String, String> paramMap = new LinkedMultiValueMap<>();
         paramMap.set("code", code);
-        return baseRestClient.get(settingClient, "/v1/option-set-value/option-set", null, paramMap, DataResponse.class)
+        return baseRestClient
+                .get(settingClient, "/v1/option-set-value/option-set", null, paramMap, DataResponse.class)
                 .flatMap(dataResponse -> {
                     if (DataUtil.isNullOrEmpty(dataResponse)) {
                         return Mono.just(new ArrayList<>());
@@ -105,14 +100,11 @@ public class SettingClientImpl implements SettingClient {
                         return Mono.just(new ArrayList<>());
                     }
 
-                    String dataJson = DataUtil.parseObjectToString(dataResponseOptional.get().getData());
+                    String dataJson = DataUtil.parseObjectToString(
+                            dataResponseOptional.get().getData());
 
-                    List<OptionSetValueDTO> optionSetValueList = DataUtil.parseStringToObject(
-                            dataJson,
-                            new TypeReference<>() {
-                            },
-                            new ArrayList<>()
-                    );
+                    List<OptionSetValueDTO> optionSetValueList =
+                            DataUtil.parseStringToObject(dataJson, new TypeReference<>() {}, new ArrayList<>());
                     return Mono.just(optionSetValueList);
                 })
                 .onErrorResume(throwable -> {
@@ -123,7 +115,8 @@ public class SettingClientImpl implements SettingClient {
 
     @Override
     public Mono<List<Telecom>> getAllTelecomService() {
-        return baseRestClient.get(settingClient, "/v1/telecom-services/all", null, null, DataResponse.class)
+        return baseRestClient
+                .get(settingClient, "/v1/telecom-services/all", null, null, DataResponse.class)
                 .flatMap(dataResponse -> {
                     if (DataUtil.isNullOrEmpty(dataResponse)) {
                         return Mono.just(new ArrayList<>());
@@ -133,14 +126,11 @@ public class SettingClientImpl implements SettingClient {
                         return Mono.just(new ArrayList<>());
                     }
 
-                    String dataJson = DataUtil.parseObjectToString(dataResponseOptional.get().getData());
+                    String dataJson = DataUtil.parseObjectToString(
+                            dataResponseOptional.get().getData());
 
-                    List<Telecom> telecomList = DataUtil.parseStringToObject(
-                            dataJson,
-                            new TypeReference<>() {
-                            },
-                            new ArrayList<>()
-                    );
+                    List<Telecom> telecomList =
+                            DataUtil.parseStringToObject(dataJson, new TypeReference<>() {}, new ArrayList<>());
                     return Mono.just(telecomList);
                 })
                 .onErrorResume(throwable -> {
@@ -153,7 +143,8 @@ public class SettingClientImpl implements SettingClient {
     public Mono<List<OptionSetValue>> getAllActiveOptionSetValueByOptionSetCode(String code) {
         MultiValueMap<String, String> paramMap = new LinkedMultiValueMap<>();
         paramMap.set("code", code);
-        return baseRestClient.get(settingClient, "/v1/option-set-value/code", null, paramMap, DataResponse.class)
+        return baseRestClient
+                .get(settingClient, "/v1/option-set-value/code", null, paramMap, DataResponse.class)
                 .flatMap(dataResponse -> {
                     if (DataUtil.isNullOrEmpty(dataResponse)) {
                         return Mono.just(new ArrayList<>());
@@ -163,13 +154,11 @@ public class SettingClientImpl implements SettingClient {
                         return Mono.just(new ArrayList<>());
                     }
 
-                    String dataJson = DataUtil.parseObjectToString(dataResponseOptional.get().getData());
+                    String dataJson = DataUtil.parseObjectToString(
+                            dataResponseOptional.get().getData());
 
                     List<OptionSetValue> optionSetValueList = DataUtil.parseStringToObject(
-                            dataJson,
-                            new TypeReference<List<OptionSetValue>>() {},
-                            new ArrayList<>()
-                    );
+                            dataJson, new TypeReference<List<OptionSetValue>>() {}, new ArrayList<>());
                     return Mono.just(optionSetValueList);
                 })
                 .onErrorResume(throwable -> {
@@ -184,27 +173,32 @@ public class SettingClientImpl implements SettingClient {
         params.add("province", province);
         params.add("district", district);
         params.add("precinct", precinct);
-        return baseRestClient.get(settingClient, "v1/area/get-area-name", null, params, DataResponse.class)
+        return baseRestClient
+                .get(settingClient, "v1/area/get-area-name", null, params, DataResponse.class)
                 .map(dataResponse -> {
                     if (DataUtil.isNullOrEmpty(dataResponse)) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "call.api.setting.error"));
+                        return Mono.error(
+                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "call.api.setting.error"));
                     }
                     Optional<DataResponse> dataResponseOptional = (Optional<DataResponse>) dataResponse;
                     if (dataResponseOptional.isEmpty()) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "call.api.setting.error"));
+                        return Mono.error(
+                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "call.api.setting.error"));
                     }
-                    String dataJson = DataUtil.parseObjectToString(dataResponseOptional.get().getData());
+                    String dataJson = DataUtil.parseObjectToString(
+                            dataResponseOptional.get().getData());
                     try {
                         return ObjectMapperFactory.getInstance().readValue(dataJson, AreaDTO.class);
                     } catch (Exception ex) {
                         log.error("convert json error: ", ex.getMessage());
-                        return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, Translator.toLocaleVi("setting.service.error")));
+                        return Mono.error(new BusinessException(
+                                CommonErrorCode.INTERNAL_SERVER_ERROR, Translator.toLocaleVi("setting.service.error")));
                     }
                 })
                 .onErrorResume(throwable -> {
-                            log.error("call.api.setting.error");
-                            return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "call.api.setting.error"));
-                        }
-                );
+                    log.error("call.api.setting.error");
+                    return Mono.error(
+                            new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "call.api.setting.error"));
+                });
     }
 }

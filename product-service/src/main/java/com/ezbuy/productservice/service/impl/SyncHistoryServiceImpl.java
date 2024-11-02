@@ -1,5 +1,7 @@
 package com.ezbuy.productservice.service.impl;
 
+import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
+
 import com.ezbuy.productmodel.constants.Constants;
 import com.ezbuy.productmodel.model.SyncHistory;
 import com.ezbuy.productmodel.model.SyncHistoryDetail;
@@ -13,15 +15,12 @@ import io.hoangtien2k3.reactify.Translator;
 import io.hoangtien2k3.reactify.constants.CommonErrorCode;
 import io.hoangtien2k3.reactify.exception.BusinessException;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
+import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
-
-import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
 
 @Service
 @RequiredArgsConstructor
@@ -34,42 +33,46 @@ public class SyncHistoryServiceImpl implements SyncHistoryService {
 
     @Override
     public Mono<DataResponse<SyncHistory>> createSyncHistoryTrans(CreateSyncHistoryRequest request) {
-        return SecurityUtils.getCurrentUser()
-                .flatMap(tokenUser -> Mono.zip(syncClient.getProductSyncTransId(tokenUser.getUsername()),
-                syncHistoryRepository.getSysDate()).flatMap(tuple -> {
-            String id = UUID.randomUUID().toString();
-            String syncTransid = tuple.getT1();
-            LocalDateTime now = tuple.getT2();
-            String userName = tokenUser.getUsername();
-            SyncHistory syncHistory = SyncHistory.builder()
-                    .id(id)
-                    .orgId(request.getOrgId())
-                    .idNo(request.getIdNo())
-                    .syncTransId(syncTransid)
-                    .action(request.getAction())
-                    .serviceType(request.getServiceType())
-                    .dstService(request.getDstService())
-                    .syncType(request.getSyncType())
-                    .objectType(request.getObjectType())
-                    .state(Constants.SYNC_HISTORY_STATE.WAIT_SYNC)
-                    .status(ACTIVE)
-                    .retry(0)
-                    .createAt(now)
-                    .createBy(userName)
-                    .updateAt(now)
-                    .updateBy(userName)
-                    .isNew(true)
-                    .build();
-            return syncHistoryRepository.save(syncHistory)
-                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "sync.history.create.new")))
-                    .flatMap(x -> Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), syncHistory)));
-        }));
+        return SecurityUtils.getCurrentUser().flatMap(tokenUser -> Mono.zip(
+                        syncClient.getProductSyncTransId(tokenUser.getUsername()), syncHistoryRepository.getSysDate())
+                .flatMap(tuple -> {
+                    String id = UUID.randomUUID().toString();
+                    String syncTransid = tuple.getT1();
+                    LocalDateTime now = tuple.getT2();
+                    String userName = tokenUser.getUsername();
+                    SyncHistory syncHistory = SyncHistory.builder()
+                            .id(id)
+                            .orgId(request.getOrgId())
+                            .idNo(request.getIdNo())
+                            .syncTransId(syncTransid)
+                            .action(request.getAction())
+                            .serviceType(request.getServiceType())
+                            .dstService(request.getDstService())
+                            .syncType(request.getSyncType())
+                            .objectType(request.getObjectType())
+                            .state(Constants.SYNC_HISTORY_STATE.WAIT_SYNC)
+                            .status(ACTIVE)
+                            .retry(0)
+                            .createAt(now)
+                            .createBy(userName)
+                            .updateAt(now)
+                            .updateBy(userName)
+                            .isNew(true)
+                            .build();
+                    return syncHistoryRepository
+                            .save(syncHistory)
+                            .switchIfEmpty(Mono.error(new BusinessException(
+                                    CommonErrorCode.INTERNAL_SERVER_ERROR, "sync.history.create.new")))
+                            .flatMap(x -> Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), syncHistory)));
+                }));
     }
 
     @Override
     public Mono<DataResponse<SyncHistoryDetail>> createSyncHistoryDetail(SyncHistoryDetail detail) {
-        return syncHistoryDetailRepository.save(detail)
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "sync.history.create.new")))
+        return syncHistoryDetailRepository
+                .save(detail)
+                .switchIfEmpty(Mono.error(
+                        new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "sync.history.create.new")))
                 .flatMap(x -> Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), detail)));
     }
 }

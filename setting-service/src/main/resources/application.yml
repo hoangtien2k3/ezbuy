@@ -14,7 +14,7 @@ logging:
 # spring config
 spring:
   application:
-    name: auth-service
+    name: setting-service
   main:
     web-application-type: reactive
     allow-bean-definition-overriding: true
@@ -70,6 +70,9 @@ client:
     auth:
       client-id: ezbuy-client
       client-secret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
+    pool:
+      max-size: 100
+      max-pending-acquire: 100
 
 # unauthenticated endpoints config
 application:

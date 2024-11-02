@@ -24,9 +24,10 @@ public class AreaController {
     }
 
     @GetMapping("/get-area-name")
-    public Mono<DataResponse<AreaDTO>> getAreaName(@RequestParam("province") String province,
-                                                   @RequestParam("district") String district,
-                                                   @RequestParam("precinct") String precinct) {
+    public Mono<DataResponse<AreaDTO>> getAreaName(
+            @RequestParam("province") String province,
+            @RequestParam("district") String district,
+            @RequestParam("precinct") String precinct) {
         return this.areaService.getArea(province, district, precinct);
     }
 }

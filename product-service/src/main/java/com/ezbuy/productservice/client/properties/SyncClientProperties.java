@@ -10,5 +10,4 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "client.sync", ignoreInvalidFields = true)
 @Data
 @AllArgsConstructor
-public class SyncClientProperties extends WebClientProperties {
-}
+public class SyncClientProperties extends WebClientProperties {}

@@ -1,20 +1,19 @@
 package com.ezbuy.paymentservice.service.impl;
 
-import com.ezbuy.paymentservice.client.ProductClient;
-import com.ezbuy.paymentservice.service.PriceService;
 import com.ezbuy.paymentmodel.dto.request.ProductItem;
 import com.ezbuy.paymentmodel.dto.request.ProductPriceRequest;
 import com.ezbuy.paymentmodel.dto.response.ProductPrice;
+import com.ezbuy.paymentservice.client.ProductClient;
+import com.ezbuy.paymentservice.service.PriceService;
 import io.hoangtien2k3.reactify.DataUtil;
 import io.hoangtien2k3.reactify.constants.CommonErrorCode;
 import io.hoangtien2k3.reactify.exception.BusinessException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -29,8 +28,7 @@ public class PriceServiceImpl implements PriceService {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.item.null"));
         }
         Map<String, Integer> missingPriceProductIdsMap = new HashMap<>();
-        for (ProductItem productItem : productItems
-        ) {
+        for (ProductItem productItem : productItems) {
             String templateId = productItem.getTemplateId();
             Long price = productItem.getPrice();
             Integer quantity = productItem.getQuantity();
@@ -38,7 +36,8 @@ public class PriceServiceImpl implements PriceService {
                 return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.item.id.null"));
             }
             if (quantity == null || quantity < 1) {
-                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.item.quantity.invalid"));
+                return Mono.error(
+                        new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.item.quantity.invalid"));
             }
             if (price == null) {
                 Integer existQuantity = missingPriceProductIdsMap.get(templateId);
@@ -58,16 +57,18 @@ public class PriceServiceImpl implements PriceService {
         } else {
             return Mono.just(new ProductPrice(totalPrice));
         }
-
     }
 
-    private Mono<ProductPrice> calculateWithMissingPriceProducts(Map<String, Integer> missingPriceProductIdsMap, Long currentTotalPrice) {
-        return productClient.getExProductPrices(missingPriceProductIdsMap.keySet())
+    private Mono<ProductPrice> calculateWithMissingPriceProducts(
+            Map<String, Integer> missingPriceProductIdsMap, Long currentTotalPrice) {
+        return productClient
+                .getExProductPrices(missingPriceProductIdsMap.keySet())
                 .map(rs -> {
                     Long productPrice = rs.getPrice();
                     Integer quantity = missingPriceProductIdsMap.get(rs.getTemplateId());
                     if (productPrice == null) {
-                        Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "call.product.service.error"));
+                        Mono.error(new BusinessException(
+                                CommonErrorCode.INTERNAL_SERVER_ERROR, "call.product.service.error"));
                     }
                     return productPrice * quantity;
                 })

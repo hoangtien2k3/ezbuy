@@ -3,20 +3,23 @@ package com.ezbuy.productservice.service;
 import com.ezbuy.productmodel.request.ProductSpecificationRequest;
 import com.ezbuy.productmodel.response.SubscriberResponse;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
+import java.util.List;
 import org.springframework.web.bind.annotation.RequestParam;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 public interface RenewalCAService {
 
     Mono<DataResponse> getStatisticSubscriber(String organizationId, Integer time);
 
-    Mono<DataResponse> getListSubscriber(@RequestParam(required = false) Long telecomServiceId, @RequestParam(required = false) String telecomServiceAlias, @RequestParam(required = true) String organizationId);
+    Mono<DataResponse> getListSubscriber(
+            @RequestParam(required = false) Long telecomServiceId,
+            @RequestParam(required = false) String telecomServiceAlias,
+            @RequestParam(required = true) String organizationId);
 
     Mono<DataResponse> syncListSubscriber();
 
     Mono<DataResponse> getProductSpecification(ProductSpecificationRequest productSpecificationRequest);
 
-    Mono<List<SubscriberResponse>> getSubscriberSmeInfo(Long telecomServiceId, String idNo, String isdn, String telecomServiceAlias);
+    Mono<List<SubscriberResponse>> getSubscriberSmeInfo(
+            Long telecomServiceId, String idNo, String isdn, String telecomServiceAlias);
 }

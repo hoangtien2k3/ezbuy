@@ -30,17 +30,7 @@ public class Organization extends EntityBase {
     private String streetBlock;
     private Integer state;
     private Integer status;
-
-    // private LocalDateTime createAt;
-    //
-    // private String createBy;
-    //
-    // private LocalDateTime updateAt;
-    //
-    // private String updateBy;
-
     private String orgType; // loai khach hang
-
     private String taxDepartment; // chi cuc thue quan ly
 
     public Organization(Organization organization) {

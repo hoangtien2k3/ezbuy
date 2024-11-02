@@ -1,11 +1,21 @@
 package com.ezbuy.productservice.service.impl;
 
+import static com.ezbuy.authmodel.constants.AuthConstants.STATUS_ACTIVE;
+import static com.ezbuy.productmodel.constants.Constants.*;
+import static com.ezbuy.productmodel.constants.Constants.LOCK_STATUS.LOCK_STATUS_LOCK;
+import static com.ezbuy.productmodel.constants.Constants.LOCK_STATUS.LOCK_STATUS_UNLOCK;
+import static com.ezbuy.productmodel.constants.Constants.Message.FAIL;
+import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
+import static com.ezbuy.productmodel.constants.Constants.SYNC_HISTORY_DETAIL.SOURCE_ALIAS_HUB_PRODUCT;
+import static com.ezbuy.productmodel.constants.TemplateConstants.*;
+
 import com.ezbuy.authmodel.constants.AuthConstants;
 import com.ezbuy.authmodel.dto.response.GetActionLoginReportResponse;
 import com.ezbuy.authmodel.model.OrganizationUnit;
 import com.ezbuy.ordermodel.dto.response.GetOrderReportResponse;
 import com.ezbuy.productmodel.dto.*;
 import com.ezbuy.productmodel.model.Product;
+import com.ezbuy.productmodel.model.Subscriber;
 import com.ezbuy.productmodel.model.SummaryReport;
 import com.ezbuy.productmodel.model.SyncHistory;
 import com.ezbuy.productmodel.model.SyncHistoryDetail;
@@ -17,22 +27,15 @@ import com.ezbuy.productservice.client.AuthClient;
 import com.ezbuy.productservice.client.CaClient;
 import com.ezbuy.productservice.client.OrderClient;
 import com.ezbuy.productservice.client.SyncClient;
+import com.ezbuy.productservice.repository.ProductRepository;
+import com.ezbuy.productservice.repository.SubscriberRepository;
+import com.ezbuy.productservice.repository.SummaryReportRepo;
+import com.ezbuy.productservice.repository.SummaryReportRepository;
+import com.ezbuy.productservice.repository.TelecomRepository;
 import com.ezbuy.productservice.repository.repoTemplate.ProductCustomRepository;
 import com.ezbuy.productservice.repository.repoTemplate.ServiceGroupCustomerRepo;
 import com.ezbuy.productservice.service.ProductService;
 import com.ezbuy.productservice.service.SyncHistoryService;
-import com.ezbuy.productservice.repository.ProductRepository;
-import com.ezbuy.productservice.repository.SubscriberRepository;
-import com.ezbuy.productservice.repository.SummaryReportRepository;
-import com.ezbuy.productservice.repository.TelecomRepository;
-import com.ezbuy.productservice.repository.SummaryReportRepo;
-import com.ezbuy.productmodel.model.Subscriber;
-
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.time.LocalDate;
-import java.time.LocalTime;
-
 import io.hoangtien2k3.reactify.AppUtils;
 import io.hoangtien2k3.reactify.DataUtil;
 import io.hoangtien2k3.reactify.SecurityUtils;
@@ -42,6 +45,16 @@ import io.hoangtien2k3.reactify.constants.Constants;
 import io.hoangtien2k3.reactify.exception.BusinessException;
 import io.hoangtien2k3.reactify.factory.ModelMapperFactory;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -60,22 +73,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static com.ezbuy.authmodel.constants.AuthConstants.STATUS_ACTIVE;
-import static com.ezbuy.productmodel.constants.Constants.*;
-import static com.ezbuy.productmodel.constants.Constants.LOCK_STATUS.LOCK_STATUS_LOCK;
-import static com.ezbuy.productmodel.constants.Constants.LOCK_STATUS.LOCK_STATUS_UNLOCK;
-import static com.ezbuy.productmodel.constants.Constants.Message.FAIL;
-import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
-import static com.ezbuy.productmodel.constants.Constants.SYNC_HISTORY_DETAIL.SOURCE_ALIAS_HUB_PRODUCT;
-import static com.ezbuy.productmodel.constants.TemplateConstants.*;
 
 @Service
 @RequiredArgsConstructor
@@ -103,13 +100,17 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Mono<List<ServiceDTO>> getAllServiceGroupAndTelecomServiceActive() {
-        return serviceGroupCustomerRepo.getAllServiceGroupAndTelecomServiceActive().collectList()
+        return serviceGroupCustomerRepo
+                .getAllServiceGroupAndTelecomServiceActive()
+                .collectList()
                 .map(list -> list);
     }
 
     @Override
     public Mono<List<Long>> getAllRegisterdTelecomServicesByIdNoList(List<String> idNoList) {
-        return subscriberRepository.getAllRegisterdTelecomServicesByIdNoList(idNoList).collectList()
+        return subscriberRepository
+                .getAllRegisterdTelecomServicesByIdNoList(idNoList)
+                .collectList()
                 .map(subList -> {
                     if (DataUtil.isNullOrEmpty(subList)) {
                         return Collections.emptyList();
@@ -120,12 +121,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Mono<List<String>> getAllRegisterdTelecomServicesAliasByIdNoList(List<String> idNoList) {
-        return subscriberRepository.getAllRegisterdTelecomServicesAliasByIdNoList(idNoList).collectList()
+        return subscriberRepository
+                .getAllRegisterdTelecomServicesAliasByIdNoList(idNoList)
+                .collectList()
                 .map(subList -> {
                     if (DataUtil.isNullOrEmpty(subList)) {
                         return Collections.emptyList();
                     }
-                    return subList.stream().map(Subscriber::getTelecomServiceAlias).collect(Collectors.toList());
+                    return subList.stream()
+                            .map(Subscriber::getTelecomServiceAlias)
+                            .collect(Collectors.toList());
                 });
     }
 
@@ -157,20 +162,18 @@ public class ProductServiceImpl implements ProductService {
         }
         // check gia tri don gia nhap
         if (product.getPriceImport() != null
-                && (product.getPriceImport() < 0D
-                || product.getPriceImport() >= 10000000000D)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.price.import.invalid"));
+                && (product.getPriceImport() < 0D || product.getPriceImport() >= 10000000000D)) {
+            return Mono.error(
+                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.price.import.invalid"));
         }
         // check gia tri don gia ban
         if (product.getPriceExport() != null
-                && (product.getPriceExport() < 0D
-                || product.getPriceExport() >= 10000000000D)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.price.export.invalid"));
+                && (product.getPriceExport() < 0D || product.getPriceExport() >= 10000000000D)) {
+            return Mono.error(
+                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.price.export.invalid"));
         }
         // check gia tri chiet khau
-        if (product.getDiscount() != null
-                && (product.getDiscount() < 0D
-                || product.getDiscount() >= 10000000000D)) {
+        if (product.getDiscount() != null && (product.getDiscount() < 0D || product.getDiscount() >= 10000000000D)) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.discount.invalid"));
         }
         // check gia tri Thue GTGT hop le
@@ -178,24 +181,32 @@ public class ProductServiceImpl implements ProductService {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.tax.ratio.invalid"));
         }
         // check gia tri Ti le & theo doanh thu hop le
-        if (!DataUtil.isNullOrEmpty(product.getRevenueRatio()) &&
-                !REVENUE_RATIO_LIST.contains(DataUtil.safeToString(product.getRevenueRatio()))) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.revenue.ratio.invalid"));
+        if (!DataUtil.isNullOrEmpty(product.getRevenueRatio())
+                && !REVENUE_RATIO_LIST.contains(DataUtil.safeToString(product.getRevenueRatio()))) {
+            return Mono.error(
+                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.revenue.ratio.invalid"));
         }
         // check chiet khau khong duoc < don gia ban
         if (!DataUtil.isNullOrEmpty(product.getPriceExport())
                 && !DataUtil.isNullOrEmpty(product.getDiscount())
                 && product.getPriceExport() < product.getDiscount()) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.price.export.smaller.than.discount"));
+            return Mono.error(new BusinessException(
+                    CommonErrorCode.INVALID_PARAMS, "product.error.price.export.smaller.than.discount"));
         }
         // check ma hang hoa da ton tai
-        return productRepository.findFirstByCode(product.getCode()).switchIfEmpty(Mono.just(new Product()))
+        return productRepository
+                .findFirstByCode(product.getCode())
+                .switchIfEmpty(Mono.just(new Product()))
                 .flatMap(productDb -> {
                     if (isCreate && !DataUtil.isNullOrEmpty(productDb.getCode())) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.code.exist"));
+                        return Mono.error(
+                                new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.code.exist"));
                     }
-                    if (!isCreate && !DataUtil.isNullOrEmpty(productDb.getCode()) && !DataUtil.safeEqual(product.getId(), productDb.getId())) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.code.exist"));
+                    if (!isCreate
+                            && !DataUtil.isNullOrEmpty(productDb.getCode())
+                            && !DataUtil.safeEqual(product.getId(), productDb.getId())) {
+                        return Mono.error(
+                                new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.code.exist"));
                     }
                     return Mono.just(true);
                 });
@@ -211,35 +222,45 @@ public class ProductServiceImpl implements ProductService {
         }
         return Mono.zip(
                         productCustomRepository.countProduct(request, organizationId),
-                        productCustomRepository.searchProduct(request, organizationId).collectList())
+                        productCustomRepository
+                                .searchProduct(request, organizationId)
+                                .collectList())
                 .flatMap(searchResult -> Mono.just(ProductSearchResult.builder()
                         .total(searchResult.getT1())
                         .pageIndex(request.getPageIndex())
                         .pageSize(request.getPageSize())
                         .dataList(searchResult.getT2())
-                        .build())
-                );
+                        .build()));
     }
 
     @Override
     public Mono<DataResponse<Product>> createProductSync(Product product, String organizationId) {
         if (DataUtil.isNullOrEmpty(organizationId)) {
-            return Mono.error(new BusinessException(String.valueOf(HttpStatus.BAD_REQUEST.value()),
+            return Mono.error(new BusinessException(
+                    String.valueOf(HttpStatus.BAD_REQUEST.value()),
                     Translator.toLocaleVi(NOT_FOUND, Translator.toLocaleVi(PRODUCT_ID))));
         }
-        return Mono.zip(SecurityUtils.getCurrentUser(), authClient.getIdNoOrganization("MST", ORGANIZATION, organizationId)).flatMap(tuple1 -> {
-            String userName = tuple1.getT1().getUsername();
-            CreateSyncHistoryRequest request = createSyncHistory("INSERT", organizationId, tuple1.getT2());
-            return Mono.zip(syncHistoryService.createSyncHistoryTrans(request), productRepository.getSysDate())
-                    .flatMap(tuple -> createProduct(product, organizationId).flatMap(productDataResponse -> {
-                        if (DataUtil.isNullOrEmpty(productDataResponse.getData().getId())) {
-                            return Mono.just(productDataResponse);
-                        }
-                        String productId = productDataResponse.getData().getId();
-                        return syncRequestDetail(tuple.getT1().getData(), tuple.getT2(), productId, userName).defaultIfEmpty(productDataResponse)
-                                .flatMap(response -> Mono.just(productDataResponse));
-                    }));
-        });
+        return Mono.zip(
+                        SecurityUtils.getCurrentUser(),
+                        authClient.getIdNoOrganization("MST", ORGANIZATION, organizationId))
+                .flatMap(tuple1 -> {
+                    String userName = tuple1.getT1().getUsername();
+                    CreateSyncHistoryRequest request = createSyncHistory("INSERT", organizationId, tuple1.getT2());
+                    return Mono.zip(syncHistoryService.createSyncHistoryTrans(request), productRepository.getSysDate())
+                            .flatMap(tuple -> createProduct(product, organizationId)
+                                    .flatMap(productDataResponse -> {
+                                        if (DataUtil.isNullOrEmpty(
+                                                productDataResponse.getData().getId())) {
+                                            return Mono.just(productDataResponse);
+                                        }
+                                        String productId =
+                                                productDataResponse.getData().getId();
+                                        return syncRequestDetail(
+                                                        tuple.getT1().getData(), tuple.getT2(), productId, userName)
+                                                .defaultIfEmpty(productDataResponse)
+                                                .flatMap(response -> Mono.just(productDataResponse));
+                                    }));
+                });
     }
 
     private CreateSyncHistoryRequest createSyncHistory(String action, String organizationId, Optional<String> opIdNo) {
@@ -253,7 +274,8 @@ public class ProductServiceImpl implements ProductService {
         return request;
     }
 
-    private Mono<DataResponse> syncRequestDetail(SyncHistory syncHistory, LocalDateTime now, String targetId, String userName) {
+    private Mono<DataResponse> syncRequestDetail(
+            SyncHistory syncHistory, LocalDateTime now, String targetId, String userName) {
         SyncHistoryDetail detail = SyncHistoryDetail.builder()
                 .id(UUID.randomUUID().toString())
                 .syncHistoryId(syncHistory.getId())
@@ -277,14 +299,17 @@ public class ProductServiceImpl implements ProductService {
                     .changeDate(now)
                     .sourceAlias(SOURCE_ALIAS_HUB_PRODUCT)
                     .build();
-            ServiceSyncProductDTO service = ServiceSyncProductDTO.builder().type(syncHistory.getServiceType()).build();
+            ServiceSyncProductDTO service = ServiceSyncProductDTO.builder()
+                    .type(syncHistory.getServiceType())
+                    .build();
             CallApiSyncProductRequest requestSync = CallApiSyncProductRequest.builder()
                     .organizationId(syncHistory.getOrgId())
                     .idNo(syncHistory.getIdNo())
                     .action(syncHistory.getAction())
                     .service(service)
                     .transactionId(syncHistory.getSyncTransId())
-                    .object(Collections.singletonList(changeData)).build();
+                    .object(Collections.singletonList(changeData))
+                    .build();
             AppUtils.runHiddenStream(syncClient.callApiSyncProduct(requestSync));
             return Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), null));
         });
@@ -292,15 +317,15 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public Mono<DataResponse<Product>> handleCreateProduct(Product product, List<OrganizationUnit> unitList, String organizationId) {
-        return Mono.zip(
-                        SecurityUtils.getCurrentUser(),
-                        validateRequestCreateProduct(product, true))
+    public Mono<DataResponse<Product>> handleCreateProduct(
+            Product product, List<OrganizationUnit> unitList, String organizationId) {
+        return Mono.zip(SecurityUtils.getCurrentUser(), validateRequestCreateProduct(product, true))
                 .flatMap(userValidate -> {
                     String username = userValidate.getT1().getUsername();
-                    //lay don vi dau tien
-                    String unitName = !DataUtil.isNullOrEmpty(unitList) ? unitList.get(0).getName() : StringUtils.EMPTY;
-                    //set data insert
+                    // lay don vi dau tien
+                    String unitName =
+                            !DataUtil.isNullOrEmpty(unitList) ? unitList.get(0).getName() : StringUtils.EMPTY;
+                    // set data insert
                     product.setId(UUID.randomUUID().toString());
                     product.setNew(true);
                     product.setLockStatus(LOCK_STATUS_UNLOCK);
@@ -311,82 +336,103 @@ public class ProductServiceImpl implements ProductService {
                     product.setCreateBy(username);
                     product.setUpdateBy(username);
                     product.setOrganizationId(organizationId);
-                    return productRepository.save(product)
+                    return productRepository
+                            .save(product)
                             .map(rsp -> new DataResponse<>(AuthConstants.SUCCESS, rsp))
-                            .onErrorReturn(new DataResponse<>(CommonErrorCode.INTERNAL_SERVER_ERROR, Translator.toLocaleVi(COMMON_ERROR), new Product()))
+                            .onErrorReturn(new DataResponse<>(
+                                    CommonErrorCode.INTERNAL_SERVER_ERROR,
+                                    Translator.toLocaleVi(COMMON_ERROR),
+                                    new Product()))
                             .doOnError(throwable -> log.error("Save product error: {}", throwable.getMessage()));
-
                 });
     }
 
     @Override
     public Mono<DataResponse<Boolean>> updateProductSync(Product product, String organizationId) {
         if (DataUtil.isNullOrEmpty(organizationId)) {
-            return Mono.error(new BusinessException(String.valueOf(HttpStatus.BAD_REQUEST.value()),
+            return Mono.error(new BusinessException(
+                    String.valueOf(HttpStatus.BAD_REQUEST.value()),
                     Translator.toLocaleVi(NOT_FOUND, Translator.toLocaleVi(PRODUCT_ID))));
         }
-        return Mono.zip(SecurityUtils.getCurrentUser(), authClient.getIdNoOrganization("MST", ORGANIZATION, organizationId))
+        return Mono.zip(
+                        SecurityUtils.getCurrentUser(),
+                        authClient.getIdNoOrganization("MST", ORGANIZATION, organizationId))
                 .flatMap(tuple1 -> {
                     String userName = tuple1.getT1().getUsername();
                     CreateSyncHistoryRequest request = createSyncHistory("UPDATE", organizationId, tuple1.getT2());
                     return Mono.zip(syncHistoryService.createSyncHistoryTrans(request), productRepository.getSysDate())
-                            .flatMap(tuple -> updateProduct(product)
-                                    .flatMap(result -> syncRequestDetail(tuple.getT1().getData(), tuple.getT2(), product.getId(), userName)
-                                            .defaultIfEmpty(result)
-                                            .flatMap(response -> Mono.just(result))));
+                            .flatMap(tuple -> updateProduct(product).flatMap(result -> syncRequestDetail(
+                                            tuple.getT1().getData(), tuple.getT2(), product.getId(), userName)
+                                    .defaultIfEmpty(result)
+                                    .flatMap(response -> Mono.just(result))));
                 });
     }
 
     @Override
     public Mono<DataResponse<Boolean>> deleteProductSync(String productId, String organizationId) {
         if (DataUtil.isNullOrEmpty(organizationId)) {
-            return Mono.error(new BusinessException(String.valueOf(HttpStatus.BAD_REQUEST.value()),
+            return Mono.error(new BusinessException(
+                    String.valueOf(HttpStatus.BAD_REQUEST.value()),
                     Translator.toLocaleVi(NOT_FOUND, Translator.toLocaleVi(PRODUCT_ID))));
         }
-        return Mono.zip(SecurityUtils.getCurrentUser(), authClient.getIdNoOrganization("MST", ORGANIZATION, organizationId)).flatMap(tuple1 -> {
-            Optional<String> opIdNo = tuple1.getT2();
-            String userName = tuple1.getT1().getUsername();
-            CreateSyncHistoryRequest request = new CreateSyncHistoryRequest();
-            request.setOrgId(organizationId);
-            request.setIdNo(opIdNo.orElse(null));
-            request.setAction("DELETE");
-            request.setServiceType("ALL_BY_ORG");
-            request.setSyncType("EVENT");
-            request.setObjectType(PRODUCT);
-            return Mono.zip(syncHistoryService.createSyncHistoryTrans(request), productRepository.getSysDate())
-                    .flatMap(tuple -> deleteProduct(productId)
-                            .flatMap(customerDataResponse -> syncRequestDetail(tuple.getT1().getData(), tuple.getT2(), productId, userName)
-                                    .defaultIfEmpty(customerDataResponse)
-                                    .flatMap(response -> Mono.just(customerDataResponse))));
-        });
+        return Mono.zip(
+                        SecurityUtils.getCurrentUser(),
+                        authClient.getIdNoOrganization("MST", ORGANIZATION, organizationId))
+                .flatMap(tuple1 -> {
+                    Optional<String> opIdNo = tuple1.getT2();
+                    String userName = tuple1.getT1().getUsername();
+                    CreateSyncHistoryRequest request = new CreateSyncHistoryRequest();
+                    request.setOrgId(organizationId);
+                    request.setIdNo(opIdNo.orElse(null));
+                    request.setAction("DELETE");
+                    request.setServiceType("ALL_BY_ORG");
+                    request.setSyncType("EVENT");
+                    request.setObjectType(PRODUCT);
+                    return Mono.zip(syncHistoryService.createSyncHistoryTrans(request), productRepository.getSysDate())
+                            .flatMap(
+                                    tuple -> deleteProduct(productId).flatMap(customerDataResponse -> syncRequestDetail(
+                                                    tuple.getT1().getData(), tuple.getT2(), productId, userName)
+                                            .defaultIfEmpty(customerDataResponse)
+                                            .flatMap(response -> Mono.just(customerDataResponse))));
+                });
     }
 
     @Override
     public Mono<Product> detailProduct(String productId) {
-        return productRepository.findFirstById(productId)
+        return productRepository
+                .findFirstById(productId)
                 .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "product.error.not.exist")))
                 .map(product -> product);
     }
 
     @Override
     @Transactional
-    public Mono<DataResponse<List<Product>>> lockMultiProductSync(LockMultiProductRequest request, String organizationId) {
+    public Mono<DataResponse<List<Product>>> lockMultiProductSync(
+            LockMultiProductRequest request, String organizationId) {
         try {
             if (DataUtil.isNullOrEmpty(organizationId)) {
-                return Mono.error(new BusinessException(String.valueOf(HttpStatus.BAD_REQUEST.value()),
+                return Mono.error(new BusinessException(
+                        String.valueOf(HttpStatus.BAD_REQUEST.value()),
                         Translator.toLocaleVi(NOT_FOUND, Translator.toLocaleVi(PRODUCT_ID))));
             }
             // lay ma so thue doanh nghiep
             return Mono.zip(
                             SecurityUtils.getCurrentUser(),
                             authClient.getIdNoOrganization("MST", ORGANIZATION, organizationId),
-                            productRepository.findAllByIdIn(request.getProductIdList()).collectList()
-                                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "product.error.not.exist"))))
+                            productRepository
+                                    .findAllByIdIn(request.getProductIdList())
+                                    .collectList()
+                                    .switchIfEmpty(Mono.error(new BusinessException(
+                                            CommonErrorCode.NOT_FOUND, "product.error.not.exist"))))
                     .flatMap(tuple1 -> {
                         String userName = tuple1.getT1().getUsername();
-                        CreateSyncHistoryRequest createSyncHistoryRequest = createSyncHistory("UPDATE", organizationId, tuple1.getT2());
+                        CreateSyncHistoryRequest createSyncHistoryRequest =
+                                createSyncHistory("UPDATE", organizationId, tuple1.getT2());
                         return Mono.zip(
-                                        syncHistoryService.createSyncHistoryTrans(createSyncHistoryRequest), // goi api lay transaction id
+                                        syncHistoryService.createSyncHistoryTrans(createSyncHistoryRequest), // goi api
+                                        // lay
+                                        // transaction
+                                        // id
                                         productRepository.getSysDate())
                                 .flatMap(tuple -> {
                                     SyncHistory syncHistory = tuple.getT1().getData();
@@ -396,15 +442,20 @@ public class ProductServiceImpl implements ProductService {
                                     Flux<Product> productList = Flux.fromIterable(tuple1.getT3())
                                             .flatMap(product -> {
                                                 product.setNew(false);
-                                                product.setLockStatus(DataUtil.safeEqual(product.getLockStatus(), LOCK_STATUS_LOCK) ? LOCK_STATUS_UNLOCK : LOCK_STATUS_LOCK);
+                                                product.setLockStatus(
+                                                        DataUtil.safeEqual(product.getLockStatus(), LOCK_STATUS_LOCK)
+                                                                ? LOCK_STATUS_UNLOCK
+                                                                : LOCK_STATUS_LOCK);
                                                 product.setUpdateAt(now);
                                                 product.setUpdateBy(userName);
-                                                return productRepository.save(product)
+                                                return productRepository
+                                                        .save(product)
                                                         .flatMap(rsp -> {
                                                             String productId = rsp.getId();
-                                                            //Luu thong tin vao bang sync history
+                                                            // Luu thong tin vao bang sync history
                                                             SyncHistoryDetail detail = SyncHistoryDetail.builder()
-                                                                    .id(UUID.randomUUID().toString())
+                                                                    .id(UUID.randomUUID()
+                                                                            .toString())
                                                                     .syncHistoryId(syncHistoryId)
                                                                     .syncTransId(syncTransId)
                                                                     .targetId(productId)
@@ -415,45 +466,59 @@ public class ProductServiceImpl implements ProductService {
                                                                     .updateBy(userName)
                                                                     .isNew(true)
                                                                     .build();
-                                                            return syncHistoryService.createSyncHistoryDetail(detail) // luu thong tin vao bang sync history detail
+                                                            return syncHistoryService
+                                                                    .createSyncHistoryDetail(detail) // luu thong tin
+                                                                    // vao bang sync
+                                                                    // history
+                                                                    // detail
                                                                     .map(result -> product)
                                                                     .onErrorResume(error -> Mono.just(new Product()));
                                                         })
                                                         .onErrorResume(error -> Mono.just(new Product()));
                                             });
-                                    return productList.collectList()
-                                            .flatMap(list -> {
-                                                long totalSucceed = list.stream().filter(product -> !DataUtil.isNullOrEmpty(product.getId())).count();
-                                                // neu khong co ban ghi nao cap nhat thanh cong => khong kich hoat dong bo
-                                                if (totalSucceed == 0) {
-                                                    return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, COMMON_ERROR));
-                                                }
-                                                // tao request kich hoat dong bo
-                                                PaginationDTO paginationDTO = new PaginationDTO();
-                                                paginationDTO.setTotalRecords(totalSucceed);
-                                                // lay danh sach product id cap nhat thanh cong sau khi cap nhat
-                                                List<String> productIdList = list.stream().filter(product -> !DataUtil.isNullOrEmpty(product.getId())).map(Product::getId).collect(Collectors.toList());
-                                                ChangeDataDTO changeData = ChangeDataDTO.builder()
-                                                        .syncType(syncHistory.getSyncType())
-                                                        .objectType(syncHistory.getObjectType())
-                                                        .pagination(paginationDTO)
-                                                        .ids(productIdList)
-                                                        .changeDate(now)
-                                                        .sourceAlias(SOURCE_ALIAS_HUB_PRODUCT)
-                                                        .build();
-                                                ServiceSyncProductDTO service = ServiceSyncProductDTO.builder().type(syncHistory.getServiceType()).build();
-                                                CallApiSyncProductRequest requestSync = CallApiSyncProductRequest.builder()
-                                                        .organizationId(syncHistory.getOrgId())
-                                                        .idNo(syncHistory.getIdNo())
-                                                        .action(syncHistory.getAction())
-                                                        .service(service)
-                                                        .transactionId(syncHistory.getSyncTransId())
-                                                        .object(Collections.singletonList(changeData)).build();
-                                                List<Product> resultList = list.stream().filter(product -> !DataUtil.isNullOrEmpty(product.getId())).collect(Collectors.toList());
-                                                // call api kich hoat dong bo
-                                                AppUtils.runHiddenStream(syncClient.callApiSyncProduct(requestSync));
-                                                return Mono.just(new DataResponse<>(CommonErrorCode.SUCCESS, resultList));
-                                            });
+                                    return productList.collectList().flatMap(list -> {
+                                        long totalSucceed = list.stream()
+                                                .filter(product -> !DataUtil.isNullOrEmpty(product.getId()))
+                                                .count();
+                                        // neu khong co ban ghi nao cap nhat thanh cong => khong kich hoat dong bo
+                                        if (totalSucceed == 0) {
+                                            return Mono.error(new BusinessException(
+                                                    CommonErrorCode.INTERNAL_SERVER_ERROR, COMMON_ERROR));
+                                        }
+                                        // tao request kich hoat dong bo
+                                        PaginationDTO paginationDTO = new PaginationDTO();
+                                        paginationDTO.setTotalRecords(totalSucceed);
+                                        // lay danh sach product id cap nhat thanh cong sau khi cap nhat
+                                        List<String> productIdList = list.stream()
+                                                .filter(product -> !DataUtil.isNullOrEmpty(product.getId()))
+                                                .map(Product::getId)
+                                                .collect(Collectors.toList());
+                                        ChangeDataDTO changeData = ChangeDataDTO.builder()
+                                                .syncType(syncHistory.getSyncType())
+                                                .objectType(syncHistory.getObjectType())
+                                                .pagination(paginationDTO)
+                                                .ids(productIdList)
+                                                .changeDate(now)
+                                                .sourceAlias(SOURCE_ALIAS_HUB_PRODUCT)
+                                                .build();
+                                        ServiceSyncProductDTO service = ServiceSyncProductDTO.builder()
+                                                .type(syncHistory.getServiceType())
+                                                .build();
+                                        CallApiSyncProductRequest requestSync = CallApiSyncProductRequest.builder()
+                                                .organizationId(syncHistory.getOrgId())
+                                                .idNo(syncHistory.getIdNo())
+                                                .action(syncHistory.getAction())
+                                                .service(service)
+                                                .transactionId(syncHistory.getSyncTransId())
+                                                .object(Collections.singletonList(changeData))
+                                                .build();
+                                        List<Product> resultList = list.stream()
+                                                .filter(product -> !DataUtil.isNullOrEmpty(product.getId()))
+                                                .collect(Collectors.toList());
+                                        // call api kich hoat dong bo
+                                        AppUtils.runHiddenStream(syncClient.callApiSyncProduct(requestSync));
+                                        return Mono.just(new DataResponse<>(CommonErrorCode.SUCCESS, resultList));
+                                    });
                                 });
                     });
         } catch (BusinessException e) {
@@ -465,18 +530,24 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Mono<DataResponse<Boolean>> lockProductSync(LockProductRequest request, String organizationId) {
         if (DataUtil.isNullOrEmpty(organizationId)) {
-            return Mono.error(new BusinessException(String.valueOf(HttpStatus.BAD_REQUEST.value()),
+            return Mono.error(new BusinessException(
+                    String.valueOf(HttpStatus.BAD_REQUEST.value()),
                     Translator.toLocaleVi(NOT_FOUND, Translator.toLocaleVi(PRODUCT_ID))));
         }
-        return Mono.zip(SecurityUtils.getCurrentUser(), authClient.getIdNoOrganization("MST", ORGANIZATION, organizationId))
+        return Mono.zip(
+                        SecurityUtils.getCurrentUser(),
+                        authClient.getIdNoOrganization("MST", ORGANIZATION, organizationId))
                 .flatMap(tuple1 -> {
                     String userName = tuple1.getT1().getUsername();
-                    CreateSyncHistoryRequest createSyncHistoryRequest = createSyncHistory("UPDATE", organizationId, tuple1.getT2());
-                    return Mono.zip(syncHistoryService.createSyncHistoryTrans(createSyncHistoryRequest), productRepository.getSysDate())
-                            .flatMap(tuple -> lockProduct(request)
-                                    .flatMap(result -> syncRequestDetail(tuple.getT1().getData(), tuple.getT2(), request.getProductId(), userName)
-                                            .defaultIfEmpty(result)
-                                            .flatMap(response -> Mono.just(result))));
+                    CreateSyncHistoryRequest createSyncHistoryRequest =
+                            createSyncHistory("UPDATE", organizationId, tuple1.getT2());
+                    return Mono.zip(
+                                    syncHistoryService.createSyncHistoryTrans(createSyncHistoryRequest),
+                                    productRepository.getSysDate())
+                            .flatMap(tuple -> lockProduct(request).flatMap(result -> syncRequestDetail(
+                                            tuple.getT1().getData(), tuple.getT2(), request.getProductId(), userName)
+                                    .defaultIfEmpty(result)
+                                    .flatMap(response -> Mono.just(result))));
                 });
     }
 
@@ -537,44 +608,61 @@ public class ProductServiceImpl implements ProductService {
         row.createCell(0).setCellValue(i + 1);
         row.createCell(1).setCellValue(Optional.ofNullable(item.getCode()).orElse(StringUtils.EMPTY));
         row.createCell(2).setCellValue(Optional.ofNullable(item.getName()).orElse(StringUtils.EMPTY));
-        row.createCell(3).setCellValue(Optional.ofNullable(DataUtil.safeToString(item.getPriceImportStr())).orElse(StringUtils.EMPTY));
-        row.createCell(4).setCellValue(Optional.ofNullable(DataUtil.safeToString(item.getPriceExportStr())).orElse(StringUtils.EMPTY));
-        row.createCell(5).setCellValue(Optional.ofNullable(DataUtil.safeToString(item.getUnit())).orElse(StringUtils.EMPTY));
-        row.createCell(6).setCellValue(Optional.ofNullable(DataUtil.safeToString(item.getTaxRatio())).orElse(StringUtils.EMPTY));
-        row.createCell(7).setCellValue(Optional.ofNullable(DataUtil.safeToString(item.getDiscountStr())).orElse(StringUtils.EMPTY));
-        row.createCell(8).setCellValue(Optional.ofNullable(DataUtil.safeToString(item.getRevenueRatioStr())).orElse(StringUtils.EMPTY));
+        row.createCell(3)
+                .setCellValue(Optional.ofNullable(DataUtil.safeToString(item.getPriceImportStr()))
+                        .orElse(StringUtils.EMPTY));
+        row.createCell(4)
+                .setCellValue(Optional.ofNullable(DataUtil.safeToString(item.getPriceExportStr()))
+                        .orElse(StringUtils.EMPTY));
+        row.createCell(5)
+                .setCellValue(Optional.ofNullable(DataUtil.safeToString(item.getUnit()))
+                        .orElse(StringUtils.EMPTY));
+        row.createCell(6)
+                .setCellValue(Optional.ofNullable(DataUtil.safeToString(item.getTaxRatio()))
+                        .orElse(StringUtils.EMPTY));
+        row.createCell(7)
+                .setCellValue(Optional.ofNullable(DataUtil.safeToString(item.getDiscountStr()))
+                        .orElse(StringUtils.EMPTY));
+        row.createCell(8)
+                .setCellValue(Optional.ofNullable(DataUtil.safeToString(item.getRevenueRatioStr()))
+                        .orElse(StringUtils.EMPTY));
         // Ket qua
-        row.createCell(9).setCellValue(Optional.ofNullable(item.isResult()).map(x -> x.equals(true) ?
-                Translator.toLocaleVi(SUCCESS) : Translator.toLocaleVi(FAIL)).orElse(StringUtils.EMPTY));
-        row.createCell(10).setCellValue(Optional.ofNullable(item.isResult()).map(x -> x.equals(true) ?
-                StringUtils.EMPTY : item.getErrMsg()).orElse(StringUtils.EMPTY));
+        row.createCell(9)
+                .setCellValue(Optional.ofNullable(item.isResult())
+                        .map(x -> x.equals(true) ? Translator.toLocaleVi(SUCCESS) : Translator.toLocaleVi(FAIL))
+                        .orElse(StringUtils.EMPTY));
+        row.createCell(10)
+                .setCellValue(Optional.ofNullable(item.isResult())
+                        .map(x -> x.equals(true) ? StringUtils.EMPTY : item.getErrMsg())
+                        .orElse(StringUtils.EMPTY));
     }
 
     @Override
     public Mono<ProductImportListDTO> validateImportProduct(FilePart filePart) {
-        //validate file trong
+        // validate file trong
         if (filePart == null || filePart.filename() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File must be provided.");
         }
-        //validate dinh dang file
+        // validate dinh dang file
         String filename = filePart.filename();
         if (!filename.endsWith(".xlsx") && !filename.endsWith(".xls")) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.type.invalid"));
+            return Mono.error(
+                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.type.invalid"));
         }
         Flux<ProductImportDTO> organizationUnitRequests = getCreateOrganizationUnitRequestFlux(filePart);
         Flux<ProductImportDTO> results = organizationUnitRequests.flatMap(this::validateImport);
-        return results.collectList()
-                .flatMap(list -> {
-                    var total = list.size();
-                    var totalSucceed = list.stream().filter(ProductImportDTO::isResult).count();
-                    return Mono.just(new ProductImportListDTO(list, totalSucceed, total - totalSucceed));
-                });
+        return results.collectList().flatMap(list -> {
+            var total = list.size();
+            var totalSucceed = list.stream().filter(ProductImportDTO::isResult).count();
+            return Mono.just(new ProductImportListDTO(list, totalSucceed, total - totalSucceed));
+        });
     }
 
     /**
      * validate import item
      *
-     * @param request request
+     * @param request
+     *            request
      * @return
      */
     private Mono<ProductImportDTO> validateImport(ProductImportDTO request) {
@@ -601,43 +689,58 @@ public class ProductServiceImpl implements ProductService {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.name.empty"));
         }
         if (DataUtil.isNullOrEmpty(product.getTaxRatio())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.tax.ratio.empty"));
+            return Mono.error(
+                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.tax.ratio.empty"));
         }
         // check gia tri
         if (product.getCode().length() > 15 || !product.getCode().matches(CHAR_AND_NUM_REGEX)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.code.invalid"));
+            return Mono.error(
+                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.code.invalid"));
         }
         if (product.getName().length() > 500 || !product.getName().matches(VIE_CHAR_AND_NUM_REGEX)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.name.invalid"));
+            return Mono.error(
+                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.name.invalid"));
         }
-        if (!DataUtil.isNullOrEmpty(product.getPriceImportStr()) &&
-                (product.getPriceImportStr().length() > 10 || !product.getPriceImportStr().matches(PRICE_REGEX))) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.price.import.invalid"));
+        if (!DataUtil.isNullOrEmpty(product.getPriceImportStr())
+                && (product.getPriceImportStr().length() > 10
+                        || !product.getPriceImportStr().matches(PRICE_REGEX))) {
+            return Mono.error(
+                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.price.import.invalid"));
         }
-        if (!DataUtil.isNullOrEmpty(product.getUnit()) &&
-                (product.getUnit().length() > 150 || !product.getUnit().matches(VIE_CHAR_REGEX))) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.unit.invalid"));
+        if (!DataUtil.isNullOrEmpty(product.getUnit())
+                && (product.getUnit().length() > 150 || !product.getUnit().matches(VIE_CHAR_REGEX))) {
+            return Mono.error(
+                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.unit.invalid"));
         }
-        if (!DataUtil.isNullOrEmpty(product.getPriceExportStr()) &&
-                (product.getPriceExportStr().length() > 10 || !product.getPriceExportStr().matches(PRICE_REGEX))) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.price.export.invalid"));
+        if (!DataUtil.isNullOrEmpty(product.getPriceExportStr())
+                && (product.getPriceExportStr().length() > 10
+                        || !product.getPriceExportStr().matches(PRICE_REGEX))) {
+            return Mono.error(
+                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.price.export.invalid"));
         }
-        if (!DataUtil.isNullOrEmpty(product.getDiscountStr()) &&
-                (product.getDiscountStr().length() > 10 || !product.getDiscountStr().matches(PRICE_REGEX))) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.discount.invalid"));
+        if (!DataUtil.isNullOrEmpty(product.getDiscountStr())
+                && (product.getDiscountStr().length() > 10
+                        || !product.getDiscountStr().matches(PRICE_REGEX))) {
+            return Mono.error(
+                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.discount.invalid"));
         }
         if (!TAX_RATIO_LIST.contains(product.getTaxRatio())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.tax.ratio.invalid"));
+            return Mono.error(
+                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.tax.ratio.invalid"));
         }
-        if (!DataUtil.isNullOrEmpty(product.getRevenueRatioStr()) &&
-                !REVENUE_RATIO_LIST.contains(product.getRevenueRatioStr())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.revenue.ratio.invalid"));
+        if (!DataUtil.isNullOrEmpty(product.getRevenueRatioStr())
+                && !REVENUE_RATIO_LIST.contains(product.getRevenueRatioStr())) {
+            return Mono.error(new BusinessException(
+                    CommonErrorCode.INVALID_PARAMS, "product.import.error.revenue.ratio.invalid"));
         }
         // check ton tai
-        return productRepository.findFirstByCode(product.getCode()).switchIfEmpty(Mono.just(new Product()))
+        return productRepository
+                .findFirstByCode(product.getCode())
+                .switchIfEmpty(Mono.just(new Product()))
                 .flatMap(productDb -> {
                     if (!DataUtil.isNullOrEmpty(productDb.getCode())) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.code.exist"));
+                        return Mono.error(new BusinessException(
+                                CommonErrorCode.INVALID_PARAMS, "product.import.error.code.exist"));
                     }
                     return Mono.just(true);
                 });
@@ -666,18 +769,29 @@ public class ProductServiceImpl implements ProductService {
                             String unitTemplateRow = DataUtil.safeTrim(this.getValueInCell(row, formatter, i++));
                             String taxRatioRow = DataUtil.safeTrim(this.getValueInCell(row, formatter, i++));
                             String discountTemplateRow = DataUtil.safeTrim(this.getValueInCell(row, formatter, i++));
-                            String revenueRatioTemplateRow = DataUtil.safeTrim(this.getValueInCell(row, formatter, i++));
+                            String revenueRatioTemplateRow =
+                                    DataUtil.safeTrim(this.getValueInCell(row, formatter, i++));
 
-                            if (!(Translator.toLocaleVi(ROW_TEMPLATE_NAME.CODE) + ROW_TEMPLATE_NAME.OBLIGATORY).equals(DataUtil.safeTrim(codeTemplateRow)) ||
-                                    !(Translator.toLocaleVi(ROW_TEMPLATE_NAME.NAME) + ROW_TEMPLATE_NAME.OBLIGATORY).equals(DataUtil.safeTrim(nameTemplateRow)) ||
-                                    !Translator.toLocaleVi(ROW_TEMPLATE_NAME.PRICE_IMPORT).equals(DataUtil.safeTrim(priceImportTemplateRow)) ||
-                                    !Translator.toLocaleVi(ROW_TEMPLATE_NAME.PRICE_EXPORT).equals(DataUtil.safeTrim(priceExportTemplateRow)) ||
-                                    !Translator.toLocaleVi(ROW_TEMPLATE_NAME.UNIT).equals(DataUtil.safeTrim(unitTemplateRow)) ||
-                                    !(Translator.toLocaleVi(ROW_TEMPLATE_NAME.TAX_RATIO) + ROW_TEMPLATE_NAME.OBLIGATORY).equals(DataUtil.safeTrim(taxRatioRow)) ||
-                                    !Translator.toLocaleVi(ROW_TEMPLATE_NAME.DISCOUNT).equals(DataUtil.safeTrim(discountTemplateRow)) ||
-                                    !Translator.toLocaleVi(ROW_TEMPLATE_NAME.REVENUE_RATIO).equals(DataUtil.safeTrim(revenueRatioTemplateRow))
-                            ) {
-                                return Mono.error(new BusinessException(String.valueOf(HttpStatus.BAD_REQUEST.value()), Translator.toLocaleVi("product.import.error.template.invalid")));
+                            if (!(Translator.toLocaleVi(ROW_TEMPLATE_NAME.CODE) + ROW_TEMPLATE_NAME.OBLIGATORY)
+                                            .equals(DataUtil.safeTrim(codeTemplateRow))
+                                    || !(Translator.toLocaleVi(ROW_TEMPLATE_NAME.NAME) + ROW_TEMPLATE_NAME.OBLIGATORY)
+                                            .equals(DataUtil.safeTrim(nameTemplateRow))
+                                    || !Translator.toLocaleVi(ROW_TEMPLATE_NAME.PRICE_IMPORT)
+                                            .equals(DataUtil.safeTrim(priceImportTemplateRow))
+                                    || !Translator.toLocaleVi(ROW_TEMPLATE_NAME.PRICE_EXPORT)
+                                            .equals(DataUtil.safeTrim(priceExportTemplateRow))
+                                    || !Translator.toLocaleVi(ROW_TEMPLATE_NAME.UNIT)
+                                            .equals(DataUtil.safeTrim(unitTemplateRow))
+                                    || !(Translator.toLocaleVi(ROW_TEMPLATE_NAME.TAX_RATIO)
+                                                    + ROW_TEMPLATE_NAME.OBLIGATORY)
+                                            .equals(DataUtil.safeTrim(taxRatioRow))
+                                    || !Translator.toLocaleVi(ROW_TEMPLATE_NAME.DISCOUNT)
+                                            .equals(DataUtil.safeTrim(discountTemplateRow))
+                                    || !Translator.toLocaleVi(ROW_TEMPLATE_NAME.REVENUE_RATIO)
+                                            .equals(DataUtil.safeTrim(revenueRatioTemplateRow))) {
+                                return Mono.error(new BusinessException(
+                                        String.valueOf(HttpStatus.BAD_REQUEST.value()),
+                                        Translator.toLocaleVi("product.import.error.template.invalid")));
                             }
                         }
                         List<ProductImportDTO> items = new ArrayList<>();
@@ -688,12 +802,15 @@ public class ProductServiceImpl implements ProductService {
                         }
                         // Validate size
                         if (items.size() > 200) {
-                            return Flux.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("file.input.exceed", "200")));
+                            return Flux.error(new BusinessException(
+                                    CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("file.input.exceed", "200")));
                         }
                         return Flux.fromIterable(items);
                     } catch (Exception e) {
                         log.error(e.getMessage(), e);
-                        return Mono.error(new BusinessException(String.valueOf(HttpStatus.BAD_REQUEST.value()), Translator.toLocaleVi("product.import.error.file.invalid")));
+                        return Mono.error(new BusinessException(
+                                String.valueOf(HttpStatus.BAD_REQUEST.value()),
+                                Translator.toLocaleVi("product.import.error.file.invalid")));
                     }
                 });
     }
@@ -705,13 +822,16 @@ public class ProductServiceImpl implements ProductService {
         ProductImportDTO productImportDTO = new ProductImportDTO();
         productImportDTO.setCode(this.getValueInCell(row, formatter, i++));
         productImportDTO.setName(this.getValueInCell(row, formatter, i++));
-        productImportDTO.setPriceImport(DataUtil.safeToDouble(this.getValueInCell(row, formatter, i).replace(",", ""), null));
+        productImportDTO.setPriceImport(
+                DataUtil.safeToDouble(this.getValueInCell(row, formatter, i).replace(",", ""), null));
         productImportDTO.setPriceImportStr(DataUtil.safeToString(this.getValueInCell(row, formatter, i++), null));
-        productImportDTO.setPriceExport(DataUtil.safeToDouble(this.getValueInCell(row, formatter, i).replace(",", ""), null));
+        productImportDTO.setPriceExport(
+                DataUtil.safeToDouble(this.getValueInCell(row, formatter, i).replace(",", ""), null));
         productImportDTO.setPriceExportStr(DataUtil.safeToString(this.getValueInCell(row, formatter, i++), null));
         productImportDTO.setUnit(this.getValueInCell(row, formatter, i++));
         productImportDTO.setTaxRatio(this.getValueInCell(row, formatter, i++));
-        productImportDTO.setDiscount(DataUtil.safeToDouble(this.getValueInCell(row, formatter, i).replace(",", ""), null));
+        productImportDTO.setDiscount(
+                DataUtil.safeToDouble(this.getValueInCell(row, formatter, i).replace(",", ""), null));
         productImportDTO.setDiscountStr(DataUtil.safeToString(this.getValueInCell(row, formatter, i++), null));
         productImportDTO.setRevenueRatio(DataUtil.safeToLong(this.getValueInCell(row, formatter, i), null));
         productImportDTO.setRevenueRatioStr(DataUtil.safeToString(this.getValueInCell(row, formatter, i), null));
@@ -719,7 +839,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private String getValueInCell(Row row, DataFormatter formatter, int i) {
-        return Optional.ofNullable(row.getCell(i)).map(value -> formatter.formatCellValue(value).trim()).orElse(StringUtils.EMPTY);
+        return Optional.ofNullable(row.getCell(i))
+                .map(value -> formatter.formatCellValue(value).trim())
+                .orElse(StringUtils.EMPTY);
     }
 
     @Override
@@ -736,37 +858,52 @@ public class ProductServiceImpl implements ProductService {
             }
             // validate truyen organization id
             if (DataUtil.isNullOrEmpty(organizationId)) {
-                return Mono.error(new BusinessException(String.valueOf(HttpStatus.BAD_REQUEST.value()),
+                return Mono.error(new BusinessException(
+                        String.valueOf(HttpStatus.BAD_REQUEST.value()),
                         Translator.toLocaleVi(NOT_FOUND, Translator.toLocaleVi(PRODUCT_ID))));
             }
             Flux<ProductImportDTO> organizationUnitRequests = getCreateOrganizationUnitRequestFlux(filePart);
             // lay ma so thue doanh nghiep
-            return Mono.zip(SecurityUtils.getCurrentUser(), authClient.getIdNoOrganization("MST", ORGANIZATION, organizationId)).flatMap(tuple1 -> {
-                String userName = tuple1.getT1().getUsername();
-                CreateSyncHistoryRequest createSyncHistoryRequest = createSyncHistory("INSERT", organizationId, tuple1.getT2());
-                return Mono.zip(
-                                syncHistoryService.createSyncHistoryTrans(createSyncHistoryRequest), // goi api lay transaction id
-                                productRepository.getSysDate(),
-                                SecurityUtils.getCurrentUser().flatMap(user -> authClient.findAllActiveOrganizationUnitsByOrganizationId(user.getId(), organizationId))) // lay danh sach don vi cua user
-                        .flatMap(tuple -> {
-                            SyncHistory syncHistory = tuple.getT1().getData();
-                            LocalDateTime now = tuple.getT2();
-                            String syncHistoryId = syncHistory.getId();
-                            String syncTransId = syncHistory.getSyncTransId();
-                            List<OrganizationUnit> unitList = tuple.getT3();
-                            // validate import data
-                            Flux<ProductImportDTO> results = organizationUnitRequests.flatMap(this::validateImport);
-                            Flux<ProductImportDTO> productImportList = results
-                                    .flatMap(productImport -> {
+            return Mono.zip(
+                            SecurityUtils.getCurrentUser(),
+                            authClient.getIdNoOrganization("MST", ORGANIZATION, organizationId))
+                    .flatMap(tuple1 -> {
+                        String userName = tuple1.getT1().getUsername();
+                        CreateSyncHistoryRequest createSyncHistoryRequest =
+                                createSyncHistory("INSERT", organizationId, tuple1.getT2());
+                        return Mono.zip(
+                                        syncHistoryService.createSyncHistoryTrans(createSyncHistoryRequest), // goi api
+                                        // lay
+                                        // transaction
+                                        // id
+                                        productRepository.getSysDate(),
+                                        SecurityUtils.getCurrentUser()
+                                                .flatMap(user ->
+                                                        authClient.findAllActiveOrganizationUnitsByOrganizationId(
+                                                                user.getId(),
+                                                                organizationId))) // lay danh sach don vi cua user
+                                .flatMap(tuple -> {
+                                    SyncHistory syncHistory = tuple.getT1().getData();
+                                    LocalDateTime now = tuple.getT2();
+                                    String syncHistoryId = syncHistory.getId();
+                                    String syncTransId = syncHistory.getSyncTransId();
+                                    List<OrganizationUnit> unitList = tuple.getT3();
+                                    // validate import data
+                                    Flux<ProductImportDTO> results =
+                                            organizationUnitRequests.flatMap(this::validateImport);
+                                    Flux<ProductImportDTO> productImportList = results.flatMap(productImport -> {
                                         if (productImport.isResult()) {
                                             Product product = new Product();
                                             ModelMapperFactory.getInstance().map(productImport, product);
-                                            return handleCreateProduct(product, unitList, organizationId) // insert product
+                                            return handleCreateProduct(product, unitList, organizationId) // insert
+                                                    // product
                                                     .flatMap(response -> {
-                                                        String productId = response.getData().getId();
-                                                        //Luu thong tin vao bang sync history
+                                                        String productId = response.getData()
+                                                                .getId();
+                                                        // Luu thong tin vao bang sync history
                                                         SyncHistoryDetail detail = SyncHistoryDetail.builder()
-                                                                .id(UUID.randomUUID().toString())
+                                                                .id(UUID.randomUUID()
+                                                                        .toString())
                                                                 .syncHistoryId(syncHistoryId)
                                                                 .syncTransId(syncTransId)
                                                                 .targetId(productId)
@@ -777,21 +914,33 @@ public class ProductServiceImpl implements ProductService {
                                                                 .updateBy(userName)
                                                                 .isNew(true)
                                                                 .build();
-                                                        return syncHistoryService.createSyncHistoryDetail(detail) // luu thong tin vao bang sync history detail
+                                                        return syncHistoryService
+                                                                .createSyncHistoryDetail(detail) // luu
+                                                                // thong
+                                                                // tin
+                                                                // vao
+                                                                // bang
+                                                                // sync
+                                                                // history
+                                                                // detail
                                                                 .map(result -> {
-                                                                    productImport.setId(productId); //bo sung them id cua ban ghi duoc tao
+                                                                    productImport.setId(productId); // bo sung them id
+                                                                    // cua ban ghi duoc
+                                                                    // tao
                                                                     productImport.setErrMsg(StringUtils.EMPTY);
                                                                     productImport.setResult(true);
                                                                     return productImport;
                                                                 })
                                                                 .onErrorResume(error -> {
-                                                                    productImport.setErrMsg(Translator.toLocaleVi(error.getMessage()));
+                                                                    productImport.setErrMsg(
+                                                                            Translator.toLocaleVi(error.getMessage()));
                                                                     productImport.setResult(false);
                                                                     return Mono.just(productImport);
                                                                 });
                                                     })
                                                     .onErrorResume(error -> {
-                                                        productImport.setErrMsg(Translator.toLocaleVi(error.getMessage()));
+                                                        productImport.setErrMsg(
+                                                                Translator.toLocaleVi(error.getMessage()));
                                                         productImport.setResult(false);
                                                         return Mono.just(productImport);
                                                     });
@@ -799,19 +948,24 @@ public class ProductServiceImpl implements ProductService {
                                             return Mono.just(productImport);
                                         }
                                     });
-                            return productImportList.collectList()
-                                    .flatMap(list -> {
+                                    return productImportList.collectList().flatMap(list -> {
                                         long total = list.size();
-                                        long totalSucceed = list.stream().filter(ProductImportDTO::isResult).count();
+                                        long totalSucceed = list.stream()
+                                                .filter(ProductImportDTO::isResult)
+                                                .count();
                                         // neu khong co ban ghi nao import thanh cong => khong kich hoat dong bo
                                         if (totalSucceed == 0) {
-                                            return Mono.just(new ProductImportListDTO(list, totalSucceed, total - totalSucceed));
+                                            return Mono.just(
+                                                    new ProductImportListDTO(list, totalSucceed, total - totalSucceed));
                                         }
                                         // tao request kich hoat dong bo
                                         PaginationDTO paginationDTO = new PaginationDTO();
                                         paginationDTO.setTotalRecords(totalSucceed);
                                         // lay danh sach product id insert thanh cong sau khi cap nhat
-                                        List<String> productList = list.stream().filter(ProductImportDTO::isResult).map(ProductImportDTO::getId).collect(Collectors.toList());
+                                        List<String> productList = list.stream()
+                                                .filter(ProductImportDTO::isResult)
+                                                .map(ProductImportDTO::getId)
+                                                .collect(Collectors.toList());
                                         ChangeDataDTO changeData = ChangeDataDTO.builder()
                                                 .syncType(syncHistory.getSyncType())
                                                 .objectType(syncHistory.getObjectType())
@@ -820,20 +974,24 @@ public class ProductServiceImpl implements ProductService {
                                                 .changeDate(now)
                                                 .sourceAlias(SOURCE_ALIAS_HUB_PRODUCT)
                                                 .build();
-                                        ServiceSyncProductDTO service = ServiceSyncProductDTO.builder().type(syncHistory.getServiceType()).build();
+                                        ServiceSyncProductDTO service = ServiceSyncProductDTO.builder()
+                                                .type(syncHistory.getServiceType())
+                                                .build();
                                         CallApiSyncProductRequest requestSync = CallApiSyncProductRequest.builder()
                                                 .organizationId(syncHistory.getOrgId())
                                                 .idNo(syncHistory.getIdNo())
                                                 .action(syncHistory.getAction())
                                                 .service(service)
                                                 .transactionId(syncHistory.getSyncTransId())
-                                                .object(Collections.singletonList(changeData)).build();
+                                                .object(Collections.singletonList(changeData))
+                                                .build();
                                         // call api kich hoat dong bo
                                         AppUtils.runHiddenStream(syncClient.callApiSyncProduct(requestSync));
-                                        return Mono.just(new ProductImportListDTO(list, totalSucceed, total - totalSucceed));
+                                        return Mono.just(
+                                                new ProductImportListDTO(list, totalSucceed, total - totalSucceed));
                                     });
-                        });
-            });
+                                });
+                    });
         } catch (BusinessException e) {
             log.error(e.getMessage(), e);
             return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, e.getMessage()));
@@ -843,73 +1001,85 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public Mono<DataResponse<Product>> createProduct(Product product, String organizationId) {
-        return SecurityUtils.getCurrentUser()
-                .flatMap(user -> authClient.findAllActiveOrganizationUnitsByOrganizationId(user.getId(), organizationId)
-                        .flatMap(unitList -> handleCreateProduct(product, unitList, organizationId)));
+        return SecurityUtils.getCurrentUser().flatMap(user -> authClient
+                .findAllActiveOrganizationUnitsByOrganizationId(user.getId(), organizationId)
+                .flatMap(unitList -> handleCreateProduct(product, unitList, organizationId)));
     }
 
     @Override
     @Transactional
     public Mono<DataResponse<Boolean>> updateProduct(Product product) {
-        return Mono.zip(
-                validateRequestCreateProduct(product, false),
-                SecurityUtils.getCurrentUser()
-        ).flatMap(validateUser -> productRepository.findFirstById(product.getId())
-                .flatMap(productDb -> {
-                    productDb.setCode(product.getCode());
-                    productDb.setName(product.getName());
-                    productDb.setPriceImport(product.getPriceImport());
-                    productDb.setPriceExport(product.getPriceExport());
-                    productDb.setUnit(product.getUnit());
-                    productDb.setDiscount(product.getDiscount());
-                    productDb.setTaxRatio(product.getTaxRatio());
-                    productDb.setRevenueRatio(product.getRevenueRatio());
-                    productDb.setUpdateAt(LocalDateTime.now());
-                    productDb.setUpdateBy(validateUser.getT2().getUsername());
-                    productDb.setNew(false);
-                    productDb.setStatus(STATUS_ACTIVE);
-                    return productRepository.save(productDb).map(rsp -> DataResponse.success(true))
-                            .onErrorResume(throwable -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, COMMON_ERROR)));
-                })
-        );
+        return Mono.zip(validateRequestCreateProduct(product, false), SecurityUtils.getCurrentUser())
+                .flatMap(validateUser -> productRepository
+                        .findFirstById(product.getId())
+                        .flatMap(productDb -> {
+                            productDb.setCode(product.getCode());
+                            productDb.setName(product.getName());
+                            productDb.setPriceImport(product.getPriceImport());
+                            productDb.setPriceExport(product.getPriceExport());
+                            productDb.setUnit(product.getUnit());
+                            productDb.setDiscount(product.getDiscount());
+                            productDb.setTaxRatio(product.getTaxRatio());
+                            productDb.setRevenueRatio(product.getRevenueRatio());
+                            productDb.setUpdateAt(LocalDateTime.now());
+                            productDb.setUpdateBy(validateUser.getT2().getUsername());
+                            productDb.setNew(false);
+                            productDb.setStatus(STATUS_ACTIVE);
+                            return productRepository
+                                    .save(productDb)
+                                    .map(rsp -> DataResponse.success(true))
+                                    .onErrorResume(throwable -> Mono.error(new BusinessException(
+                                            CommonErrorCode.INTERNAL_SERVER_ERROR, COMMON_ERROR)));
+                        }));
     }
 
     @Override
     @Transactional
     public Mono<DataResponse<Boolean>> deleteProduct(String productId) {
         return Mono.zip(
-                productRepository.findFirstByIdAndStatus(productId, STATUS_ACTIVE)
-                        .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "product.error.not.exist.or.inactive"))),
-                SecurityUtils.getCurrentUser()
-        ).flatMap(productUser -> {
-            Product product = productUser.getT1();
-            product.setNew(false);
-            product.setStatus(Constants.COMMON.STATUS_INACTIVE);
-            product.setUpdateAt(LocalDateTime.now());
-            product.setUpdateBy(productUser.getT2().getUsername());
-            return productRepository.save(product)
-                    .map(rsp -> DataResponse.success(true))
-                    .onErrorResume(error -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, COMMON_ERROR)));
-        });
+                        productRepository
+                                .findFirstByIdAndStatus(productId, STATUS_ACTIVE)
+                                .switchIfEmpty(Mono.error(new BusinessException(
+                                        CommonErrorCode.NOT_FOUND, "product.error.not.exist.or.inactive"))),
+                        SecurityUtils.getCurrentUser())
+                .flatMap(productUser -> {
+                    Product product = productUser.getT1();
+                    product.setNew(false);
+                    product.setStatus(Constants.COMMON.STATUS_INACTIVE);
+                    product.setUpdateAt(LocalDateTime.now());
+                    product.setUpdateBy(productUser.getT2().getUsername());
+                    return productRepository
+                            .save(product)
+                            .map(rsp -> DataResponse.success(true))
+                            .onErrorResume(error -> Mono.error(
+                                    new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, COMMON_ERROR)));
+                });
     }
 
     @Override
     @Transactional
     public Mono<DataResponse<Boolean>> lockProduct(LockProductRequest request) {
         return Mono.zip(
-                productRepository.findFirstById(request.getProductId())
-                        .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "product.error.not.exist"))),
-                SecurityUtils.getCurrentUser()
-        ).flatMap(productUser -> {
-            Product product = productUser.getT1();
-            product.setNew(false);
-            product.setLockStatus(DataUtil.safeEqual(product.getLockStatus(), LOCK_STATUS_LOCK) ? LOCK_STATUS_UNLOCK : LOCK_STATUS_LOCK);
-            product.setUpdateAt(LocalDateTime.now());
-            product.setUpdateBy(productUser.getT2().getUsername());
-            return productRepository.save(product)
-                    .map(rsp -> DataResponse.success(true))
-                    .onErrorResume(error -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, COMMON_ERROR)));
-        });
+                        productRepository
+                                .findFirstById(request.getProductId())
+                                .switchIfEmpty(Mono.error(
+                                        new BusinessException(CommonErrorCode.NOT_FOUND, "product.error.not.exist"))),
+                        SecurityUtils.getCurrentUser())
+                .flatMap(productUser -> {
+                    Product product = productUser.getT1();
+                    product.setNew(false);
+                    product.setLockStatus(
+                            DataUtil.safeEqual(product.getLockStatus(), LOCK_STATUS_LOCK)
+                                    ? LOCK_STATUS_UNLOCK
+                                    : LOCK_STATUS_LOCK);
+                    product.setUpdateAt(LocalDateTime.now());
+                    product.setUpdateBy(productUser.getT2().getUsername());
+                    return productRepository
+                            .save(product)
+                            .map(rsp -> DataResponse.success(true))
+                            .onErrorResume(error -> Mono.error(
+                                    new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, COMMON_ERROR)));
+                });
     }
 
     @Override
@@ -925,71 +1095,78 @@ public class ProductServiceImpl implements ProductService {
         }
         Flux<ProductImportDTO> organizationUnitRequests = getCreateOrganizationUnitRequestFlux(filePart);
         Flux<ProductImportDTO> results = organizationUnitRequests.flatMap(this::validateImport);
-        Flux<ProductImportDTO> productImportList = results
-                .flatMap(productImport -> SecurityUtils.getCurrentUser()
-                        .flatMap(user -> authClient.findAllActiveOrganizationUnitsByOrganizationId(user.getId(), organizationId)
-                                .flatMap(unitList -> {
-                                    if (productImport.isResult()) {
-                                        Product product = new Product();
-                                        ModelMapperFactory.getInstance().map(productImport, product);
-                                        return handleCreateProduct(product, unitList, organizationId)
-                                                .map(result -> {
-                                                    productImport.setErrMsg(StringUtils.EMPTY);
-                                                    productImport.setResult(true);
-                                                    return productImport;
-                                                })
-                                                .onErrorResume(error -> {
-                                                    productImport.setErrMsg(Translator.toLocaleVi(error.getMessage()));
-                                                    productImport.setResult(false);
-                                                    return Mono.just(productImport);
-                                                });
-                                    } else {
-                                        return Mono.just(productImport);
-                                    }
-                                })
-                        )
-                );
-        return productImportList.collectList()
-                .flatMap(list -> {
-                    var total = list.size();
-                    var totalSucceed = list.stream().filter(ProductImportDTO::isResult).count();
-                    return Mono.just(new ProductImportListDTO(list, totalSucceed, total - totalSucceed));
-                });
+        Flux<ProductImportDTO> productImportList =
+                results.flatMap(productImport -> SecurityUtils.getCurrentUser().flatMap(user -> authClient
+                        .findAllActiveOrganizationUnitsByOrganizationId(user.getId(), organizationId)
+                        .flatMap(unitList -> {
+                            if (productImport.isResult()) {
+                                Product product = new Product();
+                                ModelMapperFactory.getInstance().map(productImport, product);
+                                return handleCreateProduct(product, unitList, organizationId)
+                                        .map(result -> {
+                                            productImport.setErrMsg(StringUtils.EMPTY);
+                                            productImport.setResult(true);
+                                            return productImport;
+                                        })
+                                        .onErrorResume(error -> {
+                                            productImport.setErrMsg(Translator.toLocaleVi(error.getMessage()));
+                                            productImport.setResult(false);
+                                            return Mono.just(productImport);
+                                        });
+                            } else {
+                                return Mono.just(productImport);
+                            }
+                        })));
+        return productImportList.collectList().flatMap(list -> {
+            var total = list.size();
+            var totalSucceed = list.stream().filter(ProductImportDTO::isResult).count();
+            return Mono.just(new ProductImportListDTO(list, totalSucceed, total - totalSucceed));
+        });
     }
 
     @Override
     public Mono<DataResponse> validateSubIns(ValidateSubInsRequest request) {
         return caClient.validateSubIns(request)
-                .flatMap(rsp -> Mono.just(new DataResponse(SUCCESS, SUCCESS, rsp.get().getData())))
+                .flatMap(rsp ->
+                        Mono.just(new DataResponse(SUCCESS, SUCCESS, rsp.get().getData())))
                 .onErrorResume(throwable -> Mono.just(new DataResponse(FAIL, throwable.getMessage(), null)));
     }
 
     @Override
     public Mono<DataResponse> getListAreaIns(getListAreaInsRequest request) {
         return caClient.getListAreaIns(request)
-                .flatMap(rsp -> Mono.just(new DataResponse(SUCCESS, SUCCESS, rsp.get().getData())))
+                .flatMap(rsp ->
+                        Mono.just(new DataResponse(SUCCESS, SUCCESS, rsp.get().getData())))
                 .onErrorResume(throwable -> Mono.just(new DataResponse(FAIL, FAIL, null)));
     }
 
     @Override
     public Mono<Boolean> lockMultiProduct(LockMultiProductRequest request) {
         return Mono.zip(
-                productRepository.findAllByIdIn(request.getProductIdList()).collectList()
-                        .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "product.error.not.exist"))),
-                SecurityUtils.getCurrentUser()
-        ).flatMap(productListUser -> {
-            List<Product> productDbList = productListUser.getT1();
-            productDbList.forEach(product -> {
-                product.setNew(false);
-                product.setLockStatus(DataUtil.safeEqual(product.getLockStatus(), LOCK_STATUS_LOCK) ? LOCK_STATUS_UNLOCK : LOCK_STATUS_LOCK);
-                product.setUpdateAt(LocalDateTime.now());
-                product.setUpdateBy(productListUser.getT2().getUsername());
-            });
-            return productRepository.saveAll(productDbList)
-                    .collectList()
-                    .map(rsp -> true)
-                    .onErrorResume(error -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, COMMON_ERROR)));
-        });
+                        productRepository
+                                .findAllByIdIn(request.getProductIdList())
+                                .collectList()
+                                .switchIfEmpty(Mono.error(
+                                        new BusinessException(CommonErrorCode.NOT_FOUND, "product.error.not.exist"))),
+                        SecurityUtils.getCurrentUser())
+                .flatMap(productListUser -> {
+                    List<Product> productDbList = productListUser.getT1();
+                    productDbList.forEach(product -> {
+                        product.setNew(false);
+                        product.setLockStatus(
+                                DataUtil.safeEqual(product.getLockStatus(), LOCK_STATUS_LOCK)
+                                        ? LOCK_STATUS_UNLOCK
+                                        : LOCK_STATUS_LOCK);
+                        product.setUpdateAt(LocalDateTime.now());
+                        product.setUpdateBy(productListUser.getT2().getUsername());
+                    });
+                    return productRepository
+                            .saveAll(productDbList)
+                            .collectList()
+                            .map(rsp -> true)
+                            .onErrorResume(error -> Mono.error(
+                                    new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, COMMON_ERROR)));
+                });
     }
 
     @Override
@@ -1010,15 +1187,22 @@ public class ProductServiceImpl implements ProductService {
         Integer offset = request.getOffset();
         Integer limit = request.getLimit();
         if (offset != null && offset < 0) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("sync.history.params.pageIndex.invalid")));
+            return Mono.error(new BusinessException(
+                    CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("sync.history.params.pageIndex.invalid")));
         }
         if (limit != null && limit < 1) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("sync.history.params.pageSize.invalid")));
+            return Mono.error(new BusinessException(
+                    CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("sync.history.params.pageSize.invalid")));
         }
-        return productCustomRepository.getProductByIdAndOrganizationIdAndTransId(ids, organizationId, offset, limit, request.getTransactionId()).collectList()
-                .switchIfEmpty(Mono.error(new BusinessException(String.valueOf(HttpStatus.BAD_REQUEST.value()), Translator.toLocaleVi(NOT_FOUND, "Hàng hóa"))))
+        return productCustomRepository
+                .getProductByIdAndOrganizationIdAndTransId(
+                        ids, organizationId, offset, limit, request.getTransactionId())
+                .collectList()
+                .switchIfEmpty(Mono.error(new BusinessException(
+                        String.valueOf(HttpStatus.BAD_REQUEST.value()), Translator.toLocaleVi(NOT_FOUND, "Hàng hóa"))))
                 .map(productList -> {
-                    List<String> lstCustId = productList.stream().map(Product::getId).collect(Collectors.toList());
+                    List<String> lstCustId =
+                            productList.stream().map(Product::getId).collect(Collectors.toList());
                     GetProductInfoResponse getProductInfoResponse = new GetProductInfoResponse();
                     getProductInfoResponse.setRecords(productList);
                     getProductInfoResponse.setIds(lstCustId);
@@ -1026,9 +1210,10 @@ public class ProductServiceImpl implements ProductService {
                 });
     }
 
-    //Ghi vao file excel
+    // Ghi vao file excel
     private ByteArrayResource writeExcel(Workbook workbook) {
-        try (ByteArrayOutputStream os = new ByteArrayOutputStream(); workbook) {
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream();
+                workbook) {
             workbook.write(os);
             return new ByteArrayResource(os.toByteArray()) {
                 @Override
@@ -1057,28 +1242,24 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-    //set style va data vao file exel
+    // set style va data vao file exel
     private Workbook writeReport(QueryReport queryReport) {
-        try (InputStream templateInputStream = new ClassPathResource(
-                "template/template_export_report.xlsx")
-                .getInputStream()) {
+        try (InputStream templateInputStream =
+                new ClassPathResource("template/template_export_report.xlsx").getInputStream()) {
 
             Workbook workbook = new XSSFWorkbook(templateInputStream);
             Sheet sheet = workbook.getSheetAt(0);
-            //fill fromDate to column 5 row 1
-            String fromDate = DataUtil.formatDate(queryReport.getFromDateParse(),
-                    Constants.DateTimePattern.DMY, "");
+            // fill fromDate to column 5 row 1
+            String fromDate = DataUtil.formatDate(queryReport.getFromDateParse(), Constants.DateTimePattern.DMY, "");
             Cell exportFromDateCell = sheet.getRow(1).getCell(5);
             exportFromDateCell.setCellValue(
                     exportFromDateCell.getStringCellValue().replace("${date}", fromDate));
-            //fill toDate to column 6 row 1
-            String toDate = DataUtil.formatDate(queryReport.getToDateParse(),
-                    Constants.DateTimePattern.DMY, "");
+            // fill toDate to column 6 row 1
+            String toDate = DataUtil.formatDate(queryReport.getToDateParse(), Constants.DateTimePattern.DMY, "");
             Cell exportToDateCell = sheet.getRow(1).getCell(6);
-            exportToDateCell.setCellValue(
-                    exportToDateCell.getStringCellValue().replace("${date}", toDate));
-            int rowCount = 5;//bat dau fill du lieu tu dong thu 5
-            int index = 1;//index bat dau tu 1
+            exportToDateCell.setCellValue(exportToDateCell.getStringCellValue().replace("${date}", toDate));
+            int rowCount = 5; // bat dau fill du lieu tu dong thu 5
+            int index = 1; // index bat dau tu 1
             // tao number format de dinh dang tien te
             Row row = sheet.createRow(rowCount);
             CellStyle style = workbook.createCellStyle();
@@ -1090,16 +1271,19 @@ public class ProductServiceImpl implements ProductService {
             style.setTopBorderColor(IndexedColors.BLACK.getIndex());
             style.setBorderLeft(BorderStyle.THIN);
             style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-            writeRow(row, style, 0, Arrays.asList(
-                    String.valueOf(index),
-                    formatCurrency(DataUtil.safeToDouble(queryReport.getAccess())),
-                    formatCurrency(DataUtil.safeToDouble(queryReport.getTotalProducts())),
-                    formatCurrency(DataUtil.safeToDouble(queryReport.getNewProducts())),
-                    formatCurrency(DataUtil.safeToDouble(queryReport.getTotalOrders())),
-                    formatCurrency(DataUtil.safeToDouble(queryReport.getSuccessfulOrders())),
-                    formatCurrency(DataUtil.safeToDouble(queryReport.getFailedOrders())),
-                    formatCurrency(DataUtil.safeToDouble(queryReport.getTransactionValue()))
-            ));
+            writeRow(
+                    row,
+                    style,
+                    0,
+                    Arrays.asList(
+                            String.valueOf(index),
+                            formatCurrency(DataUtil.safeToDouble(queryReport.getAccess())),
+                            formatCurrency(DataUtil.safeToDouble(queryReport.getTotalProducts())),
+                            formatCurrency(DataUtil.safeToDouble(queryReport.getNewProducts())),
+                            formatCurrency(DataUtil.safeToDouble(queryReport.getTotalOrders())),
+                            formatCurrency(DataUtil.safeToDouble(queryReport.getSuccessfulOrders())),
+                            formatCurrency(DataUtil.safeToDouble(queryReport.getFailedOrders())),
+                            formatCurrency(DataUtil.safeToDouble(queryReport.getTransactionValue()))));
             return workbook;
         } catch (IOException e) {
             log.error(e.getMessage(), e);
@@ -1116,7 +1300,7 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-    //xuat excel
+    // xuat excel
     public Mono<Resource> exportReport(QueryReport request) {
         Workbook workbook = writeReport(request);
         return Mono.just(writeExcel(workbook));
@@ -1125,26 +1309,25 @@ public class ProductServiceImpl implements ProductService {
     public Mono<QueryReport> getDataReport(QueryReport request) {
         var fromDate = getFromDate(request.getFromDateParse());
         var toDate = getToDate(request.getToDateParse());
-        //Lay tong so dich vu
+        // Lay tong so dich vu
         var totalProduct = telecomRepository.countAllProduct();
-        //Lay ra summary cac truong fromDate -> toDate
-        var summaryReport = summaryReportRepository.getSummaryReport(fromDate,
-                toDate);
-        return Mono.zip(
-                DataUtil.optional(totalProduct),
-                DataUtil.optional(summaryReport)
-        ).flatMap(data -> {
-            QueryReport queryReport = data.getT2().get();
-            Integer countProducts = data.getT1().get();
-            queryReport.setTotalProducts(String.valueOf(countProducts));
-            queryReport.setFromDateParse(request.getFromDateParse());
-            queryReport.setToDateParse(request.getToDateParse());
-            return Mono.just(queryReport);
-        });
+        // Lay ra summary cac truong fromDate -> toDate
+        var summaryReport = summaryReportRepository.getSummaryReport(fromDate, toDate);
+        return Mono.zip(DataUtil.optional(totalProduct), DataUtil.optional(summaryReport))
+                .flatMap(data -> {
+                    QueryReport queryReport = data.getT2().get();
+                    Integer countProducts = data.getT1().get();
+                    queryReport.setTotalProducts(String.valueOf(countProducts));
+                    queryReport.setFromDateParse(request.getFromDateParse());
+                    queryReport.setToDateParse(request.getToDateParse());
+                    return Mono.just(queryReport);
+                });
     }
 
     private LocalDateTime getFromDate(LocalDate fromDate) {
-        return fromDate == null ? LocalDateTime.from(LocalDate.now().atStartOfDay().minusDays(30)) : fromDate.atTime(0, 0, 0);
+        return fromDate == null
+                ? LocalDateTime.from(LocalDate.now().atStartOfDay().minusDays(30))
+                : fromDate.atTime(0, 0, 0);
     }
 
     private LocalDateTime getToDate(LocalDate toDate) {
@@ -1158,18 +1341,27 @@ public class ProductServiceImpl implements ProductService {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "dateReport.not.empty"));
         }
 
-        var countTelecomService = telecomRepository.countTelecomByDateReport(request.getDateReport(), Constants.Activation.ACTIVE); // bo sung new service account
+        var countTelecomService = telecomRepository.countTelecomByDateReport(
+                request.getDateReport(), Constants.Activation.ACTIVE); // bo sung new service account
 
-        return Mono.zip(authClient.getActionLoginReport(request.getDateReport()), orderClient.getOrderReport(request.getDateReport()), countTelecomService)
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "daily-report.not.found")))
+        return Mono.zip(
+                        authClient.getActionLoginReport(request.getDateReport()),
+                        orderClient.getOrderReport(request.getDateReport()),
+                        countTelecomService)
+                .switchIfEmpty(
+                        Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "daily-report.not.found")))
                 .flatMap(tuple2 -> {
                     if (tuple2.getT1().isEmpty() || tuple2.getT2().isEmpty()) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "daily-report.not.found"));
+                        return Mono.error(
+                                new BusinessException(CommonErrorCode.INVALID_PARAMS, "daily-report.not.found"));
                     }
-                    GetActionLoginReportResponse getActionLoginReportResponse = tuple2.getT1().get();
-                    GetOrderReportResponse getOrderReportResponse = tuple2.getT2().get();
+                    GetActionLoginReportResponse getActionLoginReportResponse =
+                            tuple2.getT1().get();
+                    GetOrderReportResponse getOrderReportResponse =
+                            tuple2.getT2().get();
 
-                    return summaryReportRepo.getSummaryReportId(request.getDateReport())
+                    return summaryReportRepo
+                            .getSummaryReportId(request.getDateReport())
                             .collectList()
                             .flatMap(summaryReportResult -> {
                                 SummaryReport summaryReport = new SummaryReport();
@@ -1196,7 +1388,8 @@ public class ProductServiceImpl implements ProductService {
                                     summaryReport.setNew(Boolean.FALSE);
                                 }
 
-                                return summaryReportRepo.save(summaryReport)
+                                return summaryReportRepo
+                                        .save(summaryReport)
                                         .map(rs -> true)
                                         .switchIfEmpty(Mono.just(true))
                                         .flatMap(rs -> Mono.just(DataResponse.success("daily-report.success")));
@@ -1204,4 +1397,3 @@ public class ProductServiceImpl implements ProductService {
                 });
     }
 }
-

@@ -2,14 +2,13 @@ package com.ezbuy.authservice.client.config;
 
 import com.ezbuy.authservice.client.properties.KeycloakClientProperties;
 import com.ezbuy.authservice.client.properties.NotiServiceProperties;
-import io.hoangtien2k3.reactify.client.WebClientFactory;
+import com.ezbuy.reactify.client.WebClientFactory;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientManager;
-
-import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor

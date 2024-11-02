@@ -1,10 +1,10 @@
 package com.ezbuy.notificationservice.repository
 
 import com.ezbuy.notificationservice.repository.query.TransmissionQuery
-import com.ezbuy.notimodel.dto.TransmissionNotiDTO
-import com.ezbuy.notimodel.dto.response.CountNoticeDTO
-import com.ezbuy.notimodel.model.NotificationContent
-import com.ezbuy.notimodel.model.Transmission
+import com.ezbuy.notificationmodel.dto.TransmissionNotiDTO
+import com.ezbuy.notificationmodel.dto.response.CountNoticeDTO
+import com.ezbuy.notificationmodel.model.NotificationContent
+import com.ezbuy.notificationmodel.model.Transmission
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.r2dbc.repository.R2dbcRepository
 import reactor.core.publisher.Flux

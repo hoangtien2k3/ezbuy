@@ -10,6 +10,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.hoangtien2k3.reactify.DataUtil;
 import io.hoangtien2k3.reactify.client.BaseRestClient;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
@@ -18,12 +23,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -34,8 +33,7 @@ public class ProductClientImpl implements ProductClient {
 
     private final WebClient productClient;
 
-    public ProductClientImpl(BaseRestClient baseRestClient,
-                             @Qualifier("productClient") WebClient product) {
+    public ProductClientImpl(BaseRestClient baseRestClient, @Qualifier("productClient") WebClient product) {
         this.baseRestClient = baseRestClient;
         this.productClient = product;
     }
@@ -45,18 +43,21 @@ public class ProductClientImpl implements ProductClient {
         FilterProductTemplateDTO filterProductTemplateDTO = new FilterProductTemplateDTO();
         filterProductTemplateDTO.setListId(templateIds);
 
-        return baseRestClient.post(productClient, "/v1/filter-product-template", null, filterProductTemplateDTO, DataResponse.class)
+        return baseRestClient
+                .post(productClient, "/v1/filter-product-template", null, filterProductTemplateDTO, DataResponse.class)
                 .map(resp -> {
                     Optional<DataResponse> respOptional = (Optional<DataResponse>) resp;
                     if (respOptional.isEmpty() || respOptional.get().getData() == null) {
                         return new ArrayList<>();
                     }
 
-                    Map<String, Object> dataMap = (Map<String, Object>) respOptional.get().getData();
+                    Map<String, Object> dataMap =
+                            (Map<String, Object>) respOptional.get().getData();
                     String dataJson = DataUtil.parseObjectToString(dataMap.get("data"));
-                    return DataUtil.parseStringToObject(dataJson, new TypeReference<List<ProductOfferTemplateDTO>>() {
-                    }, new ArrayList<>());
-                }).onErrorResume(throwable -> Mono.just(new ArrayList<>()));
+                    return DataUtil.parseStringToObject(
+                            dataJson, new TypeReference<List<ProductOfferTemplateDTO>>() {}, new ArrayList<>());
+                })
+                .onErrorResume(throwable -> Mono.just(new ArrayList<>()));
     }
 
     @Override
@@ -65,34 +66,41 @@ public class ProductClientImpl implements ProductClient {
         filterGetListSubscriberActive.setIdNo(idNo);
         filterGetListSubscriberActive.setLstTelecomServiceId(lstTelecomServiceId);
 
-        return baseRestClient.post(productClient, "/v1/get-list-subscriber-active", null, filterGetListSubscriberActive, DataResponse.class)
+        return baseRestClient
+                .post(
+                        productClient,
+                        "/v1/get-list-subscriber-active",
+                        null,
+                        filterGetListSubscriberActive,
+                        DataResponse.class)
                 .map(resp -> {
                     Optional<DataResponse> respOptional = (Optional<DataResponse>) resp;
                     if (respOptional.isEmpty() || respOptional.get().getData() == null) {
                         return new ArrayList<>();
                     }
 
-                    Map<String, Object> dataMap = (Map<String, Object>) respOptional.get().getData();
+                    Map<String, Object> dataMap =
+                            (Map<String, Object>) respOptional.get().getData();
                     String dataJson = DataUtil.parseObjectToString(dataMap.get("data"));
-                    return DataUtil.parseStringToObject(dataJson, new TypeReference<List<Subscriber>>() {
-                    }, new ArrayList<>());
-                }).onErrorResume(throwable -> Mono.just(new ArrayList<>()));
+                    return DataUtil.parseStringToObject(
+                            dataJson, new TypeReference<List<Subscriber>>() {}, new ArrayList<>());
+                })
+                .onErrorResume(throwable -> Mono.just(new ArrayList<>()));
     }
 
     private String joinStringList(List<String> inputList) {
         if (DataUtil.isNullOrEmpty(inputList)) {
             return "";
         }
-        return inputList.stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(","));
+        return inputList.stream().map(String::valueOf).collect(Collectors.joining(","));
     }
 
     @Override
     public Mono<List<Telecom>> getTelecomByAlias(List<String> lstTelecomServiceAlias) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.set("lstTelecomServiceAlias", joinStringList(lstTelecomServiceAlias));
-        return baseRestClient.get(productClient, "/v1/telecom-service/get-by-lst-alias", null, params, DataResponse.class)
+        return baseRestClient
+                .get(productClient, "/v1/telecom-service/get-by-lst-alias", null, params, DataResponse.class)
                 .flatMap(dataResponse -> {
                     if (DataUtil.isNullOrEmpty(dataResponse)) {
                         return Mono.just(new ArrayList<>());
@@ -102,20 +110,16 @@ public class ProductClientImpl implements ProductClient {
                         return Mono.just(new ArrayList<>());
                     }
 
-                    String dataJson = DataUtil.parseObjectToString(dataResponseOptional.get().getData());
+                    String dataJson = DataUtil.parseObjectToString(
+                            dataResponseOptional.get().getData());
 
-                    List<Telecom> lstTelecom = DataUtil.parseStringToObject(
-                            dataJson,
-                            new TypeReference<>() {
-                            },
-                            new ArrayList<>()
-                    );
+                    List<Telecom> lstTelecom =
+                            DataUtil.parseStringToObject(dataJson, new TypeReference<>() {}, new ArrayList<>());
                     return Mono.just(lstTelecom);
                 })
                 .onErrorResume(throwable -> {
                     log.error("call ws product getTelecomByAlias error: {}", throwable);
                     return new ArrayList<>();
                 });
-
     }
 }

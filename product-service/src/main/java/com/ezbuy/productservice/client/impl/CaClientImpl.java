@@ -11,6 +11,7 @@ import io.hoangtien2k3.reactify.Translator;
 import io.hoangtien2k3.reactify.client.BaseRestClient;
 import io.hoangtien2k3.reactify.constants.CommonErrorCode;
 import io.hoangtien2k3.reactify.exception.BusinessException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,8 +19,6 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
-import java.util.Optional;
 
 @Log4j2
 @Service
@@ -37,37 +36,49 @@ public class CaClientImpl implements CaClient {
     public Mono<Optional<ValidateSubInsResponse>> validateSubIns(ValidateSubInsRequest request) {
         request.setUsername(caProperties.getUsername());
         request.setPassword(caProperties.getPassword());
-        return baseRestClient.callPostBodyJson(caClient, "/validateSubIns", null, request, ValidateSubInsResponse.class)
+        return baseRestClient
+                .callPostBodyJson(caClient, "/validateSubIns", null, request, ValidateSubInsResponse.class)
                 .map(dataResponse -> {
                     if (DataUtil.isNullOrEmpty(dataResponse)) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, Translator.toLocaleVi("call.api.ca.error")));
+                        return Mono.error(new BusinessException(
+                                CommonErrorCode.INTERNAL_SERVER_ERROR, Translator.toLocaleVi("call.api.ca.error")));
                     }
                     return dataResponse;
                 })
                 .onErrorResume(throwable -> {
-                            log.error("call.api.ca.error");
-                            ValidateSubInsResponse response = DataUtil.parseStringToObject(((BusinessException) throwable).getMessage(), ValidateSubInsResponse.class);
-                            return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, response != null ? Translator.toLocaleVi(response.getDescription()) : Translator.toLocaleVi("call.api.ca.error")));
-                        }
-                );
+                    log.error("call.api.ca.error");
+                    ValidateSubInsResponse response = DataUtil.parseStringToObject(
+                            ((BusinessException) throwable).getMessage(), ValidateSubInsResponse.class);
+                    return Mono.error(new BusinessException(
+                            CommonErrorCode.INTERNAL_SERVER_ERROR,
+                            response != null
+                                    ? Translator.toLocaleVi(response.getDescription())
+                                    : Translator.toLocaleVi("call.api.ca.error")));
+                });
     }
 
     @Override
     public Mono<Optional<ListAreaInsResponse>> getListAreaIns(getListAreaInsRequest request) {
         request.setUsername(caProperties.getUsername());
         request.setPassword(caProperties.getPassword());
-        return baseRestClient.callPostBodyJson(caClient, "/getListAreaIns", null, request, ListAreaInsResponse.class)
+        return baseRestClient
+                .callPostBodyJson(caClient, "/getListAreaIns", null, request, ListAreaInsResponse.class)
                 .map(dataResponse -> {
                     if (DataUtil.isNullOrEmpty(dataResponse)) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, Translator.toLocaleVi("call.api.ca.error")));
+                        return Mono.error(new BusinessException(
+                                CommonErrorCode.INTERNAL_SERVER_ERROR, Translator.toLocaleVi("call.api.ca.error")));
                     }
                     return dataResponse;
                 })
                 .onErrorResume(throwable -> {
-                            log.error("call.api.ca.error");
-                            ValidateSubInsResponse response = DataUtil.parseStringToObject(((BusinessException) throwable).getMessage(), ListAreaInsResponse.class);
-                            return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, response != null ? Translator.toLocaleVi(response.getDescription()) : Translator.toLocaleVi("call.api.ca.error")));
-                        }
-                );
+                    log.error("call.api.ca.error");
+                    ValidateSubInsResponse response = DataUtil.parseStringToObject(
+                            ((BusinessException) throwable).getMessage(), ListAreaInsResponse.class);
+                    return Mono.error(new BusinessException(
+                            CommonErrorCode.INTERNAL_SERVER_ERROR,
+                            response != null
+                                    ? Translator.toLocaleVi(response.getDescription())
+                                    : Translator.toLocaleVi("call.api.ca.error")));
+                });
     }
 }

@@ -10,5 +10,4 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "client.profile", ignoreInvalidFields = true)
 @Data
 @AllArgsConstructor
-public class ProfileProperties extends WebClientProperties {
-}
+public class ProfileProperties extends WebClientProperties {}

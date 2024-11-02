@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: bu-order
+  name: ezbuy-search-service
+  labels:
+    app: ezbuy-search-service
+    environment: development
+    release: stable
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ezbuy-search-service
+  template:
+    metadata:
+      labels:
+        app: ezbuy-search-service
+    spec:
+      serviceAccountName: bu-order-adm
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: sme-search-service
+          image: 10.207.252.224:9901/sme-search-service:1.0.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: JAVA_OPTS
+              value: "-Duser.timezone=GMT+7"
+            - name: SPRING_PROFILES_ACTIVE
+              value: dev
+            - name: LOG_HOST
+              value: sme-logstash-svc.bu-order.svc
+            - name: LOG_PORT
+              value: '8200'
+            - name: DB_ADDR
+              valueFrom:
+                secretKeyRef:
+                  key: db-addr
+                  name: sme-search-service
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: db-password
+                  name: ezbuy-search-service
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: db-username
+                  name: ezbuy-search-service
+            - name: CLIENT_KEYCLOAK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: client-keycloak-secret
+                  name: ezbuy-search-service
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 2
+            timeoutSeconds: 10
+            httpGet:
+              path: /actuator/health
+              port: 8080

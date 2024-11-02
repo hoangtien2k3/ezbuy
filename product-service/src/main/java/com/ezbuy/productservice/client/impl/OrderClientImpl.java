@@ -10,6 +10,9 @@ import io.hoangtien2k3.reactify.client.BaseRestClient;
 import io.hoangtien2k3.reactify.constants.CommonErrorCode;
 import io.hoangtien2k3.reactify.exception.BusinessException;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
+import java.time.LocalDate;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,10 +22,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
-import java.time.LocalDate;
-import java.util.Map;
-import java.util.Optional;
 
 @Log4j2
 @Service
@@ -34,44 +33,58 @@ public class OrderClientImpl implements OrderClient {
 
     @Qualifier(value = "orderClient")
     private final WebClient orderClient;
+
     private final ObjectMapperUtil objectMapperUtil;
 
     @Override
     public Mono<PricingProductResponse> getPricingProduct(PricingProductRequest productRequest) {
-        return baseRestClient.post(orderClient,"/order/pricing-product-internal", null, productRequest, DataResponse.class)
+        return baseRestClient
+                .post(orderClient, "/order/pricing-product-internal", null, productRequest, DataResponse.class)
                 .map(resp -> {
                     Optional<DataResponse> respOptional = (Optional<DataResponse>) resp;
-                    if (respOptional.isEmpty() || respOptional.get() == null || respOptional.get().getData() == null) {
+                    if (respOptional.isEmpty()
+                            || respOptional.get() == null
+                            || respOptional.get().getData() == null) {
                         return null;
                     }
 
-                    Map<String, Object> dataMap = (Map<String, Object>) respOptional.get().getData();
+                    Map<String, Object> dataMap =
+                            (Map<String, Object>) respOptional.get().getData();
                     String dataJson = DataUtil.parseObjectToString(dataMap);
                     return DataUtil.parseStringToObject(dataJson, PricingProductResponse.class);
                 })
                 .doOnError(err -> log.error("Exception when call order service: ", err))
-                .onErrorResume(throwable -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "order.service.error")));
+                .onErrorResume(throwable -> Mono.error(
+                        new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "order.service.error")));
     }
 
     @Override
     public Mono<Optional<GetOrderReportResponse>> getOrderReport(LocalDate dateReport) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("dateReport", String.valueOf(dateReport));
-        return baseRestClient.get(orderClient, "/order/order-report", null, params, DataResponse.class)
+        return baseRestClient
+                .get(orderClient, "/order/order-report", null, params, DataResponse.class)
                 .map(dataResponse -> {
                     if (DataUtil.isNullOrEmpty(dataResponse)) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "call.api.auth.error"));
+                        return Mono.error(
+                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "call.api.auth.error"));
                     }
                     Optional<DataResponse> dataResponseOptional = (Optional<DataResponse>) dataResponse;
                     if (dataResponseOptional.isEmpty()) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "call.api.auth.error"));
+                        return Mono.error(
+                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "call.api.auth.error"));
                     }
-                    String result = ObjectMapperUtil.convertObjectToJson(dataResponseOptional.get().getData());
-                    GetOrderReportResponse getOrderReportResponse = objectMapperUtil.convertStringToObject(result, GetOrderReportResponse.class);
+                    String result = ObjectMapperUtil.convertObjectToJson(
+                            dataResponseOptional.get().getData());
+                    GetOrderReportResponse getOrderReportResponse =
+                            objectMapperUtil.convertStringToObject(result, GetOrderReportResponse.class);
                     return Optional.ofNullable(getOrderReportResponse);
-                }).switchIfEmpty(Mono.just(Optional.empty())).onErrorResume(throwable -> {
+                })
+                .switchIfEmpty(Mono.just(Optional.empty()))
+                .onErrorResume(throwable -> {
                     log.error("order.service.error");
-                    return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "order.service.error"));
+                    return Mono.error(
+                            new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "order.service.error"));
                 });
     }
 }

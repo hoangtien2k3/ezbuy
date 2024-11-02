@@ -1,7 +1,7 @@
 package com.ezbuy.customer.client.properties;
 
-import io.hoangtien2k3.reactify.client.properties.WebClientProperties;
-import io.hoangtien2k3.reactify.filter.properties.KeyCloakProperties;
+import com.ezbuy.reactify.client.properties.WebClientProperties;
+import com.ezbuy.reactify.filter.properties.KeyCloakProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -6,10 +6,9 @@ import com.ezbuy.ordermodel.dto.ws.PlaceOrderResponse;
 import com.ezbuy.ordermodel.dto.ws.PricingProductWSResponse;
 import com.ezbuy.ordermodel.dto.ws.SearchOrderStateResponse;
 import com.ezbuy.ordermodel.dto.ws.ValidateDataOrderResponse;
-import reactor.core.publisher.Mono;
-
 import java.util.List;
 import java.util.Optional;
+import reactor.core.publisher.Mono;
 
 public interface OrderClient {
 
@@ -19,5 +18,6 @@ public interface OrderClient {
 
     Mono<Optional<PricingProductWSResponse>> getPricingProduct(PricingProductRequest request);
 
-    Mono<Optional<ValidateDataOrderResponse>> validateDataOrder(String orderType, String dataJson, List<ExtKeyDTO> lstExtKey);
+    Mono<Optional<ValidateDataOrderResponse>> validateDataOrder(
+            String orderType, String dataJson, List<ExtKeyDTO> lstExtKey);
 }

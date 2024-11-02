@@ -9,12 +9,13 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@SpringBootApplication(exclude = {
-        DataSourceAutoConfiguration.class,
-        DataSourceTransactionManagerAutoConfiguration.class,
-        HibernateJpaAutoConfiguration.class,
-        SecurityAutoConfiguration.class
-})
+@SpringBootApplication(
+        exclude = {
+            DataSourceAutoConfiguration.class,
+            DataSourceTransactionManagerAutoConfiguration.class,
+            HibernateJpaAutoConfiguration.class,
+            SecurityAutoConfiguration.class
+        })
 @ComponentScan(basePackages = {"com.ezbuy", "io.hoangtien2k3.reactify"})
 @EnableScheduling
 public class ProductApplication {

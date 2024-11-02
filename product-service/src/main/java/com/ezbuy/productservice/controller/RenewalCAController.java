@@ -1,5 +1,7 @@
 package com.ezbuy.productservice.controller;
 
+import static com.ezbuy.productmodel.constants.UrlPaths.*;
+
 import com.ezbuy.productmodel.request.ProductSpecificationRequest;
 import com.ezbuy.productservice.service.RenewalCAService;
 import io.hoangtien2k3.reactify.model.response.DataResponse;
@@ -8,8 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-
-import static com.ezbuy.productmodel.constants.UrlPaths.*;
 
 @Slf4j
 @RestController
@@ -21,6 +21,7 @@ public class RenewalCAController {
 
     /**
      * Bo sung alias cho dich vu vao response
+     *
      * @param organizationId
      * @param time
      * @return
@@ -33,7 +34,8 @@ public class RenewalCAController {
 
     @GetMapping(value = GET_LIST_SUBSCRIBER)
     @PreAuthorize("hasAnyAuthority('user')")
-    public Mono<DataResponse> getListSubscriber(Long telecomServiceId, String telecomServiceAlias, String organizationId) {
+    public Mono<DataResponse> getListSubscriber(
+            Long telecomServiceId, String telecomServiceAlias, String organizationId) {
         return renewalCAService.getListSubscriber(telecomServiceId, telecomServiceAlias, organizationId);
     }
 

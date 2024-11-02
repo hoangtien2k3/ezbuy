@@ -2,12 +2,11 @@ package com.ezbuy.productservice.utils;
 
 import com.ezbuy.productmodel.model.Subscriber;
 import com.ezbuy.productmodel.response.SubscriberResponse;
+import java.util.Optional;
 import reactor.core.publisher.Mono;
 
-import java.util.Optional;
-
 public class DataUtils {
-    //Convert Mono<T> to Mono<Optional<T>>
+    // Convert Mono<T> to Mono<Optional<T>>
     public static <T> Mono<Optional<T>> optional(Mono<T> mono) {
         return mono.map(Optional::of).defaultIfEmpty(Optional.empty());
     }
