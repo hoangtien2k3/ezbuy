@@ -1,7 +1,7 @@
 package com.ezbuy.authservice.service.impl;
 
 import static com.ezbuy.authmodel.constants.AuthConstants.ClientName.EZBUY_CLIENT;
-import static com.ezbuy.reactify.constants.Constants.ActionUser.SYSTEM;
+import static com.reactify.constants.Constants.ActionUser.SYSTEM;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import com.ezbuy.authmodel.constants.AuthConstants;
@@ -30,15 +30,15 @@ import com.ezbuy.authservice.service.IdentifyService;
 import com.ezbuy.notificationmodel.dto.request.CreateNotificationDTO;
 import com.ezbuy.notificationmodel.dto.request.NotiContentDTO;
 import com.ezbuy.notificationmodel.dto.request.ReceiverDataDTO;
-import com.ezbuy.reactify.*;
-import com.ezbuy.reactify.config.CipherManager;
-import com.ezbuy.reactify.constants.CommonErrorCode;
-import com.ezbuy.reactify.constants.Constants;
-import com.ezbuy.reactify.constants.Regex;
-import com.ezbuy.reactify.exception.BusinessException;
-import com.ezbuy.reactify.model.TokenUser;
-import com.ezbuy.reactify.model.UserDTO;
-import com.ezbuy.reactify.model.response.DataResponse;
+import com.reactify.config.CipherManager;
+import com.reactify.constants.CommonErrorCode;
+import com.reactify.constants.Constants;
+import com.reactify.constants.Regex;
+import com.reactify.exception.BusinessException;
+import com.reactify.model.TokenUser;
+import com.reactify.model.UserDTO;
+import com.reactify.model.response.DataResponse;
+import com.reactify.util.*;
 import jakarta.ws.rs.core.Response;
 import java.security.SecureRandom;
 import java.text.DecimalFormat;

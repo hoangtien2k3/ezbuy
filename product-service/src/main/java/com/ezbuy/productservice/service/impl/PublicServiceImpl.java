@@ -6,9 +6,9 @@ import com.ezbuy.productmodel.request.GetListProductOfferingComboForHubSmeReques
 import com.ezbuy.productmodel.request.GetProductTemplateDetailRequest;
 import com.ezbuy.productservice.client.ProductClient;
 import com.ezbuy.productservice.service.PublicService;
-import io.hoangtien2k3.reactify.Translator;
-import io.hoangtien2k3.reactify.annotations.LocalCache;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
+import com.reactify.annotations.LocalCache;
+import com.reactify.model.response.DataResponse;
+import com.reactify.util.Translator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

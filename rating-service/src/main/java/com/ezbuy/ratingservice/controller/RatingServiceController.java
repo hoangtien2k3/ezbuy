@@ -4,7 +4,7 @@ import com.ezbuy.ratingmodel.constants.UrlPaths;
 import com.ezbuy.ratingmodel.dto.RatingServiceResponse;
 import com.ezbuy.ratingmodel.dto.SearchRatingRequest;
 import com.ezbuy.ratingservice.service.RatingService;
-import com.ezbuy.reactify.model.response.DataResponse;
+import com.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

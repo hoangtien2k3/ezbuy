@@ -2,9 +2,10 @@ package com.ezbuy.productservice.client.utils;
 
 import com.ezbuy.productmodel.constants.Constants;
 import com.ezbuy.productmodel.request.*;
-import io.hoangtien2k3.reactify.DataUtil;
-import io.hoangtien2k3.reactify.DataWsUtil;
-import io.hoangtien2k3.reactify.factory.MarshallerFactory;
+import com.reactify.factory.MarshallerFactory;
+import com.reactify.util.DataUtil;
+import com.reactify.util.DataWsUtil;
+
 import java.text.MessageFormat;
 import java.util.List;
 

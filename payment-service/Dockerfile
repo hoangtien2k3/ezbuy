@@ -4,10 +4,10 @@ ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
 FROM  openjdk:11.0.12-oracle
-LABEL com.ezbuy.ecom.payment.version="1.0.0"
+LABEL com.ezbuy.payment.version="1.0.0"
 LABEL version="1.0.0"
 LABEL description="payment service"
-LABEL author="Viettel Company"
+LABEL author="Ezbuy Platform"
 WORKDIR application
 
 # additional timezone +7

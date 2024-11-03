@@ -1,6 +1,6 @@
 package com.ezbuy.searchservice.client.properties;
 
-import com.ezbuy.reactify.client.properties.WebClientProperties;
+import com.reactify.client.properties.WebClientProperties;
 import lombok.*;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

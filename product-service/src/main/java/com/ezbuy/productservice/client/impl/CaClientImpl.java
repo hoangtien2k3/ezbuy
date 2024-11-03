@@ -6,12 +6,13 @@ import com.ezbuy.productmodel.response.ListAreaInsResponse;
 import com.ezbuy.productmodel.response.ValidateSubInsResponse;
 import com.ezbuy.productservice.client.CaClient;
 import com.ezbuy.productservice.client.properties.CaProperties;
-import io.hoangtien2k3.reactify.DataUtil;
-import io.hoangtien2k3.reactify.Translator;
-import io.hoangtien2k3.reactify.client.BaseRestClient;
-import io.hoangtien2k3.reactify.constants.CommonErrorCode;
-import io.hoangtien2k3.reactify.exception.BusinessException;
 import java.util.Optional;
+
+import com.reactify.client.BaseRestClient;
+import com.reactify.constants.CommonErrorCode;
+import com.reactify.exception.BusinessException;
+import com.reactify.util.DataUtil;
+import com.reactify.util.Translator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Qualifier;

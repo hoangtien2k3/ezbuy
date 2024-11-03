@@ -3,8 +3,9 @@ package com.ezbuy.productservice.repository.repoTemplate.impl;
 import com.ezbuy.productmodel.response.StatisticSubscriberResponse;
 import com.ezbuy.productmodel.response.TotalSubscriberResponse;
 import com.ezbuy.productservice.repository.repoTemplate.SubscriberCustomRepository;
-import io.hoangtien2k3.reactify.DataUtil;
 import java.util.List;
+
+import com.reactify.util.DataUtil;
 import lombok.Data;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.stereotype.Repository;

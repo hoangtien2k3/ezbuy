@@ -7,7 +7,7 @@ import com.ezbuy.ratingmodel.request.FindRatingRequest;
 import com.ezbuy.ratingmodel.request.RatingRequest;
 import com.ezbuy.ratingmodel.response.SearchRatingResponse;
 import com.ezbuy.ratingservice.service.RatingService;
-import com.ezbuy.reactify.model.response.DataResponse;
+import com.reactify.model.response.DataResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

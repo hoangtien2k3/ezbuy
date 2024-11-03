@@ -1,10 +1,10 @@
 package com.ezbuy.searchservice.service.impl;
 
-import com.ezbuy.reactify.DataUtil;
-import com.ezbuy.reactify.Translator;
-import com.ezbuy.reactify.constants.CommonErrorCode;
-import com.ezbuy.reactify.exception.BusinessException;
-import com.ezbuy.reactify.model.response.DataResponse;
+import com.reactify.util.DataUtil;
+import com.reactify.util.Translator;
+import com.reactify.constants.CommonErrorCode;
+import com.reactify.exception.BusinessException;
+import com.reactify.model.response.DataResponse;
 import com.ezbuy.settingmodel.constants.Constants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

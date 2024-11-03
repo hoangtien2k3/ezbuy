@@ -1,8 +1,9 @@
 package com.ezbuy.productservice.client.utils;
 
 import com.ezbuy.productmodel.request.GetLstSubscriberRequest;
-import io.hoangtien2k3.reactify.DataWsUtil;
-import io.hoangtien2k3.reactify.factory.MarshallerFactory;
+import com.reactify.factory.MarshallerFactory;
+import com.reactify.util.DataWsUtil;
+
 import java.text.MessageFormat;
 
 public class CMClientUtils {

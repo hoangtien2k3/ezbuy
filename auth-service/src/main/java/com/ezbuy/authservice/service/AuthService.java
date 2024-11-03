@@ -7,7 +7,7 @@ import com.ezbuy.authmodel.dto.response.GetTwoWayPasswordResponse;
 import com.ezbuy.authmodel.dto.response.Permission;
 import com.ezbuy.authmodel.model.Individual;
 import com.ezbuy.authmodel.model.UserOtp;
-import com.ezbuy.reactify.model.response.DataResponse;
+import com.reactify.model.response.DataResponse;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.web.server.ServerWebExchange;

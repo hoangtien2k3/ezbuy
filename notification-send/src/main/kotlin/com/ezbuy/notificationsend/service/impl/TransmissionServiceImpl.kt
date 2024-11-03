@@ -6,11 +6,11 @@ import com.ezbuy.notificationsend.service.MailService
 import com.ezbuy.notificationsend.service.TransmissionService
 import com.ezbuy.notificationmodel.dto.EmailResultDTO
 import com.ezbuy.notificationmodel.dto.TransmissionNotiDTO
-import com.ezbuy.reactify.AppUtils
-import com.ezbuy.reactify.DataUtil
-import com.ezbuy.reactify.ValidateUtils
-import com.ezbuy.reactify.model.response.DataResponse
-import com.ezbuy.reactify.constants.Regex
+import com.reactify.util.AppUtils
+import com.reactify.util.DataUtil
+import com.reactify.util.ValidateUtils
+import com.reactify.model.response.DataResponse
+import com.reactify.constants.Regex
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service

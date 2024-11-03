@@ -2,8 +2,8 @@ package com.ezbuy.notificationservice.client.impl
 
 import com.ezbuy.notificationservice.client.AuthClient
 import com.fasterxml.jackson.core.type.TypeReference
-import com.ezbuy.reactify.DataUtil
-import com.ezbuy.reactify.client.BaseRestClient
+import com.reactify.util.DataUtil
+import com.reactify.client.BaseRestClient
 import lombok.extern.slf4j.Slf4j
 import org.reflections.Reflections.log
 import org.springframework.beans.factory.annotation.Qualifier

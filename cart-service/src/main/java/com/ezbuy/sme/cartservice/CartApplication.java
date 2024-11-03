@@ -16,7 +16,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
             HibernateJpaAutoConfiguration.class,
             SecurityAutoConfiguration.class
         })
-@ComponentScan(basePackages = {"com.ezbuy", "io.hoangtien2k3.reactify"})
+@ComponentScan(basePackages = {"com.ezbuy", "com.reactify"})
 @EnableScheduling
 public class CartApplication {
     public static void main(String[] args) {

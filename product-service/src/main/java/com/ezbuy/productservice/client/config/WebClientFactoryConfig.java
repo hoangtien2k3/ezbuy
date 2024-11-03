@@ -1,8 +1,9 @@
 package com.ezbuy.productservice.client.config;
 
 import com.ezbuy.productservice.client.properties.*;
-import io.hoangtien2k3.reactify.client.WebClientFactory;
 import java.util.List;
+
+import com.reactify.client.WebClientFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -21,8 +22,10 @@ public class WebClientFactoryConfig {
     @Bean(name = "webClientFactory")
     public WebClientFactory webClientFactory(
             ApplicationContext applicationContext, ReactiveOAuth2AuthorizedClientManager authorizedClientManager) {
+        var listPropertiest = List.of(authProperties, orderProperties, settingProperties);
+
         WebClientFactory factory = new WebClientFactory(applicationContext, authorizedClientManager);
-        factory.setWebClients(List.of(authProperties, orderProperties, settingProperties));
+        factory.setWebClients(listPropertiest);
         return factory;
     }
 }

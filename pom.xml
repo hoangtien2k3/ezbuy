@@ -30,9 +30,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:git://github.com/hoangtien2k3/fw-commons.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com:hoangtien2k3/fw-commons.git</developerConnection>
-        <url>https://github.com/hoangtien2k3/fw-commons</url>
+        <connection>scm:git:git://github.com/hoangtien2k3/ezbuy.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:hoangtien2k3/ezbuy.git</developerConnection>
+        <url>https://github.com/hoangtien2k3/ezbuy</url>
     </scm>
     <distributionManagement>
         <snapshotRepository>
@@ -146,7 +146,6 @@
             <version>${mapstruct.processor.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- r2dbc depenedcies-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-r2dbc</artifactId>
@@ -154,6 +153,11 @@
         <dependency>
             <groupId>io.r2dbc</groupId>
             <artifactId>r2dbc-pool</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jcl</artifactId>
+            <version>6.1.14</version>
         </dependency>
     </dependencies>
 

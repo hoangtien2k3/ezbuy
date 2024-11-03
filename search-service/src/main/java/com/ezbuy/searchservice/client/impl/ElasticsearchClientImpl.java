@@ -1,6 +1,6 @@
 package com.ezbuy.searchservice.client.impl;
 
-import com.ezbuy.reactify.DataUtil;
+import com.reactify.util.DataUtil;
 import com.ezbuy.searchservice.client.ElasticsearchClient;
 import com.ezbuy.searchservice.client.properties.ElasticsearchClientProperties;
 import com.ezbuy.searchservice.client.properties.IndexProperties;

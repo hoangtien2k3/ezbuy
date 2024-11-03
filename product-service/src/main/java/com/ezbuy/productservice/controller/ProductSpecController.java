@@ -12,7 +12,7 @@ import com.ezbuy.productmodel.request.FilterGetListSubscriberActive;
 import com.ezbuy.productmodel.request.FilterGetListSubscriberActiveByAlias;
 import com.ezbuy.productmodel.request.GetListSubscriberActive;
 import com.ezbuy.productservice.service.ProductSpecService;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
+import com.reactify.model.response.DataResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;

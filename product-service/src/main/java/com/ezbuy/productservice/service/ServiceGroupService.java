@@ -4,8 +4,9 @@ import com.ezbuy.productmodel.model.ServiceGroup;
 import com.ezbuy.productmodel.request.CreateServiceGroupRequest;
 import com.ezbuy.productmodel.request.SearchServiceGroupRequest;
 import com.ezbuy.productmodel.response.SearchServiceGroupResponse;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
 import java.util.List;
+
+import com.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 
 public interface ServiceGroupService {

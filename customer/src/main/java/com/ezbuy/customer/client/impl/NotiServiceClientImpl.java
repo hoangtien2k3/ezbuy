@@ -2,8 +2,8 @@ package com.ezbuy.customer.client.impl;
 
 import com.ezbuy.customer.client.NotiServiceClient;
 import com.ezbuy.customer.model.dto.request.CreateNotificationDTO;
-import com.ezbuy.reactify.client.BaseRestClient;
-import com.ezbuy.reactify.model.response.DataResponse;
+import com.reactify.client.BaseRestClient;
+import com.reactify.model.response.DataResponse;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

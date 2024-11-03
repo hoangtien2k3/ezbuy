@@ -11,7 +11,7 @@
     <artifactId>reactify-core</artifactId>
     <version>${revision}</version>
     <name>reactify-core</name>
-    <description>Java library for developing backend with reactive programming</description>
+    <description>Java Library for Developing Reactive Backend Systems with Keycloak Authentication, Minio Storage, OAuth2 Security, Caching, and Trace Logging Integration</description>
     <url>https://github.com/hoangtien2k3/reactify</url>
 
     <licenses>
@@ -101,6 +101,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

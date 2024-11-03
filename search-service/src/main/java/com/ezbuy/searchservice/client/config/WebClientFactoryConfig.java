@@ -1,6 +1,6 @@
 package com.ezbuy.searchservice.client.config;
 
-import com.ezbuy.reactify.client.WebClientFactory;
+import com.reactify.client.WebClientFactory;
 import com.ezbuy.searchservice.client.properties.ElasticsearchClientProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;

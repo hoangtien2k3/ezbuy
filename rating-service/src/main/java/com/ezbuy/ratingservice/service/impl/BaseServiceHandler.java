@@ -1,7 +1,7 @@
 package com.ezbuy.ratingservice.service.impl;
 
-import com.ezbuy.reactify.constants.CommonErrorCode;
-import com.ezbuy.reactify.exception.BusinessException;
+import com.reactify.constants.CommonErrorCode;
+import com.reactify.exception.BusinessException;
 
 public class BaseServiceHandler {
     public int validatePageSize(Integer pageSize, int defaultPageSize) {

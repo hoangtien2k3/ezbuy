@@ -4,7 +4,7 @@ import com.ezbuy.productmodel.dto.ProductSpecCharAndValDTO;
 import com.ezbuy.productmodel.dto.ProductSpecCharValueDTO;
 import com.ezbuy.productmodel.model.ProductSpecCharAndValue;
 import com.ezbuy.productservice.repository.repoTemplate.ProductSpecRepo;
-import io.hoangtien2k3.reactify.DataUtil;
+import com.reactify.util.DataUtil;
 import io.r2dbc.spi.Statement;
 import java.util.ArrayList;
 import java.util.List;

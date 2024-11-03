@@ -8,10 +8,11 @@ import com.ezbuy.productmodel.model.Subscriber;
 import com.ezbuy.productmodel.request.FilterGetListSubscriberActive;
 import com.ezbuy.productmodel.response.ProductOfferTemplateDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
-import io.hoangtien2k3.reactify.DataUtil;
-import io.hoangtien2k3.reactify.client.BaseRestClient;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
 import java.util.*;
+
+import com.reactify.client.BaseRestClient;
+import com.reactify.model.response.DataResponse;
+import com.reactify.util.DataUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;

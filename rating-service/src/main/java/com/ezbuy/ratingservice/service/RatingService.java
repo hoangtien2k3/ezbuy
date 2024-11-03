@@ -7,7 +7,7 @@ import com.ezbuy.ratingmodel.model.RatingCount;
 import com.ezbuy.ratingmodel.request.FindRatingRequest;
 import com.ezbuy.ratingmodel.request.RatingRequest;
 import com.ezbuy.ratingmodel.response.SearchRatingResponse;
-import com.ezbuy.reactify.model.response.DataResponse;
+import com.reactify.model.response.DataResponse;
 import java.util.List;
 import reactor.core.publisher.Mono;
 

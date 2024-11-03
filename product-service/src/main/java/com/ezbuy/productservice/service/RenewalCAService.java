@@ -2,8 +2,9 @@ package com.ezbuy.productservice.service;
 
 import com.ezbuy.productmodel.request.ProductSpecificationRequest;
 import com.ezbuy.productmodel.response.SubscriberResponse;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
 import java.util.List;
+
+import com.reactify.model.response.DataResponse;
 import org.springframework.web.bind.annotation.RequestParam;
 import reactor.core.publisher.Mono;
 

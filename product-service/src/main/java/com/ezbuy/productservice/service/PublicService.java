@@ -2,7 +2,7 @@ package com.ezbuy.productservice.service;
 
 import com.ezbuy.productmodel.request.GetListProductOfferingComboForHubSmeRequest;
 import com.ezbuy.productmodel.request.GetProductTemplateDetailRequest;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
+import com.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 
 public interface PublicService {

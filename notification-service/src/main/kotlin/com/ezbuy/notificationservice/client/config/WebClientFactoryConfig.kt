@@ -1,7 +1,7 @@
 package com.ezbuy.notificationservice.client.config
 
 import com.ezbuy.notificationservice.client.properties.AuthProperties
-import com.ezbuy.reactify.client.WebClientFactory
+import com.reactify.client.WebClientFactory
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

@@ -9,8 +9,9 @@ import com.ezbuy.productmodel.request.FilterCreatingRequest;
 import com.ezbuy.productmodel.request.FilterGetListSubscriberActive;
 import com.ezbuy.productmodel.request.FilterGetListSubscriberActiveByAlias;
 import com.ezbuy.productmodel.request.GetListSubscriberActive;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
 import java.util.List;
+
+import com.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 
 public interface ProductSpecService {

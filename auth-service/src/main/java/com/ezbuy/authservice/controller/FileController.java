@@ -1,8 +1,8 @@
 package com.ezbuy.authservice.controller;
 
 import com.ezbuy.authmodel.constants.UrlPaths;
-import com.ezbuy.reactify.MinioUtils;
-import com.ezbuy.reactify.model.response.DataResponse;
+import com.reactify.util.MinioUtils;
+import com.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

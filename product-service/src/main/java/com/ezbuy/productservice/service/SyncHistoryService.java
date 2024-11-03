@@ -3,7 +3,7 @@ package com.ezbuy.productservice.service;
 import com.ezbuy.productmodel.model.SyncHistory;
 import com.ezbuy.productmodel.model.SyncHistoryDetail;
 import com.ezbuy.productmodel.request.CreateSyncHistoryRequest;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
+import com.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 
 public interface SyncHistoryService {

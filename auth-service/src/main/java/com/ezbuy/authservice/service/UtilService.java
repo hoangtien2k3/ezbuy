@@ -1,7 +1,7 @@
 package com.ezbuy.authservice.service;
 
 import com.ezbuy.authmodel.dto.request.JobAddRoleAdminForOldUserRequest;
-import com.ezbuy.reactify.model.response.DataResponse;
+import com.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 
 /**

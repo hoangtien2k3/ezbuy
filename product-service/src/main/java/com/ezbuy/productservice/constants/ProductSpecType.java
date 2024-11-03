@@ -5,8 +5,8 @@ import java.util.Arrays;
 public enum ProductSpecType {
     FILTER_PRICE("FILTER_PRICE", "Lọc theo giá"),
     INVALID("INVALID", "INVALID");
-    private String code;
-    private String name;
+    private final String code;
+    private final String name;
 
     ProductSpecType(String code, String name) {
         this.code = code;

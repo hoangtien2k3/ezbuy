@@ -8,7 +8,7 @@ import com.ezbuy.productmodel.request.GetProductTemplateDetailRequest;
 import com.ezbuy.productservice.service.ProductOfferTemplateService;
 import com.ezbuy.productservice.service.ProductSpecService;
 import com.ezbuy.productservice.service.PublicService;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
+import com.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

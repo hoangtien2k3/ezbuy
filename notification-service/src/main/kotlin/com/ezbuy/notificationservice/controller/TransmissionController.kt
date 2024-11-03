@@ -7,7 +7,7 @@ import com.ezbuy.notificationmodel.dto.request.CreateNotificationDTO
 import com.ezbuy.notificationmodel.dto.response.CountNoticeResponseDTO
 import com.ezbuy.notificationmodel.dto.response.NotificationHeader
 import com.ezbuy.notificationmodel.model.NotificationContent
-import com.ezbuy.reactify.model.response.DataResponse
+import com.reactify.model.response.DataResponse
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Size
 import org.springframework.security.access.prepost.PreAuthorize

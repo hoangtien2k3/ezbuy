@@ -10,7 +10,6 @@ import reactor.core.publisher.Flux;
 
 public interface OrderFieldConfigRepository extends R2dbcRepository<OrderFieldConfig, Long> {
 
-    // chuyen tu truy van theo telecomsersiviceId thanh alias
     @Query(value = queryFindConfigByOrderTypeAndTelecomServiceIds)
     Flux<OrderFieldConfig> findByOrderTypeAndTelecomServiceIds(String orderType, List<String> lstServiceAlias);
 }

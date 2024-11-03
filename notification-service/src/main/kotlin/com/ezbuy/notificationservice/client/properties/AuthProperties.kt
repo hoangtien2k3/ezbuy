@@ -1,6 +1,6 @@
 package com.ezbuy.notificationservice.client.properties
 
-import com.ezbuy.reactify.client.properties.WebClientProperties
+import com.reactify.client.properties.WebClientProperties
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 import lombok.AllArgsConstructor
