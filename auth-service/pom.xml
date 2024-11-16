@@ -5,11 +5,11 @@
 	<parent>
 		<groupId>com.ezbuy.platform</groupId>
 		<artifactId>ezbuy</artifactId>
-		<version>${revision}</version>
+		<version>1.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>auth-service</artifactId>
-	<version>${revision}</version>
+	<version>1.0-SNAPSHOT</version>
 	<name>auth-service</name>
 	<description>auth-service</description>
 
@@ -27,19 +27,25 @@
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.11.0</version>
-		</dependency>
-		<dependency>
 			<groupId>com.ezbuy.platform</groupId>
 			<artifactId>auth-model</artifactId>
-			<version>${revision}</version>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.ezbuy.platform</groupId>
 			<artifactId>notification-model</artifactId>
-			<version>${revision}</version>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ezbuy.platform</groupId>
+			<artifactId>setting-model</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<!--gson-->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.11.0</version>
 		</dependency>
 		<!-- Base64 -->
 		<dependency>
@@ -94,12 +100,6 @@
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webflux-api</artifactId>
 			<version>2.2.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-logging</artifactId>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

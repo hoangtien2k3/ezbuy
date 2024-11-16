@@ -6,11 +6,11 @@
     <parent>
         <groupId>com.ezbuy.platform</groupId>
         <artifactId>ezbuy</artifactId>
-        <version>${revision}</version>
+        <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>product-service</artifactId>
-    <version>${revision}</version>
+    <version>1.0-SNAPSHOT</version>
     <name>product-service</name>
     <description>product-service</description>
 
@@ -44,12 +44,12 @@
         <dependency>
             <groupId>com.ezbuy.platform</groupId>
             <artifactId>product-model</artifactId>
-            <version>${revision}</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.ezbuy.platform</groupId>
             <artifactId>setting-model</artifactId>
-            <version>${revision}</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <!-- external dependencies-->
         <dependency>
@@ -70,25 +70,25 @@
         <dependency>
             <groupId>com.ezbuy.platform</groupId>
             <artifactId>setting-model</artifactId>
-            <version>${revision}</version>
+            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.ezbuy.platform</groupId>
             <artifactId>auth-model</artifactId>
-            <version>${revision}</version>
+            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.ezbuy.platform</groupId>
             <artifactId>order-model</artifactId>
-            <version>${revision}</version>
+            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.ezbuy.platform</groupId>
             <artifactId>order-model</artifactId>
-            <version>${revision}</version>
+            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <!--        log4j setting-->

@@ -5,11 +5,11 @@
     <parent>
         <groupId>com.ezbuy.platform</groupId>
         <artifactId>ezbuy</artifactId>
-        <version>${revision}</version>
+        <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>search-model</artifactId>
-    <version>${revision}</version>
+    <version>1.0-SNAPSHOT</version>
     <name>search-model</name>
     <description>search-model</description>
 

@@ -1,31 +1,28 @@
 # server config
 server:
-  port: 7777
+  port: 8999
+#logging
 logging:
-  #  config: classpath:log4j2-prod.xml
+  pattern:
+    console: "%d{dd/MM/yy HH:mm:ss}|%X{traceId}|%m%n"
   level:
     root: INFO
-    org.springframework.r2dbc: DEBUG
-    io.r2dbc.postgresql.QUERY: DEBUG
-    io.r2dbc.postgresql.PARAM: DEBUG
+
 # spring config
 spring:
+  application:
+    name: setting_service
   main:
-    web-application-type: reactive
     allow-bean-definition-overriding: true
+  messages:
+    basename: lang
+
+  #r2dbc postgresql
   r2dbc:
-    url: r2dbc:postgresql://localhost:5434/notification
+    url: r2dbc:postgresql://localhost:5434/setting
     username: admin
     password: admin
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: hoangtien2k3qx1@gmail.com
-    password: tjib jbht tlbp zwzo
-    protocol: smtp
-    properties.mail.smtp:
-      auth: true
-      starttls.enable: true
+
   security:
     oauth2:
       client:
@@ -42,33 +39,53 @@ spring:
           jwk-set-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/certs
       keycloak:
         client-id: ${keycloak.clientId}
+        client-secret: ${keycloak.clientSecret}
+
+  data:
+    elasticsearch:
+      repositories:
+        enabled: false
+  elasticsearch:
+    uris: http://localhost:9200
+
 #keycloak client config
 keycloak:
   clientId: ezbuy-client
   clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
   realm: ezbuy-server
   serverUrl: http://localhost:8080
+  grantType: password
   host: localhost
 
-#client
+#client-elastic
 client:
-  auth:
-    internal-oauth: true
-    address: http://localhost:8088/v1/auth
-    name: auth
-    pool:
-      max-size: 100
-      max-pending-acquire: 100
-    timeout:
-      read: 60000
-      write: 1000
+  elasticsearch:
+    address: http://localhost:9200
+    name: elasticsearchClient
+
 # unauthenticated endpoints config
 application:
+  index:
+    indexScores:
+      - name: news
+        score: 1
+      - name: services
+        score: 4
   whiteList:
     - uri: /actuator/health
       methods:
         - GET
-# config query
-config:
-  resendCount: 2
-  limit: 800
+    - uri: /v1/page
+      methods:
+        - GET
+    - uri: /v1/search-services
+      methods:
+        - GET
+
+management:
+  endpoint:
+    health:
+      show-details: never
+  health:
+    elasticsearch:
+      enabled: false

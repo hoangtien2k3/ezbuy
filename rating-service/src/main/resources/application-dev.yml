@@ -1,8 +1,10 @@
 # server config
 server:
   port: 8950
+#logging
 logging:
-  #  config: classpath:log4j2-prod.xml
+  pattern:
+    console: "%d{dd/MM/yy HH:mm:ss}|%X{traceId}|%m%n"
   level:
     root: INFO
     org.springframework.r2dbc: DEBUG

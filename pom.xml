@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.ezbuy.platform</groupId>
     <artifactId>ezbuy</artifactId>
-    <version>${revision}</version>
+    <version>1.0-SNAPSHOT</version>
     <name>ezbuy</name>
     <packaging>pom</packaging>
     <description>ezbuy</description>
@@ -63,7 +63,6 @@
 
     <properties>
         <java.version>21</java.version>
-        <revision>1.0-SNAPSHOT</revision>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <mapstruct.processor.version>1.5.5.Final</mapstruct.processor.version>
         <modelmapper.version>3.2.0</modelmapper.version>

@@ -14,7 +14,7 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 public class SecurityConfiguration {
 
     private static final String FRONTEND_LOCALHOST = "http://localhost:3000";
-    private static final String FRONTEND_CMS = "http://10.207.59.7:8988";
+    private static final String FRONTEND_CMS = "http://localhost:8988";
 
     @Bean
     CorsConfigurationSource corsConfiguration() {

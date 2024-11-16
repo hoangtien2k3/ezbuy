@@ -6,8 +6,8 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-@Component("notiServiceProperties")
-@ConfigurationProperties(prefix = "client.notification", ignoreInvalidFields = true)
 @Data
+@Component("settingClientProperties")
+@ConfigurationProperties(prefix = "client.setting", ignoreInvalidFields = true)
 @AllArgsConstructor
-public class NotiServiceProperties extends WebClientProperties {}
+public class SettingClientProperties extends WebClientProperties {}

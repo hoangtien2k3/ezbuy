@@ -5,11 +5,11 @@
     <parent>
         <groupId>com.ezbuy.platform</groupId>
         <artifactId>ezbuy</artifactId>
-        <version>${revision}</version>
+        <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>reactify-core</artifactId>
-    <version>${revision}</version>
+    <version>1.0-SNAPSHOT</version>
     <name>reactify-core</name>
     <description>Java Library for Developing Reactive Backend Systems with Keycloak Authentication, Minio Storage, OAuth2 Security, Caching, and Trace Logging Integration</description>
     <url>https://github.com/hoangtien2k3/reactify</url>

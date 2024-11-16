@@ -2,6 +2,7 @@ package com.ezbuy.authservice.client.config;
 
 import com.ezbuy.authservice.client.properties.KeycloakClientProperties;
 import com.ezbuy.authservice.client.properties.NotiServiceProperties;
+import com.ezbuy.authservice.client.properties.SettingClientProperties;
 import com.reactify.client.WebClientFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +16,13 @@ import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClient
 public class WebClientFactoryConfig {
     private final KeycloakClientProperties keycloakClientProperties;
     private final NotiServiceProperties notiServiceProperties;
+    private final SettingClientProperties settingClientProperties;
 
     @Bean(name = "webClientFactory")
     public WebClientFactory webClientFactory(
             ApplicationContext applicationContext, ReactiveOAuth2AuthorizedClientManager authorizedClientManager) {
         WebClientFactory factory = new WebClientFactory(applicationContext, authorizedClientManager);
-        factory.setWebClients(List.of(keycloakClientProperties, notiServiceProperties));
+        factory.setWebClients(List.of(keycloakClientProperties, notiServiceProperties, settingClientProperties));
         return factory;
     }
 }

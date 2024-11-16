@@ -1,5 +1,13 @@
 server:
   port: 8918
+#login
+logging:
+  pattern:
+    console: "%d{dd/MM/yy HH:mm:ss}|%X{traceId}|%m%n"
+  level:
+    root: INFO
+    io.r2dbc.postgresql.QUERY: DEBUG
+    io.r2dbc.postgresql.PARAM: DEBUG
 
 #spring config
 spring:

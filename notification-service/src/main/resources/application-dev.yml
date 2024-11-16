@@ -1,8 +1,17 @@
 # server config
 server:
-  port: 8888
+  port: 7777
+#logging
+logging:
+  pattern:
+    console: "%d{dd/MM/yy HH:mm:ss}|%X{traceId}|%m%n"
+  level:
+    root: INFO
 # spring config
 spring:
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
   r2dbc:
     url: r2dbc:postgresql://localhost:5434/notification
     username: admin
@@ -39,10 +48,12 @@ keycloak:
   realm: ezbuy-server
   serverUrl: http://localhost:8080
   host: localhost
+
+#client
 client:
   auth:
     internal-oauth: true
-    address: http://localhost/v1
+    address: http://localhost:8088/v1/auth
     name: auth
     pool:
       max-size: 100

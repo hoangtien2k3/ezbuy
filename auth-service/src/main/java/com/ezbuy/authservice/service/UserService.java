@@ -8,6 +8,8 @@ import com.ezbuy.authmodel.model.UserProfile;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.core.io.Resource;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -21,21 +23,11 @@ public interface UserService {
 
     Mono<Optional<UserProfile>> getUserById(String id);
 
-    // Mono<List<CredentialResponse>> getCredentialsList(String idNo);
-
-    // Mono<DataResponse> sighHash(SignHashRequest request);
-
-    // Mono<DataResponse> getStatusSignHash();
-
     Mono<QueryUserResponse> queryUserProfile(QueryUserRequest request);
 
     Mono<Resource> exportUser(QueryUserRequest request);
 
     Mono<UserProfileDTO> getUserProfile(String id);
 
-    // Flux<TaxBranchResponse> getTaxBranches();
-
-    // Flux<IdTypeResponse> getIdTypes();
-
-    // Mono<Account> findUserByIdNo(String idNo, String idType);
+    Mono<UserRepresentation> getEmailsByKeycloakUsername(String username);
 }

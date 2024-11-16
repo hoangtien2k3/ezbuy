@@ -1,6 +1,13 @@
 # server config
 server:
   port: 8080
+#logging
+logging:
+  pattern:
+    console: "%d{dd/MM/yy HH:mm:ss}|%X{traceId}|%m%n"
+  level:
+    root: INFO
+
 # ot=oauth
 keycloak:
   clientId: web-client

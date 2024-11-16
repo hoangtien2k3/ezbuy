@@ -463,4 +463,8 @@ public final class Constants {
 
     public static final String NULL_IMAGE_SRC = null;
 
+    public static final class ArrayLimit {
+        public static final Integer COMMON = 100;
+    }
+
 }

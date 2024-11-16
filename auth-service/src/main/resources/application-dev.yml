@@ -1,10 +1,12 @@
 server:
   port: 8089
 logging:
+  pattern:
+    console: "%d{dd/MM/yy HH:mm:ss}|%X{traceId}|%m%n"
   level:
     root: INFO
-    io.r2dbc.postgresql.QUERY: DEBUG # for queries
-    io.r2dbc.postgresql.PARAM: DEBUG # for parameters
+    io.r2dbc.postgresql.QUERY: DEBUG
+    io.r2dbc.postgresql.PARAM: DEBUG
 
 # spring config
 spring:
@@ -54,15 +56,15 @@ spring:
 
 # web client config
 client:
+  #keycloak
   keycloak:
     address: http://localhost:8080/realms/ezbuy-server/protocol/openid-connect
     name: keycloak
     auth:
       client-id: ezbuy-client
       client-secret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
-
   #notification
-  noti:
+  notification:
     internal-oauth: true
     address: http://localhost:7777/v1/transmission
     name: notiServiceClient
@@ -72,7 +74,10 @@ client:
     timeout:
       read: 60000
       write: 1000
-
+  #setting
+  setting:
+    address: http://localhost:8081/
+    name: settingClient
   #product config
   product:
     internal-oauth: true
