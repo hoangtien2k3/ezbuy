@@ -3,7 +3,6 @@ package com.ezbuy.productservice.client.utils;
 import com.ezbuy.productmodel.request.GetLstSubscriberRequest;
 import com.reactify.factory.MarshallerFactory;
 import com.reactify.util.DataWsUtil;
-
 import java.text.MessageFormat;
 
 public class CMClientUtils {

@@ -7,8 +7,8 @@ package com.ezbuy.authservice.service.impl; // package com.ezbuy.auth.service.im
 // import com.ezbuy.auth.model.postgresql.OrganizationUnit;
 // import com.ezbuy.auth.model.postgresql.TenantIdentify;
 // import com.ezbuy.auth.service.OrganizationService;
-// import io.hoangtien2k3.commons.model.response.DataResponse;
-// import io.hoangtien2k3.commons.utils.DataUtil;
+// import com.commons.model.response.DataResponse;
+// import com.commons.utils.DataUtil;
 // import com.nimbusds.openid.connect.sdk.assurance.evidences.Organization;
 // import org.springframework.stereotype.Service;
 // import org.springframework.transaction.annotation.Transactional;

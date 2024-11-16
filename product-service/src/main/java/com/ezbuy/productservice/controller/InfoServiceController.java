@@ -3,10 +3,9 @@ package com.ezbuy.productservice.controller;
 import static com.ezbuy.productmodel.constants.UrlPaths.DEFAULT_V1_PREFIX;
 
 import com.ezbuy.productservice.service.InfoSerService;
-import java.util.List;
-
 import com.reactify.model.response.DataResponse;
 import com.reactify.util.Translator;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;

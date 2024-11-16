@@ -7,7 +7,7 @@ import com.ezbuy.ordermodel.dto.ProfileForBusinessCustDTO;
 import com.ezbuy.ordermodel.dto.request.*;
 import com.ezbuy.ordermodel.dto.response.GetGroupCAInfoResponse;
 import com.ezbuy.ordermodel.dto.response.GetOrderReportResponse;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
+import com.reactify.model.response.DataResponse;
 import java.util.List;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;

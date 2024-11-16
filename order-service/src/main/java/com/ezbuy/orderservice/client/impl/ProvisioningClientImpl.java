@@ -1,7 +1,7 @@
 // package com.ezbuy.orderservice.client.impl;
 //
 // import com.ezbuy.orderservice.client.ProvisioningClient;
-// import io.hoangtien2k3.reactify.factory.MarshallerFactory;
+// import com.reactify.factory.MarshallerFactory;
 // import org.apache.logging.log4j.LogManager;
 // import org.apache.logging.log4j.Logger;
 // import org.springframework.beans.factory.annotation.Value;

@@ -28,5 +28,5 @@ public class ProductOrderItem {
     private Long priceDailyMain;
     private ProductOfferingRef productOffering;
     private Product product;
-    private String telecomServiceName; // ten dich vu dau noi
+    private String telecomServiceName;
 }

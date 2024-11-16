@@ -6,9 +6,10 @@ import com.ezbuy.settingmodel.dto.request.SearchNewsInfoRequest;
 import com.ezbuy.settingmodel.model.NewsInfo;
 import com.ezbuy.settingmodel.request.CreateNewsInfoRequest;
 import com.ezbuy.settingmodel.response.SearchNewsInfoResponse;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
-import java.util.List;
+import com.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 public interface NewsInfoService {
     Mono<DataResponse<NewsInfo>> createNewsInfo(CreateNewsInfoRequest request);

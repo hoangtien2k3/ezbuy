@@ -7,7 +7,7 @@ import com.ezbuy.settingmodel.request.PageCreatingRequest;
 import com.ezbuy.settingmodel.request.PagePolicyRequest;
 import com.ezbuy.settingmodel.request.SearchingPageRequest;
 import com.ezbuy.settingmodel.response.SearchingPageResponse;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
+import com.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 
 public interface PageService {

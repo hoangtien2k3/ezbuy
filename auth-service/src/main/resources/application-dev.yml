@@ -1,17 +1,10 @@
 server:
   port: 8089
 logging:
-  #  config: classpath:log4j2-prod.xml
   level:
     root: INFO
-    org.springdoc: DEBUG
-#    org.springframework.r2dbc: DEBUG
-#    io.r2dbc.postgresql.QUERY: DEBUG
-#    io.r2dbc.postgresql.PARAM: DEBUG
-
-dotenv:
-  enabled: true
-  active: true
+    io.r2dbc.postgresql.QUERY: DEBUG # for queries
+    io.r2dbc.postgresql.PARAM: DEBUG # for parameters
 
 # spring config
 spring:
@@ -219,12 +212,6 @@ minio:
   private:
     bucket: ezbuy-private
 
-#syncacc:
-#  username: smehub
-#  password: 123456aA@
-#  clientid: sme-auth-service
-#  secretKey: YxzXsTW2sjHh3jBBYOmrIOzYT6DKE6vV
-
 #config hash password
 hashing-password:
   public-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4qGLPEGMdbDlYrc+Ud3w8Y2CobSLKAIfSBsX6bcV3bCxKZI8scW2gfr8ZMMXOxgQ0nXpIOQ0p0fb/hVHXMEnTu4Z5UEsF76eDfA80VPd96ujiZWyWYAeyIUelqPEZIWxM4MlBOPJDcCVDtwLKIoMbvVnXoHyjmOq93mHOoii24a2m0qt6jrvAYOvjNUijtofgjewYds/h74LfphDY/hNRq+4M6lI4RMZ4HiRn06P+GnvnwkxA3JL1bVRRqZ3gxB0VWiIj7I5likqnJfWnqn43mrMxfSdNI+6MpgR7L6djFOnjZiNP5bb6a3F17hwBeeLBTPs+akem/shlfoGYIbJOwIDAQAB
@@ -235,7 +222,7 @@ proxy-client:
 
 #cache2l config
 cache2l:
-  reflectionPath: io.hoangtien2k3.reactify
+  reflectionPath: com.reactify
   enable-global-cache: true
   redis:
     externalMode: true

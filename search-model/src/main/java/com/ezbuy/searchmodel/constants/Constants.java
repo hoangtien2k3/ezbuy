@@ -8,9 +8,7 @@ public class Constants {
         public static final String NEWS = "news";
         public static final String SERVICES_TEST = "servicestest";
 
-        public static final List<String> ALLOW_INDEX = List.of(
-                SERVICES, SERVICES_TEST, NEWS
-        );
+        public static final List<String> ALLOW_INDEX = List.of(SERVICES, SERVICES_TEST, NEWS);
     }
 
     public static class DEFAULT_VALUE {

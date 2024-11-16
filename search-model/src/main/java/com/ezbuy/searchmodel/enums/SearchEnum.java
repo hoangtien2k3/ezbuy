@@ -1,4 +1,3 @@
 package com.ezbuy.searchmodel.enums;
 
-public enum SearchEnum {
-}
+public enum SearchEnum {}

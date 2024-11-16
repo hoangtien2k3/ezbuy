@@ -2,7 +2,7 @@ package com.ezbuy.orderservice.service;
 
 import com.ezbuy.ordermodel.dto.OrderFieldConfigDTO;
 import com.ezbuy.ordermodel.dto.request.GetOrderFieldConfigRequest;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
+import com.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 
 public interface OrderFieldConfigService {

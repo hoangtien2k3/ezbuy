@@ -1,9 +1,13 @@
 package com.ezbuy.orderservice.client.impl;
 
 import com.ezbuy.orderservice.client.PaymentClient;
-import io.hoangtien2k3.reactify.DataUtil;
-import io.hoangtien2k3.reactify.client.BaseRestClient;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
+import com.ezbuy.paymentmodel.dto.request.ProductPaymentRequest;
+import com.ezbuy.paymentmodel.dto.request.ProductPriceRequest;
+import com.ezbuy.paymentmodel.dto.request.UpdateOrderStateRequest;
+import com.ezbuy.paymentmodel.dto.response.ProductPaymentResponse;
+import com.reactify.client.BaseRestClient;
+import com.reactify.model.response.DataResponse;
+import com.reactify.util.DataUtil;
 import java.util.LinkedHashMap;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;

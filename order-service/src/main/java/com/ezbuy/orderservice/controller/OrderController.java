@@ -9,7 +9,7 @@ import com.ezbuy.ordermodel.dto.ProfileForBusinessCustDTO;
 import com.ezbuy.ordermodel.dto.request.*;
 import com.ezbuy.ordermodel.dto.response.GetOrderReportResponse;
 import com.ezbuy.orderservice.service.OrderService;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
+import com.reactify.model.response.DataResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

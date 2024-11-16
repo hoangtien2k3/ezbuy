@@ -1,29 +1,30 @@
 package com.ezbuy.searchservice.service.impl;
 
-import com.reactify.util.DataUtil;
-import com.reactify.util.Translator;
-import com.reactify.constants.CommonErrorCode;
-import com.reactify.exception.BusinessException;
-import com.reactify.model.response.DataResponse;
-import com.ezbuy.settingmodel.constants.Constants;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ezbuy.searchmodel.dto.SearchResponseDTO;
 import com.ezbuy.searchmodel.dto.request.SearchDTORequest;
 import com.ezbuy.searchmodel.dto.response.SearchDTO;
 import com.ezbuy.searchmodel.dto.response.SearchDTOResponse;
 import com.ezbuy.searchservice.client.ElasticsearchClient;
 import com.ezbuy.searchservice.service.SearchService;
+import com.ezbuy.settingmodel.constants.Constants;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.reactify.constants.CommonErrorCode;
+import com.reactify.exception.BusinessException;
+import com.reactify.model.response.DataResponse;
+import com.reactify.util.DataUtil;
+import com.reactify.util.Translator;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +33,8 @@ public class SearchServiceImpl implements SearchService {
 
     private final ElasticsearchClient elasticsearchClient;
     private final ObjectMapper objectMapper;
+
+    private final Map<String, String> has = new HashMap<>();
 
     @Override
     public Mono<DataResponse<Object>> search(SearchDTORequest request) {
@@ -57,7 +60,8 @@ public class SearchServiceImpl implements SearchService {
             request.setSize(Constants.DEFAULT_VALUE.SIZE);
         }
 
-        return elasticsearchClient.search(request.getKeyword(), stringList, request.getFrom(), request.getSize())
+        return elasticsearchClient
+                .search(request.getKeyword(), stringList, request.getFrom(), request.getSize())
                 .flatMap(rs -> {
                     SearchResponseDTO searchResponseDTO = parseResponseElasticsearch(rs);
 
@@ -71,13 +75,14 @@ public class SearchServiceImpl implements SearchService {
                             path = hitDTO.getSource().getPath();
                         } else if (Constants.INDEX.SERVICES.equals(hitDTO.getIndex())) {
                             Pattern uuidPattern = Pattern.compile("^LANDING_PAGE_(.*)");
-                            Matcher matcher = uuidPattern.matcher(hitDTO.getSource().getCode());
+                            Matcher matcher =
+                                    uuidPattern.matcher(hitDTO.getSource().getCode());
                             if (matcher.matches()) {
                                 path = String.format("landing-page?alias=%s", matcher.group(1));
                             }
                         }
 
-                        List<String> lines =new ArrayList<>();
+                        List<String> lines = new ArrayList<>();
                         if (!DataUtil.isNullOrEmpty(hitDTO.getHighlight().getTitle())) {
                             lines.addAll(hitDTO.getHighlight().getTitle());
                         }
@@ -95,10 +100,16 @@ public class SearchServiceImpl implements SearchService {
                             }
                         }
 
-                        searchDTOList.add(SearchDTO.builder().path(path).highlight(maxEmLine).type(hitDTO.getIndex()).score(hitDTO.getScore()).build());
+                        searchDTOList.add(SearchDTO.builder()
+                                .path(path)
+                                .highlight(maxEmLine)
+                                .type(hitDTO.getIndex())
+                                .score(hitDTO.getScore())
+                                .build());
                     });
 
-                    searchDTOResponse.setResult(searchDTOList.stream().distinct().collect(Collectors.toList()));
+                    searchDTOResponse.setResult(
+                            searchDTOList.stream().distinct().collect(Collectors.toList()));
                     DataResponse<Object> dataResponse = new DataResponse<>();
                     dataResponse.setMessage(Translator.toLocale("success"));
                     dataResponse.setData(searchDTOResponse);

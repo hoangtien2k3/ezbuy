@@ -3,14 +3,15 @@ package com.ezbuy.settingservice.controller;
 import com.ezbuy.settingmodel.constants.UrlPaths;
 import com.ezbuy.settingmodel.dto.AreaDTO;
 import com.ezbuy.settingservice.service.AreaService;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
-import java.util.List;
+import com.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

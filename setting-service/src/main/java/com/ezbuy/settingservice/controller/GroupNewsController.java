@@ -6,13 +6,14 @@ import com.ezbuy.settingmodel.model.GroupNews;
 import com.ezbuy.settingmodel.request.CreateGroupNewsRequest;
 import com.ezbuy.settingmodel.response.SearchGroupNewsResponse;
 import com.ezbuy.settingservice.service.GroupNewsService;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
+import com.reactify.model.response.DataResponse;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @Slf4j
 @RestController

@@ -3,9 +3,8 @@ package com.ezbuy.productservice.controller;
 import com.ezbuy.productmodel.constants.UrlPaths;
 import com.ezbuy.productmodel.model.Telecom;
 import com.ezbuy.productservice.service.TelecomService;
-import java.util.List;
-
 import com.reactify.model.response.DataResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

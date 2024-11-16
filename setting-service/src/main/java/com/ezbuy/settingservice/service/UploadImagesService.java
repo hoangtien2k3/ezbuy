@@ -3,9 +3,10 @@ package com.ezbuy.settingservice.service;
 import com.ezbuy.settingmodel.dto.UploadImagesDTO;
 import com.ezbuy.settingmodel.dto.request.*;
 import com.ezbuy.settingmodel.dto.response.SearchImageResponse;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
-import java.util.List;
+import com.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 public interface UploadImagesService {
     Mono<DataResponse<List<UploadImagesDTO>>> uploadFile(UploadImageRequest request);

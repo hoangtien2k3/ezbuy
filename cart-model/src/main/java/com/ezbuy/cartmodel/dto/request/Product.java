@@ -17,5 +17,5 @@ public class Product {
     private String telecomServiceId;
 
     @NotEmpty(message = "telecom.alias.not.null")
-    private String telecomServiceAlias; // Bo sung Alias PYCXXX/LuongToanTrinh
+    private String telecomServiceAlias;
 }

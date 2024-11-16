@@ -5,11 +5,11 @@
 // import com.ezbuy.productservice.client.CmClient;
 // import com.ezbuy.productservice.client.properties.CmProperties;
 // import com.ezbuy.productservice.client.utils.CMClientUtils;
-// import io.hoangtien2k3.reactify.DataUtil;
-// import io.hoangtien2k3.reactify.DataWsUtil;
-// import io.hoangtien2k3.reactify.constants.CommonErrorCode;
-// import io.hoangtien2k3.reactify.constants.Constants;
-// import io.hoangtien2k3.reactify.exception.BusinessException;
+// import com.reactify.DataUtil;
+// import com.reactify.DataWsUtil;
+// import com.reactify.constants.CommonErrorCode;
+// import com.reactify.constants.Constants;
+// import com.reactify.exception.BusinessException;
 // import lombok.Data;
 // import lombok.extern.slf4j.Slf4j;
 // import org.springframework.beans.factory.annotation.Qualifier;

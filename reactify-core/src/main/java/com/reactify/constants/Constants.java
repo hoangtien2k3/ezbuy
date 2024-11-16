@@ -452,4 +452,15 @@ public final class Constants {
         /** Name of the REST client pool for HTTPS proxy. */
         String REST_CLIENT_POLL = "Rest-client-Pool";
     }
+
+    public interface MINIO_BUCKET_MARKET_INFO {
+        String URL_IMAGE = "market-info";
+    }
+
+    public interface MINIO_BUCKET_MARKET_SECTION {
+        String MARKET_SECTION = "market-section";
+    }
+
+    public static final String NULL_IMAGE_SRC = null;
+
 }

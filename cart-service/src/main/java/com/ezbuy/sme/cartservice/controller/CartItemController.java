@@ -6,7 +6,7 @@ import com.ezbuy.cartmodel.dto.request.Product;
 import com.ezbuy.cartmodel.dto.response.PageCart;
 import com.ezbuy.cartmodel.model.CartItem;
 import com.ezbuy.sme.cartservice.service.CartItemService;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
+import com.reactify.model.response.DataResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

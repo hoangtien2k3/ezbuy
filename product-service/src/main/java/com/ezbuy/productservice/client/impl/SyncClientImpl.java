@@ -3,14 +3,13 @@ package com.ezbuy.productservice.client.impl;
 import com.ezbuy.productmodel.request.CallApiSyncProductRequest;
 import com.ezbuy.productmodel.response.GetTransSyncResponse;
 import com.ezbuy.productservice.client.SyncClient;
-import java.util.Optional;
-
 import com.reactify.client.BaseRestClient;
 import com.reactify.constants.CommonErrorCode;
 import com.reactify.factory.ObjectMapperFactory;
 import com.reactify.model.response.DataResponse;
 import com.reactify.util.DataUtil;
 import com.reactify.util.Translator;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;

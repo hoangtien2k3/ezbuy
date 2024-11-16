@@ -16,7 +16,7 @@ public class CartItem {
     private String id;
     private String productId;
     private String telecomServiceId;
-    private String serviceAlias; // Bo sung alias PYCXXX/LuongToanTrinh
+    private String serviceAlias;
     private String cartId;
     private Long quantity;
     private Integer status;

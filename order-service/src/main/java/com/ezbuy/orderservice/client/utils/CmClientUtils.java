@@ -1,7 +1,7 @@
 package com.ezbuy.orderservice.client.utils;
 
 import com.ezbuy.ordermodel.dto.request.GetGroupsCAinfoRequest;
-import io.hoangtien2k3.reactify.DataUtil;
+import com.reactify.util.DataUtil;
 import java.text.MessageFormat;
 
 public class CmClientUtils {

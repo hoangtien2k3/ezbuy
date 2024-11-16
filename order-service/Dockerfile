@@ -7,7 +7,7 @@ FROM  openjdk:11.0.12-oracle
 LABEL com.ezbuy.ecom.auth.version="1.0.0"
 LABEL version="1.0.0"
 LABEL description="order service"
-LABEL author="Viettel Company"
+LABEL author="Ezbuy Platform"
 WORKDIR application
 
 # additional timezone +7

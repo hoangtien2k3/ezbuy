@@ -5,9 +5,10 @@ import com.ezbuy.settingmodel.model.OptionSet;
 import com.ezbuy.settingmodel.model.OptionSetValue;
 import com.ezbuy.settingmodel.request.CreateOptionSetRequest;
 import com.ezbuy.settingmodel.response.SearchOptionSetResponse;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
-import java.util.List;
+import com.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 public interface OptionSetService {
     /**

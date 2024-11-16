@@ -6,9 +6,9 @@
 // import com.ezbuy.authmodel.dto.request.UpdateUserRequest;
 // import com.ezbuy.authmodel.model.UserProfile;
 // import com.ezbuy.authservice.service.UserService;
-// import io.hoangtien2k3.commons.constants.MessageConstant;
-// import io.hoangtien2k3.commons.model.response.DataResponse;
-// import io.hoangtien2k3.commons.utils.Translator;
+// import com.commons.constants.MessageConstant;
+// import com.commons.model.response.DataResponse;
+// import com.commons.utils.Translator;
 // import jakarta.validation.Valid;
 // import lombok.RequiredArgsConstructor;
 // import lombok.extern.slf4j.Slf4j;

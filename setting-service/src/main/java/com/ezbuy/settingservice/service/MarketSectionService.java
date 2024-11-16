@@ -5,10 +5,11 @@ import com.ezbuy.settingmodel.model.MarketSection;
 import com.ezbuy.settingmodel.request.CreateMarketSectionRequest;
 import com.ezbuy.settingmodel.request.MarketSectionSearchRequest;
 import com.ezbuy.settingmodel.response.MarketSectionSearchResponse;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
-import java.util.List;
+import com.reactify.model.response.DataResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 public interface MarketSectionService {
     Flux<MarketSection> getMarketSection(String pageCode, String serviceId);

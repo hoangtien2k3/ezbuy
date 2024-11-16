@@ -1,9 +1,8 @@
 package com.ezbuy.productservice.service;
 
 import com.ezbuy.productmodel.model.Telecom;
-import java.util.List;
-
 import com.reactify.model.response.DataResponse;
+import java.util.List;
 import reactor.core.publisher.Mono;
 
 public interface TelecomService {

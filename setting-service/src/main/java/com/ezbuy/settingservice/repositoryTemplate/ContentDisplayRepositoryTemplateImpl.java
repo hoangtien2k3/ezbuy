@@ -3,20 +3,21 @@ package com.ezbuy.settingservice.repositoryTemplate;
 import com.ezbuy.settingmodel.dto.ContentDisplayDTO;
 import com.ezbuy.settingmodel.model.ContentDisplay;
 import com.ezbuy.settingmodel.request.ComponentPageRequest;
-import io.hoangtien2k3.reactify.DataUtil;
-import io.hoangtien2k3.reactify.SQLUtils;
-import io.hoangtien2k3.reactify.SortingUtils;
-import io.hoangtien2k3.reactify.constants.CommonErrorCode;
-import io.hoangtien2k3.reactify.exception.BusinessException;
-import io.hoangtien2k3.reactify.repository.BaseTemplateRepository;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.reactify.constants.CommonErrorCode;
+import com.reactify.exception.BusinessException;
+import com.reactify.repository.BaseTemplateRepository;
+import com.reactify.util.DataUtil;
+import com.reactify.util.SQLUtils;
+import com.reactify.util.SortingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor

@@ -4,7 +4,7 @@ import com.ezbuy.ordermodel.constants.UrlPaths;
 import com.ezbuy.ordermodel.dto.OrderFieldConfigDTO;
 import com.ezbuy.ordermodel.dto.request.GetOrderFieldConfigRequest;
 import com.ezbuy.orderservice.service.OrderFieldConfigService;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
+import com.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

@@ -1,9 +1,10 @@
 package com.ezbuy.settingservice.service;
 
 import com.ezbuy.settingmodel.dto.AreaDTO;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
-import java.util.List;
+import com.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 public interface AreaService {
     Mono<DataResponse<List<AreaDTO>>> getArea(String parentCode);

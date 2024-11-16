@@ -5,11 +5,10 @@ import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
 import com.ezbuy.productmodel.model.Telecom;
 import com.ezbuy.productservice.repository.TelecomRepository;
 import com.ezbuy.productservice.service.TelecomService;
-import java.util.List;
-
 import com.reactify.constants.MessageConstant;
 import com.reactify.model.response.DataResponse;
 import com.reactify.util.Translator;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

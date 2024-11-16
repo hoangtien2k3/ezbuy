@@ -8,9 +8,10 @@ import com.ezbuy.settingmodel.request.PageTelecomRequest;
 import com.ezbuy.settingmodel.request.StatusLockingRequest;
 import com.ezbuy.settingmodel.request.TelecomSearchingRequest;
 import com.ezbuy.settingmodel.response.*;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
-import java.util.List;
+import com.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 public interface TelecomService {
     Mono<DataResponse<List<TelecomDTO>>> getTelecomService(

@@ -4,9 +4,10 @@ import com.ezbuy.settingmodel.model.Setting;
 import com.ezbuy.settingmodel.request.CreateSettingRequest;
 import com.ezbuy.settingmodel.request.SearchSettingRequest;
 import com.ezbuy.settingmodel.response.SearchSettingResponse;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
-import java.util.List;
+import com.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 public interface SettingService {
 

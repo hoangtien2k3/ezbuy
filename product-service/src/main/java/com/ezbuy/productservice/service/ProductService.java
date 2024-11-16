@@ -8,9 +8,8 @@ import com.ezbuy.productmodel.model.Product;
 import com.ezbuy.productmodel.request.*;
 import com.ezbuy.productmodel.response.GetProductInfoResponse;
 import com.ezbuy.productmodel.response.ProductSearchResult;
-import java.util.List;
-
 import com.reactify.model.response.DataResponse;
+import java.util.List;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.multipart.FilePart;

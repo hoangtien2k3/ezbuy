@@ -4,7 +4,6 @@ import com.ezbuy.ordermodel.dto.request.PricingProductRequest;
 import com.ezbuy.ordermodel.dto.ws.SearchOrderStateRequest;
 import com.reactify.factory.MarshallerFactory;
 import com.reactify.util.DataWsUtil;
-
 import java.text.MessageFormat;
 import java.util.List;
 

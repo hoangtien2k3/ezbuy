@@ -3,7 +3,7 @@ package com.ezbuy.orderservice.service;
 import com.ezbuy.ordermodel.dto.request.CreateInvoiceInfoHistoryRequest;
 import com.ezbuy.ordermodel.dto.request.GetInvoiceInfoHistoryRequest;
 import com.ezbuy.ordermodel.model.InvoiceInfoHistory;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
+import com.reactify.model.response.DataResponse;
 import java.util.List;
 import java.util.Optional;
 import reactor.core.publisher.Mono;

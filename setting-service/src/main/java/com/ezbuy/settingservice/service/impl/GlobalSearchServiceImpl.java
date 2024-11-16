@@ -7,12 +7,10 @@ import com.ezbuy.settingservice.repository.ContentDisplayRepository;
 import com.ezbuy.settingservice.repository.NewsRepository;
 import com.ezbuy.settingservice.repository.ServicesRepository;
 import com.ezbuy.settingservice.service.GlobalSearchService;
-import io.hoangtien2k3.reactify.DataUtil;
-import io.hoangtien2k3.reactify.constants.CommonErrorCode;
-import io.hoangtien2k3.reactify.exception.BusinessException;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
-import java.util.ArrayList;
-import java.util.List;
+import com.reactify.constants.CommonErrorCode;
+import com.reactify.exception.BusinessException;
+import com.reactify.model.response.DataResponse;
+import com.reactify.util.DataUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -20,6 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor

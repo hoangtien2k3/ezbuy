@@ -9,21 +9,26 @@ import com.ezbuy.orderservice.client.OrderV2Client;
 import com.ezbuy.orderservice.client.properties.OrderV2Properties;
 import com.ezbuy.orderservice.client.utils.OrderClientUtils;
 import com.ezbuy.orderservice.client.utils.OrderV2ClientUtils;
-import io.hoangtien2k3.reactify.DataUtil;
-import io.hoangtien2k3.reactify.DataWsUtil;
-import io.hoangtien2k3.reactify.Translator;
-import io.hoangtien2k3.reactify.constants.CommonErrorCode;
-import io.hoangtien2k3.reactify.exception.BusinessException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import com.reactify.client.BaseSoapClient;
+import com.reactify.constants.CommonErrorCode;
+import com.reactify.exception.BusinessException;
+import com.reactify.util.DataUtil;
+import com.reactify.util.DataWsUtil;
+import com.reactify.util.Translator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+
+import static com.reactify.constants.Constants.XmlConst.TAG_CLOSE_RETURN;
+import static com.reactify.constants.Constants.XmlConst.TAG_OPEN_RETURN;
 
 @Service
 @Slf4j

@@ -4,9 +4,10 @@ import com.ezbuy.settingmodel.dto.request.SearchGroupNewsRequest;
 import com.ezbuy.settingmodel.model.GroupNews;
 import com.ezbuy.settingmodel.request.CreateGroupNewsRequest;
 import com.ezbuy.settingmodel.response.SearchGroupNewsResponse;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
-import java.util.List;
+import com.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 public interface GroupNewsService {
     Mono<DataResponse<GroupNews>> createGroupNews(CreateGroupNewsRequest request);

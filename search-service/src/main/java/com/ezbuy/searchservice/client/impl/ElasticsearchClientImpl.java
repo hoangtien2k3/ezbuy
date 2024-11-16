@@ -1,10 +1,12 @@
 package com.ezbuy.searchservice.client.impl;
 
-import com.reactify.util.DataUtil;
 import com.ezbuy.searchservice.client.ElasticsearchClient;
 import com.ezbuy.searchservice.client.properties.ElasticsearchClientProperties;
 import com.ezbuy.searchservice.client.properties.IndexProperties;
 import com.ezbuy.searchservice.client.properties.IndexScore;
+import com.reactify.util.DataUtil;
+import java.util.Base64;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,9 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.Base64;
-import java.util.List;
-
 @Slf4j
 @Service
 @DependsOn("webClientFactory")
@@ -27,9 +26,10 @@ public class ElasticsearchClientImpl implements ElasticsearchClient {
     private final ElasticsearchClientProperties elasticsearchClientProperties;
     private final IndexProperties indexProperties;
 
-    public ElasticsearchClientImpl(@Qualifier("elasticsearchClient") WebClient elasticsearchClient,
-                                   ElasticsearchClientProperties elasticsearchClientProperties,
-                                   IndexProperties indexProperties) {
+    public ElasticsearchClientImpl(
+            @Qualifier("elasticsearchClient") WebClient elasticsearchClient,
+            ElasticsearchClientProperties elasticsearchClientProperties,
+            IndexProperties indexProperties) {
         this.elasticsearchClient = elasticsearchClient;
         this.elasticsearchClientProperties = elasticsearchClientProperties;
         this.indexProperties = indexProperties;
@@ -94,13 +94,16 @@ public class ElasticsearchClientImpl implements ElasticsearchClient {
         String password = elasticsearchClientProperties.getPassword();
         String basicAuthHeader = null;
         if (!DataUtil.isNullOrEmpty(username) && !DataUtil.isNullOrEmpty(password)) {
-            basicAuthHeader = "Basic " + Base64.getEncoder().encodeToString(
-                    (elasticsearchClientProperties.getUsername() + ":" + elasticsearchClientProperties.getPassword()).getBytes()
-            );
+            basicAuthHeader = "Basic "
+                    + Base64.getEncoder()
+                            .encodeToString((elasticsearchClientProperties.getUsername() + ":"
+                                            + elasticsearchClientProperties.getPassword())
+                                    .getBytes());
         }
 
         log.info("Query {}", queryAll);
-        return elasticsearchClient.method(HttpMethod.GET)
+        return elasticsearchClient
+                .method(HttpMethod.GET)
                 .uri("/" + indexString + "/_search")
                 .header("Content-Type", "application/json")
                 .header(HttpHeaders.AUTHORIZATION, basicAuthHeader)

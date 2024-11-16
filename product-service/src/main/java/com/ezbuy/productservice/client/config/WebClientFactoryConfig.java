@@ -1,9 +1,8 @@
 package com.ezbuy.productservice.client.config;
 
 import com.ezbuy.productservice.client.properties.*;
-import java.util.List;
-
 import com.reactify.client.WebClientFactory;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;

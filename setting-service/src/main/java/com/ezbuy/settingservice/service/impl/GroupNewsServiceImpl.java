@@ -9,21 +9,22 @@ import com.ezbuy.settingmodel.response.SearchGroupNewsResponse;
 import com.ezbuy.settingservice.repository.GroupNewsRepository;
 import com.ezbuy.settingservice.repositoryTemplate.GroupNewsRepositoryTemplate;
 import com.ezbuy.settingservice.service.GroupNewsService;
-import io.hoangtien2k3.reactify.DataUtil;
-import io.hoangtien2k3.reactify.SecurityUtils;
-import io.hoangtien2k3.reactify.constants.CommonErrorCode;
-import io.hoangtien2k3.reactify.constants.Constants;
-import io.hoangtien2k3.reactify.exception.BusinessException;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import com.reactify.constants.CommonErrorCode;
+import com.reactify.constants.Constants;
+import com.reactify.exception.BusinessException;
+import com.reactify.model.response.DataResponse;
+import com.reactify.util.DataUtil;
+import com.reactify.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor

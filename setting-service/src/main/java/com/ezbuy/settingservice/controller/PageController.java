@@ -9,7 +9,7 @@ import com.ezbuy.settingmodel.request.PagePolicyRequest;
 import com.ezbuy.settingmodel.request.SearchingPageRequest;
 import com.ezbuy.settingmodel.response.SearchingPageResponse;
 import com.ezbuy.settingservice.service.PageService;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
+import com.reactify.model.response.DataResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;

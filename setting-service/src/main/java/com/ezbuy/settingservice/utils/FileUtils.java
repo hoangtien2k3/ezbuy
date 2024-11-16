@@ -1,11 +1,12 @@
 package com.ezbuy.settingservice.utils;
 
 import com.ezbuy.settingservice.constant.SettingConstant;
-import io.hoangtien2k3.reactify.MinioUtils;
-import java.util.Base64;
-import java.util.UUID;
+import com.reactify.util.MinioUtils;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
+
+import java.util.Base64;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 public class FileUtils {

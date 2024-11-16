@@ -11,7 +11,6 @@ import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClient
 class WebClientFactoryConfig(
     private val authProperties: AuthProperties
 ) {
-
     @Bean(name = ["webClientFactory"])
     fun webClientFactory(
         applicationContext: ApplicationContext,
@@ -21,7 +20,7 @@ class WebClientFactoryConfig(
             applicationContext,
             authorizedClientManager
         )
-        factory.setWebClients(listOf(authProperties))
+        factory.webClients = listOf(authProperties)
         return factory
     }
 }

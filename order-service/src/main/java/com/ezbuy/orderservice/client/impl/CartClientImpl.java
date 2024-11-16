@@ -2,9 +2,9 @@ package com.ezbuy.orderservice.client.impl;
 
 import com.ezbuy.cartmodel.dto.DeleteUserProductCartDTO;
 import com.ezbuy.orderservice.client.CartClient;
-import io.hoangtien2k3.reactify.client.BaseRestClient;
-import io.hoangtien2k3.reactify.constants.MessageConstant;
-import io.hoangtien2k3.reactify.model.response.DataResponse;
+import com.reactify.client.BaseRestClient;
+import com.reactify.constants.MessageConstant;
+import com.reactify.model.response.DataResponse;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
