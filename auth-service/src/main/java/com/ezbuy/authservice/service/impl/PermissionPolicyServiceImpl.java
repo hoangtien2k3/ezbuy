@@ -46,7 +46,6 @@ public class PermissionPolicyServiceImpl implements PermissionPolicyService {
             return Mono.error(
                     new BusinessException(CommonErrorCode.INVALID_PARAMS, MessageUtils.getMessage("size.invalid")));
         }
-
         if (size < 0 || size > 100) {
             return Mono.error(
                     new BusinessException(CommonErrorCode.INVALID_PARAMS, MessageUtils.getMessage("size.exceed", 100)));

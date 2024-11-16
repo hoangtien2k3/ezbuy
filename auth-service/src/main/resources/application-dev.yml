@@ -78,11 +78,6 @@ client:
   setting:
     address: http://localhost:8081/
     name: settingClient
-  #product config
-  product:
-    internal-oauth: true
-    address: http://localhost:8088/
-    name: productClient
 
 # unauthenticated endpoints config
 application:
@@ -224,22 +219,6 @@ hashing-password:
 proxy-client:
   host: 10.207.156.52
   port: 3128
-
-#cache2l config
-cache2l:
-  reflectionPath: com.reactify
-  enable-global-cache: true
-  redis:
-    externalMode: true
-    externalCluster: 127.0.0.1:6379
-    username: default
-    password: tienha@!@#
-    master:
-      host: 127.0.0.1
-      port: 6379
-    slave:
-      host: 127.0.0.1
-      port: 6379
 
 # swagger-ui custom path
 springdoc:

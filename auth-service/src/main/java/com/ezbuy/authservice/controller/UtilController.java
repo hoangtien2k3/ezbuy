@@ -8,10 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -22,17 +19,15 @@ public class UtilController {
     private final UtilService utilService;
 
     /**
-     * Add role admin of EzBuy for old user
-     *
+     * add role admin for old user
      * @param request
      * @return
      */
     @PostMapping(value = UrlPaths.Util.JOB_ADD_ROLE_ADMIN_FOR_OLD_USER)
     @PreAuthorize("hasAnyAuthority('system')")
-    public Mono<ResponseEntity<DataResponse<Object>>> jobAddRoleAdminForOldUser(
-            @Valid @RequestBody JobAddRoleAdminForOldUserRequest request) {
-        return utilService
-                .jobAddRoleAdminForOldUser(request)
-                .map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs.getData())));
+    public Mono<ResponseEntity<DataResponse>> jobAddRoleAdminForOldUser(@Valid @RequestBody JobAddRoleAdminForOldUserRequest request) {
+        return utilService.jobAddRoleAdminForOldUser(request)
+                .map(rs -> ResponseEntity.ok(new DataResponse("common.success", rs.getData())));
     }
+
 }
