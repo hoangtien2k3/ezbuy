@@ -1,8 +1,8 @@
 server:
   port: 8089
 logging:
-  pattern:
-    console: "%d{dd/MM/yy HH:mm:ss}|%X{traceId}|%m%n"
+#  pattern:
+#    console: "%d{dd/MM/yy HH:mm:ss}|%X{traceId}|%m%n"
   level:
     root: INFO
     io.r2dbc.postgresql.QUERY: DEBUG
@@ -16,7 +16,7 @@ spring:
     web-application-type: reactive
     allow-bean-definition-overriding: true
   messages:
-    basename: messages
+    basename: i18n/messages
 
   #connect db r2dbc
   r2dbc:

@@ -96,7 +96,7 @@ public interface OrderService {
      * @param request
      * @return
      */
-    Mono<DataResponse> getCAsubNumberSign(GetGroupsCAinfoRequest request);
+//    Mono<DataResponse> getCAsubNumberSign(GetGroupsCAinfoRequest request);
 
     /**
      * Ham lay so luong chu ky con lai cua thue bao
@@ -104,7 +104,7 @@ public interface OrderService {
      * @param request
      * @return
      */
-    Mono<DataResponse> getCAsubTotalSign(GetGroupsCAinfoRequest request);
+//    Mono<DataResponse> getCAsubTotalSign(GetGroupsCAinfoRequest request);
 
     Mono<DataResponse> getAdvice(CreatePreOrderRequest request);
 

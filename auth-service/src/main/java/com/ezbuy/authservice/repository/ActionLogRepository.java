@@ -20,6 +20,6 @@ public interface ActionLogRepository extends R2dbcRepository<ActionLog, String> 
      * @return a Mono emitting the count of login actions for the specified date and
      *         type
      */
-    @Query("select count(*) " + "from action_log " + "where date(create_at) =: dateReport " + "  and type = :type")
+    @Query("select count(*) from action_log where create_at::date = :dateReport and type = :type")
     Mono<Integer> countLoginInOneDay(LocalDate dateReport, String type);
 }

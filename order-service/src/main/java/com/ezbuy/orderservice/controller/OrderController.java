@@ -125,15 +125,15 @@ public class OrderController {
         return orderService.connectCASelfcare(request).map(ResponseEntity::ok);
     }
 
-    @GetMapping(UrlPaths.Order.CA_GET_NUMBER_SIGN)
-    public Mono<ResponseEntity<DataResponse>> getCAsubNumberSign(GetGroupsCAinfoRequest request) {
-        return orderService.getCAsubNumberSign(request).map(ResponseEntity::ok);
-    }
+//    @GetMapping(UrlPaths.Order.CA_GET_NUMBER_SIGN)
+//    public Mono<ResponseEntity<DataResponse>> getCAsubNumberSign(GetGroupsCAinfoRequest request) {
+//        return orderService.getCAsubNumberSign(request).map(ResponseEntity::ok);
+//    }
 
-    @GetMapping(UrlPaths.Order.CA_GET_TOTAL_SIGN)
-    public Mono<ResponseEntity<DataResponse>> getCAsubTotalSign(GetGroupsCAinfoRequest request) {
-        return orderService.getCAsubTotalSign(request).map(ResponseEntity::ok);
-    }
+//    @GetMapping(UrlPaths.Order.CA_GET_TOTAL_SIGN)
+//    public Mono<ResponseEntity<DataResponse>> getCAsubTotalSign(GetGroupsCAinfoRequest request) {
+//        return orderService.getCAsubTotalSign(request).map(ResponseEntity::ok);
+//    }
 
     /**
      * Order-005 Bo sung them alias PYCXXX/LuongToanTrinhScontract

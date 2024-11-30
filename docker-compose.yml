@@ -21,7 +21,6 @@ services:
     networks:
       - ezbuy-network
 
-
   #pgadmin:
   pgadmin:
     image: dpage/pgadmin4:${PGADMIN_VERSION}
@@ -36,7 +35,6 @@ services:
       - PGADMIN_DEFAULT_PASSWORD
     networks:
       - ezbuy-network
-
 
   #keycloak:
   keycloak:
@@ -74,47 +72,6 @@ services:
     networks:
       - ezbuy-network
 
-#  keycloak:
-#    image: quay.io/keycloak/keycloak:25.0.2
-#    restart: always
-#    command: start
-#    links:
-#      - postgres
-#    ports:
-#      - "9082:8080"
-#    depends_on:
-#      - postgresql
-#    environment:
-#      - KC_PROXY_ADDRESS_FORWARDING=true
-#      - KC_HOSTNAME_STRICT=false
-#      - KC_HOSTNAME=keycloak.jimsgarage.co.uk
-#      - KC_PROXY=edge
-#      - KC_HTTP_ENABLED=true
-#      - KC_DB=postgres
-#      - KC_DB_USERNAME=keycloak
-#      - KC_DB_PASSWORD=SUPERsecret
-#      - KC_DB_URL_HOST=postgres
-#      - KC_DB_URL_PORT=5432
-#      - KC_DB_URL_DATABASE=keycloak
-#      - KEYCLOAK_ADMIN=admin
-#      - KEYCLOAK_ADMIN_PASSWORD=password
-#    networks:
-#      proxy:
-#      keycloak:
-#    labels:
-#      - "traefik.enable=true"
-#      - "traefik.http.routers.keycloak.entrypoints=http"
-#      - "traefik.http.routers.keycloak.rule=Host(`keycloak.yourdomain.com`)"
-#      - "traefik.http.middlewares.keycloak-https-redirect.redirectscheme.scheme=https"
-#      - "traefik.http.routers.keycloak.middlewares=keycloak-https-redirect"
-#      - "traefik.http.routers.keycloak-secure.entrypoints=https"
-#      - "traefik.http.routers.keycloak-secure.rule=Host(`keycloak.yourdomain.com`)"
-#      - "traefik.http.routers.keycloak-secure.tls=true"
-#      - "traefik.http.routers.keycloak-secure.service=keycloak"
-#      - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
-#      - "traefik.docker.network=proxy"
-
-
   #minio
   minio:
     image: minio/minio:${MINIO_VERSION}
@@ -139,7 +96,6 @@ services:
     networks:
       - ezbuy-network
 
-
   #swagger-ui
   swagger-ui:
     image: swaggerapi/swagger-ui:${SWAGGER_VERSION}
@@ -153,7 +109,6 @@ services:
     networks:
       - ezbuy-network
 
-
   #zookeeper
   zookeeper:
     image: debezium/zookeeper:${ZOOKEEPER_VERSION}
@@ -165,7 +120,6 @@ services:
       - "3888:3888"
     networks:
       - ezbuy-network
-
 
   #kafka
   kafka:
@@ -188,7 +142,6 @@ services:
     networks:
       - ezbuy-network
 
-
   #kafka-connect
   kafka-connect:
     image: debezium/connect:${KAFKA_CONNECT_VERSION}
@@ -206,7 +159,6 @@ services:
       - OFFSET_STORAGE_TOPIC=kafka_connect_offsets
     networks:
       - ezbuy-network
-
 
   ###########################
   #setup
@@ -317,7 +269,6 @@ services:
     networks:
       - ezbuy-network
 
-
   #redis
   redis:
     image: redis:${REDIS_VERSION}
@@ -340,7 +291,6 @@ services:
     networks:
       - ezbuy-network
 
-
   #redis_insight
   redis_insight:
     image: redislabs/redisinsight:latest
@@ -353,6 +303,44 @@ services:
     networks:
       - ezbuy-network
 
+  #kong-gateway
+  kong:
+    image: kong/kong-gateway:${KONG_GATEWAY_VERSION}
+    container_name: kong
+    depends_on:
+      - postgres
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: postgres
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: kong
+      KONG_PG_DATABASE: kong
+      KONG_PROXY_LISTEN: "0.0.0.0:8000"
+      KONG_ADMIN_LISTEN: "0.0.0.0:8001"
+    ports:
+      - "8000:8000"  # HTTP Proxy
+      - "8443:8443"  # HTTPS Proxy
+      - "8001:8001"  # HTTP Admin API
+      - "8444:8444"  # HTTPS Admin API
+    networks:
+      - ezbuy-network
+
+  #mariadb
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    restart: always
+    ports:
+      - "9005:3306" # Cổng mặc định của MariaDB
+    environment:
+      MYSQL_ROOT_PASSWORD: root       # Đặt mật khẩu root
+      MYSQL_DATABASE: sme_ezbuy       # Tên cơ sở dữ liệu mặc định
+      MYSQL_USER: admin               # Tên người dùng
+      MYSQL_PASSWORD: admin           # Mật khẩu cho người dùng
+    volumes:
+      - mariadb:/var/lib/mysql # Lưu trữ dữ liệu bền vững
+    networks:
+      - ezbuy-network
 
 # networks:
 networks:
@@ -374,4 +362,5 @@ volumes:
   elasticsearch:
   redis:
   redis_insight:
+  mariadb:
 

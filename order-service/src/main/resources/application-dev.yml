@@ -1,79 +1,115 @@
 # server config
 server:
-  port: 8080
+  port: 8932
 #logging
 logging:
-  pattern:
-    console: "%d{dd/MM/yy HH:mm:ss}|%X{traceId}|%m%n"
+#  pattern:
+#    console: "%d{dd/MM/yy HH:mm:ss}|%X{traceId}|%m%n"
   level:
     root: INFO
 
-# ot=oauth
+#keycloak client config
 keycloak:
-  clientId: web-client
-  clientSecret: 24bcf1ec-4746-4cf6-9939-b56e6ca394b3
-  realm: sme-portal
-  serverUrl: http://sme-keycloak.bu-order.svc:8080/auth
+  clientId: ezbuy-client
+  clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
+  realm: ezbuy-server
+  serverUrl: http://localhost:8080
+  grantType: password
+  host: localhost
 oauth2:
   keycloak:
-    client-uri: http://sme-keycloak.bu-order.svc:8080/auth/realms/sme-portal
-    client-id: web-client
-    client-secret: 24bcf1ec-4746-4cf6-9939-b56e6ca394b3
+    client-uri: http://localhost:8080/realms/ezbuy-server
+    client-id: ezbuy-client
+    client-secret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
 # spring config
 spring:
+  application:
+    name: order-service
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+  messages:
+    basename: messages
+
   security:
     oauth2:
       client:
         provider:
           oidc:
-            issuer-uri: http://sme-keycloak.bu-order.svc:8080/auth/realms/sme-portal
+            token-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/token
         registration:
           oidc:
-            client-id: web-client
-            client-secret: 24bcf1ec-4746-4cf6-9939-b56e6ca394b3
+            client-id: ${keycloak.clientId}
+            client-secret: ${keycloak.clientSecret}
+            authorization-grant-type: ${keycloak.grantType} #password || #client_credentials
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/certs
+      keycloak:
+        client-id: ${keycloak.clientId}
+
   r2dbc:
-    mariadb:
-      url: r2dbc:mariadb://admin:123456%40@10.207.222.154:9001/sme_order
-      pool:
-        initial-size: 50
-        max-size: 100
-        enabled: true
-        validation-query: select 1
-        max-life-time: 9223372036854775807
+    url: r2dbc:mariadb://localhost:9005/sme_order
+    username: admin
+    password: admin
+    pool:
+      initial-size: 50
+      max-size: 100
+      enabled: true
+      validation-query: select 1
+      max-life-time: 9223372036854775807
+
 # web client config
 client:
   product:
-    address: http://sme-product-service.bu-order.svc:8080/
+    internal-oauth: true
+    token-relay: true
+    address: http://10.207.252.223/sme-product/
     name: productClient
+  product-v2:
+    internal-oauth: true
+    #    address: http://localhost:8081/
+    address: http://10.207.252.223/sme-product/
+    name: productClientV2
   setting:
-    address: http://sme-setting-service.bu-order.svc:8080/
+    internal-oauth: true
+    address: http://locahost:8081/
     name: settingClient
   payment:
-    address: http://10.207.252.76.8126/
+    internal-oauth: true
+    address: http://10.207.252.223/sme-payment/
+    #    address: http://localhost:8081/
     name: paymentClient
   cart:
-    address: http://sme-cart-service.bu-order.svc:8080/
+    internal-oauth: true
+    address: http://10.207.252.223/sme-cart/
     name: cartClient
+  gateway:
+    internal-oauth: true
+    address: http://10.207.252.223/sme-gateway/
+    name: gatewayClient
   order:
     address: http://10.207.252.104:8918/services/order/OrderSmePortalService
-    username: ${BCCS_ORDER_USERNAME}
-    password: ${BCCS_ORDER_PASSWORD}
+    username: order
+    password: order@#123
     name: orderClient
+    systemStaffCode: PORTAL_SME
+    staffRevenue: PORTAL_SME
     pool:
       max-size: 100
       max-pending-acquire: 100
     timeout:
-      read: 60000
-      write: 1000
+      read: 30000
+      write: 10000
   profile:
     address: http://10.58.71.240:8565/wsap?wsdl
     username: profile_bccs
     password: profile_bccs
     name: profileClient
   pricing:
-    address: http://10.207.252.104:8918/services/pricing/PricingService
-    username: ${BCCS_ORDER_USERNAME}
-    password: ${BCCS_ORDER_PASSWORD}
+    address: http://10.207.252.104:8099/services/pricing/PricingService
+    username: order
+    password: order
     name: pricingClient
     pool:
       max-size: 100
@@ -81,10 +117,82 @@ client:
     timeout:
       read: 60000
       write: 1000
+  cm:
+    address: http://10.58.71.238:8701/SALE_SERVICE/bpm/sale/externalSystem/InterfaceSaleMBCCS
+    username: sale
+    password: sale
+    name: cmClient
+  cmPortal:
+    address: http://10.58.71.238:8701/SALE_SERVICE/bpm/sale/externalSystem/InterfaceSalePortalSme?wsdl
+    username: sale
+    password: sale
+    name: cmPortalClient
+    timeout:
+      read: 100000
+      write: 100000
+  order-v2:
+    internal-oauth: true
+    address: http://10.207.252.75:8068/services/order/SmePortalService?wsdl
+    name: orderV2Client
+    username: order
+    password: order
+    timeout:
+      read: 600000
+      write: 1000
+  auth:
+    internal-oauth: true
+    address: http://localhost:8089/v1
+    name: authClient
+  auth-v2:
+    internal-oauth: true
+    address: http://10.207.252.223/sme-auth/v1
+    name: authClientV2
+  organization:
+    internal-oauth: true
+    address: http://localhost:8089/v1
+    name: organizationClient
+  pro:
+    host: 10.58.34.5
+    port: 8065
+    username: cm_owner
+    password: cm_owner
+    async: true
 # unauthenticated endpoints config
 application:
+  http-logging:
+    request:
+      enable: true
+      header: true
+      param: true
+      body: true
+    response:
+      enable: true
+      body: true
   whiteList:
     - uri: /actuator/health
       methods:
         - GET
+    - uri: /**
+      methods:
+        - GET
+        - POST
+    - uri: /v1/order/**
+      methods:
+        - GET
+        - POST
+        - OPTIONS
+    - uri: /v1/order/ca/add-group-member
+    - uri: /v1/order/ca/remove-group-member
+    - uri: /v1/order/ca/update-group-member
+    - uri: /v1/order/ca/get-number-sign
 
+  data:
+    sync-order:
+      limit: 500
+    system-user: HANTT #user tao don hang
+  connectCA:
+    returnUrl: http://10.207.252.223:8787/connect-ca-result/
+    cancelUrl: http://10.207.252.223:8787/payment-result-fail
+  connectOrder:
+    returnUrl: http://10.207.252.223:8787/connect-order-result/
+    cancelUrl: http://10.207.252.223:8787/payment-result-fail

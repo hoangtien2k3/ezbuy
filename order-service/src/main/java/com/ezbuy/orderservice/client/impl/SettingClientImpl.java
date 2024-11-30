@@ -1,7 +1,7 @@
 package com.ezbuy.orderservice.client.impl;
 
 import com.ezbuy.orderservice.client.SettingClient;
-import com.ezbuy.productmodel.model.Telecom;
+import com.ezbuy.settingmodel.model.Telecom;
 import com.ezbuy.settingmodel.dto.AreaDTO;
 import com.ezbuy.settingmodel.dto.OptionSetValueDTO;
 import com.ezbuy.settingmodel.dto.TelecomDTO;

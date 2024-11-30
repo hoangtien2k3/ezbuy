@@ -17,9 +17,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @CrossOrigin("http://localhost:3000/")
 public class FileController {
-
     private final MinioUtils minioUtils;
-
     @Value("${minio.bucket}")
     private String bucket;
 

@@ -88,34 +88,6 @@ public class AuthController {
         return authService.signUp(signupRequest).map(su -> new DataResponse<>("otp.success", null));
     }
 
-    // @PostMapping(value = UrlPaths.Auth.CREATE_ORG_ACCOUNT)
-    // @PreAuthorize("hasAnyAuthority('system')")
-    // public Mono<DataResponse<Individual>> createOrgAccount(@Valid @RequestBody
-    // CreateOrgAccount signupRequest)
-    // {
-    // return authService.createAccount(signupRequest)
-    // .map(rs -> new DataResponse<>(Translator.toLocaleVi("common.success"), rs));
-    // }
-    //
-    // @GetMapping(value = UrlPaths.Auth.FIND_ORG_ACCOUNT)
-    // @PreAuthorize("hasAnyAuthority('system')")
-    // public Mono<DataResponse<Account>> findByIdNo(@RequestParam(name = "idNo")
-    // String idNo, @RequestParam(name
-    // = "idType") String idType) {
-    // return userService.findUserByIdNo(idNo, idType)
-    // .map(rs -> new DataResponse<>(Translator.toLocaleVi("common.success"), rs))
-    // .switchIfEmpty(Mono.just(new
-    // DataResponse<>(Translator.toLocale("account.not.exist"), null)));
-    // }
-    //
-    // @PostMapping(value = UrlPaths.Auth.ADD_SERVICE_ADMIN_ROLE)
-    // @PreAuthorize("hasAnyAuthority('system')")
-    // public Mono<DataResponse> addServiceAdminRole(@RequestBody AdminPermission
-    // adminPermission) {
-    // return authService.addServiceAdminPermission(adminPermission)
-    // .map(rs -> new DataResponse<>(Translator.toLocale("common.success"), rs));
-    // }
-
     @PostMapping(value = UrlPaths.Auth.FORGOT_PASSWORD)
     public Mono<DataResponse<UserOtp>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest forgotPasswordRequest) {
         return authService.forgotPassword(forgotPasswordRequest).map(su -> new DataResponse<>("otp.success", null));
@@ -169,21 +141,11 @@ public class AuthController {
 
     @GetMapping(value = UrlPaths.Auth.ACTION_LOGIN)
     public Mono<ResponseEntity<DataResponse<GetActionLoginReportResponse>>> getActionLoginReport(
-            GetActionLoginReportRequest request) {
+            @RequestBody GetActionLoginReportRequest request) {
         return authService
                 .getActionLoginReport(request)
                 .map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
     }
-
-    // @GetMapping(UrlPaths.Auth.BLOCK_LOGIN)
-    // public Mono<ResponseEntity<DataResponse>>
-    // blockLoginPartnerLicense(@RequestParam(name = "organizationId",
-    // required = true) String organizationId, @RequestParam(name = "clientCode")
-    // String clientCode) {
-    // return authService.blockLoginPartnerLicense(organizationId, clientCode)
-    // .map(rs -> ResponseEntity.ok(new
-    // DataResponse(Translator.toLocaleVi("success"), rs)));
-    // }
 
     @PostMapping(UrlPaths.Auth.CONFIRM_OTP)
     public Mono<DataResponse> confirmOTP(
@@ -199,27 +161,4 @@ public class AuthController {
         return authService.generateOtp(confirmOTPRequest, serverWebExchange);
     }
 
-    // @PostMapping(UrlPaths.Auth.GET_CONTRACT)
-    // @PreAuthorize("hasAnyAuthority('user')")
-    // public Mono<ResponseEntity<DataResponse>> signBusinessAuth(@Valid
-    // @RequestBody SignBusinessAuthRequest
-    // signBusinessAuthRequest) {
-    // return authService.signBusinessAuth(signBusinessAuthRequest)
-    // .map(rs -> ResponseEntity.ok(new DataResponse("common.success", rs)));
-    // }
-    //
-    // @PostMapping(UrlPaths.Auth.RECEIVE_SIGN_RESULT)
-    // public Mono<String> receiveSignResult(@Valid @RequestBody ReceiveSignDTO
-    // request) {
-    // return authService.receiveSignResult(request).map(rs -> rs);
-    // }
-    //
-    // @GetMapping(UrlPaths.Auth.VIEW_BUSINESS_AUTH_CONTRACT)
-    // public Mono<ResponseEntity<DataResponse>>
-    // viewBusinessAuthContract(@RequestParam(name = "organiztionId")
-    // String organiztionId) {
-    // return authService.viewBusinessAuthContract(organiztionId).map(rs ->
-    // ResponseEntity.ok(new
-    // DataResponse("common.success", rs)));
-    // }
 }

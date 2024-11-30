@@ -996,8 +996,7 @@ public class AuthServiceImpl implements AuthService {
         if (DataUtil.isNullOrEmpty(request.getDateReport())) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "dateReport.not.empty"));
         }
-        return actionLogRepository
-                .countLoginInOneDay(request.getDateReport(), ActionLogType.LOGIN)
+        return actionLogRepository.countLoginInOneDay(request.getDateReport(), ActionLogType.LOGIN)
                 .switchIfEmpty(
                         Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "action-log.login.not.found")))
                 .flatMap(rs -> Mono.just(
