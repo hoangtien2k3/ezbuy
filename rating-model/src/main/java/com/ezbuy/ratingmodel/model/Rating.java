@@ -37,8 +37,7 @@ public class Rating extends EntityBase implements Persistable<String> {
     private Integer hasImage;
     private Integer hasVideo;
     private Integer status;
-    // @Enumerated(EnumType.STRING)
-    private RatingState state;
+    private String state;
     private Integer displayStatus;
     private Integer sumRateStatus;
     private String targetUser;

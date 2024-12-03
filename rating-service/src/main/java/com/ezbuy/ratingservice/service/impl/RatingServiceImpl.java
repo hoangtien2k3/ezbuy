@@ -178,10 +178,7 @@ public class RatingServiceImpl extends BaseServiceHandler implements RatingServi
                                     rating.getRating(),
                                     Constants.COMMON.STATUS_INACTIVE);
                         }
-                    } else if (Constants.COMMON.STATUS_ACTIVE.equals(rating.getSumRateStatus())) { // neu khong thay doi
-                        // trang thai tinh
-                        // tong danh gia
-                        // kiem tra co thay doi so diem danh gia khong
+                    } else if (Constants.COMMON.STATUS_ACTIVE.equals(rating.getSumRateStatus())) {
                         if (!rating.getRating().equals(request.getRating())) {
                             ratingCountMono = ratingCountService.updateRatingCount(
                                     rating.getRatingTypeCode(),
@@ -191,11 +188,10 @@ public class RatingServiceImpl extends BaseServiceHandler implements RatingServi
                         }
                     }
                     Mono<RatingHistory> ratingHistoryMono = Mono.just(new RatingHistory());
-                    Rating.RatingState newState = Rating.RatingState.valueOf(request.getState());
                     // luu thong tin lich su danh gia
                     if (!rating.getRating().equals(request.getRating())
                             || !rating.getContent().equals(request.getContent())
-                            || !rating.getState().equals(newState)) {
+                            || !rating.getState().equals(request.getState())) {
                         ratingHistoryMono = ratingHistoryService.createRatingHistory(
                                 rating.getId(),
                                 rating.getRating(),
@@ -204,7 +200,7 @@ public class RatingServiceImpl extends BaseServiceHandler implements RatingServi
                                 request.getContent(),
                                 request.getApproveBy(),
                                 now,
-                                newState);
+                                request.getState());
                     }
                     ModelMapperFactory.getInstance().map(request, rating);
                     rating.setUpdateAt(now);

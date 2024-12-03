@@ -8,9 +8,12 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface RatingTypeRepository extends R2dbcRepository<RatingType, String> {
-    @Query("select * from sme_rating.rating_type where status = 1 ORDER BY name")
+
+    // Lấy tất cả các rating_type đang hoạt động (status = 1), sắp xếp theo tên
+    @Query("SELECT * FROM rating_type WHERE status = 1 ORDER BY name")
     Flux<RatingType> getAllActive();
 
-    @Query("select current_timestamp")
+    // Lấy thời gian hệ thống hiện tại
+    @Query("SELECT current_timestamp")
     Mono<LocalDateTime> getSysDate();
 }

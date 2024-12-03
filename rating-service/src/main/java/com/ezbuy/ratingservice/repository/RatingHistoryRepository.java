@@ -8,6 +8,6 @@ import reactor.core.publisher.Mono;
 
 public interface RatingHistoryRepository extends R2dbcRepository<RatingHistory, String> {
 
-    @Query("select current_timestamp")
+    @Query("SELECT current_timestamp")
     Mono<LocalDateTime> getSysDate();
 }

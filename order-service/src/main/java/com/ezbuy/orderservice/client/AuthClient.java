@@ -46,4 +46,6 @@ public interface AuthClient {
      * @return
      */
     Mono<String> updateTrustStatusNotSign(UpdateTenantTrustStatusRequest request);
+
+    Mono<String> getEmailsByUsername(String username);
 }

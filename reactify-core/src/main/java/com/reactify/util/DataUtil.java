@@ -1003,14 +1003,12 @@ public class DataUtil {
             return null;
         }
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(format);
-
         DateTimeFormatter convertDateFormatter = new DateTimeFormatterBuilder()
                 .append(dateFormatter)
                 .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
                 .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
                 .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
                 .toFormatter();
-
         try {
             return LocalDateTime.parse(input, convertDateFormatter);
         } catch (Exception ex) {

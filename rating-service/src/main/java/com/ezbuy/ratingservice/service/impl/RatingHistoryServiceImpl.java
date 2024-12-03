@@ -30,7 +30,7 @@ public class RatingHistoryServiceImpl extends BaseServiceHandler implements Rati
             String contentAf,
             String approveBy,
             LocalDateTime approveAt,
-            Rating.RatingState state) {
+            String state) {
         var getSysDate = ratingHistoryRepository.getSysDate();
         return Mono.zip(
                         SecurityUtils.getCurrentUser() // get info user

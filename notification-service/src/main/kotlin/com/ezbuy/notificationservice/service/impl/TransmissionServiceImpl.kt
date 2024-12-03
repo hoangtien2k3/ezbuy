@@ -1,8 +1,5 @@
 package com.ezbuy.notificationservice.service.impl
 
-import com.ezbuy.notificationservice.client.AuthClient
-import com.ezbuy.notificationservice.repository.*
-import com.ezbuy.notificationservice.service.TransmissionService
 import com.ezbuy.notificationmodel.common.ConstValue
 import com.ezbuy.notificationmodel.common.ConstValue.Channel.*
 import com.ezbuy.notificationmodel.common.ConstValue.CommonMessageNoti.INVALID_FORMAT_SPEC
@@ -13,21 +10,29 @@ import com.ezbuy.notificationmodel.common.ConstValue.NotiServerity.NORMAL
 import com.ezbuy.notificationmodel.common.ConstValue.NotificationConstant.ANNOUNCEMENT
 import com.ezbuy.notificationmodel.common.ConstValue.NotificationConstant.NEWS
 import com.ezbuy.notificationmodel.common.ConstValue.TransmissionState.*
+import com.ezbuy.notificationmodel.dto.UserTransmissionDTO
+import com.ezbuy.notificationmodel.dto.UserTransmissionPageDTO
 import com.ezbuy.notificationmodel.dto.request.CreateNotificationDTO
+import com.ezbuy.notificationmodel.dto.request.GetTransmissionByEmailAndFromToRequest
 import com.ezbuy.notificationmodel.dto.request.NotiContentDTO
 import com.ezbuy.notificationmodel.dto.request.ReceiverDataDTO
 import com.ezbuy.notificationmodel.dto.response.CountNoticeDTO
 import com.ezbuy.notificationmodel.dto.response.CountNoticeResponseDTO
 import com.ezbuy.notificationmodel.dto.response.NotificationHeader
+import com.ezbuy.notificationmodel.model.Notification
 import com.ezbuy.notificationmodel.model.NotificationContent
 import com.ezbuy.notificationmodel.model.Transmission
-import com.ezbuy.notificationmodel.model.Notification
+import com.ezbuy.notificationservice.client.AuthClient
+import com.ezbuy.notificationservice.repository.*
+import com.ezbuy.notificationservice.repository.repoTemplate.TransmissionRepoTemplate
+import com.ezbuy.notificationservice.service.TransmissionService
+import com.reactify.constants.CommonConstant.FORMAT_DATE_DMY_HYPHEN
 import com.reactify.constants.CommonErrorCode.*
 import com.reactify.constants.Constants.DateTimePattern.LOCAL_DATE_TIME_PATTERN
+import com.reactify.constants.Regex
 import com.reactify.exception.BusinessException
 import com.reactify.model.TokenUser
 import com.reactify.model.response.DataResponse
-import com.reactify.constants.Regex
 import com.reactify.util.*
 import io.r2dbc.spi.Row
 import lombok.RequiredArgsConstructor
@@ -50,6 +55,7 @@ class TransmissionServiceImpl(
     private val channelRepository: ChannelRepository,
     private val authClient: AuthClient,
     private val template: R2dbcEntityTemplate,
+    private val transmissionRepoTemplate: TransmissionRepoTemplate,
     @Value("\${config.resendCount}")
     private val resendCount: Int
 ) : TransmissionService {
@@ -704,4 +710,75 @@ class TransmissionServiceImpl(
             .state(DataUtil.safeToString(row.get("state")))
             .build()
     }
+
+    override fun getTransmissionByEmailAndFromTo(request: GetTransmissionByEmailAndFromToRequest): Mono<DataResponse<UserTransmissionPageDTO>> {
+        var to: LocalDateTime? = null
+        var from: LocalDateTime? = null
+
+        if (!DataUtil.isNullOrEmpty(request.from)) {
+            from = DataUtil.convertDateStrToLocalDateTime(request.from, FORMAT_DATE_DMY_HYPHEN)
+        }
+        if (!DataUtil.isNullOrEmpty(request.to)) {
+            to = DataUtil.convertDateStrToLocalDateTime(request.to, FORMAT_DATE_DMY_HYPHEN)
+        }
+        if (DataUtil.isNullOrEmpty(request.username) && DataUtil.isNullOrEmpty(request.email)) {
+            // Nếu không truyền username + email, lấy 30 ngày gần nhất
+            to = to ?: LocalDateTime.now()
+            if (DataUtil.isNullOrEmpty(request.from)) {
+                from = to?.minusDays(30)
+            }
+        }
+
+        val offset = (request.pageIndex - 1) * request.pageSize
+        val sort = request.sort
+        val sortQuery = if (sort.contains("-")) {
+            " order by ${sort.substring(1)} desc "
+        } else {
+            " order by ${sort.substring(1)}"
+        }
+
+        return if (!DataUtil.isNullOrEmpty(request.username)) {
+            // Nếu có truyền username, gọi lên keycloak lấy email tương ứng với username
+            val finalFrom = from
+            val finalTo = to
+            authClient.getEmailsByUsername(request.username)
+                .flatMap { email ->
+                    if (!DataUtil.isNullOrEmpty(request.email) && email != request.email) {
+                        Mono.just(mapPaginationResults(emptyList(), request.pageIndex, request.limit, 0L))
+                    } else {
+                        Mono.zip(
+                            transmissionRepoTemplate.searchUserTransmission(email, request.templateMail, finalFrom, finalTo, offset, request.limit, sortQuery).collectList(),
+                            transmissionRepoTemplate.countUserTransmission(email, request.templateMail, finalFrom, finalTo)
+                        ).map { tuple2 ->
+                            mapPaginationResults(tuple2.t1, request.pageIndex, request.limit, tuple2.t2)
+                        }.switchIfEmpty(Mono.just(mapPaginationResults(emptyList(), request.pageIndex, request.limit, 0L)))
+                    }
+                }.switchIfEmpty(Mono.just(mapPaginationResults(emptyList(), request.pageIndex, request.limit, 0L)))
+        } else {
+            // Nếu không truyền username, tìm kiếm theo các điều kiện từ input
+            Mono.zip(
+                transmissionRepoTemplate.searchUserTransmission(request.email, request.templateMail, from, to, offset, request.limit, sortQuery).collectList(),
+                transmissionRepoTemplate.countUserTransmission(request.email, request.templateMail, from, to)
+            ).map { tuple2 ->
+                mapPaginationResults(tuple2.t1, request.pageIndex, request.limit, tuple2.t2)
+            }.switchIfEmpty(Mono.just(mapPaginationResults(emptyList(), request.pageIndex, request.limit, 0L)))
+        }
+    }
+
+    private fun mapPaginationResults(
+        userTransmissionDTOs: List<UserTransmissionDTO>,
+        pageIndex: Int,
+        limit: Int,
+        totalRecords: Long
+    ): DataResponse<UserTransmissionPageDTO> {
+        val pagination = UserTransmissionPageDTO.Pagination.builder()
+            .totalRecords(totalRecords)
+            .pageIndex(pageIndex)
+            .pageSize(limit).build()
+        val pageResponse = UserTransmissionPageDTO.builder()
+            .pagination(pagination)
+            .results(userTransmissionDTOs).build()
+        return DataResponse(Translator.toLocaleVi(SUCCESS), null, pageResponse)
+    }
+
 }

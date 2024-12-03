@@ -195,4 +195,6 @@ public interface OrderService {
      * @return
      */
     Mono<DataResponse> createOrderCts(CreateOrderPaidRequest request);
+
+    Mono<DataResponse> getOrderTransactionFromTo(GetOrderTransactionToRequest request);
 }

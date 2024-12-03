@@ -24,6 +24,7 @@ import com.ezbuy.orderservice.client.*;
 import com.ezbuy.orderservice.client.properties.OrderProperties;
 import com.ezbuy.orderservice.client.utils.OrderClientUtils;
 import com.ezbuy.orderservice.repoTemplate.OrderRepositoryTemplate;
+import com.ezbuy.orderservice.repoTemplate.OrderTransactionRepositoryTemplate;
 import com.ezbuy.orderservice.repository.*;
 import com.ezbuy.orderservice.service.OrderFieldConfigService;
 import com.ezbuy.orderservice.service.OrderService;
@@ -94,6 +95,7 @@ import static com.ezbuy.ordermodel.constants.TemplateConstants.*;
 import static com.ezbuy.paymentmodel.constants.PaymentConstants.OrderType.*;
 import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
 import static com.ezbuy.settingmodel.constants.Constants.UPLOAD_STATUS.ACTIVE;
+import static com.reactify.constants.CommonConstant.FORMAT_DATE_DMY_HYPHEN;
 import static com.reactify.constants.MessageConstant.FAIL;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
@@ -115,9 +117,9 @@ public class OrderServiceImpl implements OrderService {
     private final CartClient cartClient;
     private final CmClient cmClient;
     private final AuthClient authClient;
-//    private final ObjectMapperUtil objectMapperUtil;
+    //    private final ObjectMapperUtil objectMapperUtil;
     private final CmPortalClient cmPortalClient;
-//    private final ProvisioningClient provisioningClient;
+    //    private final ProvisioningClient provisioningClient;
     private final OrderBccsDataRepository orderBccsDataRepository;
     private final OrderRepositoryTemplate orderRepositoryTemplate;
     private final OrderV2Client orderV2Client;
@@ -128,6 +130,7 @@ public class OrderServiceImpl implements OrderService {
     private static final String RETURN_URL_COMBO = "COMBO";
     private final OrderExtRepository orderExtRepository;
     private final PartnerLicenseKeyService partnerLicenseKeyService;
+    private final OrderTransactionRepositoryTemplate orderTransactionRepositoryTemplate;
 
     @Value("${application.data.sync-order.limit}")
     private String limit;
@@ -4195,39 +4198,39 @@ public class OrderServiceImpl implements OrderService {
                                             .collect(Collectors.toList());
                                 }
                                 return Mono.zip(
-                                                settingClient.getAllTelecomService(),
-                                                searchOrderV2(request, preOrderCodeList)
-                                        ).map(telecomOrderDb -> {
-                                            // map data from ws
-                                            List<OrderDetailDTO> orderDetailList = new ArrayList<>();
-                                            for (GetOrderHistoryResponse orderHistory : finalResponse) {
-                                                orderDetailList.add(
-                                                        mappingOrderHistory(orderHistory, telecomOrderDb.getT1()));
-                                            }
-                                            SearchOrderHistoryResponse result = new SearchOrderHistoryResponse();
+                                        settingClient.getAllTelecomService(),
+                                        searchOrderV2(request, preOrderCodeList)
+                                ).map(telecomOrderDb -> {
+                                    // map data from ws
+                                    List<OrderDetailDTO> orderDetailList = new ArrayList<>();
+                                    for (GetOrderHistoryResponse orderHistory : finalResponse) {
+                                        orderDetailList.add(
+                                                mappingOrderHistory(orderHistory, telecomOrderDb.getT1()));
+                                    }
+                                    SearchOrderHistoryResponse result = new SearchOrderHistoryResponse();
 
-                                            // merge order data tu db va ws
-                                            SearchOrderHistoryResponse orderHistoryDb =
-                                                    !DataUtil.isNullOrEmpty(telecomOrderDb
-                                                            .getT2()
-                                                            .getData())
-                                                            ? (SearchOrderHistoryResponse) telecomOrderDb
-                                                            .getT2()
-                                                            .getData()
-                                                            : new SearchOrderHistoryResponse();
-                                            List<OrderDetailDTO> orderDetailDbList = orderHistoryDb.getData();
-                                            // merge danh sach don hang db va danh sach don hang ws
-                                            orderDetailList.addAll(orderDetailDbList);
-                                            orderDetailList.sort(Comparator.comparing(
-                                                    OrderDetailDTO::getCreateAt, (s1, s2) -> DataUtil.safeToString(s2)
-                                                            .compareTo(DataUtil.safeToString(s1))));
-                                            orderDetailList = orderDetailList.stream()
-                                                    .limit(request.getPageSize())
-                                                    .collect(Collectors.toList());
-                                            result.setData(orderDetailList);
+                                    // merge order data tu db va ws
+                                    SearchOrderHistoryResponse orderHistoryDb =
+                                            !DataUtil.isNullOrEmpty(telecomOrderDb
+                                                    .getT2()
+                                                    .getData())
+                                                    ? (SearchOrderHistoryResponse) telecomOrderDb
+                                                    .getT2()
+                                                    .getData()
+                                                    : new SearchOrderHistoryResponse();
+                                    List<OrderDetailDTO> orderDetailDbList = orderHistoryDb.getData();
+                                    // merge danh sach don hang db va danh sach don hang ws
+                                    orderDetailList.addAll(orderDetailDbList);
+                                    orderDetailList.sort(Comparator.comparing(
+                                            OrderDetailDTO::getCreateAt, (s1, s2) -> DataUtil.safeToString(s2)
+                                                    .compareTo(DataUtil.safeToString(s1))));
+                                    orderDetailList = orderDetailList.stream()
+                                            .limit(request.getPageSize())
+                                            .collect(Collectors.toList());
+                                    result.setData(orderDetailList);
 
-                                            return new DataResponse<>(Translator.toLocaleVi(SUCCESS), result);
-                                        });
+                                    return new DataResponse<>(Translator.toLocaleVi(SUCCESS), result);
+                                });
                             });
                 }));
     }
@@ -5010,5 +5013,64 @@ public class OrderServiceImpl implements OrderService {
                                                 });
                                     });
                         }));
+    }
+
+    @Override
+    public Mono<DataResponse> getOrderTransactionFromTo(GetOrderTransactionToRequest request) {
+        LocalDateTime to = null;
+        LocalDateTime from = null;
+        if (!DataUtil.isNullOrEmpty(request.getFrom())) {
+            from = DataUtil.convertDateStrToLocalDateTime(request.getFrom(), FORMAT_DATE_DMY_HYPHEN);
+        }
+        if (!DataUtil.isNullOrEmpty(request.getTo())) {
+            to = DataUtil.convertDateStrToLocalDateTime(request.getTo(), FORMAT_DATE_DMY_HYPHEN);
+        }
+        if (DataUtil.isNullOrEmpty(request.getUsername())) {
+            //lay 30 ngay gan nhat
+            if (to == null) {
+                to = LocalDateTime.now();
+            }
+            if (DataUtil.isNullOrEmpty(request.getFrom())) {
+                from = to.minusDays(30);
+            }
+        }
+
+        int offset = (request.getPageIndex() - 1) * request.getPageSize();
+        String sort = request.getSort();
+        String sortQuery = (sort.contains("-")) ? " order by " + sort.substring(1) + " desc " : " order by " + sort.substring(1);
+        if (!DataUtil.isNullOrEmpty(request.getUsername())) {
+            LocalDateTime finalFrom = from;
+            LocalDateTime finalTo = to;
+            return authClient.getEmailsByUsername(request.getUsername()).flatMap(email -> {
+                //neu email tim theo username khong khop -> tra ve ds trong
+                if (DataUtil.isNullOrEmpty(email)) {
+                    return Mono.just(this.mapPaginationResults(new ArrayList<>(), request.getPageIndex(), request.getLimit(), 0L));
+                } else {
+                    //tim kiem theo email lay duoc
+                    return Mono.zip(orderTransactionRepositoryTemplate.searchOrderTransmission(email, request.getOrderCode(), request.getIdNo(), request.getPhone(), finalFrom, finalTo, offset, request.getLimit(), sortQuery).collectList(),
+                                    orderTransactionRepositoryTemplate.countOrderTransmission(email, request.getOrderCode(), request.getIdNo(), request.getPhone(), finalFrom, finalTo))
+                            .map(tuple2 -> this.mapPaginationResults(tuple2.getT1(), request.getPageIndex(), request.getLimit(), tuple2.getT2()))
+                            .switchIfEmpty(Mono.just(this.mapPaginationResults(new ArrayList<>(), request.getPageIndex(), request.getLimit(), 0L)));
+                }
+            }).switchIfEmpty(Mono.just(this.mapPaginationResults(new ArrayList<>(), request.getPageIndex(), request.getLimit(), 0L)));
+        } else {
+            //tim kiem theo input dau vao
+            return Mono.zip(orderTransactionRepositoryTemplate.searchOrderTransmission(null, request.getOrderCode(), request.getIdNo(), request.getPhone(), from, to, offset, request.getLimit(), sortQuery).collectList(),
+                            orderTransactionRepositoryTemplate.countOrderTransmission(null, request.getOrderCode(), request.getIdNo(), request.getPhone(), from, to))
+                    .map(tuple2 -> this.mapPaginationResults(tuple2.getT1(), request.getPageIndex(), request.getLimit(), tuple2.getT2()))
+                    .switchIfEmpty(Mono.just(this.mapPaginationResults(new ArrayList<>(), request.getPageIndex(), request.getLimit(), 0L)));
+        }
+    }
+
+    private DataResponse mapPaginationResults(List<OrderTransmissionDTO> orderTransmissionDTOS, Integer pageIndex, Integer limit, Long totalRecords) {
+        var pagination = PaginationDTO.builder()
+                .pageSize(limit)
+                .pageIndex(pageIndex)
+                .totalRecords(totalRecords).build();
+        var pageResponse = OrderTransmissionPageDTO.builder()
+                .pagination(pagination)
+                .results(orderTransmissionDTOS)
+                .build();
+        return new DataResponse<>(Translator.toLocaleVi(SUCCESS), null, pageResponse);
     }
 }

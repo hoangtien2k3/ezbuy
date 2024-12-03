@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -287,5 +288,21 @@ public class AuthClientImpl implements AuthClient {
                         err -> log.error("Exception when call auth service /identify/org-trust-status/not-sign: ", err))
                 .onErrorResume(throwable ->
                         Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, AUTH_SERVICE_ERROR)));
+    }
+
+    @Override
+    public Mono<String> getEmailsByUsername(String username) {
+        var payload = new LinkedMultiValueMap<>();
+        payload.set("username", username);
+        return SecurityUtils.getTokenUser().flatMap(token -> {
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + token);
+            return baseRestClient
+                    .get(authClient, "/user/keycloak", headers, payload, String.class)
+                    .map(response -> {
+                        Optional<?> optionalEmail = (Optional<?>) response;
+                        return DataUtil.safeToString(optionalEmail.orElse(null));
+                    });
+        });
     }
 }

@@ -1,6 +1,8 @@
 package com.ezbuy.notificationservice.service
 
+import com.ezbuy.notificationmodel.dto.UserTransmissionPageDTO
 import com.ezbuy.notificationmodel.dto.request.CreateNotificationDTO
+import com.ezbuy.notificationmodel.dto.request.GetTransmissionByEmailAndFromToRequest
 import com.ezbuy.notificationmodel.dto.response.CountNoticeResponseDTO
 import com.ezbuy.notificationmodel.dto.response.NotificationHeader
 import com.ezbuy.notificationmodel.model.NotificationContent
@@ -65,4 +67,12 @@ interface TransmissionService {
      *         NotificationContent objects
      */
     fun getNewNotiWhenOnline(newestNotiTime: String): Mono<DataResponse<List<NotificationContent>>>
+
+    /**
+     * search by email
+     * @param request
+     * @return
+     */
+    fun getTransmissionByEmailAndFromTo(request: GetTransmissionByEmailAndFromToRequest): Mono<DataResponse<UserTransmissionPageDTO>>
+
 }

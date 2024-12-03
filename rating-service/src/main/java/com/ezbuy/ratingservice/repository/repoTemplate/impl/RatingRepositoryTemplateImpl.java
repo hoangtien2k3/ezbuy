@@ -2,7 +2,7 @@ package com.ezbuy.ratingservice.repository.repoTemplate.impl;
 
 import com.ezbuy.ratingmodel.dto.RatingDTO;
 import com.ezbuy.ratingmodel.request.FindRatingRequest;
-import com.ezbuy.ratingservice.repository.BaseRepositoryTemplate;
+import com.ezbuy.ratingservice.repository.repoTemplate.BaseRepositoryTemplate;
 import com.ezbuy.ratingservice.repository.repoTemplate.RatingRepositoryTemplate;
 import com.reactify.util.DataUtil;
 import com.reactify.util.SQLUtils;
@@ -43,7 +43,7 @@ public class RatingRepositoryTemplateImpl extends BaseRepositoryTemplate impleme
     }
 
     private void buildQueryServiceRating(StringBuilder builder, Map<String, Object> params, FindRatingRequest request) {
-        builder.append("select * from sme_rating.rating \n" + "where 1=1");
+        builder.append("select * from rating \n" + "where 1=1");
 
         if (!DataUtil.isNullOrEmpty(request.getRatingTypeCode())) {
             builder.append(" and rating_type_code = :ratingTypeCode ");
@@ -60,7 +60,7 @@ public class RatingRepositoryTemplateImpl extends BaseRepositoryTemplate impleme
             params.put("username", request.getUsername());
         }
         if (!DataUtil.isNullOrEmpty(request.getCustName())) {
-            builder.append(" and cust_name LIKE CONCAT('%',:custName, '%') ");
+            builder.append(" and cust_name LIKE '%' || :custName || '%' ");
             params.put("custName", request.getCustName());
         }
         if (request.getRating() != null && request.getRating() != 0) {
@@ -88,12 +88,12 @@ public class RatingRepositoryTemplateImpl extends BaseRepositoryTemplate impleme
             params.put("targetUser", request.getTargetUser());
         }
         if (request.getFromDate() != null) {
-            builder.append(" and rating_date >= FROM_UNIXTIME(:fromDate) ");
-            params.put("fromDate", request.getFromDate().divide(BigInteger.valueOf(1000)));
+            builder.append(" and rating_date >= to_timestamp(:fromDate / 1000) ");
+            params.put("fromDate", request.getFromDate());
         }
         if (request.getToDate() != null) {
-            builder.append(" and rating_date <= FROM_UNIXTIME(:toDate)  ");
-            params.put("toDate", request.getToDate().divide(BigInteger.valueOf(1000)));
+            builder.append(" and rating_date <= to_timestamp(:toDate / 1000)  ");
+            params.put("toDate", request.getToDate());
         }
     }
 

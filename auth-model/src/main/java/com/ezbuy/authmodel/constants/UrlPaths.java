@@ -58,6 +58,7 @@ public class UrlPaths {
         String TAX_BRANCHES = "tax-branches";
         String ID_TYPES = "id-types";
         String SYNC_SIGN_HASH = "/sync-sign-hash";
+        String KEYCLOAK = "/keycloak";
     }
 
     public interface Organization {

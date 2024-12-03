@@ -3,10 +3,12 @@ server:
   port: 8932
 #logging
 logging:
-#  pattern:
-#    console: "%d{dd/MM/yy HH:mm:ss}|%X{traceId}|%m%n"
+  pattern:
+    console: "%d{dd/MM/yy HH:mm:ss}|%X{traceId}|%m%n"
   level:
     root: INFO
+    io.r2dbc.postgresql.QUERY: DEBUG
+    io.r2dbc.postgresql.PARAM: DEBUG
 
 #keycloak client config
 keycloak:

@@ -121,5 +121,21 @@ interface TransmissionQuery {
         const val updateStateById = """
             UPDATE transmission SET state = :state, update_by = 'system' WHERE id = :id;
         """
+
+        const val findAllUserTransmissionFromTo: String = """
+            SELECT t.id, t.email, t.create_at, t.create_by, t.state, c.template_mail
+            FROM transmission t
+            INNER JOIN notification n ON t.notification_id = n.id
+            INNER JOIN notification_content c ON n.notification_content_id = c.id
+            WHERE 1=1
+        """
+
+        const val findCountUserTransmissionFromTo: String = """
+            SELECT t.id, t.email, t.create_at, t.create_by, t.state, c.template_mail
+            FROM transmission t
+            INNER JOIN notification n ON t.notification_id = n.id
+            INNER JOIN notification_content c ON n.notification_content_id = c.id
+            WHERE 1=1
+        """
     }
 }

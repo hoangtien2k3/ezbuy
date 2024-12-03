@@ -40,6 +40,8 @@ public class UrlPaths {
 
         String GET_LIST_SERVICE_RECORD_PROFILE = "/get-list-service-record";
         String GET_LIST_PRODUCT_OFFERING_RECORD_PROFILE = "/get-list-product-offering-record";
+
+        String GET_ORDER_TRANS = "/get-order-trans";
     }
 
     public interface OrderFieldConfig {

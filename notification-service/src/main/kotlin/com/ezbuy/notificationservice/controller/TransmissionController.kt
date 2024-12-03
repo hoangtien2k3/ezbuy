@@ -1,18 +1,22 @@
 package com.ezbuy.notificationservice.controller
 
-import com.ezbuy.notificationservice.service.TransmissionService
 import com.ezbuy.notificationmodel.common.ConstValue.ControllerPath.TRANSMISSION_PATH
 import com.ezbuy.notificationmodel.common.ConstValue.NotificationConstant.ANNOUNCEMENT
+import com.ezbuy.notificationmodel.dto.UserTransmissionPageDTO
 import com.ezbuy.notificationmodel.dto.request.CreateNotificationDTO
+import com.ezbuy.notificationmodel.dto.request.GetTransmissionByEmailAndFromToRequest
 import com.ezbuy.notificationmodel.dto.response.CountNoticeResponseDTO
 import com.ezbuy.notificationmodel.dto.response.NotificationHeader
 import com.ezbuy.notificationmodel.model.NotificationContent
+import com.ezbuy.notificationservice.service.TransmissionService
 import com.reactify.model.response.DataResponse
+import com.reactify.util.DataUtil
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Size
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
+import kotlin.math.max
 
 @RestController
 @RequestMapping(TRANSMISSION_PATH)
@@ -62,4 +66,31 @@ class TransmissionController(
     ): Mono<DataResponse<List<NotificationContent>>> {
         return transmissionService.getNewNotiWhenOnline(newestNotiTime)
     }
+
+    @PreAuthorize("hasAnyAuthority('admin','system')")
+    @GetMapping("/get-trans")
+    fun getUserTransmission(
+        @RequestParam(required = false) email: String?,
+        @RequestParam(required = false) username: String?,
+        @RequestParam(required = false, name = "template_mail") templateMail: String?,
+        @RequestParam(required = false) from: String?,
+        @RequestParam(required = false) to: String?,
+        @RequestParam(required = false, defaultValue = "1") pageIndex: Int,
+        @RequestParam(required = false, defaultValue = "10") pageSize: Int?,
+        @RequestParam(required = false, defaultValue = "-create_at") sort: String?
+    ): Mono<DataResponse<UserTransmissionPageDTO>> {
+        var pageIndex = pageIndex
+        pageIndex = max(pageIndex.toDouble(), 1.0).toInt()
+        val request = GetTransmissionByEmailAndFromToRequest.builder()
+            .email(DataUtil.safeTrim(email)).username(DataUtil.safeTrim(username))
+            .templateMail(DataUtil.safeTrim(templateMail))
+            .from(from).to(to)
+            .pageIndex(pageIndex)
+            .pageSize(pageSize)
+            .limit(pageSize)
+            .sort(sort)
+            .build()
+        return transmissionService.getTransmissionByEmailAndFromTo(request)
+    }
+
 }

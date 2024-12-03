@@ -27,7 +27,7 @@ public class RatingHistory extends EntityBase implements Persistable<String> {
     private String contentAf;
     private LocalDateTime approveAt;
     private String approveBy;
-    private Rating.RatingState state;
+    private String state;
     private Integer status;
 
     @Transient

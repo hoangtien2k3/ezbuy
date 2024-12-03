@@ -8,17 +8,25 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface RatingRepository extends R2dbcRepository<Rating, String> {
-    @Query(
-            value =
-                    " select * from sme_rating.rating where rating_type_code = 'service' and target_id = :serviceAlias and status = 1 ")
+
+    // Lấy danh sách các đánh giá dịch vụ
+    @Query("SELECT * FROM rating WHERE rating_type_code = 'service' AND target_id = :serviceAlias AND status = 1")
     Flux<Rating> getListRatingService(String serviceAlias);
 
-    @Query("select * from sme_rating.rating where id = :id")
+    // Lấy thông tin đánh giá theo ID
+    @Query("SELECT * FROM rating WHERE id = :id")
     Mono<Rating> getById(String ratingId);
 
-    @Query(
-            value =
-                    "update sme_rating.rating set target = :ratingId, telecom_service_id = :telecomServiceId, product_id = :productId, order_id = :orderId, username = :username, cust_name = :custName, rating = :rating, fix_rating = :fixRating, content = :content, fix_content = :fixContent, rating_date = :ratingDate, tag = :tag, fix_tag = :fixTag, has_image = :hasImage, has_video = :hasVideo, rating_status = :ratingStatus, state = :state, display_status = :displayStatus, sum_rate_status = :sumRateStatus, target = :target, update_by = :user, update_at = current_timestamp() where id = :id")
+    // Cập nhật thông tin đánh giá
+    @Query("""
+            UPDATE rating
+            SET target_id = :ratingId, telecom_service_id = :telecomServiceId, product_id = :productId, order_id = :orderId,
+                username = :username, cust_name = :custName, rating = :rating, fix_rating = :fixRating, content = :content, 
+                fix_content = :fixContent, rating_date = :ratingDate, tag = :tag, fix_tag = :fixTag, has_image = :hasImage, 
+                has_video = :hasVideo, rating_status = :ratingStatus, state = :state, display_status = :displayStatus, 
+                sum_rate_status = :sumRateStatus, target = :target, update_by = :user, update_at = current_timestamp()
+            WHERE id = :id
+            """)
     Mono<Rating> updateRating(
             String id,
             String ratingId,
@@ -43,28 +51,44 @@ public interface RatingRepository extends R2dbcRepository<Rating, String> {
             String target,
             String user);
 
-    @Query("select * from sme_rating.rating where telecom_service_id = :telecomServiceId")
+    // Lấy đánh giá theo Telecom Service ID
+    @Query("SELECT * FROM rating WHERE telecom_service_id = :telecomServiceId")
     Mono<Rating> getByTelecomServiceId(String telecomServiceId);
 
-    @Query("select * from sme_rating.rating where product_id = :productId")
+    // Lấy đánh giá theo Product ID
+    @Query("SELECT * FROM rating WHERE product_id = :productId")
     Mono<Rating> getByProductId(String productId);
 
-    @Query("select * from sme_rating.rating where order_id = :orderId")
+    // Lấy đánh giá theo Order ID
+    @Query("SELECT * FROM rating WHERE order_id = :orderId")
     Mono<Rating> getByOrderId(String orderId);
 
-    @Query("select * from sme_rating.rating where status = 1 ORDER BY create_at desc")
+    // Lấy danh sách đánh giá dịch vụ đang hoạt động
+    @Query("SELECT * FROM rating WHERE status = 1 ORDER BY create_at DESC")
     Flux<Rating> getAllTelecomServiceActive();
 
-    @Query("select current_timestamp")
+    // Lấy thời gian hệ thống
+    @Query("SELECT current_timestamp")
     Mono<LocalDateTime> getSysDate();
 
-    @Query(
-            value =
-                    " select * from sme_rating.rating where rating_type_code = 'SERVICE' and target_id = :serviceAlias and status = 1 and display_status = 1 and  (( :rating = 0.0 ) or ( rating = :rating )) ORDER BY rating_date desc LIMIT :pageSize OFFSET :index ")
+    // Lấy danh sách đánh giá dịch vụ có phân trang
+    @Query("""
+            SELECT * FROM rating 
+            WHERE rating_type_code = 'SERVICE' AND target_id = :serviceAlias AND status = 1 
+            AND display_status = 1 
+            AND ((:rating = 0.0) OR (rating = :rating)) 
+            ORDER BY rating_date DESC 
+            LIMIT :pageSize OFFSET :index
+            """)
     Flux<Rating> getListRatingServicePage(String serviceAlias, Integer pageSize, Integer index, Float rating);
 
-    @Query(
-            value =
-                    " select count(1) from sme_rating.rating where rating_type_code = 'SERVICE' and target_id = :serviceAlias and status = 1 and display_status = 1 and  (( :rating = 0.0 ) or ( rating = :rating )) ")
+    // Đếm số lượng đánh giá dịch vụ
+    @Query("""
+            SELECT COUNT(1) 
+            FROM rating 
+            WHERE rating_type_code = 'SERVICE' AND target_id = :serviceAlias AND status = 1 
+            AND display_status = 1 
+            AND ((:rating = 0.0) OR (rating = :rating))
+            """)
     Mono<Long> getCountRatingService(String serviceAlias, Float rating);
 }

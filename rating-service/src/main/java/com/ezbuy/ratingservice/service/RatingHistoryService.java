@@ -15,5 +15,5 @@ public interface RatingHistoryService {
             String contentAf,
             String approveBy,
             LocalDateTime approveAt,
-            Rating.RatingState state);
+            String state);
 }

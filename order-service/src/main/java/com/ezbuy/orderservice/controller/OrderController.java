@@ -10,9 +10,11 @@ import com.ezbuy.ordermodel.dto.request.*;
 import com.ezbuy.ordermodel.dto.response.GetOrderReportResponse;
 import com.ezbuy.orderservice.service.OrderService;
 import com.reactify.model.response.DataResponse;
+import com.reactify.util.DataUtil;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -247,5 +249,34 @@ public class OrderController {
     @PreAuthorize("hasAnyAuthority('user')")
     public Mono<ResponseEntity<DataResponse>> createOrderCts(@RequestBody CreateOrderPaidRequest request) {
         return orderService.createOrderCts(request).map(rs -> ResponseEntity.ok(rs));
+    }
+
+    @GetMapping(UrlPaths.Order.GET_ORDER_TRANS)
+    @PreAuthorize("hasAnyAuthority('admin','system')")
+    public Mono<ResponseEntity<DataResponse>> getOrderTransaction(
+            @RequestParam(required = false) String orderCode,
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String idNo,
+            @RequestParam(required = false) String phone,
+            @RequestParam(required = false) String from,
+            @RequestParam(required = false) String to,
+            @RequestParam(required = false, defaultValue = "1") Integer pageIndex,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "-create_at") String sort
+    ) {
+        pageIndex = Math.max(pageIndex, 1);
+        var request = GetOrderTransactionToRequest.builder()
+                .orderCode(DataUtil.safeTrim(orderCode))
+                .username(DataUtil.safeTrim(username))
+                .idNo(DataUtil.safeTrim(idNo))
+                .phone(DataUtil.safeTrim(phone))
+                .from(from).to(to)
+                .pageIndex(pageIndex)
+                .pageSize(pageSize)
+                .limit(pageSize)
+                .sort(sort)
+                .build();
+        return orderService.getOrderTransactionFromTo(request)
+                .map(ResponseEntity::ok);
     }
 }
