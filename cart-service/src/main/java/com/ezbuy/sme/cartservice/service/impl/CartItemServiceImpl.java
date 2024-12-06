@@ -53,7 +53,6 @@ public class CartItemServiceImpl implements CartItemService {
         String messageSuccess = SUCCESS;
         String cartItemId = DataUtil.safeTrim(id);
         if (DataUtil.isNullOrEmpty(cartItemId)) {
-
             return SecurityUtils.getCurrentUser().flatMap(tokenUser -> cartRepository
                     .findByUserId(tokenUser.getId())
                     .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, message)))
@@ -97,7 +96,6 @@ public class CartItemServiceImpl implements CartItemService {
     @Override
     public Mono<DataResponse<CartItem>> addCartItem(Product product) {
         listProductIdValidate(product);
-        // find cart by user token
         return SecurityUtils.getCurrentUser().flatMap(tokenUser -> cartRepository
                 .findByUserIdFlux(tokenUser.getId())
                 .collectList()
@@ -130,7 +128,6 @@ public class CartItemServiceImpl implements CartItemService {
                 .createBy(user)
                 .updateBy(user)
                 .build();
-
         return cartRepository.save(cartBuild).flatMap(saveCart -> {
             for (String p : product.getListProductId()) {
                 if (DataUtil.isNullOrEmpty(p)) {
@@ -141,7 +138,6 @@ public class CartItemServiceImpl implements CartItemService {
                         productIdTrim, product.getTelecomServiceId(), product.getTelecomServiceAlias(), cartId, user);
                 cartItemList.add(cartItem);
             }
-
             AppUtils.runHiddenStream(cartItemRepository.saveAll(cartItemList).collectList());
             return Mono.just(new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), null));
         });
@@ -354,7 +350,6 @@ public class CartItemServiceImpl implements CartItemService {
             PaginationDTO pagination) {
         // filter list productId
         List<String> productId = itemList.stream().map(CartItem::getProductId).collect(Collectors.toList());
-
         return productClient
                 .getProductInfo(productId)
                 .flatMap(productInfoData -> {

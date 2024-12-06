@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-// request de lay token Sync
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -10,6 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class GetTwoWayPasswordResponse {
-
     private String password;
 }

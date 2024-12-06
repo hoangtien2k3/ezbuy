@@ -4,7 +4,6 @@ import com.reactify.util.Translator;
 import java.util.Map;
 
 public interface ActionLogType {
-
     String LOGIN = "LOGIN";
     String CHANGE_PASSWORD = "CHANGE_PASSWORD";
     String FORGOT_PASSWORD = "FORGOT_PASSWORD";

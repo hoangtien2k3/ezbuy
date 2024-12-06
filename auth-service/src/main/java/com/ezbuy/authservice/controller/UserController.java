@@ -44,8 +44,7 @@ public class UserController {
 
     @PostMapping(UrlPaths.User.UPDATE_USER)
     @PreAuthorize("hasAnyAuthority('user')")
-    public Mono<DataResponse<UserProfile>> updateUser(@Valid @RequestBody
-                                                      UpdateUserRequest user) {
+    public Mono<DataResponse<UserProfile>> updateUser(@Valid @RequestBody UpdateUserRequest user) {
         return userService.update(user)
                 .map(rs -> new DataResponse<>(Translator.toLocaleVi("user.update.success"),
                         rs));
@@ -53,8 +52,7 @@ public class UserController {
 
     @GetMapping(UrlPaths.User.CONTACTS)
     @PreAuthorize("hasAnyAuthority('system')")
-    public Mono<ResponseEntity<DataResponse>> getUserContacts(@RequestBody
-                                                              List<UUID> ids) {
+    public Mono<ResponseEntity<DataResponse>> getUserContacts(@RequestBody List<UUID> ids) {
         return userService.getUserContacts(ids).collectList()
                 .map(rs -> ResponseEntity.ok(new
                         DataResponse<>(Translator.toLocaleVi("success"), rs)));
@@ -62,38 +60,21 @@ public class UserController {
 
     @GetMapping(UrlPaths.User.GET_USER_BY_ID)
     @PreAuthorize("hasAnyAuthority('system')")
-    public Mono<ResponseEntity<DataResponse>> getUserById(@PathVariable String
-                                                                  id) {
+    public Mono<ResponseEntity<DataResponse>> getUserById(@PathVariable String id) {
         return userService.getUserById(id)
                 .map(rs -> ResponseEntity.ok(new DataResponse<>(MessageConstant.SUCCESS,
                         rs)));
     }
 
-//    @GetMapping(UrlPaths.User.GET_CREDENTIALS)
-//    @PreAuthorize("hasAnyAuthority('user')")
-//    public Mono<ResponseEntity<DataResponse>> getCredentialsList(String idNo) {
-//        return userService.getCredentialsList(idNo)
-//                .map(rs -> ResponseEntity.ok(new DataResponse<>(MessageConstant.SUCCESS,
-//                        rs)));
-//    }
-//
-//    @PostMapping(UrlPaths.User.SIGN_HASH)
-//    @PreAuthorize("hasAnyAuthority('user')")
-//    public Mono<DataResponse> signHash(@RequestBody SignHashRequest request) {
-//        return userService.sighHash(request);
-//    }
-
     @PreAuthorize("hasAnyAuthority('admin')")
     @GetMapping(UrlPaths.User.USER_PROFILES)
-    public Mono<ResponseEntity<DataResponse>> getUserProfiles(QueryUserRequest
-                                                                      request) {
+    public Mono<ResponseEntity<DataResponse>> getUserProfiles(QueryUserRequest request) {
         return userService.queryUserProfile(request)
                 .map(rs -> ResponseEntity.ok(new DataResponse(MessageConstant.SUCCESS, rs)));
     }
 
     @GetMapping(UrlPaths.User.EXPORT_PROFILES)
-    public Mono<ResponseEntity<Resource>> exportUserProfiles(QueryUserRequest
-                                                                     request) {
+    public Mono<ResponseEntity<Resource>> exportUserProfiles(QueryUserRequest request) {
         return userService.exportUser(request)
                 .map(resource -> ResponseEntity.ok()
                         .contentType(MediaType.APPLICATION_OCTET_STREAM)
@@ -104,17 +85,10 @@ public class UserController {
     }
 
     @GetMapping(UrlPaths.User.GET_PROFILES)
-    public Mono<ResponseEntity<DataResponse>> getUserProfile(@PathVariable("id")
-                                                             String userId) {
+    public Mono<ResponseEntity<DataResponse>> getUserProfile(@PathVariable("id") String userId) {
         return userService.getUserProfile(userId)
                 .map(rs -> ResponseEntity.ok(new DataResponse(MessageConstant.SUCCESS, rs)));
     }
-
-//    @GetMapping(UrlPaths.User.ID_TYPES)
-//    public Mono<ResponseEntity<DataResponse>> getIdTypes() {
-//        return userService.getIdTypes().collectList()
-//                .map(rs -> ResponseEntity.ok(new DataResponse(MessageConstant.SUCCESS, rs)));
-//    }
 
     @GetMapping(UrlPaths.User.KEYCLOAK)
     @PreAuthorize("hasAnyAuthority('system', 'admin')")

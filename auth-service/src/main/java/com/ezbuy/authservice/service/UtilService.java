@@ -8,6 +8,5 @@ import reactor.core.publisher.Mono;
  * Interface for utility services in the application.
  */
 public interface UtilService {
-
     Mono<DataResponse<Object>> jobAddRoleAdminForOldUser(JobAddRoleAdminForOldUserRequest request);
 }

@@ -1,4 +1,4 @@
-FROM  openjdk:11.0.12-oracle as builder
+FROM amazoncorretto:21.0.3 as builder
 WORKDIR application
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} application.jar
@@ -7,7 +7,7 @@ FROM  openjdk:11.0.12-oracle
 LABEL com.ezbuy.ecom.order.version="1.0.0"
 LABEL version="1.0.0"
 LABEL description="cart service"
-LABEL author="Viettel Company"
+LABEL author="Ezbuy Platform"
 WORKDIR application
 
 # additional timezone +7

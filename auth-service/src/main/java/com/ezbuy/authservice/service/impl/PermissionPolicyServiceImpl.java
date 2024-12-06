@@ -108,34 +108,28 @@ public class PermissionPolicyServiceImpl implements PermissionPolicyService {
             Mono.error(new BusinessException(
                     HttpStatus.BAD_REQUEST.toString(), MessageUtils.getMessage("input.not.null", "Tên nhóm quyền")));
         }
-
         if (DataUtil.isNullOrEmpty(request.getGroupPermissionCode())) {
             Mono.error(new BusinessException(
                     HttpStatus.BAD_REQUEST.toString(), MessageUtils.getMessage("input.not.null", "Mã nhóm quyền")));
         }
-
         if (!request.getGroupPermissionCode().matches(PERMISSION_PARTTERN)) {
             Mono.error(new BusinessException(
                     HttpStatus.BAD_REQUEST.toString(),
                     MessageUtils.getMessage("input.invalid.format", "Mã nhóm quyền")));
         }
-
         if (DataUtil.isNullOrEmpty(request.getState())) {
             Mono.error(new BusinessException(
                     HttpStatus.BAD_REQUEST.toString(), MessageUtils.getMessage("input.not.null", "Loại nhóm quyền")));
         }
-
         if (!State.statusOf(request.getState())) {
             Mono.error(new BusinessException(
                     HttpStatus.BAD_REQUEST.toString(), MessageUtils.getMessage("input.invalid", "Loại nhóm quyền")));
         }
-
         if (request.getDescription().length() > 500) {
             Mono.error(new BusinessException(
                     HttpStatus.BAD_REQUEST.toString(),
                     MessageUtils.getMessage("input.length.exceed", "Description", "500")));
         }
-
         addOrUpdateIndividualPermission(request);
         return Mono.just(DataResponse.success(true));
     }
@@ -176,7 +170,6 @@ public class PermissionPolicyServiceImpl implements PermissionPolicyService {
             Mono.error(new BusinessException(
                     HttpStatus.BAD_REQUEST.toString(), MessageUtils.getMessage("input.invalid", "Action")));
         }
-
         PermissionPolicy permissionPolicy = PermissionPolicy.builder()
                 .id(
                         "CREATE".equals(request.getAction())

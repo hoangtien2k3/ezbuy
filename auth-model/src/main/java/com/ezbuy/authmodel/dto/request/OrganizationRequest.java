@@ -12,7 +12,6 @@ import org.hibernate.validator.constraints.Length;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrganizationRequest {
-
     @Length(max = 255, message = "organization.name.over.length")
     @NotEmpty(message = "organization.name.not.empty")
     private String name;

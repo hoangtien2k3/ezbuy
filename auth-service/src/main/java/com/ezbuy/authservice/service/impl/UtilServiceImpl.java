@@ -56,8 +56,7 @@ public class UtilServiceImpl implements UtilService {
                                 roleRepresentation.setComposite(Boolean.FALSE);
                                 roleRepresentation.setClientRole(Boolean.TRUE);
                                 roleRepresentation.setContainerId(request.getClientId()); // clientId of dich vu
-                                return keyCloakClient
-                                        .addRoleForUserInClientId(
+                                return keyCloakClient.addRoleForUserInClientId(
                                                 request.getClientId(),
                                                 token,
                                                 roleRepresentation,
@@ -70,8 +69,7 @@ public class UtilServiceImpl implements UtilService {
                                             Individual individual = new Individual();
                                             individual.setId(orgIndIdDTO.getIndividualId());
                                             // check exist in HUB
-                                            return indOrgPermissionRepo
-                                                    .checkExistRoleInHub(
+                                            return indOrgPermissionRepo.checkExistRoleInHub(
                                                             orgIndIdDTO.getIndividualId(),
                                                             request.getRoleName(),
                                                             request.getClientId(),
@@ -84,10 +82,7 @@ public class UtilServiceImpl implements UtilService {
                                                             return Mono.just(true);
                                                         }
                                                         // save 2 table
-                                                        return createEmployeePermission(
-                                                                employeePermissionRequests,
-                                                                individual,
-                                                                orgIndIdDTO.getOrgId());
+                                                        return createEmployeePermission(employeePermissionRequests, individual, orgIndIdDTO.getOrgId());
                                                     });
                                         });
                             })
@@ -117,53 +112,46 @@ public class UtilServiceImpl implements UtilService {
     public Mono<List<PermissionPolicy>> createEmployeePermission(
             List<EmployeePermissionRequest> employeeUpdateRequest, Individual individual, String organizationId) {
         return Flux.fromIterable(employeeUpdateRequest)
-                .flatMap(employeePermissionRequest -> {
-
-                    // checkExist bang individual_organization_permission by clientId, individual,
-                    // organizationId
-                    // neu da ton tai o bang individual_organization_permission => lay luon id
-                    return indOrgPermissionRepo
-                            .getIndOrgPerIdByClientIdAndIndId(
-                                    employeePermissionRequest.getClientId(), individual.getId())
-                            .collectList()
-                            .flatMap(rs -> {
-                                TokenUser tokenUser = new TokenUser();
-                                tokenUser.setUsername("system");
-                                IndividualOrganizationPermissions individualOrganizationPermissions =
-                                        new IndividualOrganizationPermissions();
-                                if (rs.isEmpty()) {
-                                    individualOrganizationPermissions.setId(String.valueOf(UUID.randomUUID()));
-                                    individualOrganizationPermissions.setIndividualId(individual.getId());
-                                    individualOrganizationPermissions.setOrganizationId(organizationId);
-                                    individualOrganizationPermissions.setClientId(
-                                            employeePermissionRequest.getClientId());
-                                    individualOrganizationPermissions.setCreateAt(LocalDateTime.now());
-                                    individualOrganizationPermissions.setUpdateAt(LocalDateTime.now());
-                                    individualOrganizationPermissions.setCreateBy("system");
-                                    individualOrganizationPermissions.setUpdateBy("system");
-                                    individualOrganizationPermissions.setStatus(Constants.STATUS.ACTIVE);
-                                    return individualOrgPermissionRepo
-                                            .save(individualOrganizationPermissions)
-                                            .flatMap(data -> permissionPolicyService.createPermissionPolicy(
-                                                    Constants.PERMISSION_TYPE.ROLE,
-                                                    employeePermissionRequest.getRoleId(),
-                                                    employeePermissionRequest.getRoleCode(),
-                                                    employeePermissionRequest.getPolicyId(),
-                                                    individualOrganizationPermissions,
-                                                    LocalDateTime.now(),
-                                                    tokenUser));
-                                }
-                                individualOrganizationPermissions.setId(rs.getFirst());
-                                return permissionPolicyService.createPermissionPolicy(
-                                        Constants.PERMISSION_TYPE.ROLE,
-                                        employeePermissionRequest.getRoleId(),
-                                        employeePermissionRequest.getRoleCode(),
-                                        employeePermissionRequest.getPolicyId(),
-                                        individualOrganizationPermissions,
-                                        LocalDateTime.now(),
-                                        tokenUser);
-                            });
-                })
+                .flatMap(employeePermissionRequest -> indOrgPermissionRepo
+                        .getIndOrgPerIdByClientIdAndIndId(
+                                employeePermissionRequest.getClientId(), individual.getId())
+                        .collectList()
+                        .flatMap(rs -> {
+                            TokenUser tokenUser = new TokenUser();
+                            tokenUser.setUsername("system");
+                            IndividualOrganizationPermissions individualOrganizationPermissions =
+                                    new IndividualOrganizationPermissions();
+                            if (rs.isEmpty()) {
+                                individualOrganizationPermissions.setId(String.valueOf(UUID.randomUUID()));
+                                individualOrganizationPermissions.setIndividualId(individual.getId());
+                                individualOrganizationPermissions.setOrganizationId(organizationId);
+                                individualOrganizationPermissions.setClientId(employeePermissionRequest.getClientId());
+                                individualOrganizationPermissions.setCreateAt(LocalDateTime.now());
+                                individualOrganizationPermissions.setUpdateAt(LocalDateTime.now());
+                                individualOrganizationPermissions.setCreateBy("system");
+                                individualOrganizationPermissions.setUpdateBy("system");
+                                individualOrganizationPermissions.setStatus(Constants.STATUS.ACTIVE);
+                                return individualOrgPermissionRepo
+                                        .save(individualOrganizationPermissions)
+                                        .flatMap(data -> permissionPolicyService.createPermissionPolicy(
+                                                Constants.PERMISSION_TYPE.ROLE,
+                                                employeePermissionRequest.getRoleId(),
+                                                employeePermissionRequest.getRoleCode(),
+                                                employeePermissionRequest.getPolicyId(),
+                                                individualOrganizationPermissions,
+                                                LocalDateTime.now(),
+                                                tokenUser));
+                            }
+                            individualOrganizationPermissions.setId(rs.getFirst());
+                            return permissionPolicyService.createPermissionPolicy(
+                                    Constants.PERMISSION_TYPE.ROLE,
+                                    employeePermissionRequest.getRoleId(),
+                                    employeePermissionRequest.getRoleCode(),
+                                    employeePermissionRequest.getPolicyId(),
+                                    individualOrganizationPermissions,
+                                    LocalDateTime.now(),
+                                    tokenUser);
+                        }))
                 .collectList();
     }
 }

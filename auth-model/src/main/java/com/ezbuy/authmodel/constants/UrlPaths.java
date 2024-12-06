@@ -30,8 +30,6 @@ public class UrlPaths {
         String RECEIVE_SIGN_RESULT = "/receive-sign-result"; // API lay ket qua chuyen ky tu vcontract
         String GET_INDIVIDUAL_BY_USERNAME = "/username";
         String VIEW_BUSINESS_AUTH_CONTRACT = "/view-business-auth-contract"; // API lay file xac minh doanh nghiep da ky
-        // dang base64 tu vcontract de
-        // view len giao dien Hub
 
         String BLOCK_LOGIN = "/block-partner-license-key-login";
 

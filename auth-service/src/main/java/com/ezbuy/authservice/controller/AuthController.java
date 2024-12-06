@@ -160,5 +160,4 @@ public class AuthController {
             @Valid @RequestBody ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange) {
         return authService.generateOtp(confirmOTPRequest, serverWebExchange);
     }
-
 }

@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import org.springframework.stereotype.Repository;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
@@ -15,10 +14,4 @@ public interface UserRepository extends R2dbcRepository<UserProfile, String>, Us
 
     @Query(value = "Select now()")
     Mono<LocalDateTime> currentTimeDb();
-
-    @Query(value = "select * from user_profile where trust_status = :status")
-    Flux<UserProfile> findByTrustStatus(Integer status);
-
-    @Query(value = "select tax_code from user_profile where trust_status = 1")
-    Flux<String> findUserTrusted();
 }

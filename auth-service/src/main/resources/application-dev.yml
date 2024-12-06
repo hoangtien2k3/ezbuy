@@ -232,7 +232,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: "*"  # Bật tất cả các endpoint
+        include: "*"
   endpoint:
     health:
-      show-details: always  # Hiển thị chi tiết health status
+      show-details: always

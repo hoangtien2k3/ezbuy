@@ -1,4 +1,4 @@
-FROM  openjdk:11.0.12-oracle as builder
+FROM amazoncorretto:21.0.3 as builder
 WORKDIR application
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} application.jar

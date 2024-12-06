@@ -56,10 +56,6 @@ public class UserServiceImpl implements UserService {
     private final SettingClient settingClient;
     private final IdentifyService identifyService;
     private final MinioUtils minioUtils;
-//    private final TaxBranchRepository taxBranchRepository;
-//    private final IdTypeRepository idTypeRepository;
-//    private final MySignProperties mySignProperties;
-//    private final ProductClient productClient;
 
     @Value("${keycloak.realm}")
     public String realm;
@@ -86,8 +82,7 @@ public class UserServiceImpl implements UserService {
         return
                 Mono.zip(SecurityUtils.getCurrentUser(), userRepository.currentTimeDb())
                         .flatMap(currentUser -> userRepository.findById(currentUser.getT1().getId())
-                                .map(userProfile ->
-                                {
+                                .map(userProfile -> {
                                     userProfile.setCompanyName(DataUtil.safeTrim(u.getCompanyName()));
                                     userProfile.setTaxCode(DataUtil.safeTrim(u.getTaxCode()));
                                     userProfile.setTaxDepartment(DataUtil.safeTrim(u.getTaxDepartment()));
@@ -101,7 +96,8 @@ public class UserServiceImpl implements UserService {
                                     userProfile.setUpdateAt(currentUser.getT2());
                                     userProfile.setUpdateBy(currentUser.getT1().getUsername());
                                     return userProfile;
-                                }).flatMap(userRepository::save))
+                                })
+                                .flatMap(userRepository::save))
                         .switchIfEmpty(
                                 Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "query.user.not.found")));
 

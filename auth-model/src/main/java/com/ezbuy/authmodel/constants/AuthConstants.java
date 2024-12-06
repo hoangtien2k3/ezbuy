@@ -58,77 +58,9 @@ public final class AuthConstants {
         public static final String ORGANIZATION_UNIT = "ORGANIZATION_UNIT";
     }
 
-    public static final class UserAttributes {
-        public static final String INDIVIDUAL_ID = "individual_id";
-    }
-
-    public static final class OrganizationState {
-        public static final Integer ACTIVE = 1;
-        public static final Integer INACTIVE = 0;
-        public static final List<Integer> ALLOW_ORGANIZATION_STATE = List.of(INACTIVE, ACTIVE);
-    }
-
     public static final class IDType {
         public static final String MST = "MST";
         public static final String GPKD = "GPKD";
-    }
-
-    public static final class SystemPolicy {
-        public static final String SYSTEM_FULL_PERMISSION = "SYSTEM_ALL_PERMISSION";
-    }
-
-    public static final class ConfigSync {
-        public static final Integer ALLOW = 1;
-        public static final String ORGANIZATION_TYPE = "organization";
-        public static final String INDIVIDUAL_TYPE = "individual";
-        public static final String ORGANIZATION_UNIT_TYPE = "organizationUnit";
-        public static final String POLICY = "policy";
-        public static final String PASSWORD_TYPE = "password";
-        public static final String PREFIX_BEAN = "syncDataService-";
-    }
-
-    public static final class HashedPasswordType {
-        public static final String HUB_SME = "PRIVATE_HUB";
-        public static final String KEYCLOAK = "KEYCLOAK";
-    }
-
-    public static final class TenantIdentify {
-        public static final Integer PRIMARY_IDENTIFY = 1;
-        public static final String ID_TYPE_MST = "MST";
-    }
-
-    public static final class SyncServiceType {
-        public static final String TYPE_SPECIFIC = "SPECIFIC";
-        public static final String TYPE_ALL_BY_ORG = "ALL_BY_ORG";
-    }
-
-    public static final class SyncObjectType {
-        public static final String TYPE_SPECIFIC = "SPECIFIC";
-        public static final String TYPE_ALL = "ALL";
-        public static final String EVENT = "EVENT";
-        public static final String FIRST_CONNECTED = "FIRST_CONNECTED";
-    }
-
-    public static final class DataSyncType {
-        public static final String ORGANIZATION_TYPE = "ORGANIZATION";
-        public static final String INDIVIDUAL_TYPE = "INDIVIDUAL";
-        public static final String ORGANIZATION_UNIT_TYPE = "ORGANIZATION_UNIT";
-        public static final String POLICY_TYPE = "POLICY";
-        public static final String PASSWORD_TYPE = "PASSWORD";
-        public static final String CHANGE_PASSWORD_TYPE = "CHANGE_PASSWORD";
-    }
-
-    public static final class OrganizationUnitCodeDefault {
-        public static final String PB1 = "PB1";
-    }
-
-    public static final class UnitTypeCode {
-        public static final String DEPARTMENT = "DEPARTMENT";
-    }
-
-    public static final class GroupStatus {
-        public static final String ACTIVE = "1";
-        public static final String INACTIVE = "0";
     }
 
     public static final class ALGORITHM {
@@ -140,7 +72,7 @@ public final class AuthConstants {
     }
 
     public static final class System {
-        public static final String SME_HUB = "SME_HUB";
+        public static final String EZBUY = "EZBUY";
     }
 
     public static final class Proxy {
@@ -157,7 +89,6 @@ public final class AuthConstants {
     }
 
     public static final class ClientName {
-        public static final String HUB_SME = "web-client";
         public static final String EZBUY_CLIENT = "ezbuy-client";
     }
 
@@ -168,24 +99,9 @@ public final class AuthConstants {
         public static final String PARENT_ID = "parent_id";
     }
 
-    public interface ExtraParams {
-        String SERVICE = "service";
-        String HASHED_PASSWORD_TYPE = "hash_password_type";
-    }
-
-    public static final String SERVICE_ALIAS = "HUB_AUTH_INTERNAL";
-
     public enum SyncState {
         WAIT,
         PUSHED
-    }
-
-    public static class TelecomServiceIdString {
-        public static final String CA = "7";
-        public static final String EASY_BOOK = "208";
-        public static final String SINVOICE = "37";
-        public static final String VCONTRACT = "101";
-        public static final String VBHXH = "151";
     }
 
     public static class TelecomServiceAlias {
@@ -193,39 +109,8 @@ public final class AuthConstants {
         public static final String VCONTRACT = "VCONTRACT";
     }
 
-    public interface ALIAS_RULE {
-        List<String> ALIAS_NOT_SYNC_POLICY_FIRST = List.of("SINVOICE", "VCONTRACT", "SCONTRACT"); // lstAlias not sync
-        // policy for first
-    }
-
     public interface OPTION_SET {
         String OPTION_SET_CODE = "optionSetCode";
         String OPTION_SET_VALUE_CODE = "optionSetValueCode";
-    }
-
-    public interface VCONTRACT {
-        public static final String IS_NOT_HUMAN = "true";
-        public static final String CP_CODE_CM_SYS = "CM_SYS";
-        public static final String CANCELLED = "Cancelled";
-        public static final String COMPLETED = "Completed";
-        public static final String REJECTED = "Rejected";
-        public static final String CP_CODE_SME_HUB_SYS = "SME_HUB_SYS";
-    }
-
-    public interface TENANT_FILE {
-        public static final String PYCXTTT = "PYCXTTT";
-    }
-
-    // cau hinh bang sme_setting.setting
-    public static final class Setting {
-        public static final String FLAG_CALL_CRM = "FLAG_CALL_CRM"; // co ON/OFF goi CRM
-        public static final String ON = "ON";
-        public static final String OFF = "OFF";
-    }
-
-    // state bang sme_setting.setting
-    public static final class OrgBusinessInfoState {
-        public static final String NEW = "new";
-        public static final String UPDATED = "updated";
     }
 }
