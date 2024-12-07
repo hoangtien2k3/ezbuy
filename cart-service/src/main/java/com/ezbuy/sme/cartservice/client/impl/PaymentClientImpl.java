@@ -23,10 +23,9 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @DependsOn("webClientFactory")
 public class PaymentClientImpl implements PaymentClient {
-    private final BaseRestClient baseRestClient;
-
     @Qualifier("payment")
     private final WebClient payment;
+    private final BaseRestClient baseRestClient;
 
     @Override
     public Mono<Optional<Long>> estimatePrice(ProductPriceRequest productPriceRequest) {

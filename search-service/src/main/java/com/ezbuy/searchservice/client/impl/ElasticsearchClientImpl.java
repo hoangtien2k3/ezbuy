@@ -7,6 +7,8 @@ import com.ezbuy.searchservice.client.properties.IndexScore;
 import com.reactify.util.DataUtil;
 import java.util.Base64;
 import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,20 +22,13 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 @DependsOn("webClientFactory")
 public class ElasticsearchClientImpl implements ElasticsearchClient {
+    @Qualifier("elasticsearchClient")
     private final WebClient elasticsearchClient;
     private final ElasticsearchClientProperties elasticsearchClientProperties;
     private final IndexProperties indexProperties;
-
-    public ElasticsearchClientImpl(
-            @Qualifier("elasticsearchClient") WebClient elasticsearchClient,
-            ElasticsearchClientProperties elasticsearchClientProperties,
-            IndexProperties indexProperties) {
-        this.elasticsearchClient = elasticsearchClient;
-        this.elasticsearchClientProperties = elasticsearchClientProperties;
-        this.indexProperties = indexProperties;
-    }
 
     @Override
     public Mono<String> search(String keyword, List<String> indices, Integer from, Integer size) {

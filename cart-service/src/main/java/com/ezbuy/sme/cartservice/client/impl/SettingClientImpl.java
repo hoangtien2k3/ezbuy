@@ -23,10 +23,9 @@ import reactor.core.publisher.Mono;
 @DependsOn("webClientFactory")
 public class SettingClientImpl implements SettingClient {
 
-    private final BaseRestClient baseRestClient;
-
     @Qualifier("setting")
     private final WebClient setting;
+    private final BaseRestClient baseRestClient;
 
     @Override
     public Mono<List<CartTelecomDTO>> getTelecomService() {

@@ -25,10 +25,10 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @DependsOn("webClientFactory")
 public class ProductClientImpl implements ProductClient {
-    private final BaseRestClient baseRestClient;
 
     @Qualifier("product")
     private final WebClient product;
+    private final BaseRestClient baseRestClient;
 
     private final ProductProperties productProperties;
 

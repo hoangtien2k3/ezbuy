@@ -17,6 +17,7 @@
 		<java.version>21</java.version>
 		<revision>1.0-SNAPSHOT</revision>
 		<keycloak.version>25.0.6</keycloak.version>
+		<start-class>com.ezbuy.authservice.AuthServiceApplication</start-class>
 	</properties>
 
 	<dependencies>
@@ -108,13 +109,16 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
 				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
+					<mainClass>${start-class}</mainClass>
+					<includeSystemScope>true</includeSystemScope>
 				</configuration>
 			</plugin>
             <plugin>

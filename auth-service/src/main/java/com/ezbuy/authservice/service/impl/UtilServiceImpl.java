@@ -43,32 +43,28 @@ public class UtilServiceImpl implements UtilService {
         return getAccessToken()
                 .flatMap(token -> {
                     var orgIndId =
-                            indOrgPermissionRepo.getOrgIndIdByUsername(request.getUsername()); // TH theo username of
-                    // user
+                            indOrgPermissionRepo.getOrgIndIdByUsername(request.getUsername());
                     if (DataUtil.isNullOrEmpty(request.getUsername())) {
                         Integer offset = request.getLimit() * request.getOffset();
-                        orgIndId = indOrgPermissionRepo.getOrgIndId(offset, request.getLimit()); // TH chay theo lo
+                        orgIndId = indOrgPermissionRepo.getOrgIndId(offset, request.getLimit());
                     }
                     return orgIndId.flatMapSequential(orgIndIdDTO -> {
                                 RoleRepresentation roleRepresentation = new RoleRepresentation();
-                                roleRepresentation.setId(request.getRoleId()); // id of role
+                                roleRepresentation.setId(request.getRoleId());
                                 roleRepresentation.setName(request.getRoleName());
                                 roleRepresentation.setComposite(Boolean.FALSE);
                                 roleRepresentation.setClientRole(Boolean.TRUE);
-                                roleRepresentation.setContainerId(request.getClientId()); // clientId of dich vu
+                                roleRepresentation.setContainerId(request.getClientId());
                                 return keyCloakClient.addRoleForUserInClientId(
                                                 request.getClientId(),
                                                 token,
                                                 roleRepresentation,
                                                 orgIndIdDTO.getUserId())
                                         .flatMap(result -> {
-                                            // build role user
                                             List<EmployeePermissionRequest> employeePermissionRequests =
                                                     getEmployeePermissionRequests(request);
-                                            // build individual
                                             Individual individual = new Individual();
                                             individual.setId(orgIndIdDTO.getIndividualId());
-                                            // check exist in HUB
                                             return indOrgPermissionRepo.checkExistRoleInHub(
                                                             orgIndIdDTO.getIndividualId(),
                                                             request.getRoleName(),

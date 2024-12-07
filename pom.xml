@@ -47,9 +47,6 @@
         <module>payment-service</module>
         <module>product-model</module>
         <module>product-service</module>
-        <module>shipping</module>
-        <module>system</module>
-        <module>tax</module>
         <module>notification-model</module>
         <module>notification-send</module>
         <module>notification-service</module>

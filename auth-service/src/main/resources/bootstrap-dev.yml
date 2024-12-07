@@ -1,0 +1,35 @@
+logging:
+  config: classpath:log4j2-dev.xml
+spring:
+  application:
+    name: auth-service
+  cloud:
+    kubernetes:
+      enabled: false
+    config:
+      enabled: false
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            token-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/token
+        registration:
+          oidc:
+            client-id: ${keycloak.clientId}
+            client-secret: ${keycloak.clientSecret}
+            authorization-grant-type: ${keycloak.grantType} #password || #client_credentials
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/certs
+      keycloak:
+        client-id: ${keycloak.clientId}
+
+#keycloak client config
+keycloak:
+  clientId: ezbuy-client
+  clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
+  realm: ezbuy-server
+  serverUrl: http://localhost:8080
+  grantType: password
+  host: localhost
