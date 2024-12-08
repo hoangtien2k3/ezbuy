@@ -18,29 +18,10 @@ public interface RatingService {
 
     Mono<List<RatingCount>> getRatingByAlias(List<String> alias);
 
-    /**
-     * Tao moi danh gia
-     *
-     * @param request
-     * @return
-     */
     Mono<DataResponse<Rating>> createRating(RatingRequest request);
 
-    /**
-     * cap nhat danh gia
-     *
-     * @param id
-     * @param request
-     * @return
-     */
     Mono<DataResponse<Rating>> editRating(String id, RatingRequest request);
 
-    /**
-     * tim kiem danh gia
-     *
-     * @param request
-     * @return
-     */
     Mono<SearchRatingResponse> findRating(FindRatingRequest request);
 
     // Mono<List<Rating>> getAllRatingActive();

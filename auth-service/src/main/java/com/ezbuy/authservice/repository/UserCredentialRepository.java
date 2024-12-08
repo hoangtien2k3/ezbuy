@@ -8,9 +8,9 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface UserCredentialRepository extends R2dbcRepository<UserCredential, String> {
-    @Query(value = "select * from user_credential where user_id =:userId")
+    @Query(value = "select * from user_credential where user_id = :userId")
     Mono<UserCredential> findByUserId(String userId);
 
-    @Query(value = "select username, pwd_changed from user_credential where username =:username")
+    @Query(value = "select username, pwd_changed from user_credential where username = :username")
     Mono<UserCredential> findByUsername(String username);
 }

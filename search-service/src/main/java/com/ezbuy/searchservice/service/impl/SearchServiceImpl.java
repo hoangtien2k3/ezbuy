@@ -41,7 +41,6 @@ public class SearchServiceImpl implements SearchService {
         if (DataUtil.isNullOrEmpty(request.getKeyword())) {
             return Mono.just(new DataResponse<>(Translator.toLocale("success"), new ArrayList<>()));
         }
-
         List<String> stringList = new ArrayList<>();
         if (DataUtil.isNullOrEmpty(request.getType())) {
             stringList = Constants.INDEX.ALLOW_INDEX;
@@ -52,7 +51,6 @@ public class SearchServiceImpl implements SearchService {
                 return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "type.invalid"));
             }
         }
-
         if (DataUtil.isNullOrEmpty(request.getFrom()) || request.getFrom() < 0) {
             request.setFrom(Constants.DEFAULT_VALUE.FROM);
         }
@@ -64,13 +62,11 @@ public class SearchServiceImpl implements SearchService {
                 .search(request.getKeyword(), stringList, request.getFrom(), request.getSize())
                 .flatMap(rs -> {
                     SearchResponseDTO searchResponseDTO = parseResponseElasticsearch(rs);
-
                     // build response
                     SearchDTOResponse searchDTOResponse = new SearchDTOResponse();
                     List<SearchDTO> searchDTOList = new ArrayList<>();
                     searchResponseDTO.getHitsDTO().getHits().forEach(hitDTO -> {
                         String path = "";
-
                         if (Constants.INDEX.NEWS.equals(hitDTO.getIndex())) {
                             path = hitDTO.getSource().getPath();
                         } else if (Constants.INDEX.SERVICES.equals(hitDTO.getIndex())) {
@@ -81,7 +77,6 @@ public class SearchServiceImpl implements SearchService {
                                 path = String.format("landing-page?alias=%s", matcher.group(1));
                             }
                         }
-
                         List<String> lines = new ArrayList<>();
                         if (!DataUtil.isNullOrEmpty(hitDTO.getHighlight().getTitle())) {
                             lines.addAll(hitDTO.getHighlight().getTitle());
@@ -89,7 +84,6 @@ public class SearchServiceImpl implements SearchService {
                         if (!DataUtil.isNullOrEmpty(hitDTO.getHighlight().getContent())) {
                             lines.addAll(hitDTO.getHighlight().getContent());
                         }
-
                         int maxEmTags = 0;
                         String maxEmLine = "";
                         for (String line : lines) {
@@ -99,7 +93,6 @@ public class SearchServiceImpl implements SearchService {
                                 maxEmLine = line;
                             }
                         }
-
                         searchDTOList.add(SearchDTO.builder()
                                 .path(path)
                                 .highlight(maxEmLine)
@@ -107,9 +100,7 @@ public class SearchServiceImpl implements SearchService {
                                 .score(hitDTO.getScore())
                                 .build());
                     });
-
-                    searchDTOResponse.setResult(
-                            searchDTOList.stream().distinct().collect(Collectors.toList()));
+                    searchDTOResponse.setResult(searchDTOList.stream().distinct().collect(Collectors.toList()));
                     DataResponse<Object> dataResponse = new DataResponse<>();
                     dataResponse.setMessage(Translator.toLocale("success"));
                     dataResponse.setData(searchDTOResponse);

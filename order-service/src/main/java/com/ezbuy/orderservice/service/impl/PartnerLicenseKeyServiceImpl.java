@@ -54,8 +54,7 @@ public class PartnerLicenseKeyServiceImpl implements PartnerLicenseKeyService {
                 .map(PartnerLicenseKeyDTO::getServiceAlias)
                 .collect(Collectors.toList());
         return partnerLicenseKeyRepository.getlstAliasKeyExsit(userId, organizationId, lstAliasCreate);
-    }
-    ;
+    };
 
     public Mono<List<OptionSetValue>> getLstAcronym(List<String> lstServiceAlias) {
         if (DataUtil.isNullOrEmpty(lstServiceAlias)) {

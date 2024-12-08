@@ -83,7 +83,8 @@ CREATE TABLE individual_organization_permissions
     create_at       TIMESTAMP,
     create_by       VARCHAR(100),
     update_at       TIMESTAMP,
-    update_by       VARCHAR(100)
+    update_by       VARCHAR(100),
+    CONSTRAINT fk_individual FOREIGN KEY (individual_id) REFERENCES individual(id)
 );
 
 CREATE TABLE permission_policy
@@ -102,7 +103,8 @@ CREATE TABLE permission_policy
     create_at                              TIMESTAMP,
     create_by                              VARCHAR(100),
     update_at                              TIMESTAMP,
-    update_by                              VARCHAR(100)
+    update_by                              VARCHAR(100),
+    CONSTRAINT fk_individual_organization_permissions FOREIGN KEY (individual_organization_permissions_id) REFERENCES individual_organization_permissions(id)
 );
 
 CREATE TABLE user_profile
@@ -127,4 +129,50 @@ CREATE TABLE user_profile
     user_id        VARCHAR(255)
 );
 
+CREATE TABLE option_set
+(
+    id          VARCHAR(36) NOT NULL PRIMARY KEY,
+    code        VARCHAR(50) NOT NULL,
+    name        VARCHAR(100) NOT NULL,
+    status      INT NOT NULL,
+    description VARCHAR(100) NOT NULL,
+    create_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
+    update_at   TIMESTAMP NULL,
+    create_by   VARCHAR(20) NULL,
+    update_by   VARCHAR(20) NULL
+);
+
+CREATE TABLE option_set_value
+(
+    id            VARCHAR(36) NOT NULL PRIMARY KEY,
+    option_set_id VARCHAR(36) NOT NULL,
+    value         VARCHAR(200) NOT NULL,
+    status        INT NOT NULL,
+    description   VARCHAR(100) NOT NULL,
+    CONSTRAINT fk_option_set FOREIGN KEY (option_set_id) REFERENCES option_set(id)
+);
+
+CREATE TABLE organization
+(
+    id             VARCHAR(36) NOT NULL PRIMARY KEY,
+    name           VARCHAR(255) NULL,
+    image          VARCHAR(500) NULL,
+    business_type  VARCHAR(255) NULL,
+    founding_date  TIMESTAMP NULL,
+    email          VARCHAR(200) NULL,
+    phone          VARCHAR(12) NULL,
+    province_code  VARCHAR(5) NULL,
+    district_code  VARCHAR(5) NULL,
+    precinct_code  VARCHAR(5) NULL,
+    street_block   VARCHAR(200) NULL,
+    state          SMALLINT NULL,
+    status         SMALLINT NULL,
+    create_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
+    create_by      VARCHAR(255) NULL,
+    update_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
+    update_by      VARCHAR(255) NULL,
+    tax_department VARCHAR(255) NULL,
+    org_type       VARCHAR(20) NULL,
+    nation         VARCHAR(150) NULL
+);
 
