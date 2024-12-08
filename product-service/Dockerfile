@@ -3,7 +3,7 @@ WORKDIR application
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
-FROM  openjdk:11.0.12-oracle
+FROM  openjdk:11.0.16-oracle
 LABEL com.ezbuy.ecom.product.version="1.0.0"
 LABEL version="1.0.0"
 LABEL description="product service"
