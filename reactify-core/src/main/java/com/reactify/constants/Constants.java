@@ -346,6 +346,17 @@ public final class Constants {
 
         /** Template name for notifications about account verification. */
         String NOTI_VERIFY_ACCOUNT = "NOTI_VERIFY_ACCOUNT";
+
+        String CREATE_ACCOUNT_SUCCESS ="CREATE_ACCOUNT_SUCCESS"; //luong mail thong bao tao tai khoan thanh cong
+        String CHANGE_PASSWORD_SUCCESS ="CHANGE_PASSWORD_SUCCESS"; //luong mail thong bao doi mat khau thanh cong
+        String APPROVE_ORDER_SUCCESS = "APPROVE_ORDER_SUCCESS"; //template gui mail thong bao phe duyet don hang thanh cong
+        String APPROVE_ORDER_FAIL = "APPROVE_ORDER_FAIL"; //template gui mail thong bao phe duyet don hang that bai
+        String NEED_APPROVE = "NEED_APPROVE";//template gui mail thong bao can phe duyet cho admin
+        String VERIFY_IDENTIFY_REJECTED = "VERIFY_IDENTIFY_REJECTED";//template gui mail thong bao tu choi xac thuc danh tinh
+        String VERIFY_IDENTIFY_SUCCESS = "VERIFY_IDENTIFY_SUCCESS";//template gui mail thong bao xac thuc danh tinh thanh cong
+        String ADTECH_TERMINATE_NOTI = "ADTECH_TERMINATE_NOTI";//template gui mail thong bao cham dut hop dong voi adtech
+        String ACCEPT_TENANT = "ACCEPT_TENANT";//quyen accept tenant
+        String ACCEPT_TENANT_IDENTIFY= "ACCEPT_TENANT_IDENTIFY";//quyen accept tenant
     }
 
     /**

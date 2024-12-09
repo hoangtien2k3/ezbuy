@@ -11,18 +11,36 @@ logging:
 # spring config
 spring:
   r2dbc:
-    url: r2dbc:postgresql://localhost:5434/notification
+    url: r2dbc:mariadb://localhost:9001/sme_ezbuy
     username: admin
     password: admin
+
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: hoangtien2k3qx1@gmail.com
-    password: tjib jbht tlbp zwzo
+    host: smtp.viettel.com.vn
+    port: 465
+    username: username@viettel.com.vn
+    password: password
     protocol: smtp
     properties.mail.smtp:
       auth: true
       starttls.enable: true
+      ssl.trust: smtp.viettel.com.vn
+      ssl.enable: true
+      tls.trust: smtp.viettel.com.vn
+      tls.enable: true
+
+  mail-first:
+    host: smtp.viettel.com.vn
+    port: 465
+    username: username@viettel.com.vn
+    password: password
+
+  mail-second:
+    host: smtp.viettel.com.vn
+    port: 465
+    username: username@viettel.com.vn
+    password: password
+
   security:
     oauth2:
       client:
@@ -47,9 +65,31 @@ keycloak:
   serverUrl: http://localhost:8080
   host: localhost
 client:
+  sms-brandname:
+    internal-oauth: true
+    name: smsBrandNameClient
+    address: https://apismsbrandname.viettelai.vn:8000/api/v1
+    username: usr
+    password: 123456a@A
+
+  allow:
+    send:
+      sms: true
+  test:
+    number: 0828007853
+  mode:
+    send:
+      sms: 2
+      backDay: 5
+
+  setting:
+    internal-oauth: true
+    name: settingClient
+    address: http://localhost:8081/v1
+
   auth:
     internal-oauth: true
-    address: http://localhost/v1
+    address: http://localhost:8089/v1
     name: auth
     pool:
       max-size: 100
@@ -58,17 +98,6 @@ client:
       read: 60000
       write: 1000
 
-  sms-brandname:
-    internal-oauth: true
-    name: smsBrandNameClient
-    address: https://hoangtien2k3.wiremockapi.cloud/api/v1
-    username: usr
-    password: 123456a@A
-
-  setting:
-    internal-oauth: true
-    name: settingClient
-    address: http://localhost:8081/v1
 # unauthenticated endpoints config
 application:
   whiteList:
@@ -80,8 +109,5 @@ config:
   resendCount: 2
   limit: 800
 
-#config send sms backDay
-mode:
-  send:
-    backDay: 5
-
+adtech:
+  date-inactive: 14

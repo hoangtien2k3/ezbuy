@@ -50,4 +50,28 @@ public class ConstValue {
         public static final int ACTIVE = 1;
         public static final int INACTIVE = 0;
     }
+
+    public static class SendSmsStatus {
+        public static final Long NEW = 1L;          //Moi
+        public static final Long SENDING = 2L;      //Dang gui
+        public static final Long SENT = 3L;         //Da gui thanh cong
+        public static final Long SENT_FAILED = 4L;  //Gui loi
+    }
+
+    public static class SendSmsErrorCode {
+        public static final int SUCCESS = 0;                  // Thành công
+        public static final int BRAND_ERROR = 1;              // Lỗi thương hiệu
+        public static final int DUPLICATE_BRAND = 2;          // Lỗi lặp tin cùng thương hiệu
+        public static final int TEMPLATE_ERROR = 3;           // Lỗi mẫu tin
+        public static final int PRICE_ERROR = 4;              // Lỗi giá tin
+        public static final int INSUFFICIENT_BALANCE = 5;     // Lỗi không đủ tiền
+        public static final int BLOCKED_KEYWORDS = 6;         // Lỗi chứa từ khóa bị chặn
+        public static final int UNKNOWN_SUBSCRIBER = 7;       // Lỗi thuê bao không có trong danh bạ
+        public static final int OPT_OUT = 8;                  // Lỗi thuê bao từ chối nhận tin quảng cáo
+        public static final int DUPLICATE_AD = 9;             // Lỗi lặp tin quảng cáo
+        public static final int CONTENT_LENGTH_ERROR = 10;    // Lỗi nội dung tin vượt quá số ký tự cho phép
+        public static final int NETWORK_ERROR = 11;           // Lỗi kết nối mạng
+        public static final int UNKNOWN_SUBSCRIBER_ERROR = 12; // Thuê bao không xác định
+        public static final int FAILURE = 13;                 // Thất bại
+    }
 }

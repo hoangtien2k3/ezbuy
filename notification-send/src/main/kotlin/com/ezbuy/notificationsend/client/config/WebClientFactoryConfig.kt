@@ -1,6 +1,8 @@
 package com.ezbuy.notificationsend.client.config
 
 import com.ezbuy.notificationsend.client.properties.AuthProperties
+import com.ezbuy.notificationsend.client.properties.SettingClientProperties
+import com.ezbuy.notificationsend.client.properties.SmsBrandNameProperties
 import com.reactify.client.WebClientFactory
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
@@ -9,7 +11,9 @@ import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClient
 
 @Configuration
 class WebClientFactoryConfig(
-    private val authProperties: AuthProperties
+    private val authProperties: AuthProperties,
+    private val smsBrandNameProperties: SmsBrandNameProperties,
+    private val settingClientProperties: SettingClientProperties
 ) {
     @Bean(name = ["webClientFactory"])
     fun webClientFactory(
@@ -20,7 +24,7 @@ class WebClientFactoryConfig(
             applicationContext,
             authorizedClientManager
         )
-        factory.webClients = listOf(authProperties)
+        factory.webClients = listOf(authProperties, smsBrandNameProperties, settingClientProperties)
         return factory
     }
 }
