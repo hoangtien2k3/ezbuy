@@ -34,9 +34,9 @@
     <dependencies>
         <!-- internal dependencies-->
         <dependency>
-            <groupId>com.ezbuy.platform</groupId>
+            <groupId>io.github.hoangtien2k3</groupId>
             <artifactId>reactify-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.1.7</version>
         </dependency>
         <dependency>
             <groupId>com.ezbuy.platform</groupId>
