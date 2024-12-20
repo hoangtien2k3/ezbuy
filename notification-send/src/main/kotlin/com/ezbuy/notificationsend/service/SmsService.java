@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface SmsService {
 
-    Mono<List<SmsResultDTO>> sendSmsBrandNameOnline(List<SendSms> lstSendSms);
+//    Mono<List<SmsResultDTO>> sendSmsBrandNameOnline(List<SendSms> lstSendSms);
 
+    Mono<String> sendSmsOnline(SendSms sms);
 }

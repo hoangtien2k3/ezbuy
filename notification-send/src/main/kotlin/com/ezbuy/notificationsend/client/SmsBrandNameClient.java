@@ -9,6 +9,6 @@ public interface SmsBrandNameClient {
 
     Mono<SmsBrandNameLoginResponse> login(String username, String password);
 
-    Mono<SendMessageDTO> sendMessage(SendMessageRequest sendMessageReq, String auth);
+    Mono<SendMessageDTO> sendSMSBR(SendMessageRequest sendMessageReq, String auth);
 
 }

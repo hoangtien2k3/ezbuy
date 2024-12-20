@@ -24,7 +24,7 @@ public interface OptionSetValueRepository extends R2dbcRepository<OptionSetValue
             String id, String code, String value, String description, Integer status, String user);
 
     @Query("select * from option_set_value where code = :code and option_set_id = :optionSetId")
-    Mono<OptionSetValue> findByCodeAndOptionSetId(String code, Long optionSetId);
+    Mono<OptionSetValue> findByCodeAndOptionSetId(String code, String optionSetId);
 
     @Query(value = "select * from option_set_value where option_set_id = :optionSetId")
     Mono<OptionSetValue> getByOptionSetId(Long optionSetId);

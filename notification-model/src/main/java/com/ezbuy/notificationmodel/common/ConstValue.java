@@ -58,20 +58,44 @@ public class ConstValue {
         public static final Long SENT_FAILED = 4L;  //Gui loi
     }
 
-    public static class SendSmsErrorCode {
-        public static final int SUCCESS = 0;                  // Thành công
-        public static final int BRAND_ERROR = 1;              // Lỗi thương hiệu
-        public static final int DUPLICATE_BRAND = 2;          // Lỗi lặp tin cùng thương hiệu
-        public static final int TEMPLATE_ERROR = 3;           // Lỗi mẫu tin
-        public static final int PRICE_ERROR = 4;              // Lỗi giá tin
-        public static final int INSUFFICIENT_BALANCE = 5;     // Lỗi không đủ tiền
-        public static final int BLOCKED_KEYWORDS = 6;         // Lỗi chứa từ khóa bị chặn
-        public static final int UNKNOWN_SUBSCRIBER = 7;       // Lỗi thuê bao không có trong danh bạ
-        public static final int OPT_OUT = 8;                  // Lỗi thuê bao từ chối nhận tin quảng cáo
-        public static final int DUPLICATE_AD = 9;             // Lỗi lặp tin quảng cáo
-        public static final int CONTENT_LENGTH_ERROR = 10;    // Lỗi nội dung tin vượt quá số ký tự cho phép
-        public static final int NETWORK_ERROR = 11;           // Lỗi kết nối mạng
-        public static final int UNKNOWN_SUBSCRIBER_ERROR = 12; // Thuê bao không xác định
-        public static final int FAILURE = 13;                 // Thất bại
+
+    ///// send sms
+    public static final class SEND_SMS {
+        public static final String STATUS_NEW_SMS = "1";    // Trang thai sms da duoc xu ly
+        public static final String STATUS_SEND_SMS = "0";    //STATUS_SEND_SMS
+        public static final Long NOT_RETRY = 0L;
+        public static final String STATUS_ACTIVE = "1";
+
+        public static final String DEFAULT_SMS_CP_CODE = "155";
+        public static final String DEFAULT_SMS_ALIAS = "155";
+
+        public static final String REQUEST_ID = "1";
+        public static final String COMMAND_CODE = "bulksms";
+        public static final String CONTENT_TYPE_VIETNAM = "1";
+        public static final String CONTENT_TYPE_VIETNAM_NON = "0";
+
+        public static final Long CCAPI_RESULT_ERROR = 0L;
+        public static final Long CCAPI_RESULT_SUCCESS = 1L;
+        public static final Long CCAPI_RESULT_AUTHEN = 3L;
+        public static final Long CCAPI_RESULT_ERROR_SYSTEM = -1L;
+
+        public static final String GECO_002 = "GECO_002"; //gui tin nhan thanh cong
     }
+
+    public static final class OptionSet {
+        public static final String MODE_SEND_SMS_CALL_API = "MODE_SEND_SMS_CALL_API";//null hoac 1 thi goi soap, 2 thi goi rest
+        public static final String MODE_SEND_SMS_CONVERT_VN = "MODE_SEND_SMS_CONVERT_VN";//0: khong dau, 1: co dau, mac dinh la co dau
+
+    }
+
+    public static final class SendSmsConvertVN {
+        public static final Integer UNACCENTED = 0; //gui tin nhan khong dau
+        public static final Integer ACCENTED = 1; //gui tin nhan co dau
+    }
+
+    public static final class Common {
+        public static final String STRING_ACTIVE_STATUS = "1";
+
+    }
+
 }

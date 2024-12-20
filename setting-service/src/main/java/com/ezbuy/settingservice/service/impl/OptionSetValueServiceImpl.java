@@ -45,7 +45,7 @@ public class OptionSetValueServiceImpl extends BaseServiceHandler implements Opt
         validateInput(request);
         var getSysDate = optionSetValueRepository.getSysDate();
         String code = DataUtil.safeTrim(request.getCode());
-        Long optionSetId = request.getOptionSetId();
+        String optionSetId = request.getOptionSetId();
         return Mono.zip(
                         SecurityUtils.getCurrentUser() // get info user
                                 .switchIfEmpty(
@@ -109,7 +109,7 @@ public class OptionSetValueServiceImpl extends BaseServiceHandler implements Opt
         }
     }
 
-    public Mono<Boolean> validateDuplicateCode(String code, Long optionSetId) {
+    public Mono<Boolean> validateDuplicateCode(String code, String optionSetId) {
         return optionSetValueRepository
                 .findByCodeAndOptionSetId(code, optionSetId)
                 .defaultIfEmpty(new OptionSetValue())

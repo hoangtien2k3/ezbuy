@@ -64,7 +64,14 @@ client:
     address: https://hoangtien2k3.wiremockapi.cloud/api/v1
     username: usr
     password: 123456a@A
-
+  order-cp:
+    address: http://10.207.252.104:8074/services/order/PricingService?wsdl
+    username: order
+    password: order
+    name: pricingClient
+    timeout:
+      read: 600000
+      write: 600000
   setting:
     internal-oauth: true
     name: settingClient

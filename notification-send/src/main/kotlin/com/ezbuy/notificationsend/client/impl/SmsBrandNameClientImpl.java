@@ -53,7 +53,7 @@ public class SmsBrandNameClientImpl implements SmsBrandNameClient {
     }
 
     @Override
-    public Mono<SendMessageDTO> sendMessage(SendMessageRequest sendMessageReq, String auth) {
+    public Mono<SendMessageDTO> sendSMSBR(SendMessageRequest sendMessageReq, String auth) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("Authorization", "Bearer " + DataUtil.safeTrim(auth));
         return baseRestClient.post(smsBrandNameClient,"/ws/sent-mt", params, sendMessageReq, DataResponse.class)
