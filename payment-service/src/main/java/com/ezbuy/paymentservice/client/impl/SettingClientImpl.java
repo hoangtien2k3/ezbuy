@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
@@ -23,16 +25,13 @@ import reactor.core.publisher.Mono;
 @Service
 @Slf4j
 @DependsOn("webClientFactory")
+@RequiredArgsConstructor
 public class SettingClientImpl implements SettingClient {
 
     private final BaseRestClient baseRestClient;
 
+    @Qualifier("settingClient")
     private final WebClient settingClient;
-
-    public SettingClientImpl(BaseRestClient baseRestClient, @Qualifier("settingClient") WebClient settingClient) {
-        this.baseRestClient = baseRestClient;
-        this.settingClient = settingClient;
-    }
 
     @Override
     public Mono<List<TelecomDTO>> getTelecomData(List<String> ids, List<String> aliases, List<String> origins) {

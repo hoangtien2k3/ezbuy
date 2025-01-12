@@ -1,9 +1,10 @@
 package com.ezbuy.productservice.client;
 
-import com.ezbuy.productmodel.request.ApiUtils;
-import com.ezbuy.productmodel.request.GetListProductOfferingComboForHubSmeRequest;
-import com.ezbuy.productmodel.request.GetProductTemplateDetailRequest;
-import com.ezbuy.productmodel.response.*;
+import com.ezbuy.productmodel.dto.request.ApiUtils;
+import com.ezbuy.productmodel.dto.request.GetListProductOfferingComboForHubSmeRequest;
+import com.ezbuy.productmodel.dto.request.GetProductTemplateDetailRequest;
+import com.ezbuy.productmodel.dto.response.*;
+
 import java.util.List;
 import java.util.Optional;
 import reactor.core.publisher.Mono;

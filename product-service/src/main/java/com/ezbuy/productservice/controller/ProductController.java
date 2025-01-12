@@ -5,8 +5,8 @@ import static com.ezbuy.productmodel.constants.UrlPaths.*;
 import static com.ezbuy.productmodel.constants.UrlPaths.Product.*;
 
 import com.ezbuy.productmodel.dto.ProductImportDTO;
+import com.ezbuy.productmodel.dto.request.*;
 import com.ezbuy.productmodel.model.Product;
-import com.ezbuy.productmodel.request.*;
 import com.ezbuy.productservice.service.ProductService;
 import com.reactify.model.response.DataResponse;
 import com.reactify.util.Translator;

@@ -3,8 +3,8 @@ package com.ezbuy.productservice.controller;
 import static com.ezbuy.productmodel.constants.UrlPaths.*;
 
 import com.ezbuy.productmodel.dto.FilterProductTemplateDTO;
-import com.ezbuy.productmodel.request.GetListProductOfferingComboForHubSmeRequest;
-import com.ezbuy.productmodel.request.GetProductTemplateDetailRequest;
+import com.ezbuy.productmodel.dto.request.GetListProductOfferingComboForHubSmeRequest;
+import com.ezbuy.productmodel.dto.request.GetProductTemplateDetailRequest;
 import com.ezbuy.productservice.service.ProductOfferTemplateService;
 import com.ezbuy.productservice.service.ProductSpecService;
 import com.ezbuy.productservice.service.PublicService;

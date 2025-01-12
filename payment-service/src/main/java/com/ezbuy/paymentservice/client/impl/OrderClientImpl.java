@@ -7,6 +7,7 @@ import com.ezbuy.paymentservice.client.properties.OrderClientProperties;
 import com.reactify.client.BaseRestClient;
 import com.reactify.constants.MessageConstant;
 import com.reactify.model.response.DataResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
@@ -17,19 +18,12 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Service
 @DependsOn("webClientFactory")
+@RequiredArgsConstructor
 public class OrderClientImpl implements OrderClient {
     private final BaseRestClient baseRestClient;
+    @Qualifier("orderClient")
     private final WebClient orderClient;
     private final OrderClientProperties orderProperties;
-
-    public OrderClientImpl(
-            BaseRestClient baseRestClient,
-            @Qualifier("orderClient") WebClient orderClient,
-            OrderClientProperties orderProperties) {
-        this.baseRestClient = baseRestClient;
-        this.orderClient = orderClient;
-        this.orderProperties = orderProperties;
-    }
 
     @Override
     public Mono<DataResponse> updateStatusOrder(String orderCode, Integer orderState) {

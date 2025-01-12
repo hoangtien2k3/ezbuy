@@ -1,6 +1,6 @@
 package com.ezbuy.productmodel.dto;
 
-import com.ezbuy.productmodel.response.ProductOfferTemplateDTO;
+import com.ezbuy.productmodel.dto.response.ProductOfferTemplateDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;

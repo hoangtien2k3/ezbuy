@@ -2,6 +2,7 @@ package com.ezbuy.productservice.client;
 
 import com.ezbuy.authmodel.dto.response.GetActionLoginReportResponse;
 import com.ezbuy.authmodel.dto.response.TenantIdentifyDTO;
+import com.ezbuy.authmodel.model.Individual;
 import com.ezbuy.authmodel.model.OrganizationUnit;
 import java.time.LocalDate;
 import java.util.List;
@@ -39,4 +40,12 @@ public interface AuthClient {
     Mono<Optional<String>> getIdNoOrganization(String idType, String type, String tenantId);
 
     Mono<Optional<GetActionLoginReportResponse>> getActionLoginReport(LocalDate dateReport);
+
+    /**
+     * Ham lay individual theo user dang nhap
+     * @param userId
+     * @param organizationId
+     * @return
+     */
+    Mono<Individual> findIndividualByUserIdAndOrganizationId(String userId, String organizationId);
 }

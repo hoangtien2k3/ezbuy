@@ -18,7 +18,6 @@ import org.springframework.data.relational.core.mapping.Table;
 public class Product implements Persistable<String> {
     @Id
     private String id;
-
     private String code; // ma hang hoa
     private String name; // ten hang hoa
     private Double priceImport; // don gia nhap

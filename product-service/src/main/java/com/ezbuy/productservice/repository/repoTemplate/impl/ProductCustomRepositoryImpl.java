@@ -1,7 +1,7 @@
 package com.ezbuy.productservice.repository.repoTemplate.impl;
 
 import com.ezbuy.productmodel.model.Product;
-import com.ezbuy.productmodel.request.SearchProductRequest;
+import com.ezbuy.productmodel.dto.request.SearchProductRequest;
 import com.ezbuy.productservice.repository.repoTemplate.BaseRepositoryTemplate;
 import com.ezbuy.productservice.repository.repoTemplate.ProductCustomRepository;
 import com.reactify.util.DataUtil;

@@ -1,7 +1,7 @@
 package com.ezbuy.productservice.client.utils;
 
 import com.ezbuy.productmodel.constants.Constants;
-import com.ezbuy.productmodel.request.*;
+import com.ezbuy.productmodel.dto.request.*;
 import com.reactify.factory.MarshallerFactory;
 import com.reactify.util.DataUtil;
 import com.reactify.util.DataWsUtil;

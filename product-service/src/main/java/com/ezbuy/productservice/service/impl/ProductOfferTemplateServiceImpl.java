@@ -3,9 +3,9 @@ package com.ezbuy.productservice.service.impl;
 import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
 
 import com.ezbuy.productmodel.dto.FilterProductTemplateDTO;
-import com.ezbuy.productmodel.request.ApiUtils;
-import com.ezbuy.productmodel.response.ListProductOfferResponse;
-import com.ezbuy.productmodel.response.ProductOfferTemplateDTO;
+import com.ezbuy.productmodel.dto.request.ApiUtils;
+import com.ezbuy.productmodel.dto.response.ListProductOfferResponse;
+import com.ezbuy.productmodel.dto.response.ProductOfferTemplateDTO;
 import com.ezbuy.productservice.client.ProductClient;
 import com.ezbuy.productservice.client.SettingClient;
 import com.ezbuy.productservice.repository.repoTemplate.TelecomServiceRepository;

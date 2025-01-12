@@ -1,6 +1,6 @@
 package com.ezbuy.productmodel.dto;
 
-import com.ezbuy.productmodel.response.PaginationDTO;
+import com.ezbuy.productmodel.dto.response.PaginationDTO;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;

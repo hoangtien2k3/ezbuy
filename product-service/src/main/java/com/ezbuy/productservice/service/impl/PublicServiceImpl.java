@@ -2,8 +2,8 @@ package com.ezbuy.productservice.service.impl;
 
 import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
 
-import com.ezbuy.productmodel.request.GetListProductOfferingComboForHubSmeRequest;
-import com.ezbuy.productmodel.request.GetProductTemplateDetailRequest;
+import com.ezbuy.productmodel.dto.request.GetListProductOfferingComboForHubSmeRequest;
+import com.ezbuy.productmodel.dto.request.GetProductTemplateDetailRequest;
 import com.ezbuy.productservice.client.ProductClient;
 import com.ezbuy.productservice.service.PublicService;
 import com.reactify.annotations.LocalCache;

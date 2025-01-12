@@ -2,7 +2,7 @@ package com.ezbuy.productservice.service;
 
 import com.ezbuy.productmodel.model.SyncHistory;
 import com.ezbuy.productmodel.model.SyncHistoryDetail;
-import com.ezbuy.productmodel.request.CreateSyncHistoryRequest;
+import com.ezbuy.productmodel.dto.request.CreateSyncHistoryRequest;
 import com.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 

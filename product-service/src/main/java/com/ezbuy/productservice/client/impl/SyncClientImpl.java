@@ -1,7 +1,7 @@
 package com.ezbuy.productservice.client.impl;
 
-import com.ezbuy.productmodel.request.CallApiSyncProductRequest;
-import com.ezbuy.productmodel.response.GetTransSyncResponse;
+import com.ezbuy.productmodel.dto.request.CallApiSyncProductRequest;
+import com.ezbuy.productmodel.dto.response.GetTransSyncResponse;
 import com.ezbuy.productservice.client.SyncClient;
 import com.reactify.client.BaseRestClient;
 import com.reactify.constants.CommonErrorCode;

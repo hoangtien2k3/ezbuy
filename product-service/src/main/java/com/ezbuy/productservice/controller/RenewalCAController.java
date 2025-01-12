@@ -2,7 +2,7 @@ package com.ezbuy.productservice.controller;
 
 import static com.ezbuy.productmodel.constants.UrlPaths.*;
 
-import com.ezbuy.productmodel.request.ProductSpecificationRequest;
+import com.ezbuy.productmodel.dto.request.ProductSpecificationRequest;
 import com.ezbuy.productservice.service.RenewalCAService;
 import com.reactify.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;

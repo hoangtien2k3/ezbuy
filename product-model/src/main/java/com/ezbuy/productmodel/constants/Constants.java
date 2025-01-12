@@ -8,6 +8,7 @@ public class Constants {
         public static final String FAIL = "fail";
     }
 
+    public static final String ORDER_SYSTEM = "ORDER_SYSTEM";
     public static final String PRICE_FILTER = "PRICE_FILTER";
     public static final String PHASE_EXTEND_PACKAGE = "EXTEND_PACKAGE";
 
@@ -63,5 +64,52 @@ public class Constants {
 
     public static class TelecomServiceAlias {
         public static final String VBHXH = "VBHXH";
+    }
+
+    //trang thai state bang voucher
+    public static final class VOUCHER_STATE {
+        public static final String NEW = "new"; // voucher moi chua su dung
+        public static final String LOCKED = "locked"; // voucher da lock de thuc hien thanh toan
+        public static final String USED = "used"; // voucher da duoc gan cho user
+        public static final String INACTIVE = "inactive"; // voucher khong hieu luc
+    }
+    //trang thai state bang voucher_batch
+    public static final class VOUCHER_BATCH_STATE {
+        public static final String NEW = "NEW"; // lo voucher dang trang thai chua su dung
+        public static final String INPROGRESS = "INPROGRESS"; // trang thai lo voucher dang duoc xu ly
+        public static final String COMPLETE = "DONE";//trang thai lo voucher da xu ly xong
+        public static final String FAILED = "FAILED";
+    }
+
+    //trang thai state bang voucher_use
+    public static final class VOUCHER_USE_STATE {
+        public static final String ACTIVE = "active";
+        public static final String PRE_ACTIVE = "preActive";
+        public static final String INACTIVE = "inactive";
+        public static final String USING = "using";// dang trong luong don hang
+        public static final String USED = "used";
+    }
+
+    //trang thai state bang voucher_transaction
+    public static final class VOUCHER_TRANSACTION_STATE {
+        public static final String ACTIVE = "active"; // trang thai trong khi giao dich thanh toan thanh cong
+        public static final String PRE_ACTIVE = "preActive";
+        public static final String INACTIVE = "inactive";
+        public static final String USED = "used";
+    }
+
+    //trang thai transaction_type bang voucher_transaction
+    public static final class VOUCHER_TRANSACTION_TYPE {
+        public static final String CONNECT = "CONNECT";
+        public static final String AFTER = "AFTER";
+    }
+
+    public static class VOUCHER_TYPE {
+        public static final Integer CODE_MAX_LENGTH = 100;
+        public static final Integer DESCRIPTION_MAX_LENGTH = 1000;
+        public static final String CODE_REGEX = "[^a-zA-Z0-9_]+";
+        public static final String ACTION_TYPE_DISCOUNT = "discount";
+        public static final String ACTION_TYPE_FIXED = "fixed";
+        public static final String ACTION_TYPE_ITEM = "item";
     }
 }

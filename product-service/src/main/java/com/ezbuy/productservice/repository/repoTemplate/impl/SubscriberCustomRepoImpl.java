@@ -1,6 +1,6 @@
 package com.ezbuy.productservice.repository.repoTemplate.impl;
 
-import com.ezbuy.productmodel.response.StatisticSubscriberResponse;
+import com.ezbuy.productmodel.dto.response.StatisticSubscriberResponse;
 import com.ezbuy.productservice.repository.repoTemplate.SubscriberCustomRepo;
 import com.reactify.util.DataUtil;
 import java.util.List;
