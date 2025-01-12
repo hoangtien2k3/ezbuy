@@ -1,6 +1,6 @@
 package com.ezbuy.productservice.client;
 
-import com.ezbuy.productmodel.request.CallApiSyncProductRequest;
+import com.ezbuy.productmodel.dto.request.CallApiSyncProductRequest;
 import com.reactify.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 

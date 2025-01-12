@@ -18,12 +18,10 @@ import org.springframework.data.relational.core.mapping.Table;
 public class SyncHistory implements Persistable<String> {
     @Id
     private String id;
-
     private String orgId; // id doanh nghiep organization id
     private String idNo; // mst doanh nghiep
     private String action; // tac dong INSERT, UPDATE, DELETE
-    private String serviceType; // loai dong bo: SPECIFICT - dong bo theo dv chi dinh, ALL_BY_ORG - dong bo theo
-    // dv su dung
+    private String serviceType; // loai dong bo: SPECIFICT - dong bo theo dv chi dinh, ALL_BY_ORG
     private String dstService; // danh sach dinh danh doi tuong VCONTRACT, SINVOICE, MYSIGN ..
     private String syncType; // loai dong bo: ALL - tat ca, EVENT - theo su kien
     private String objectType; // loai du lieu dong bo: CUSTOMER

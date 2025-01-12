@@ -12,6 +12,8 @@ import com.reactify.util.Translator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
@@ -24,15 +26,12 @@ import reactor.core.publisher.Mono;
 @Log4j2
 @Service
 @DependsOn("webClientFactory")
+@RequiredArgsConstructor
 public class AuthClientImpl implements AuthClient {
 
     private final BaseRestClient baseRestClient;
+    @Qualifier("authClient")
     private final WebClient authClient;
-
-    public AuthClientImpl(BaseRestClient baseRestClient, @Qualifier("authClient") WebClient authClient) {
-        this.baseRestClient = baseRestClient;
-        this.authClient = authClient;
-    }
 
     @Override
     public Mono<List<String>> getTrustedIdNoOrganization(String organizationId) {

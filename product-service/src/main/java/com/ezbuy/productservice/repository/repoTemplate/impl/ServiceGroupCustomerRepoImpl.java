@@ -2,7 +2,7 @@ package com.ezbuy.productservice.repository.repoTemplate.impl;
 
 import com.ezbuy.productmodel.dto.ServiceDTO;
 import com.ezbuy.productmodel.dto.ServiceGroupDTO;
-import com.ezbuy.productmodel.request.SearchServiceGroupRequest;
+import com.ezbuy.productmodel.dto.request.SearchServiceGroupRequest;
 import com.ezbuy.productservice.repository.repoTemplate.BaseRepositoryTemplate;
 import com.ezbuy.productservice.repository.repoTemplate.ServiceGroupCustomerRepo;
 import com.reactify.util.DataUtil;

@@ -1,6 +1,6 @@
 package com.ezbuy.productservice.repository.repoTemplate;
 
-import com.ezbuy.productmodel.response.StatisticSubscriberResponse;
+import com.ezbuy.productmodel.dto.response.StatisticSubscriberResponse;
 import java.util.List;
 import reactor.core.publisher.Flux;
 

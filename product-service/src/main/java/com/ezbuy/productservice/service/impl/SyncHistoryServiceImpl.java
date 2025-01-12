@@ -5,7 +5,7 @@ import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
 import com.ezbuy.productmodel.constants.Constants;
 import com.ezbuy.productmodel.model.SyncHistory;
 import com.ezbuy.productmodel.model.SyncHistoryDetail;
-import com.ezbuy.productmodel.request.CreateSyncHistoryRequest;
+import com.ezbuy.productmodel.dto.request.CreateSyncHistoryRequest;
 import com.ezbuy.productservice.client.SyncClient;
 import com.ezbuy.productservice.repository.SyncHistoryDetailRepository;
 import com.ezbuy.productservice.repository.SyncHistoryRepository;

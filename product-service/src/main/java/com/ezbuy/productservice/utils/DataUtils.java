@@ -1,7 +1,7 @@
 package com.ezbuy.productservice.utils;
 
 import com.ezbuy.productmodel.model.Subscriber;
-import com.ezbuy.productmodel.response.SubscriberResponse;
+import com.ezbuy.productmodel.dto.response.SubscriberResponse;
 import java.util.Optional;
 import reactor.core.publisher.Mono;
 

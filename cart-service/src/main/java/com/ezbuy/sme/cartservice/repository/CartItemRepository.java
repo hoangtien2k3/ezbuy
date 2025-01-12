@@ -14,12 +14,12 @@ public interface CartItemRepository extends R2dbcRepository<CartItem, UUID> {
 
     @Query(
             value =
-                    "update cart_item set status = 0, update_by=:user, update_at=CURRENT_TIMESTAMP() where id =:cartItemId")
+                    "update cart_item set status = 0, update_by=:user, update_at = CURRENT_TIMESTAMP() where id = :cartItemId")
     Mono<CartItem> deleteCartItem(String cartItemId, String user);
 
     @Query(
             value =
-                    "update cart_item set status = 0, update_by=:user, update_at=CURRENT_TIMESTAMP()  where cart_id =:cartId")
+                    "update cart_item set status = 0, update_by=:user, update_at = CURRENT_TIMESTAMP()  where cart_id =:cartId")
     Mono<CartItem> deleteAllByCartId(String cartId, String user);
 
     @Query(value = "select * from cart_item where id =:cartItemId and status = 1")
@@ -30,12 +30,12 @@ public interface CartItemRepository extends R2dbcRepository<CartItem, UUID> {
 
     @Query(
             value =
-                    "select * from cart_item ct where ct.cart_id =:cartId and ct.product_id in(:productList) and ct.status = 1")
+                    "select * from cart_item ct where ct.cart_id =:cartId and ct.product_id in (:productList) and ct.status = 1")
     Flux<CartItem> findByCartIdAndProductId(String cartId, List<String> productList);
 
     @Query(
             value =
-                    "update cart_item set quantity =quantity+1, update_by=:user, update_at=CURRENT_TIMESTAMP() where id in(:cartItemIdList)")
+                    "update cart_item set quantity =quantity+1, update_by=:user, update_at = CURRENT_TIMESTAMP() where id in(:cartItemIdList)")
     Mono<CartItem> updateForAdd(List<String> cartItemIdList, String user);
 
     @Query(

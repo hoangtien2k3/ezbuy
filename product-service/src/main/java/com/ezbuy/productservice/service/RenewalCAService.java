@@ -1,7 +1,7 @@
 package com.ezbuy.productservice.service;
 
-import com.ezbuy.productmodel.request.ProductSpecificationRequest;
-import com.ezbuy.productmodel.response.SubscriberResponse;
+import com.ezbuy.productmodel.dto.request.ProductSpecificationRequest;
+import com.ezbuy.productmodel.dto.response.SubscriberResponse;
 import com.reactify.model.response.DataResponse;
 import java.util.List;
 import org.springframework.web.bind.annotation.RequestParam;

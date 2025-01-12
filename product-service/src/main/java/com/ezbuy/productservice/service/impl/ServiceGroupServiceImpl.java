@@ -4,10 +4,10 @@ import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
 
 import com.ezbuy.productmodel.dto.ServiceGroupDTO;
 import com.ezbuy.productmodel.model.ServiceGroup;
-import com.ezbuy.productmodel.request.CreateServiceGroupRequest;
-import com.ezbuy.productmodel.request.SearchServiceGroupRequest;
-import com.ezbuy.productmodel.response.PaginationDTO;
-import com.ezbuy.productmodel.response.SearchServiceGroupResponse;
+import com.ezbuy.productmodel.dto.request.CreateServiceGroupRequest;
+import com.ezbuy.productmodel.dto.request.SearchServiceGroupRequest;
+import com.ezbuy.productmodel.dto.response.PaginationDTO;
+import com.ezbuy.productmodel.dto.response.SearchServiceGroupResponse;
 import com.ezbuy.productservice.repository.ServiceGroupRepository;
 import com.ezbuy.productservice.repository.repoTemplate.ServiceGroupCustomerRepo;
 import com.ezbuy.productservice.service.ServiceGroupService;

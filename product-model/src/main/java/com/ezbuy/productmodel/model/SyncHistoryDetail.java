@@ -18,7 +18,6 @@ import org.springframework.data.relational.core.mapping.Table;
 public class SyncHistoryDetail implements Persistable<String> {
     @Id
     private String id;
-
     private String syncTransId; // ma transId do databus tra ve de dinh danh luong dong bo
     private String syncHistoryId; // ma bang syncHistory
     private String targetId; // id cua khach hang

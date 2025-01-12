@@ -1,6 +1,6 @@
 package com.ezbuy.productmodel.dto;
 
-import com.ezbuy.productmodel.request.ApiUtils;
+import com.ezbuy.productmodel.dto.request.ApiUtils;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,9 +1,9 @@
 package com.ezbuy.productservice.client.impl;
 
-import com.ezbuy.productmodel.request.ValidateSubInsRequest;
-import com.ezbuy.productmodel.request.getListAreaInsRequest;
-import com.ezbuy.productmodel.response.ListAreaInsResponse;
-import com.ezbuy.productmodel.response.ValidateSubInsResponse;
+import com.ezbuy.productmodel.dto.request.ValidateSubInsRequest;
+import com.ezbuy.productmodel.dto.request.getListAreaInsRequest;
+import com.ezbuy.productmodel.dto.response.ListAreaInsResponse;
+import com.ezbuy.productmodel.dto.response.ValidateSubInsResponse;
 import com.ezbuy.productservice.client.CaClient;
 import com.ezbuy.productservice.client.properties.CaProperties;
 import com.reactify.client.BaseRestClient;

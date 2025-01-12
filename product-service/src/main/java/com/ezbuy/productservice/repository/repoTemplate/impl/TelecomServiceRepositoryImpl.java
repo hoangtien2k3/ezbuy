@@ -1,7 +1,7 @@
 package com.ezbuy.productservice.repository.repoTemplate.impl;
 
 import com.ezbuy.productmodel.dto.TelecomServiceResponse;
-import com.ezbuy.productmodel.response.MegaMenuResponse;
+import com.ezbuy.productmodel.dto.response.MegaMenuResponse;
 import com.ezbuy.productservice.repository.repoTemplate.TelecomServiceRepository;
 import com.reactify.util.DataUtil;
 import lombok.Data;

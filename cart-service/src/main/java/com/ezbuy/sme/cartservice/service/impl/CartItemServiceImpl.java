@@ -14,7 +14,7 @@ import com.ezbuy.cartmodel.model.CartItem;
 import com.ezbuy.ordermodel.dto.PaginationDTO;
 import com.ezbuy.paymentmodel.dto.request.ProductItem;
 import com.ezbuy.paymentmodel.dto.request.ProductPriceRequest;
-import com.ezbuy.productmodel.response.ProductOfferTemplateDTO;
+import com.ezbuy.productmodel.dto.response.ProductOfferTemplateDTO;
 import com.ezbuy.sme.cartservice.client.PaymentClient;
 import com.ezbuy.sme.cartservice.client.ProductClient;
 import com.ezbuy.sme.cartservice.client.SettingClient;

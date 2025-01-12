@@ -2,9 +2,9 @@ package com.ezbuy.productservice.controller;
 
 import com.ezbuy.productmodel.constants.UrlPaths;
 import com.ezbuy.productmodel.model.ServiceGroup;
-import com.ezbuy.productmodel.request.CreateServiceGroupRequest;
-import com.ezbuy.productmodel.request.SearchServiceGroupRequest;
-import com.ezbuy.productmodel.response.SearchServiceGroupResponse;
+import com.ezbuy.productmodel.dto.request.CreateServiceGroupRequest;
+import com.ezbuy.productmodel.dto.request.SearchServiceGroupRequest;
+import com.ezbuy.productmodel.dto.response.SearchServiceGroupResponse;
 import com.ezbuy.productservice.service.ServiceGroupService;
 import com.reactify.model.response.DataResponse;
 import com.reactify.util.Translator;

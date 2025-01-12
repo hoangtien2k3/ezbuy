@@ -14,12 +14,12 @@ import com.ezbuy.productmodel.model.ProductSpecChar;
 import com.ezbuy.productmodel.model.ProductSpecCharValue;
 import com.ezbuy.productmodel.model.Subscriber;
 import com.ezbuy.productmodel.model.Telecom;
-import com.ezbuy.productmodel.request.FilterCreatingRequest;
-import com.ezbuy.productmodel.request.FilterGetListSubscriberActive;
-import com.ezbuy.productmodel.request.FilterGetListSubscriberActiveByAlias;
-import com.ezbuy.productmodel.request.GetListSubscriberActive;
-import com.ezbuy.productmodel.response.LstServiceCharacteristicResponse;
-import com.ezbuy.productmodel.response.ServiceCharacteristicDTO;
+import com.ezbuy.productmodel.dto.request.FilterCreatingRequest;
+import com.ezbuy.productmodel.dto.request.FilterGetListSubscriberActive;
+import com.ezbuy.productmodel.dto.request.FilterGetListSubscriberActiveByAlias;
+import com.ezbuy.productmodel.dto.request.GetListSubscriberActive;
+import com.ezbuy.productmodel.dto.response.LstServiceCharacteristicResponse;
+import com.ezbuy.productmodel.dto.response.ServiceCharacteristicDTO;
 import com.ezbuy.productservice.client.AuthClient;
 import com.ezbuy.productservice.client.CmClient;
 import com.ezbuy.productservice.client.ProductClient;
@@ -182,7 +182,7 @@ public class ProductSpecServiceImpl implements ProductSpecService {
                             }
                             List<ProductSpecCharValueDTO> productSpecCharValueList =
                                     productSpec.getProductSpecCharValueDTOList();
-                            List<com.ezbuy.productmodel.response.ProductSpecCharValueDTO> values =
+                            List<com.ezbuy.productmodel.dto.response.ProductSpecCharValueDTO> values =
                                     serviceCharacteristic.getProductSpecCharValueDTOList() != null
                                             ? serviceCharacteristic.getProductSpecCharValueDTOList()
                                             : new ArrayList<>();
@@ -213,7 +213,7 @@ public class ProductSpecServiceImpl implements ProductSpecService {
                             productSpec.setTelecomServiceAlias(telecomAlias);
                             List<ProductSpecCharValueDTO> updateSpecCharValueList = new ArrayList<>();
                             for (ProductSpecCharValueDTO productSpecValue : productSpecCharValueList) {
-                                Optional<com.ezbuy.productmodel.response.ProductSpecCharValueDTO>
+                                Optional<com.ezbuy.productmodel.dto.response.ProductSpecCharValueDTO>
                                         productSpecCharValueOptional = values.stream()
                                                 .filter(value -> DataUtil.safeEqual(
                                                         value.getValue(), productSpecValue.getValue()))
