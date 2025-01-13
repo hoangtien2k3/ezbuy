@@ -81,8 +81,7 @@ public class VoucherBatchServiceImpl extends BaseServiceHandler implements Vouch
 
     @Override
     @Transactional
-    public Mono<DataResponse<Boolean>> updateVoucherBatch(String id,
-                                                          CreateVoucherBatchRequest request) {
+    public Mono<DataResponse<Boolean>> updateVoucherBatch(String id, CreateVoucherBatchRequest request) {
         var getSysDate = voucherBatchRepository.getSysDate();
         return Mono.zip(
                         validateRequestVoucher(request, false),
@@ -116,7 +115,6 @@ public class VoucherBatchServiceImpl extends BaseServiceHandler implements Vouch
                 .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "voucher.batch.found")))
                 .map(voucherBatch -> new DataResponse<>(Translator.toLocale("Success"), voucherBatch));
     }
-
 
     private Mono<Boolean> validateRequestVoucher(CreateVoucherBatchRequest request, boolean isCreate) {
         if (DataUtil.isNullOrEmpty(request.getCode())) {
@@ -211,6 +209,4 @@ public class VoucherBatchServiceImpl extends BaseServiceHandler implements Vouch
             return response;
         });
     }
-
-
 }

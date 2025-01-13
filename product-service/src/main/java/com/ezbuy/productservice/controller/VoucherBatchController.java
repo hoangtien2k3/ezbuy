@@ -23,44 +23,44 @@ import static com.ezbuy.productmodel.constants.UrlPaths.VoucherBatch.*;
 @RequestMapping(DEFAULT_V1_PREFIX)
 public class VoucherBatchController {
 
-  private final VoucherBatchService voucherBatchService;
+    private final VoucherBatchService voucherBatchService;
 
-  @GetMapping(value = GET_ALL_VOUCHER_BATCH)
-  public Mono<ResponseEntity<DataResponse>> getAllVoucherBatch() {
-    return voucherBatchService.getAllVoucherBatch()
-        .map(result -> ResponseEntity.ok(new DataResponse(Translator.toLocaleVi(
-            MessageConstant.SUCCESS), result)));
-  }
+    @GetMapping(value = GET_ALL_VOUCHER_BATCH)
+    public Mono<ResponseEntity<DataResponse>> getAllVoucherBatch() {
+        return voucherBatchService.getAllVoucherBatch()
+                .map(result -> ResponseEntity.ok(new DataResponse(Translator.toLocaleVi(
+                        MessageConstant.SUCCESS), result)));
+    }
 
-  @PostMapping(value = CREATE_VOUCHER_BATCH)
-  public Mono<DataResponse> createVoucherBatch(@Valid @RequestBody CreateVoucherBatchRequest request) {
-    return voucherBatchService.createVoucherBatch(request)
-        .map(result -> new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), result));
-  }
+    @PostMapping(value = CREATE_VOUCHER_BATCH)
+    public Mono<DataResponse> createVoucherBatch(@Valid @RequestBody CreateVoucherBatchRequest request) {
+        return voucherBatchService.createVoucherBatch(request)
+                .map(result -> new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), result));
+    }
 
-  @PutMapping(value = UPDATE_VOUCHER_BATCH)
-  public Mono<DataResponse> updateVoucherBatch(@PathVariable String id,@Valid @RequestBody CreateVoucherBatchRequest request) {
-    return voucherBatchService.updateVoucherBatch(id,request)
-        .map(result -> new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), result));
-  }
+    @PutMapping(value = UPDATE_VOUCHER_BATCH)
+    public Mono<DataResponse> updateVoucherBatch(@PathVariable String id, @Valid @RequestBody CreateVoucherBatchRequest request) {
+        return voucherBatchService.updateVoucherBatch(id, request)
+                .map(result -> new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), result));
+    }
 
-  @GetMapping(value = DETAIL_VOUCHER_BATCH)
-  public Mono<DataResponse<VoucherBatch>> getInfoVoucherBatch(@PathVariable("id") String id) {
-    return voucherBatchService.getVoucherBatch(id);
-  }
+    @GetMapping(value = DETAIL_VOUCHER_BATCH)
+    public Mono<DataResponse<VoucherBatch>> getInfoVoucherBatch(@PathVariable("id") String id) {
+        return voucherBatchService.getVoucherBatch(id);
+    }
 
-  @GetMapping(value = GET_ALL_VOUCHER_TYPE)
-  public Mono<ResponseEntity<DataResponse>> getAllVoucherType() {
-    return voucherBatchService.getAllVoucherType()
-        .map(result -> ResponseEntity.ok(new DataResponse(Translator.toLocaleVi(
-            MessageConstant.SUCCESS), result)));
-  }
+    @GetMapping(value = GET_ALL_VOUCHER_TYPE)
+    public Mono<ResponseEntity<DataResponse>> getAllVoucherType() {
+        return voucherBatchService.getAllVoucherType()
+                .map(result -> ResponseEntity.ok(new DataResponse(Translator.toLocaleVi(
+                        MessageConstant.SUCCESS), result)));
+    }
 
-  @GetMapping(value = SEARCH_VOUCHER_BATCH)
-  public Mono<ResponseEntity<DataResponse>> searchVoucherBatch(VoucherBatchRequest request) {
-    return voucherBatchService.searchVoucherBatch(request)
-        .map(rs -> ResponseEntity.ok(
-            new DataResponse(Translator.toLocaleVi(MessageConstant.SUCCESS), rs)));
-  }
+    @GetMapping(value = SEARCH_VOUCHER_BATCH)
+    public Mono<ResponseEntity<DataResponse>> searchVoucherBatch(VoucherBatchRequest request) {
+        return voucherBatchService.searchVoucherBatch(request)
+                .map(rs -> ResponseEntity.ok(
+                        new DataResponse(Translator.toLocaleVi(MessageConstant.SUCCESS), rs)));
+    }
 
 }

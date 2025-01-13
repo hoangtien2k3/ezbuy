@@ -4,7 +4,6 @@ import com.ezbuy.paymentmodel.constants.ClientUris;
 import com.ezbuy.paymentmodel.dto.response.IdentityProductPrice;
 import com.ezbuy.paymentservice.client.ProductClient;
 import com.ezbuy.productmodel.dto.FilterProductTemplateDTO;
-import com.ezbuy.productmodel.model.Subscriber;
 import com.ezbuy.productmodel.dto.request.FilterGetListSubscriberActive;
 import com.ezbuy.productmodel.dto.response.ProductOfferTemplateDTO;
 import com.fasterxml.jackson.core.type.TypeReference;

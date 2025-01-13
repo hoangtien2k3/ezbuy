@@ -15,8 +15,6 @@ public class WebClientFactoryConfig {
     private final AuthProperties authProperties;
     private final OrderProperties orderProperties;
     private final SettingProperties settingProperties;
-    // private final CaProperties caProperties;
-    // private final SyncClientProperties syncClientProperties;
 
     @Bean(name = "webClientFactory")
     public WebClientFactory webClientFactory(
@@ -26,7 +24,6 @@ public class WebClientFactoryConfig {
                 orderProperties,
                 settingProperties
         );
-
         WebClientFactory factory = new WebClientFactory(applicationContext, authorizedClientManager);
         factory.setWebClients(listProperties);
         return factory;
