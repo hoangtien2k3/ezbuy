@@ -2,8 +2,6 @@ package com.ezbuy.orderservice.client.impl;
 
 import com.ezbuy.orderservice.client.ProductClient;
 import com.ezbuy.productmodel.dto.FilterProductTemplateDTO;
-import com.ezbuy.productmodel.model.Subscriber;
-import com.ezbuy.productmodel.model.Telecom;
 import com.ezbuy.productmodel.dto.request.FilterGetListSubscriberActive;
 import com.ezbuy.productmodel.dto.response.ProductOfferTemplateDTO;
 import com.fasterxml.jackson.core.type.TypeReference;

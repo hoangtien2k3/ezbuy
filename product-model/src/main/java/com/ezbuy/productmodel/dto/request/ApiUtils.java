@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ApiUtils {
-
     private SortOrder sortOrder;
     private String sortField;
     private Integer pageSize;

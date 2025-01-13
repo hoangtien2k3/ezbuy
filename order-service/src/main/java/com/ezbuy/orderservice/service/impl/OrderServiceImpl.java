@@ -32,7 +32,6 @@ import com.ezbuy.orderservice.service.PartnerLicenseKeyService;
 import com.ezbuy.paymentmodel.dto.UpdateOrderStateDTO;
 import com.ezbuy.paymentmodel.dto.request.*;
 import com.ezbuy.paymentmodel.dto.response.ProductPaymentResponse;
-import com.ezbuy.productmodel.model.Subscriber;
 import com.ezbuy.productmodel.dto.response.ProductOfferTemplateDTO;
 import com.ezbuy.settingmodel.dto.OptionSetValueDTO;
 import com.ezbuy.settingmodel.dto.TelecomDTO;

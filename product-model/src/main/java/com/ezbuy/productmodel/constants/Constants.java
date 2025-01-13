@@ -39,25 +39,6 @@ public class Constants {
         public static final String OBLIGATORY = " (*)";
     }
 
-    public static class SYNC_HISTORY_STATE {
-        public static String WAIT_SYNC = "waitSync";
-        public static String DONE = "done";
-        public static String FAIL = "fail";
-        public static String IN_PROGRESS = "inProgress";
-    }
-
-    public static class SYNC_HISTORY_DETAIL {
-        public static String SOURCE_ALIAS_HUB_PRODUCT = "HUB_PRODUCT_INTERNAL";
-    }
-
-    public static class TelecomServiceId {
-        public static final Long CA = 7L;
-        public static final Long EASY_BOOK = 208L;
-        public static final Long SINVOICE = 37L;
-        public static final Long VCONTRACT = 101L;
-        public static final Long VBHXH = 151L;
-    }
-
     public static class ServiceId {
         public static final String VBHXH = "151";
     }

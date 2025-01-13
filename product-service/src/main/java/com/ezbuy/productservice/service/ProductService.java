@@ -16,11 +16,6 @@ import org.springframework.http.codec.multipart.FilePart;
 import reactor.core.publisher.Mono;
 
 public interface ProductService {
-    Mono<List<ServiceDTO>> getAllServiceGroupAndTelecomServiceActive();
-
-    Mono<List<Long>> getAllRegisterdTelecomServicesByIdNoList(List<String> idNoList);
-
-    Mono<List<String>> getAllRegisterdTelecomServicesAliasByIdNoList(List<String> idNoList);
 
     /**
      * Hàm tìm kiếm hàng hóa
@@ -30,44 +25,12 @@ public interface ProductService {
     Mono<ProductSearchResult> searchProduct(SearchProductRequest request, String organizationId);
 
     /**
-     * Ham them moi hang hoa dong thoi luu thong tin vao bang syncHistory
-     *
-     * @param product
-     * @return
-     */
-    Mono<DataResponse<Product>> createProductSync(Product product, String organizationId);
-
-    /**
-     * Ham cap nhat thong tin hang hoa dong thoi luu thong tin vao bang syncHistory
-     *
-     * @param product
-     * @return
-     */
-    Mono<DataResponse<Boolean>> updateProductSync(Product product, String organizationId);
-
-    /**
-     * Ham xoa hang hoa dong thoi luu thong tin vao bang syncHistory
-     *
-     * @param productId
-     * @return
-     */
-    Mono<DataResponse<Boolean>> deleteProductSync(String productId, String organizationId);
-
-    /**
      * Ham xem thong tin chi tiet hang hoa
      *
      * @param productId
      * @return
      */
     Mono<Product> detailProduct(String productId);
-
-    /**
-     * Ham khoa hang hoa dong thoi luu thong tin vao bang syncHistory
-     *
-     * @param request
-     * @return
-     */
-    Mono<DataResponse<Boolean>> lockProductSync(LockProductRequest request, String organizationId);
 
     /**
      * Ham tai file import mau cho hang hoa
@@ -91,22 +54,6 @@ public interface ProductService {
      * @return
      */
     Mono<ProductImportListDTO> validateImportProduct(FilePart filePart);
-
-    /**
-     * Ham import hang hoa dong thoi luu thong tin vao bang syncHistory
-     *
-     * @param filePart
-     * @return
-     */
-    Mono<ProductImportListDTO> importProductSync(FilePart filePart, String organizationId);
-
-    /**
-     * Ham khoa nhieu ban ghi hang hoa dong thoi luu thong tin vao bang syncHistory
-     *
-     * @param request
-     * @return
-     */
-    Mono<DataResponse<List<Product>>> lockMultiProductSync(LockMultiProductRequest request, String organizationId);
 
     /**
      * Ham them moi thong tin hang hoa
@@ -158,22 +105,6 @@ public interface ProductService {
     Mono<Boolean> lockMultiProduct(LockMultiProductRequest request);
 
     /**
-     * Ham validate thue bao vBHXH
-     *
-     * @param request
-     * @return
-     */
-    Mono<DataResponse> validateSubIns(ValidateSubInsRequest request);
-
-    /**
-     * Ham lay danh sach tinh/co quan quan ly
-     *
-     * @param request
-     * @return
-     */
-    Mono<DataResponse> getListAreaIns(getListAreaInsRequest request);
-
-    /**
      * Ham them moi hang hoa
      *
      * @param product
@@ -191,9 +122,6 @@ public interface ProductService {
      */
     Mono<GetProductInfoResponse> getProductInfo(GetProductInfoRequest request);
 
-    Mono<DataResponse> createSummaryReport(CreateSummaryRequest request);
-
     Mono<Resource> exportReport(QueryReport request);
 
-    Mono<QueryReport> getDataReport(QueryReport request);
 }

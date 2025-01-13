@@ -15,7 +15,6 @@ import org.springframework.data.relational.core.mapping.Table;
 public class IdType {
     @Id
     private String id;
-
     private String name;
     private String code;
     private Integer status;
