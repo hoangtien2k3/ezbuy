@@ -3,6 +3,7 @@ package com.ezbuy.settingservice.repository;
 import com.ezbuy.settingmodel.model.MarketPage;
 import java.util.List;
 import java.util.UUID;
+
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Flux;
@@ -47,4 +48,7 @@ public interface MarketPageRepository extends R2dbcRepository<MarketPage, UUID> 
     // lay danh sach cau hinh trang theo danh sach alias
     @Query(value = "select * from market_info where service_alias in (:lstAlias) and status = 1 ")
     Flux<MarketPage> getByServiceAlias(List<String> lstAlias);
+
+    @Query("Select * from market_page where id = :id and (:status is null or status = :status)")
+    Mono<MarketPage> findMarketPageById(String id, Integer status);
 }

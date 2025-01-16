@@ -169,4 +169,12 @@ public class UrlPaths {
 
         String UPDATE = Constants.ID; // cap nhat option_set_value theo id
     }
+
+    public interface MarketPageSection {
+        String PREFIX = "v1/market-page-section";
+        String DETAIL = "/detail";
+        String CREATE = "/create";
+        String EDIT = "/edit/{id}";
+        String DELETE = "/delete/{id}";
+    }
 }
