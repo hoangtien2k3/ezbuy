@@ -3,7 +3,6 @@ package com.ezbuy.settingservice.service.impl;
 import com.ezbuy.settingmodel.dto.PaginationDTO;
 import com.ezbuy.settingmodel.dto.request.SearchMarketPageSectionRequest;
 import com.ezbuy.settingmodel.model.MarketPageSection;
-import com.ezbuy.settingmodel.model.MarketSection;
 import com.ezbuy.settingmodel.request.MarketPageSectionRequest;
 import com.ezbuy.settingmodel.response.SearchMarketPageSectionResponse;
 import com.ezbuy.settingservice.repository.MarketPageRepository;
@@ -12,7 +11,6 @@ import com.ezbuy.settingservice.repository.MarketSectionRepository;
 import com.ezbuy.settingservice.repositoryTemplate.MarketPageSectionRepositoryTemplate;
 import com.ezbuy.settingservice.service.MarketPageSectionService;
 import com.reactify.constants.CommonErrorCode;
-import com.reactify.constants.Constants;
 import com.reactify.exception.BusinessException;
 import com.reactify.model.TokenUser;
 import com.reactify.model.response.DataResponse;
@@ -21,6 +19,7 @@ import com.reactify.util.SecurityUtils;
 import com.reactify.util.Translator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -60,6 +59,7 @@ public class MarketPageSectionServiceImpl extends BaseServiceHandler implements 
     }
 
     @Override
+    @Transactional
     public Mono<DataResponse<MarketPageSection>> createMarketPageSection(MarketPageSectionRequest request) {
         return Mono.zip(
                         SecurityUtils.getCurrentUser().switchIfEmpty(Mono.just(new TokenUser())),
@@ -84,11 +84,12 @@ public class MarketPageSectionServiceImpl extends BaseServiceHandler implements 
                     return marketPageSectionRepository
                             .save(marketPageSection)
                             .onErrorReturn(new MarketPageSection())
-                            .flatMap(result -> Mono.just(new DataResponse<>("success", result)));
+                            .flatMap(result -> Mono.just(new DataResponse<>(SUCCESS, result)));
                 });
     }
 
     @Override
+    @Transactional
     public Mono<DataResponse<MarketPageSection>> updateMarketPageSection(String id, MarketPageSectionRequest request) {
         if (DataUtil.isNullOrEmpty(id)) {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.page.id.not.empty");
@@ -108,45 +109,9 @@ public class MarketPageSectionServiceImpl extends BaseServiceHandler implements 
                     return marketPageSectionRepository
                             .save(marketPageSection)
                             .onErrorReturn(new MarketPageSection())
-                            .flatMap(result -> Mono.just(new DataResponse<>("success", result)));
+                            .flatMap(result -> Mono.just(new DataResponse<>(SUCCESS, result)));
                 })
                 .map(rs -> new DataResponse<>(Translator.toLocaleVi(SUCCESS), null));
-    }
-
-    @Override
-    public Mono<DataResponse<MarketPageSection>> lockMarketPageSectionById(String id) {
-        String marketPageSectionId = DataUtil.safeTrim(id);
-        if (DataUtil.isNullOrEmpty(marketPageSectionId)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.section.validate.id.null");
-        }
-        return Mono.zip(SecurityUtils.getCurrentUser()
-                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
-                        marketPageSectionRepository
-                                .findMarketPageSectionById(marketPageSectionId, Constants.Activation.ACTIVE)
-                                .switchIfEmpty(Mono.error(new BusinessException(
-                                        CommonErrorCode.NOT_FOUND, "market.section.validate.find.by.id.null"))))
-                .flatMap(tuple -> marketPageSectionRepository
-                        .updateMarketPageSectionByStatus(marketPageSectionId, Constants.Activation.INACTIVE, tuple.getT1().getUsername())
-                        .defaultIfEmpty(new MarketSection())
-                        .flatMap(response -> Mono.just(new DataResponse<>("success", null))));
-    }
-
-    @Override
-    public Mono<DataResponse<MarketPageSection>> unlockMarketPageSectionById(String id) {
-        String marketPageSectionId = DataUtil.safeTrim(id);
-        if (DataUtil.isNullOrEmpty(marketPageSectionId)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.section.validate.id.null");
-        }
-        return Mono.zip(SecurityUtils.getCurrentUser()
-                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
-                        marketPageSectionRepository
-                                .findMarketPageSectionById(marketPageSectionId, Constants.Activation.INACTIVE)
-                                .switchIfEmpty(Mono.error(new BusinessException(
-                                        CommonErrorCode.NOT_FOUND, "market.section.validate.find.by.id.null"))))
-                .flatMap(tuple -> marketPageSectionRepository
-                        .updateMarketPageSectionByStatus(marketPageSectionId, Constants.Activation.ACTIVE, tuple.getT1().getUsername())
-                        .defaultIfEmpty(new MarketSection())
-                        .flatMap(response -> Mono.just(new DataResponse<>("success", null))));
     }
 
     private Mono<Boolean> validateExitsPageId(String pageId, Integer status) {
