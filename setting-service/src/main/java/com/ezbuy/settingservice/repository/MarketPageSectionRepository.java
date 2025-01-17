@@ -15,8 +15,8 @@ public interface MarketPageSectionRepository extends R2dbcRepository<MarketPageS
     Mono<MarketPageSection> getById(String id);
 
     @Query(value = "select * from market_page_section where id = :id and (:status is null or status = :status)")
-    Mono<MarketPageSection> findMarketPageSectionById(String id, String status);
+    Mono<MarketPageSection> findMarketPageSectionById(String id, Integer status);
 
-    @Query(value = "update market_page_section set status = :status, update_by = :user, update_at = CURRENT_TIMESTAMP() where id = :id")
+    @Query(value = "update market_page_section set status = :status, update_by = :user, update_at = CURRENT_TIMESTAMP where id = :id")
     Mono<MarketSection> updateMarketPageSectionByStatus(String id, Integer status, String user);
 }

@@ -12,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = UrlPaths.MarketPageSection.PREFIX)
@@ -35,8 +33,13 @@ public class MarketPageSectionController {
         return marketPageSectionService.updateMarketPageSection(id, request);
     }
 
-    @PutMapping(value = UrlPaths.MarketPageSection.DELETE)
-    public Mono<DataResponse<MarketPageSection>> deleteMarketSection(@PathVariable String id) {
-        return marketPageSectionService.deleteMarketPageSection(id);
+    @PutMapping(value = UrlPaths.MarketPageSection.LOCK)
+    public Mono<DataResponse<MarketPageSection>> lockMarketSection(@PathVariable String id) {
+        return marketPageSectionService.lockMarketPageSectionById(id);
+    }
+
+    @PutMapping(value = UrlPaths.MarketPageSection.UNLOCK)
+    public Mono<DataResponse<MarketPageSection>> unlockMarketSection(@PathVariable String id) {
+        return marketPageSectionService.unlockMarketPageSectionById(id);
     }
 }

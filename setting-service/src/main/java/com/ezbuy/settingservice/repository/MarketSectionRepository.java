@@ -25,7 +25,7 @@ public interface MarketSectionRepository extends R2dbcRepository<MarketSection, 
     Flux<MarketSection> getMarketSectionV2(String pageCode, String serviceAlias);
 
     @Query("Select * from market_section where id = :id and (:status is null or status = :status)")
-    Mono<MarketSection> findMarketSectionById(String id, String status);
+    Mono<MarketSection> findMarketSectionById(String id, Integer status);
 
     @Query(
             value =

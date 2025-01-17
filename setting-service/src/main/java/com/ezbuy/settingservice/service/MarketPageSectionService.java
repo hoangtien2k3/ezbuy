@@ -14,5 +14,7 @@ public interface MarketPageSectionService {
 
     Mono<DataResponse<MarketPageSection>> updateMarketPageSection(String id, MarketPageSectionRequest request);
 
-    Mono<DataResponse<MarketPageSection>> deleteMarketPageSection(String id);
+    Mono<DataResponse<MarketPageSection>> lockMarketPageSectionById(String id);
+
+    Mono<DataResponse<MarketPageSection>> unlockMarketPageSectionById(String id);
 }

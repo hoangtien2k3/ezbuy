@@ -363,7 +363,7 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
                                 // BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
                                 .switchIfEmpty(Mono.just(new TokenUser())),
                         marketSectionRepository
-                                .findMarketSectionById(marketSectionId, Constants.Activation.ACTIVE.toString()) // lay
+                                .findMarketSectionById(marketSectionId, Constants.Activation.ACTIVE) // lay
                                 // thong
                                 // tin
                                 // marketSection

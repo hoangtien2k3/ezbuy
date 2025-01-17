@@ -1,13 +1,11 @@
 package com.ezbuy.settingservice.service.impl;
 
-import com.ezbuy.settingmodel.dto.OptionSetValueDTO;
 import com.ezbuy.settingmodel.dto.PaginationDTO;
 import com.ezbuy.settingmodel.dto.request.SearchMarketPageSectionRequest;
 import com.ezbuy.settingmodel.model.MarketPageSection;
 import com.ezbuy.settingmodel.model.MarketSection;
 import com.ezbuy.settingmodel.request.MarketPageSectionRequest;
 import com.ezbuy.settingmodel.response.SearchMarketPageSectionResponse;
-import com.ezbuy.settingmodel.response.SearchOptionSetValueResponse;
 import com.ezbuy.settingservice.repository.MarketPageRepository;
 import com.ezbuy.settingservice.repository.MarketPageSectionRepository;
 import com.ezbuy.settingservice.repository.MarketSectionRepository;
@@ -27,7 +25,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 import static com.reactify.constants.CommonErrorCode.SUCCESS;
@@ -117,7 +114,7 @@ public class MarketPageSectionServiceImpl extends BaseServiceHandler implements 
     }
 
     @Override
-    public Mono<DataResponse<MarketPageSection>> deleteMarketPageSection(String id) {
+    public Mono<DataResponse<MarketPageSection>> lockMarketPageSectionById(String id) {
         String marketPageSectionId = DataUtil.safeTrim(id);
         if (DataUtil.isNullOrEmpty(marketPageSectionId)) {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.section.validate.id.null");
@@ -125,11 +122,29 @@ public class MarketPageSectionServiceImpl extends BaseServiceHandler implements 
         return Mono.zip(SecurityUtils.getCurrentUser()
                                 .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
                         marketPageSectionRepository
-                                .findMarketPageSectionById(marketPageSectionId, Constants.Activation.ACTIVE.toString())
+                                .findMarketPageSectionById(marketPageSectionId, Constants.Activation.ACTIVE)
                                 .switchIfEmpty(Mono.error(new BusinessException(
                                         CommonErrorCode.NOT_FOUND, "market.section.validate.find.by.id.null"))))
                 .flatMap(tuple -> marketPageSectionRepository
                         .updateMarketPageSectionByStatus(marketPageSectionId, Constants.Activation.INACTIVE, tuple.getT1().getUsername())
+                        .defaultIfEmpty(new MarketSection())
+                        .flatMap(response -> Mono.just(new DataResponse<>("success", null))));
+    }
+
+    @Override
+    public Mono<DataResponse<MarketPageSection>> unlockMarketPageSectionById(String id) {
+        String marketPageSectionId = DataUtil.safeTrim(id);
+        if (DataUtil.isNullOrEmpty(marketPageSectionId)) {
+            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.section.validate.id.null");
+        }
+        return Mono.zip(SecurityUtils.getCurrentUser()
+                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
+                        marketPageSectionRepository
+                                .findMarketPageSectionById(marketPageSectionId, Constants.Activation.INACTIVE)
+                                .switchIfEmpty(Mono.error(new BusinessException(
+                                        CommonErrorCode.NOT_FOUND, "market.section.validate.find.by.id.null"))))
+                .flatMap(tuple -> marketPageSectionRepository
+                        .updateMarketPageSectionByStatus(marketPageSectionId, Constants.Activation.ACTIVE, tuple.getT1().getUsername())
                         .defaultIfEmpty(new MarketSection())
                         .flatMap(response -> Mono.just(new DataResponse<>("success", null))));
     }
@@ -150,7 +165,7 @@ public class MarketPageSectionServiceImpl extends BaseServiceHandler implements 
 
     private Mono<Boolean> validateExitsSectionId(String sectionId, Integer status) {
         return marketSectionRepository
-                .findMarketSectionById(sectionId, String.valueOf(status))
+                .findMarketSectionById(sectionId, status)
                 .switchIfEmpty(Mono.error(new BusinessException(
                         CommonErrorCode.BAD_REQUEST,
                         Translator.toLocaleVi("market.page.error.service.not.found"))))
