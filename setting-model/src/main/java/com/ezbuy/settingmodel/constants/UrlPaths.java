@@ -175,7 +175,5 @@ public class UrlPaths {
         String DETAIL = "/detail";
         String CREATE = "/create";
         String EDIT = "/edit/{id}";
-        String LOCK = "/lock/{id}";
-        String UNLOCK = "/unlock/{id}";
     }
 }

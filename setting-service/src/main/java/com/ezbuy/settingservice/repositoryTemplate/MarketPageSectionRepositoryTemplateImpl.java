@@ -28,7 +28,7 @@ public class MarketPageSectionRepositoryTemplateImpl extends BaseRepositoryTempl
         buildQueryOptionSetValue(query, params, request);
         String sorting;
         if (DataUtil.isNullOrEmpty(request.getSort())) {
-            sorting = " page_id \n";
+            sorting = " update_at \n";
         } else {
             sorting = SortingUtils.parseSorting(request.getSort(), MarketPageSection.class);
         }

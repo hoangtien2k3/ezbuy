@@ -119,7 +119,7 @@ public class MarketPageSectionServiceImpl extends BaseServiceHandler implements 
                 .findMarketPageById(pageId, status)
                 .switchIfEmpty(Mono.error(new BusinessException(
                         CommonErrorCode.BAD_REQUEST,
-                        Translator.toLocaleVi("market.page.error.service.not.found"))))
+                        Translator.toLocaleVi("market.page.error.pageId.not.found"))))
                 .flatMap(marketPages -> {
                     if (DataUtil.isNullOrEmpty(marketPages)) {
                         Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, Translator.toLocaleVi("market.page.error.service.not.found")));
@@ -133,7 +133,7 @@ public class MarketPageSectionServiceImpl extends BaseServiceHandler implements 
                 .findMarketSectionById(sectionId, status)
                 .switchIfEmpty(Mono.error(new BusinessException(
                         CommonErrorCode.BAD_REQUEST,
-                        Translator.toLocaleVi("market.page.error.service.not.found"))))
+                        Translator.toLocaleVi("market.page.error.sectionId.not.found"))))
                 .flatMap(marketPages -> {
                     if (DataUtil.isNullOrEmpty(marketPages)) {
                         Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, Translator.toLocaleVi("market.page.error.service.not.found")));
