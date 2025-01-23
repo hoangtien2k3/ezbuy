@@ -1,4 +1,4 @@
-FROM amazoncorretto:21.0.3 as builder
+FROM amazoncorretto:21.0.6 as builder
 WORKDIR application
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} application.jar
