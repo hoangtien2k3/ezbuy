@@ -33,8 +33,7 @@ public class NotiServiceClientImpl implements NotiServiceClient {
         return SecurityUtils.getTokenUser().flatMap(token -> {
             MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-            return baseRestClient
-                    .post(
+            return baseRestClient.post(
                             notiServiceClient,
                             UrlPaths.Noti.CREATE_NOTI,
                             headers,

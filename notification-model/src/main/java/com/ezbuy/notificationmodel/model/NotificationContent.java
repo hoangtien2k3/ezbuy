@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Data
@@ -14,6 +15,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NotificationContent extends EntityBase {
+    @Id
     private String id;
     private String title;
     private String subTitle;
@@ -24,28 +26,6 @@ public class NotificationContent extends EntityBase {
     private String externalData;
 
     public NotificationContent(
-            LocalDateTime createAt,
-            String createBy,
-            LocalDateTime updateAt,
-            String updateBy,
-            String id,
-            String title,
-            String subTitle,
-            String imageUrl,
-            String url,
-            Integer status,
-            String externalData) {
-        super(createAt, createBy, updateAt, updateBy);
-        this.id = id;
-        this.title = title;
-        this.subTitle = subTitle;
-        this.imageUrl = imageUrl;
-        this.url = url;
-        this.status = status;
-        this.externalData = externalData;
-    }
-
-    public NotificationContent(
             String id,
             String title,
             String subTitle,
@@ -61,6 +41,4 @@ public class NotificationContent extends EntityBase {
         this.status = status;
         this.externalData = externalData;
     }
-
-    public NotificationContent(String id, String title, String subTitle, String imageUrl, String url, Integer status) {}
 }
