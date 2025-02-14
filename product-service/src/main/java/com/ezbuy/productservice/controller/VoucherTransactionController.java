@@ -37,7 +37,7 @@ public class VoucherTransactionController {
      * @return
      */
     @PostMapping(value = UrlPaths.VoucherTransaction.UNLOCK)
-    public Mono<DataResponse> unlockVoucherTransaction(@RequestBody UnlockVoucherRequest unlockVoucherRequest) {
+    public Mono<DataResponse<String>> unlockVoucherTransaction(@RequestBody UnlockVoucherRequest unlockVoucherRequest) {
         return voucherTransactionService.unlockVoucherTransaction(unlockVoucherRequest).map(rs -> rs);
     }
 }

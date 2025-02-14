@@ -51,7 +51,7 @@ public class VoucherBatchServiceImpl extends BaseServiceHandler implements Vouch
 
     @Override
     @Transactional
-    public Mono<DataResponse> createVoucherBatch(CreateVoucherBatchRequest request) {
+    public Mono<DataResponse<VoucherBatch>> createVoucherBatch(CreateVoucherBatchRequest request) {
         var getSysDate = voucherBatchRepository.getSysDate();
         return Mono.zip(
                 SecurityUtils.getCurrentUser(),
@@ -74,7 +74,7 @@ public class VoucherBatchServiceImpl extends BaseServiceHandler implements Vouch
                             .build();
                     return voucherBatchRepository.save(voucherBatch)
                             .onErrorReturn(new VoucherBatch())
-                            .flatMap(result -> Mono.just(new DataResponse(Translator.toLocaleVi("Success"), result)));
+                            .flatMap(result -> Mono.just(DataResponse.success(result)));
                 }
         );
     }

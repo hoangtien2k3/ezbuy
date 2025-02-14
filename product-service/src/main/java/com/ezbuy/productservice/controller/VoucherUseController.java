@@ -50,7 +50,7 @@ public class VoucherUseController {
      * @return
      */
     @GetMapping(value = UrlPaths.VoucherUse.GET_BY_SOURCE_ORDER_ID)
-    public Mono<DataResponse> findVoucherUseByOrderId(@RequestParam String orderId) {
+    public Mono<DataResponse<List<VoucherUse>>> findVoucherUseByOrderId(@RequestParam String orderId) {
         return voucherUseService.findVoucherUseByOrderId(orderId).map(rs -> rs);
     }
 
@@ -61,7 +61,7 @@ public class VoucherUseController {
      * @return
      */
     @GetMapping(value = UrlPaths.VoucherUse.VALIDATE_VOUCHER_USED)
-    public Mono<DataResponse> validateVoucherUsed(@RequestParam String code, @RequestParam String organizationId) {
+    public Mono<DataResponse<Boolean>> validateVoucherUsed(@RequestParam String code, @RequestParam String organizationId) {
         return voucherUseService.validateVoucherUsed(code, organizationId).map(rs -> rs);
     }
 
@@ -72,7 +72,7 @@ public class VoucherUseController {
      * @return
      */
     @PostMapping(value = UrlPaths.VoucherUse.VOUCHER_GIFT_BY_TYPE_CODE)
-    public Mono<DataResponse> updateVoucherGiftInfoByVoucherGiftCode(@RequestBody UpdateVoucherGiftRequest request) {
+    public Mono<DataResponse<Boolean>> updateVoucherGiftInfoByVoucherGiftCode(@RequestBody UpdateVoucherGiftRequest request) {
         return voucherUseService.updateVoucherGiftInfoByVoucherGiftCode(request).map(rs -> new DataResponse<>("common.success", rs));
     }
 
@@ -83,7 +83,7 @@ public class VoucherUseController {
      * @return
      */
     @PostMapping(value = UrlPaths.VoucherUse.UPDATE_VOUCHER_INFO_PAYMENT)
-    public Mono<DataResponse> updateVoucherInfoPayment(@RequestBody UpdateVoucherPaymentRequest request) {
+    public Mono<DataResponse<Boolean>> updateVoucherInfoPayment(@RequestBody UpdateVoucherPaymentRequest request) {
         return voucherUseService.updateVoucherInfoPayment(request).map(rs -> rs);
     }
 }

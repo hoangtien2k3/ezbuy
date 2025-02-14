@@ -89,7 +89,7 @@ public class VoucherServiceImpl extends BaseServiceHandler implements VoucherSer
 
     @Override
     @Transactional
-    public Mono<DataResponse> createVoucher(VoucherRequest request) {
+    public Mono<DataResponse<Voucher>> createVoucher(VoucherRequest request) {
         var getSysDate = voucherBatchRepository.getSysDate();
         return Mono.zip(
                 SecurityUtils.getCurrentUser(),
@@ -111,7 +111,7 @@ public class VoucherServiceImpl extends BaseServiceHandler implements VoucherSer
                             .build();
                     return voucherRepository.save(voucher)
                             .onErrorReturn(new Voucher())
-                            .flatMap(result -> Mono.just(new DataResponse(Translator.toLocaleVi("Success"), result)));
+                            .flatMap(result -> Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), result)));
                 }
         );
     }
@@ -251,7 +251,7 @@ public class VoucherServiceImpl extends BaseServiceHandler implements VoucherSer
 
     @Override
     @Transactional
-    public Mono<DataResponse> unlockVoucher(UnlockVoucherRequest unlockVoucherRequest) {
+    public Mono<DataResponse<String>> unlockVoucher(UnlockVoucherRequest unlockVoucherRequest) {
         // lay danh sach voucher va voucher use het han
         return Mono.zip(
                         voucherUseRepository.getAllExpiredVoucherUse(unlockVoucherRequest.getExpiredMinutes()).collectList(),
@@ -297,7 +297,7 @@ public class VoucherServiceImpl extends BaseServiceHandler implements VoucherSer
 
     @Override
     @Transactional
-    public Mono<DataResponse> genVoucher(GenVoucherRequest unlockVoucherRequest) {
+    public Mono<DataResponse<String>> genVoucher(GenVoucherRequest unlockVoucherRequest) {
         // validate request
         String voucherBatchId = DataUtil.safeTrim(unlockVoucherRequest.getVoucherBatchId());
         if (DataUtil.isNullOrEmpty(voucherBatchId)) {
@@ -389,28 +389,28 @@ public class VoucherServiceImpl extends BaseServiceHandler implements VoucherSer
 
     @Override
     @Transactional
-    public Mono<DataResponse> insertVoucher() {
+    public Mono<DataResponse<String>> insertVoucher() {
         return voucherBatchRepository.findVoucherBatchInprogress().collectList().flatMap(result -> {
             if (!DataUtil.isNullOrEmpty(result)) {
                 var getSysDate = voucherRepository.getSysDate();
                 return Mono.zip(
                                 SecurityUtils.getCurrentUser(),
                                 getSysDate,
-                                voucherTypeRepository.getById(result.get(0).getVoucherTypeId()))
+                                voucherTypeRepository.getById(result.getFirst().getVoucherTypeId()))
                         .flatMap(result1 -> {
                             if (!DataUtil.isNullOrEmpty(result1.getT3())) {
                                 List<String> voucherCodeList = generateVoucherCode(result1.getT3().getCode(),
-                                        result.get(0).getCode(), result.get(0).getQuantity());
+                                        result.getFirst().getCode(), result.getFirst().getQuantity());
                                 List<Voucher> voucherList = new ArrayList<>();
                                 LocalDateTime now = result1.getT2();
                                 for (String voucherCode : voucherCodeList) {
                                     Voucher voucher = Voucher.builder()
                                             .id(UUID.randomUUID().toString())
                                             .code(voucherCode)
-                                            .expiredDate(result.get(0).getExpiredDate())
-                                            .expiredPeriod(result.get(0).getExpiredPeriod())
-                                            .voucherTypeId(result.get(0).getVoucherTypeId())
-                                            .batchId(result.get(0).getId())
+                                            .expiredDate(result.getFirst().getExpiredDate())
+                                            .expiredPeriod(result.getFirst().getExpiredPeriod())
+                                            .voucherTypeId(result.getFirst().getVoucherTypeId())
+                                            .batchId(result.getFirst().getId())
                                             .state(NEW)
                                             .createAt(now)
                                             .createBy(result1.getT1().getUsername())
@@ -419,19 +419,19 @@ public class VoucherServiceImpl extends BaseServiceHandler implements VoucherSer
                                     voucherList.add(voucher);
                                 }
                                 return batchInsertVouchers(voucherList)
-                                        .then(updateVoucherBatchState(result.get(0).getId(),
+                                        .then(updateVoucherBatchState(result.getFirst().getId(),
                                                 Constants.VOUCHER_BATCH_STATE.COMPLETE))
                                         .thenReturn(DataResponse.success("completed-to-insert-voucher"))
                                         .onErrorResume(throwable ->
-                                                updateVoucherBatchState(result.get(0).getId(), Constants.VOUCHER_BATCH_STATE.FAILED)
+                                                updateVoucherBatchState(result.getFirst().getId(), Constants.VOUCHER_BATCH_STATE.FAILED)
                                                         .thenReturn(DataResponse.failed("failed-to-insert-voucher"))
                                         );
                             }
-                            return updateVoucherBatchState(result.get(0).getId(), Constants.VOUCHER_BATCH_STATE.FAILED)
+                            return updateVoucherBatchState(result.getFirst().getId(), Constants.VOUCHER_BATCH_STATE.FAILED)
                                     .thenReturn(DataResponse.failed("voucher-type.error.not.exist"));
                         });
             }
-            return updateVoucherBatchState(result.get(0).getId(), Constants.VOUCHER_BATCH_STATE.FAILED)
+            return updateVoucherBatchState(result.getFirst().getId(), Constants.VOUCHER_BATCH_STATE.FAILED)
                     .thenReturn(DataResponse.failed("voucher-batch.error.not.exist"));
         });
     }

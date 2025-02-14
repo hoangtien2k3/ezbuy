@@ -1,6 +1,7 @@
 package com.ezbuy.productservice.controller;
 
 import com.ezbuy.productmodel.constants.UrlPaths;
+import com.ezbuy.productmodel.dto.VoucherTypeV2DTO;
 import com.ezbuy.productmodel.dto.request.SearchVoucherTypeRequest;
 import com.ezbuy.productmodel.dto.request.VoucherTypeRequest;
 import com.ezbuy.productmodel.dto.response.SearchVoucherTypeResponse;
@@ -15,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -28,12 +31,12 @@ public class VoucherTypeController {
      * @return
      */
     @GetMapping(value = UrlPaths.VoucherType.ALL_ACTIVE)
-    public Mono<DataResponse> getAllVoucherTypeActive() {
+    public Mono<DataResponse<List<VoucherType>>> getAllVoucherTypeActive() {
         return voucherTypeService.getAllVoucherTypeActive().map(rs -> rs);
     }
     @GetMapping(value = UrlPaths.VoucherType.LIST)
-    public Mono<DataResponse> getAll() {
-        return voucherTypeService.getAll().map(result -> new DataResponse(Translator.toLocaleVi(MessageConstant.SUCCESS), result));
+    public Mono<DataResponse<List<VoucherType>>> getAll() {
+        return voucherTypeService.getAll().map(result -> new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), result));
     }
 
     @PostMapping(UrlPaths.VoucherType.CREATE)
@@ -62,7 +65,7 @@ public class VoucherTypeController {
      * @return
      */
     @GetMapping(value = UrlPaths.VoucherType.FIND_BY_VOUCHER_CODE)
-    public Mono<DataResponse> findVoucherTypeByVoucherCode(@RequestParam String code) {
+    public Mono<DataResponse<List<VoucherTypeV2DTO>>> findVoucherTypeByVoucherCode(@RequestParam String code) {
         return voucherTypeService.findVoucherTypeByVoucherCode(code).map(rs -> rs);
     }
 }

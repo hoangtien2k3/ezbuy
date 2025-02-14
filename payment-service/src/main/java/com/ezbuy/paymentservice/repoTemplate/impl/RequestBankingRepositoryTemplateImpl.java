@@ -1,5 +1,6 @@
 package com.ezbuy.paymentservice.repoTemplate.impl;
 
+import static org.springframework.data.relational.core.query.Criteria.where;
 import static org.springframework.data.relational.core.query.Query.query;
 
 import com.ezbuy.ordermodel.constants.Constants;

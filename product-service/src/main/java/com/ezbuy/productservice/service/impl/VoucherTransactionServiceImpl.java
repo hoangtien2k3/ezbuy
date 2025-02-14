@@ -94,7 +94,7 @@ public class VoucherTransactionServiceImpl implements VoucherTransactionService 
 
     @Override
     @Transactional
-    public Mono<DataResponse> unlockVoucherTransaction(UnlockVoucherRequest unlockVoucherRequest) {
+    public Mono<DataResponse<String>> unlockVoucherTransaction(UnlockVoucherRequest unlockVoucherRequest) {
         // lay danh sach voucher transaction het han
         return Mono.zip(
                 voucherTransactionRepository.getAllExpiredVoucherTransaction(unlockVoucherRequest.getExpiredMinutes()).collectList(),

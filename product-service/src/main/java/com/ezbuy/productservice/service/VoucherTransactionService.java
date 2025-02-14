@@ -23,5 +23,5 @@ public interface VoucherTransactionService {
      * @param unlockVoucherRequest
      * @return
      */
-    Mono<DataResponse> unlockVoucherTransaction(UnlockVoucherRequest unlockVoucherRequest);
+    Mono<DataResponse<String>> unlockVoucherTransaction(UnlockVoucherRequest unlockVoucherRequest);
 }

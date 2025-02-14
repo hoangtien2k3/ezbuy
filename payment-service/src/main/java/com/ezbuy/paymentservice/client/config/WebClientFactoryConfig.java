@@ -21,14 +21,12 @@ public class WebClientFactoryConfig {
     @Bean(name = "webClientFactory")
     public WebClientFactory webClientFactory(
             ApplicationContext applicationContext, ReactiveOAuth2AuthorizedClientManager authorizedClientManager) {
-
         var listProperties = List.of(
                 authClientProperties,
                 orderClientProperties,
                 paymentClientProperties,
                 productClientProperties,
                 settingClientProperties);
-
         WebClientFactory factory = new WebClientFactory(applicationContext, authorizedClientManager);
         factory.setWebClients(listProperties);
         return factory;

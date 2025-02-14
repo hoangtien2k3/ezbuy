@@ -13,7 +13,7 @@ public interface VoucherService {
     //tim kiem voucher
     Mono<VoucherSearchResponse> searchVoucher(SearchVoucherRequest request);
     //tao moi voucher
-    Mono<DataResponse> createVoucher(VoucherRequest request);
+    Mono<DataResponse<Voucher>> createVoucher(VoucherRequest request);
     //cap nhat voucher
     Mono<DataResponse<Boolean>> updateVoucher(String id, VoucherRequest request);
 
@@ -35,14 +35,14 @@ public interface VoucherService {
      * @param unlockVoucherRequest
      * @return
      */
-    Mono<DataResponse> unlockVoucher(UnlockVoucherRequest unlockVoucherRequest);
+    Mono<DataResponse<String>> unlockVoucher(UnlockVoucherRequest unlockVoucherRequest);
 
     /**
      * Ham thuc hien gen voucher tu dong theo voucher batch
      * @param unlockVoucherRequest
      * @return
      */
-    Mono<DataResponse> genVoucher(GenVoucherRequest unlockVoucherRequest);
+    Mono<DataResponse<String>> genVoucher(GenVoucherRequest unlockVoucherRequest);
 
-    Mono<DataResponse> insertVoucher();
+    Mono<DataResponse<String>> insertVoucher();
 }
