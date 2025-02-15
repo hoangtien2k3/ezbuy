@@ -11,7 +11,6 @@ import com.ezbuy.settingservice.repository.UploadImagesRepository;
 import com.ezbuy.settingservice.repositoryTemplate.UploadImageRepositoryTemplate;
 import com.ezbuy.settingservice.service.UploadImagesService;
 import com.reactify.constants.CommonErrorCode;
-import com.reactify.constants.MessageConstant;
 import com.reactify.exception.BusinessException;
 import com.reactify.model.TokenUser;
 import com.reactify.model.response.DataResponse;
@@ -482,7 +481,7 @@ public class UploadImagesImpl implements UploadImagesService {
                     return uploadImagesRepository.save(uploadImages);
                 })
                 .map(this::mapToDto)
-                .map(dto -> new DataResponse<>("success", dto));
+                .map(dto -> new DataResponse<>(SUCCESS, dto));
     }
 
     @Override
@@ -499,7 +498,7 @@ public class UploadImagesImpl implements UploadImagesService {
                             .doOnNext(dto::setChildren)
                             .thenReturn(dto);
                 })
-                .map(dto -> new DataResponse<>("success", dto));
+                .map(dto -> new DataResponse<>(SUCCESS, dto));
     }
 
     @Override
@@ -508,7 +507,7 @@ public class UploadImagesImpl implements UploadImagesService {
                 .findAllFolder()
                 .map(this::mapToDto)
                 .collectList()
-                .map(folders -> new DataResponse<>("success", folders));
+                .map(folders -> new DataResponse<>(SUCCESS, folders));
     }
 
     private UploadImagesDTO mapToDto(UploadImages uploadImage) {
