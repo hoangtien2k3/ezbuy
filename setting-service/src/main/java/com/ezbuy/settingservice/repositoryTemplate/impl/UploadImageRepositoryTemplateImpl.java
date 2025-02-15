@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,9 +35,10 @@ public class UploadImageRepositoryTemplateImpl implements UploadImageRepositoryT
         StringBuilder query = new StringBuilder();
         Map<String, Object> params = new HashMap<>();
         buildQuery(query, params, request);
-        query.append("limit :offset, :limit");
-        params.put("limit", request.getPageSize());
-        params.put("offset", (request.getPageIndex() - 1) * request.getPageSize());
+        query.append(" LIMIT :pageSize  \n" + "OFFSET :index ");
+        params.put("pageSize", request.getPageSize());
+        BigDecimal index = (new BigDecimal(request.getPageIndex() - 1)).multiply(new BigDecimal(request.getPageSize()));
+        params.put("index", index);
 
         DatabaseClient.GenericExecuteSpec exeSpec = template.getDatabaseClient().sql(query.toString());
         for (String key : params.keySet()) {
@@ -60,31 +62,32 @@ public class UploadImageRepositoryTemplateImpl implements UploadImageRepositoryT
     }
 
     private void buildQuery(StringBuilder builder, Map<String, Object> params, SearchImageRequest request) {
-        builder.append(
-                "select u.*, count(c.id) total_images, group_concat(c.path order by c.update_at desc) preview_images from upload_images u \n");
-        builder.append("left join upload_images c on c.parent_id = u.id and c.status = 1 \n");
-        builder.append("where u.status = 1 \n");
-
+        builder.append("""
+                        SELECT u.*, COUNT(c.id) AS total_images,\s
+                        STRING_AGG(c.path, ',' ORDER BY c.update_at DESC) AS preview_images\s
+                        FROM upload_images u\s
+                        """
+        );
+        builder.append("LEFT JOIN upload_images c ON c.parent_id = u.id AND c.status = 1 \n");
+        builder.append("WHERE u.status = 1 \n");
         if (!DataUtil.isNullOrEmpty(request.getFromDate())) {
-            builder.append("and u.update_at >= :from \n");
+            builder.append("AND u.update_at >= :from \n");
             params.put("from", request.getFromDate().atStartOfDay());
         }
-
         if (!DataUtil.isNullOrEmpty(request.getToDate())) {
-            builder.append("and u.update_at < :to \n");
+            builder.append("AND u.update_at < :to \n");
             params.put("to", request.getToDate().plusDays(1).atStartOfDay());
         }
-
         if (!DataUtil.isNullOrEmpty(request.getName())) {
-            builder.append("and lower(u.name) like concat('%', :name, '%') \n");
-            params.put(
-                    "name",
-                    SQLUtils.replaceSpecialDigit(request.getName().trim().toLowerCase()));
+            builder.append("AND LOWER(u.name) LIKE '%' || :name || '%' \n");
+            params.put("name", SQLUtils.replaceSpecialDigit(request.getName().trim().toLowerCase()));
         }
-
-        builder.append("group by u.id, u.name, u.type, u.path, u.parent_id, u.status, \n"
-                + "u.create_at, u.create_by, u.update_at, u.update_by \n");
-        builder.append("order by ");
+        builder.append("""
+                GROUP BY u.id, u.name, u.type, u.path, u.parent_id, u.status,\s
+                u.create_at, u.create_by, u.update_at, u.update_by\s
+                """
+        );
+        builder.append("ORDER BY ");
         String otherSort = DataUtil.safeToString(request.getSort(), "+updateAt");
         builder.append(SortingUtils.parseSorting("-type," + otherSort, UploadImages.class));
         builder.append("\n");

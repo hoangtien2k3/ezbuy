@@ -33,6 +33,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.reactify.constants.MessageConstant.SUCCESS;
+
 @Slf4j
 @Service
 @Transactional
@@ -65,7 +67,7 @@ public class UploadImagesImpl implements UploadImagesService {
             parentInfoMono = Mono.just(newUploadImage);
         } else {
             parentInfoMono = uploadImagesRepository
-                    .findByParentId(request.getParentId())
+                    .findById(request.getParentId())
                     .switchIfEmpty(Mono.error(
                             new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.root.folder.notfound")));
         }
@@ -89,7 +91,7 @@ public class UploadImagesImpl implements UploadImagesService {
                             .map(this::mapToDto);
                 })
                 .collectList()
-                .map(res -> new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), res));
+                .map(res -> new DataResponse<>(Translator.toLocaleVi(SUCCESS), res));
     }
 
     /**
@@ -464,7 +466,7 @@ public class UploadImagesImpl implements UploadImagesService {
                             .build();
                     return Mono.just(response);
                 })
-                .map(res -> new DataResponse<>("success", res));
+                .map(res -> new DataResponse<>(SUCCESS, res));
     }
 
     @Override
@@ -525,8 +527,9 @@ public class UploadImagesImpl implements UploadImagesService {
             dto.setPath(newPath);
         }
         if (!DataUtil.isNullOrEmpty(dto.getPreviewImages())) {
-            List<String> previewFullPaths =
-                    dto.getPreviewImages().stream().map(this::appendFullPath).collect(Collectors.toList());
+            List<String> previewFullPaths = dto.getPreviewImages().stream()
+                            .map(this::appendFullPath)
+                            .collect(Collectors.toList());
             dto.setPreviewImages(previewFullPaths);
         }
     }

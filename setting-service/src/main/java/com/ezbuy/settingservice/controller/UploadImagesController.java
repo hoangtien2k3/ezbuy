@@ -52,7 +52,7 @@ public class UploadImagesController {
         return uploadImagesService.renameFolder(request);
     }
 
-    @PreAuthorize("hasAnyAuthority('user')")
+    @PreAuthorize("hasAnyAuthority('user', 'admin', 'system')")
     @GetMapping(UrlPaths.Upload.SEARCH)
     public Mono<DataResponse<SearchImageResponse>> search(SearchImageRequest request) {
         return uploadImagesService.searchImages(request);
@@ -70,7 +70,7 @@ public class UploadImagesController {
         return uploadImagesService.getInfo(id);
     }
 
-    @PreAuthorize("hasAnyAuthority('user')")
+    @PreAuthorize("hasAnyAuthority('user', 'admin', 'system')")
     @GetMapping(UrlPaths.Upload.FOLDER)
     public Mono<DataResponse<List<UploadImagesDTO>>> getAllFolder() {
         return uploadImagesService.getAllFolder();
