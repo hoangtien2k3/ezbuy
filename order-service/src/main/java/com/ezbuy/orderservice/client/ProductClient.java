@@ -2,6 +2,8 @@ package com.ezbuy.orderservice.client;
 
 import com.ezbuy.productmodel.dto.response.ProductOfferTemplateDTO;
 import java.util.List;
+
+import com.ezbuy.settingmodel.model.Telecom;
 import reactor.core.publisher.Mono;
 
 public interface ProductClient {

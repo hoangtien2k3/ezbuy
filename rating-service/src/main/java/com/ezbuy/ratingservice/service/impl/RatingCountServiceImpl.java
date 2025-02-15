@@ -128,7 +128,6 @@ public class RatingCountServiceImpl extends BaseServiceHandler implements Rating
     }
 
     private Mono<RatingCount> createRatingCount(Long maxRating, Long rating, String ratingTypeCode, String targetId) {
-
         List<RatingDetailDTO> listRatingDetail = new ArrayList<>();
         for (int i = 1; i <= maxRating; i++) {
             RatingDetailDTO ratingDetailDTO = new RatingDetailDTO();
@@ -141,15 +140,16 @@ public class RatingCountServiceImpl extends BaseServiceHandler implements Rating
             listRatingDetail.add(ratingDetailDTO);
         }
         String detail = DataUtil.parseObjectToString(listRatingDetail);
-        RatingCount ratingCount = new RatingCount();
-        ratingCount.setRating(DataUtil.safeToFloat(rating));
-        ratingCount.setDetail(detail);
-        ratingCount.setMaxRating(maxRating);
-        ratingCount.setRatingTypeCode(ratingTypeCode);
-        ratingCount.setTargetId(targetId);
-        ratingCount.setNumberRate(1L);
-        ratingCount.setId(UUID.randomUUID().toString());
-        ratingCount.setNew(true);
+        RatingCount ratingCount = RatingCount.builder()
+                .rating(DataUtil.safeToFloat(rating))
+                .detail(detail)
+                .maxRating(maxRating)
+                .ratingTypeCode(ratingTypeCode)
+                .targetId(targetId)
+                .numberRate(1L)
+                .id(UUID.randomUUID().toString())
+                .isNew(true)
+                .build();
         return ratingCountRepository.save(ratingCount);
     }
 }
