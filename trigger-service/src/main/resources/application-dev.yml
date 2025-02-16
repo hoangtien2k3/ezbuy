@@ -48,12 +48,12 @@ spring:
     job-store-type: jdbc
     properties:
       org.quartz.threadPool.threadCount: 25
+      org.quartz.threadPool.threadPriority: 5
       org.quartz.scheduler.instanceName: MyClusteredScheduler
       org.quartz.scheduler.instanceId: AUTO
-      org.quartz.threadPool.threadPriority: 5
+      org.quartz.scheduler.batchTriggerAcquisitionMaxCount: 5
       org.quartz.jobStore.misfireThreshold: 60000
       org.quartz.jobStore.class: org.quartz.impl.jdbcjobstore.JobStoreTX
-      org.quartz.scheduler.batchTriggerAcquisitionMaxCount: 5
       org.quartz.jobStore.acquireTriggersWithinLock: true
       org.quartz.jobStore.dataSource: jobDataSource
       org.quartz.jobStore.clusterCheckinInterval: 20000
@@ -62,7 +62,7 @@ spring:
       org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
       org.quartz.dataSource.jobDataSource.driver: org.postgresql.Driver
       org.quartz.dataSource.jobDataSource.provider: hikaricp
-      org.quartz.dataSource.jobDataSource.jdbc-url: jdbc:postgresql://localhost:5434/trigger
+      org.quartz.dataSource.jobDataSource.URL: jdbc:postgresql://localhost:5434/trigger
       org.quartz.dataSource.jobDataSource.user: admin
       org.quartz.dataSource.jobDataSource.password: admin
     wait-for-jobs-to-complete-on-shutdown: true
