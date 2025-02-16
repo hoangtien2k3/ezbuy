@@ -1,0 +1,151 @@
+# application config
+server:
+  port: 8081
+timezone:
+  default: GMT+7
+spring:
+  application:
+    name: trigger_service
+  locale:
+    active-default: vi
+    default: vi,en
+  main:
+    allow-bean-definition-overriding: true
+  #connect-r2dbc
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5434/trigger
+    username: admin
+    password: admin
+    pool:
+      initial-size: 50
+      max-size: 100
+      enabled: true
+      validation-query: select 1
+      max-life-time: 9223372036854775807
+  #security
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            token-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/token
+        registration:
+          oidc:
+            client-id: ${keycloak.clientId}
+            client-secret: ${keycloak.clientSecret}
+            authorization-grant-type: password #client_credentials
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/certs
+      keycloak:
+        client-id: ${keycloak.clientId}
+        client-secret: ${keycloak.clientSecret}
+  #quartz scheduler
+  quartz:
+    job-store-type: jdbc
+    properties:
+      org.quartz.threadPool.threadCount: 25
+      org.quartz.scheduler.instanceName: MyClusteredScheduler
+      org.quartz.scheduler.instanceId: AUTO
+      org.quartz.threadPool.threadPriority: 5
+      org.quartz.jobStore.misfireThreshold: 60000
+      org.quartz.jobStore.class: org.quartz.impl.jdbcjobstore.JobStoreTX
+      org.quartz.scheduler.batchTriggerAcquisitionMaxCount: 5
+      org.quartz.jobStore.acquireTriggersWithinLock: true
+      org.quartz.jobStore.dataSource: jobDataSource
+      org.quartz.jobStore.clusterCheckinInterval: 20000
+      org.quartz.jobStore.useProperties: true
+      org.quartz.jobStore.isClustered: true
+      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+      org.quartz.dataSource.jobDataSource.driver: org.postgresql.Driver
+      org.quartz.dataSource.jobDataSource.provider: hikaricp
+      org.quartz.dataSource.jobDataSource.URL: jdbc:postgresql://localhost:5434/trigger
+      org.quartz.dataSource.jobDataSource.user: admin
+      org.quartz.dataSource.jobDataSource.password: admin
+    wait-for-jobs-to-complete-on-shutdown: true
+    jdbc:
+      initialize-schema: never
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        connection:
+          provider_disables_autocommit: true
+        generate_statistics: false
+        jdbc:
+          batch_size: 100
+        order_inserts: true
+        order_updates: true
+        query:
+          fail_on_pagination_over_collection_fetch: true
+          in_clause_parameter_padding: true
+  jackson:
+    time-zone: GMT+7
+# quartz
+distributed:
+  jackson:
+    serialization:
+      indent-output: true
+jhipster:
+  clientApp:
+    name: trigger-service
+#keycloak client config
+keycloak:
+  clientId: ezbuy-client
+  clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
+  realm: ezbuy-server
+  serverUrl: http://localhost:8080
+  grantType: password
+  host: localhost
+# config cron-job here. Name is unix
+cron-job:
+  profiles:
+    - name: SYNC_USER_PROFILE
+      cron-job: 0/3 * * * * ?
+    - name: SYNC_ORDER_STATE
+      cron-job: 0/3 * * * * ?
+    - name: SYNC_PRODUCT_FILTER
+      cron-job: 0/3 * * * * ?
+    - name: SYNC_RETRY
+      cron-job: 0/3 * * * * ?
+    - name: SYNC_PASSWORD
+      cron-job: 0 */5 * * * ?
+    - name: SYNC_SUBSCRIBER
+      cron-job: 0 */1 * * * ?
+    - name: SYNC_ELASTICSEARCH
+      cron-job: 0 */5 * * * ?
+    - name: SYNC_CUSTOMER_INFO
+      cron-job: 0 * * ? * *
+    - name: RETRY_SYNC_CUSTOMER_INFO
+      cron-job: 0 1 * ? * *
+    - name: SYNC_EVENT_HISTORY
+      cron-job: 0/5 * * * * ?
+    - name: SYNC_TRANSACTION
+      cron-job: 0 1 1 * * ?
+    - name: SYNC_SIGN_HASH_JOB
+      cron-job: 0 */1 * * * ?
+    - name: SYNC_DAILY_REPORT
+      cron-job: 0 0 2 * * ?
+    - name: UNLOCK_VOUCHER
+      cron-job: 0 */1 * * * ?
+    - name: UNLOCK_VOUCHER_TRANSACTION
+      cron-job: 0 */1 * * * ?
+    - name: INSERT_VOUCHER
+      cron-job: 0 */1 * * * ?
+#config client here
+client:
+  product:
+    internal-oauth: true
+    address: http://localhost:8083/
+    name: productClient
+  order:
+    internal-oauth: true
+    address: http://localhost:8932/
+    name: orderClient
+  setting:
+    internal-oauth: true
+    address: http://localhost:8082/
+    name: settingClient
+expired:
+  minutes: 30
