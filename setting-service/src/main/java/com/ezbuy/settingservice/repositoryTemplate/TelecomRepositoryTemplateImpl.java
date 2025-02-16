@@ -84,9 +84,7 @@ public class TelecomRepositoryTemplateImpl extends BaseTemplateRepository implem
 
     private void buildQueryTelecomServices(
             StringBuilder builder, Map<String, Object> params, TelecomSearchingRequest request) {
-        builder.append("SELECT * \n")
-                .append("FROM telecom_service u \n")
-                .append("WHERE 1 = 1 AND u.is_filter = 1 \n");
+        builder.append("SELECT * \n").append("FROM telecom_service u \n").append("WHERE 1 = 1 AND u.is_filter = 1 \n");
         if (!DataUtil.isNullOrEmpty(request.getName())) {
             builder.append("AND LOWER(u.name) LIKE '%' || LOWER(:name) || '%' \n");
             params.put("name", SQLUtils.replaceSpecialDigit(request.getName()));

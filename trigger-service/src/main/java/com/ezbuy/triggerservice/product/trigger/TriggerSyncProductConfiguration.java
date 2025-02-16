@@ -24,7 +24,8 @@ public class TriggerSyncProductConfiguration {
         log.info("triggerSyncProductFilter config");
         try {
             String jobName = ProductJob.SYNC_PRODUCT_FILTER;
-            return TriggerBuilder.newTrigger().forJob(jobDetail)
+            return TriggerBuilder.newTrigger()
+                    .forJob(jobDetail)
                     .withIdentity(jobName, JobGroup.PRODUCT_JOB)
                     .startNow()
                     .withSchedule(CronScheduleBuilder.cronSchedule(jobFactory.getCronJobByName(jobName)))
@@ -40,7 +41,8 @@ public class TriggerSyncProductConfiguration {
         log.info("triggerSyncSubscriberJob config");
         try {
             String jobName = ProductJob.SYNC_SUBSCRIBER;
-            return TriggerBuilder.newTrigger().forJob(jobDetail)
+            return TriggerBuilder.newTrigger()
+                    .forJob(jobDetail)
                     .withIdentity(jobName, JobGroup.PRODUCT_JOB)
                     .startNow()
                     .withSchedule(CronScheduleBuilder.cronSchedule(jobFactory.getCronJobByName(jobName)))
@@ -56,7 +58,8 @@ public class TriggerSyncProductConfiguration {
         log.info("triggerSyncDailyReportJob config");
         try {
             String jobName = ProductJob.SYNC_DAILY_REPORT;
-            return TriggerBuilder.newTrigger().forJob(jobDetail)
+            return TriggerBuilder.newTrigger()
+                    .forJob(jobDetail)
                     .withIdentity(jobName, JobGroup.PRODUCT_JOB)
                     .startNow()
                     .withSchedule(CronScheduleBuilder.cronSchedule(jobFactory.getCronJobByName(jobName)))
@@ -72,7 +75,8 @@ public class TriggerSyncProductConfiguration {
         log.info("triggerUnlockVoucherJob config");
         try {
             String jobName = ProductJob.UNLOCK_VOUCHER;
-            return TriggerBuilder.newTrigger().forJob(jobDetail)
+            return TriggerBuilder.newTrigger()
+                    .forJob(jobDetail)
                     .withIdentity(jobName, JobGroup.PRODUCT_JOB)
                     .startNow()
                     .withSchedule(CronScheduleBuilder.cronSchedule(jobFactory.getCronJobByName(jobName)))
@@ -88,7 +92,8 @@ public class TriggerSyncProductConfiguration {
         log.info("triggerUnlockVoucherTransactionJob config");
         try {
             String jobName = ProductJob.UNLOCK_VOUCHER_TRANSACTION;
-            return TriggerBuilder.newTrigger().forJob(jobDetail)
+            return TriggerBuilder.newTrigger()
+                    .forJob(jobDetail)
                     .withIdentity(jobName, JobGroup.PRODUCT_JOB)
                     .startNow()
                     .withSchedule(CronScheduleBuilder.cronSchedule(jobFactory.getCronJobByName(jobName)))
@@ -98,16 +103,18 @@ public class TriggerSyncProductConfiguration {
             return null;
         }
     }
+
     @Bean
     public Trigger triggerInsertVoucherJob(@Qualifier("insertVoucherJob") JobDetail jobDetail) {
         log.info("triggerInsertVoucherJob config");
         try {
             String jobName = ProductJob.INSERT_VOUCHER;
-            return TriggerBuilder.newTrigger().forJob(jobDetail)
-                .withIdentity(jobName, JobGroup.PRODUCT_JOB)
-                .startNow()
-                .withSchedule(CronScheduleBuilder.cronSchedule(jobFactory.getCronJobByName(jobName)))
-                .build();
+            return TriggerBuilder.newTrigger()
+                    .forJob(jobDetail)
+                    .withIdentity(jobName, JobGroup.PRODUCT_JOB)
+                    .startNow()
+                    .withSchedule(CronScheduleBuilder.cronSchedule(jobFactory.getCronJobByName(jobName)))
+                    .build();
         } catch (Exception e) {
             log.error("triggerInsertVoucherJob error ", e);
             return null;

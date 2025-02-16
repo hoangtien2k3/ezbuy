@@ -25,7 +25,8 @@ public class TriggerSyncOrderConfiguration {
         log.info("triggerSyncOrderState config");
         try {
             String jobName = OrderJob.SYNC_ORDER_STATE;
-            return TriggerBuilder.newTrigger().forJob(jobDetail)
+            return TriggerBuilder.newTrigger()
+                    .forJob(jobDetail)
                     .withIdentity(jobName, JobGroup.ORDER_JOB)
                     .startNow()
                     .withSchedule(CronScheduleBuilder.cronSchedule(jobFactory.getCronJobByName(jobName)))

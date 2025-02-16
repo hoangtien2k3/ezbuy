@@ -25,7 +25,8 @@ public class TriggerSyncSettingConfiguration {
         log.info("triggerSyncElasticsearch config");
         try {
             String jobName = SettingJob.SYNC_ELASTICSEARCH;
-            return TriggerBuilder.newTrigger().forJob(jobDetail)
+            return TriggerBuilder.newTrigger()
+                    .forJob(jobDetail)
                     .withIdentity(jobName, JobGroup.SETTING_JOB)
                     .startNow()
                     .withSchedule(CronScheduleBuilder.cronSchedule(jobFactory.getCronJobByName(jobName)))

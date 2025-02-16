@@ -13,7 +13,8 @@ public class SettingJobConfiguration {
 
     @Bean(name = "syncElasticsearch")
     public JobDetail syncElasticsearch() {
-        return JobBuilder.newJob().ofType(SyncElasticsearchJob.class)
+        return JobBuilder.newJob()
+                .ofType(SyncElasticsearchJob.class)
                 .withIdentity(SettingJob.SYNC_ELASTICSEARCH, JobGroup.SETTING_JOB)
                 .storeDurably(true)
                 .build();

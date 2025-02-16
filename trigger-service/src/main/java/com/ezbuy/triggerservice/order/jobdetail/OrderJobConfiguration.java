@@ -13,7 +13,8 @@ public class OrderJobConfiguration {
 
     @Bean(name = "syncOrderState")
     public JobDetail syncOrderState() {
-        return JobBuilder.newJob().ofType(SyncOrderStateJob.class)
+        return JobBuilder.newJob()
+                .ofType(SyncOrderStateJob.class)
                 .withIdentity(OrderJob.SYNC_ORDER_STATE, JobGroup.ORDER_JOB)
                 .storeDurably(true)
                 .build();

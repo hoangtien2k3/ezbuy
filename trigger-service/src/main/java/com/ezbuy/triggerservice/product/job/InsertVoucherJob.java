@@ -19,5 +19,4 @@ public class InsertVoucherJob implements Job {
         productClient.insertVoucher().subscribe();
         log.info("=============Insert voucherJob end");
     }
-
 }

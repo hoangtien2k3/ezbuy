@@ -1,9 +1,9 @@
 package com.ezbuy.triggerservice.client.impl;
 
 import com.ezbuy.ordermodel.dto.request.SyncOrderStateRequest;
+import com.ezbuy.triggerservice.client.OrderClient;
 import com.reactify.client.BaseRestClient;
 import com.reactify.model.response.DataResponse;
-import com.ezbuy.triggerservice.client.OrderClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,11 +20,13 @@ public class OrderClientImpl implements OrderClient {
 
     @Qualifier("orderClient")
     private final WebClient orderClient;
+
     private final BaseRestClient restClient;
 
     @Override
     public Mono<DataResponse> syncOrderState(SyncOrderStateRequest request) {
-        return restClient.post(orderClient, "/v1/order/sync-order", null, request, DataResponse.class)
+        return restClient
+                .post(orderClient, "/v1/order/sync-order", null, request, DataResponse.class)
                 .map(rs -> new DataResponse());
     }
 }

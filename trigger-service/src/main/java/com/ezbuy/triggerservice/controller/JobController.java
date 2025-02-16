@@ -24,7 +24,8 @@ public class JobController {
 
     @GetMapping("/reload/{triggerName}/{triggerGroup}")
     @PreAuthorize("hasAnyAuthority('admin')")
-    public Mono<ResponseEntity> reloadErrorJob(@PathVariable("triggerName") String triggerName, @PathVariable("triggerGroup") String triggerGroup) {
+    public Mono<ResponseEntity> reloadErrorJob(
+            @PathVariable("triggerName") String triggerName, @PathVariable("triggerGroup") String triggerGroup) {
         Scheduler scheduler = schedulerFactoryBean.getScheduler();
         TriggerKey triggerKey = TriggerKey.triggerKey(triggerName, triggerGroup);
         try {

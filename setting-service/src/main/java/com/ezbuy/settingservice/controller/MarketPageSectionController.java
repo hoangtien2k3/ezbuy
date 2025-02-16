@@ -24,12 +24,14 @@ public class MarketPageSectionController {
     }
 
     @PostMapping(UrlPaths.MarketPageSection.CREATE)
-    public Mono<DataResponse<MarketPageSection>> createMarketPageSection (@Valid @RequestBody MarketPageSectionRequest request) {
+    public Mono<DataResponse<MarketPageSection>> createMarketPageSection(
+            @Valid @RequestBody MarketPageSectionRequest request) {
         return marketPageSectionService.createMarketPageSection(request);
     }
 
     @PutMapping(UrlPaths.MarketPageSection.EDIT)
-    public Mono<DataResponse<MarketPageSection>> editMarketPageSection(@PathVariable String id, @Valid @RequestBody MarketPageSectionRequest request) {
+    public Mono<DataResponse<MarketPageSection>> editMarketPageSection(
+            @PathVariable String id, @Valid @RequestBody MarketPageSectionRequest request) {
         return marketPageSectionService.updateMarketPageSection(id, request);
     }
 }

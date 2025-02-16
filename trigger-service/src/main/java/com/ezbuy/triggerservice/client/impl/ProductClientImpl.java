@@ -5,16 +5,15 @@ import com.ezbuy.productmodel.dto.request.UnlockVoucherRequest;
 import com.ezbuy.triggerservice.client.ProductClient;
 import com.reactify.client.BaseRestClient;
 import com.reactify.model.response.DataResponse;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import java.time.LocalDate;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
@@ -24,6 +23,7 @@ public class ProductClientImpl implements ProductClient {
 
     @Qualifier("productClient")
     private final WebClient productClient;
+
     private final BaseRestClient restClient;
 
     @Value("${expired.minutes}")
@@ -31,13 +31,15 @@ public class ProductClientImpl implements ProductClient {
 
     @Override
     public Mono<DataResponse> syncFilter() {
-        return restClient.post(productClient, "/v1/sync-filter-template", null, null, DataResponse.class)
+        return restClient
+                .post(productClient, "/v1/sync-filter-template", null, null, DataResponse.class)
                 .map(rs -> new DataResponse());
     }
 
     @Override
     public Mono<DataResponse> syncSubscriber() {
-        return restClient.post(productClient, "/v1/sync-subscriber", null, null, DataResponse.class)
+        return restClient
+                .post(productClient, "/v1/sync-subscriber", null, null, DataResponse.class)
                 .map(rs -> new DataResponse());
     }
 
@@ -65,7 +67,8 @@ public class ProductClientImpl implements ProductClient {
 
     @Override
     public Mono<DataResponse> insertVoucher() {
-        return restClient.post(productClient, "/v1/voucher/insert-voucher", null, null, DataResponse.class)
-            .map(rs -> new DataResponse());
+        return restClient
+                .post(productClient, "/v1/voucher/insert-voucher", null, null, DataResponse.class)
+                .map(rs -> new DataResponse());
     }
 }

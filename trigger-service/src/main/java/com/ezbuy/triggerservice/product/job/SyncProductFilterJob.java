@@ -9,7 +9,7 @@ import org.quartz.JobExecutionException;
 
 @Slf4j
 @RequiredArgsConstructor
-public class SyncProductFilterJob  implements Job {
+public class SyncProductFilterJob implements Job {
 
     private final ProductClient productClient;
 

@@ -19,17 +19,20 @@ public class SettingClientImpl implements SettingClient {
 
     @Qualifier("settingClient")
     private final WebClient settingClient;
+
     private final BaseRestClient baseRestClient;
 
     @Override
     public Mono<DataResponse> syncNews() {
-        return baseRestClient.post(settingClient, "/v1/global-search/news", null, null, DataResponse.class)
+        return baseRestClient
+                .post(settingClient, "/v1/global-search/news", null, null, DataResponse.class)
                 .map(rs -> new DataResponse());
     }
 
     @Override
     public Mono<DataResponse> syncServices() {
-        return baseRestClient.post(settingClient, "/v1/global-search/services", null, null, DataResponse.class)
+        return baseRestClient
+                .post(settingClient, "/v1/global-search/services", null, null, DataResponse.class)
                 .map(rs -> new DataResponse());
     }
 }

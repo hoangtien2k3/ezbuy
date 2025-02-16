@@ -10,5 +10,4 @@ import org.springframework.stereotype.Component;
 @Component("orderClientProperties")
 @ConfigurationProperties(prefix = "client.order", ignoreInvalidFields = true)
 @AllArgsConstructor
-public class OrderProperties extends WebClientProperties {
-}
+public class OrderProperties extends WebClientProperties {}

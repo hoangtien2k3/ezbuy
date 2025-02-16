@@ -1,6 +1,7 @@
 package com.ezbuy.settingmodel.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,8 +10,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
-
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -22,6 +21,7 @@ public class MarketPageSection implements Persistable<String> {
 
     @Id
     private String id;
+
     private String pageId;
     private String sectionId;
     private Integer displayOrder;

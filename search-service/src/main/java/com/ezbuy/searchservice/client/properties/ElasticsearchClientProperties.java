@@ -9,4 +9,4 @@ import org.springframework.stereotype.Component;
 @Component("elasticSearchClientProperties")
 @ConfigurationProperties(prefix = "client.elasticsearch", ignoreInvalidFields = true)
 @AllArgsConstructor
-public class ElasticsearchClientProperties extends WebClientProperties { }
+public class ElasticsearchClientProperties extends WebClientProperties {}

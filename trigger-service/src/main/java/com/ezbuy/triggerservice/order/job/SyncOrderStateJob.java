@@ -2,11 +2,11 @@ package com.ezbuy.triggerservice.order.job;
 
 import com.ezbuy.ordermodel.dto.request.SyncOrderStateRequest;
 import com.ezbuy.triggerservice.client.OrderClient;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Slf4j

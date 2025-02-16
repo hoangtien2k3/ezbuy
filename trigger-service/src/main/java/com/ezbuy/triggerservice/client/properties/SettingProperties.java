@@ -10,5 +10,4 @@ import org.springframework.stereotype.Component;
 @Component("settingClientProperties")
 @ConfigurationProperties(prefix = "client.setting", ignoreInvalidFields = true)
 @AllArgsConstructor
-public class SettingProperties extends WebClientProperties {
-}
+public class SettingProperties extends WebClientProperties {}

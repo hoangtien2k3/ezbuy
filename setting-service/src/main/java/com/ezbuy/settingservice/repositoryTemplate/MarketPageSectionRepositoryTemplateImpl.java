@@ -1,20 +1,17 @@
 package com.ezbuy.settingservice.repositoryTemplate;
 
-import com.ezbuy.settingmodel.dto.OptionSetValueDTO;
 import com.ezbuy.settingmodel.dto.request.SearchMarketPageSectionRequest;
-import com.ezbuy.settingmodel.dto.request.SearchOptionSetValueRequest;
 import com.ezbuy.settingmodel.model.MarketPageSection;
 import com.reactify.util.DataUtil;
 import com.reactify.util.SQLUtils;
 import com.reactify.util.SortingUtils;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
