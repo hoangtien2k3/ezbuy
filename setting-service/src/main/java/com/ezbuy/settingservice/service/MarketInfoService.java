@@ -5,9 +5,8 @@ import com.ezbuy.settingmodel.request.MarketInfoRequest;
 import com.ezbuy.settingmodel.request.SearchMarketInfoRequest;
 import com.ezbuy.settingmodel.response.SearchMarketInfoResponse;
 import com.reactify.model.response.DataResponse;
-import reactor.core.publisher.Mono;
-
 import java.util.List;
+import reactor.core.publisher.Mono;
 
 public interface MarketInfoService {
     Mono<DataResponse<SearchMarketInfoResponse>> searchMarketInfo(SearchMarketInfoRequest request);

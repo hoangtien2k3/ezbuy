@@ -1,6 +1,5 @@
 package com.ezbuy.ratingservice.service;
 
-import com.ezbuy.ratingmodel.model.Rating;
 import com.ezbuy.ratingmodel.model.RatingHistory;
 import java.time.LocalDateTime;
 import reactor.core.publisher.Mono;

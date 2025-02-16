@@ -6,9 +6,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface VoucherBatchRepositoryTemPlate {
-    //tim kiem lo voucher
+    // tim kiem lo voucher
     Flux<VoucherBatch> queryVoucherBatch(VoucherBatchRequest request);
 
-    //dem so luong bang ghi lo voucher
+    // dem so luong bang ghi lo voucher
     Mono<Long> countVoucherBatch(VoucherBatchRequest request);
 }

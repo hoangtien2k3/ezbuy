@@ -1,6 +1,7 @@
 package com.ezbuy.productmodel.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,8 +12,6 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,20 +19,24 @@ import java.time.LocalDateTime;
 @Table(name = "voucher_batch")
 public class VoucherBatch implements Persistable<String> {
     @Id
-    private String id;//uuid
-    private String code;//ma lo voucher
-    private String description;//mo ta
-    private String voucherTypeId;//ID voucher type
+    private String id; // uuid
+
+    private String code; // ma lo voucher
+    private String description; // mo ta
+    private String voucherTypeId; // ID voucher type
     private Integer quantity;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-    private LocalDateTime expiredDate;//ngay het han
-    private Integer expiredPeriod;//thoi gian het han
-    private String state;//trang thai lo voucher
+    private LocalDateTime expiredDate; // ngay het han
+
+    private Integer expiredPeriod; // thoi gian het han
+    private String state; // trang thai lo voucher
     private LocalDateTime createAt;
     private String createBy;
     private LocalDateTime updateAt;
     private String updateBy;
+
     @Transient
     private boolean isNew = false;
 

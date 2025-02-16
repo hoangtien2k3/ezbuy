@@ -1,7 +1,6 @@
 package com.ezbuy.notificationmodel.model;
 
 import com.ezbuy.notificationmodel.model.base.EntityBase;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +16,7 @@ import org.springframework.data.relational.core.mapping.Table;
 public class NotificationContent extends EntityBase {
     @Id
     private String id;
+
     private String title;
     private String subTitle;
     private String imageUrl;

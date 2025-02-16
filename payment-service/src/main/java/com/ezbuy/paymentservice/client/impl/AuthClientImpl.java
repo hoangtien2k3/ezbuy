@@ -12,7 +12,6 @@ import com.reactify.util.Translator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,6 +29,7 @@ import reactor.core.publisher.Mono;
 public class AuthClientImpl implements AuthClient {
 
     private final BaseRestClient baseRestClient;
+
     @Qualifier("authClient")
     private final WebClient authClient;
 

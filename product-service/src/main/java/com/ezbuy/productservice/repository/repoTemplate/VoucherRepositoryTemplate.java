@@ -1,18 +1,17 @@
 package com.ezbuy.productservice.repository.repoTemplate;
 
 import com.ezbuy.productmodel.dto.VoucherTypeExtDTO;
-import com.ezbuy.productmodel.model.Voucher;
 import com.ezbuy.productmodel.dto.request.SearchVoucherRequest;
+import com.ezbuy.productmodel.model.Voucher;
+import java.util.List;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-
 public interface VoucherRepositoryTemplate {
-    //tim kiem voucher
+    // tim kiem voucher
     Flux<Voucher> queryVoucher(SearchVoucherRequest request);
 
-    //dem so luong ban ghi voucher
+    // dem so luong ban ghi voucher
     Mono<Long> countVoucher(SearchVoucherRequest request);
 
     /**

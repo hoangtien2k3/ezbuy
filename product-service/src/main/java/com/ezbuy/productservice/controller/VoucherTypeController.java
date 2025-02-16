@@ -11,19 +11,18 @@ import com.reactify.constants.MessageConstant;
 import com.reactify.model.response.DataResponse;
 import com.reactify.util.Translator;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = UrlPaths.VoucherType.PREFIX)
 public class VoucherTypeController {
-    private final VoucherTypeService voucherTypeService ;
+    private final VoucherTypeService voucherTypeService;
 
     /**
      * Ham lay danh sach voucher type hieu luc
@@ -34,9 +33,12 @@ public class VoucherTypeController {
     public Mono<DataResponse<List<VoucherType>>> getAllVoucherTypeActive() {
         return voucherTypeService.getAllVoucherTypeActive().map(rs -> rs);
     }
+
     @GetMapping(value = UrlPaths.VoucherType.LIST)
     public Mono<DataResponse<List<VoucherType>>> getAll() {
-        return voucherTypeService.getAll().map(result -> new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), result));
+        return voucherTypeService
+                .getAll()
+                .map(result -> new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), result));
     }
 
     @PostMapping(UrlPaths.VoucherType.CREATE)
@@ -45,11 +47,12 @@ public class VoucherTypeController {
     }
 
     @PutMapping(value = UrlPaths.VoucherType.UPDATE)
-    public Mono<DataResponse<VoucherType>> update(@PathVariable String id, @Valid @RequestBody VoucherTypeRequest request) {
+    public Mono<DataResponse<VoucherType>> update(
+            @PathVariable String id, @Valid @RequestBody VoucherTypeRequest request) {
         return voucherTypeService.update(id, request);
     }
 
-    @GetMapping(value=UrlPaths.VoucherType.SEARCH)
+    @GetMapping(value = UrlPaths.VoucherType.SEARCH)
     public Mono<SearchVoucherTypeResponse> search(SearchVoucherTypeRequest request) {
         return voucherTypeService.search(request);
     }

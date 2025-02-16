@@ -1,17 +1,13 @@
 package com.ezbuy.orderservice.client.config;
 
-import com.ezbuy.orderservice.client.impl.ApiGatewayClientImpl;
-import com.ezbuy.orderservice.client.impl.CartClientImpl;
-import com.ezbuy.orderservice.client.impl.CmClientImpl;
 import com.ezbuy.orderservice.client.properties.*;
 import com.reactify.client.WebClientFactory;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientManager;
-
-import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -45,8 +41,7 @@ public class WebClientFactoryConfig {
                 pricingProperties,
                 profileProperties,
                 settingClientProperties,
-                productProperties
-        ));
+                productProperties));
         return factory;
     }
 }

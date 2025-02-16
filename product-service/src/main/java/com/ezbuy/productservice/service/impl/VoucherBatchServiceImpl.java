@@ -16,17 +16,16 @@ import com.reactify.model.response.DataResponse;
 import com.reactify.util.DataUtil;
 import com.reactify.util.SecurityUtils;
 import com.reactify.util.Translator;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -53,11 +52,8 @@ public class VoucherBatchServiceImpl extends BaseServiceHandler implements Vouch
     @Transactional
     public Mono<DataResponse<VoucherBatch>> createVoucherBatch(CreateVoucherBatchRequest request) {
         var getSysDate = voucherBatchRepository.getSysDate();
-        return Mono.zip(
-                SecurityUtils.getCurrentUser(),
-                validateRequestVoucher(request, true),
-                getSysDate
-        ).flatMap(userValidate -> {
+        return Mono.zip(SecurityUtils.getCurrentUser(), validateRequestVoucher(request, true), getSysDate)
+                .flatMap(userValidate -> {
                     LocalDateTime now = userValidate.getT3();
                     VoucherBatch voucherBatch = VoucherBatch.builder()
                             .id(UUID.randomUUID().toString())
@@ -72,22 +68,20 @@ public class VoucherBatchServiceImpl extends BaseServiceHandler implements Vouch
                             .createBy(userValidate.getT1().getUsername())
                             .isNew(true)
                             .build();
-                    return voucherBatchRepository.save(voucherBatch)
+                    return voucherBatchRepository
+                            .save(voucherBatch)
                             .onErrorReturn(new VoucherBatch())
                             .flatMap(result -> Mono.just(DataResponse.success(result)));
-                }
-        );
+                });
     }
 
     @Override
     @Transactional
     public Mono<DataResponse<Boolean>> updateVoucherBatch(String id, CreateVoucherBatchRequest request) {
         var getSysDate = voucherBatchRepository.getSysDate();
-        return Mono.zip(
-                        validateRequestVoucher(request, false),
-                        SecurityUtils.getCurrentUser(),
-                        getSysDate)
-                .flatMap(validateUser -> voucherBatchRepository.findFirstById(request.getId())
+        return Mono.zip(validateRequestVoucher(request, false), SecurityUtils.getCurrentUser(), getSysDate)
+                .flatMap(validateUser -> voucherBatchRepository
+                        .findFirstById(request.getId())
                         .flatMap(voucherDb -> {
                             LocalDateTime now = validateUser.getT3();
                             voucherDb.setCode(request.getCode());
@@ -100,18 +94,19 @@ public class VoucherBatchServiceImpl extends BaseServiceHandler implements Vouch
                             voucherDb.setUpdateAt(now);
                             voucherDb.setUpdateBy(validateUser.getT2().getUsername());
                             voucherDb.setNew(false);
-                            return voucherBatchRepository.save(voucherDb).map(rsp -> DataResponse.success(true))
-                                    .onErrorResume(throwable -> Mono.error(
-                                            new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR,
-                                                    "common.error")));
-                        })
-                );
+                            return voucherBatchRepository
+                                    .save(voucherDb)
+                                    .map(rsp -> DataResponse.success(true))
+                                    .onErrorResume(throwable -> Mono.error(new BusinessException(
+                                            CommonErrorCode.INTERNAL_SERVER_ERROR, "common.error")));
+                        }));
     }
 
     @Override
     @Transactional
     public Mono<DataResponse<VoucherBatch>> getVoucherBatch(String id) {
-        return voucherBatchRepository.findFirstById(id)
+        return voucherBatchRepository
+                .findFirstById(id)
                 .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "voucher.batch.found")))
                 .map(voucherBatch -> new DataResponse<>(Translator.toLocale("Success"), voucherBatch));
     }
@@ -121,27 +116,26 @@ public class VoucherBatchServiceImpl extends BaseServiceHandler implements Vouch
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher.batch.code.empty"));
         }
         if (DataUtil.isNullOrEmpty(request.getVoucherTypeId())) {
-            return Mono.error(
-                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher.batch.type.empty"));
+            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher.batch.type.empty"));
         }
         if (DataUtil.isNullOrEmpty(request.getQuantity())) {
-            return Mono.error(
-                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher.batch.quantity.empty"));
+            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher.batch.quantity.empty"));
         }
         if (DataUtil.isNullOrEmpty(request.getState())) {
-            return Mono.error(
-                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher.batch.state.empty"));
+            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher.batch.state.empty"));
         }
         if (request.getCode().length() > 200) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher.batch.error.code.length"));
         }
         if (!DataUtil.isNullOrEmpty(request.getDescription())) {
             if (request.getDescription().length() > 200) {
-                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher.error.description.length"));
+                return Mono.error(
+                        new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher.error.description.length"));
             }
         }
         if (request.getVoucherTypeId().length() > 36) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher.error.voucherTypeId.length"));
+            return Mono.error(
+                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher.error.voucherTypeId.length"));
         }
         if (request.getState().length() > 20) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher.error.state.length"));
@@ -149,8 +143,9 @@ public class VoucherBatchServiceImpl extends BaseServiceHandler implements Vouch
         if (request.getQuantity() < 0) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher.error.quantity"));
         }
-        //check exist code in db
-        return voucherBatchRepository.getVBByCodeAndVouType(request.getCode(), request.getVoucherTypeId())
+        // check exist code in db
+        return voucherBatchRepository
+                .getVBByCodeAndVouType(request.getCode(), request.getVoucherTypeId())
                 .flatMap(voucher -> {
                     if (isCreate) {
                         return Mono.error(
@@ -158,20 +153,20 @@ public class VoucherBatchServiceImpl extends BaseServiceHandler implements Vouch
                     } else {
                         assert voucher.getId() != null;
                         if (!voucher.getId().equals(request.getId())) {
-                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS,
-                                    "voucher.batch.code.exist"));
+                            return Mono.error(
+                                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher.batch.code.exist"));
                         }
                         // neu state = new thi cho phep chuyen state = inactive
                         if (INACTIVE.equals(request.getState())) {
-                            if (!(NEW.equals(voucher.getState()) || INACTIVE.equals(voucher.getState()))
-                            ) {
-                                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS,
-                                        "voucher.batch.state.inactive"));
+                            if (!(NEW.equals(voucher.getState()) || INACTIVE.equals(voucher.getState()))) {
+                                return Mono.error(new BusinessException(
+                                        CommonErrorCode.INVALID_PARAMS, "voucher.batch.state.inactive"));
                             }
                         }
                     }
                     return Mono.just(true);
-                }).switchIfEmpty(Mono.just(true));
+                })
+                .switchIfEmpty(Mono.just(true));
     }
 
     @Override
@@ -182,19 +177,24 @@ public class VoucherBatchServiceImpl extends BaseServiceHandler implements Vouch
         request.setPageSize(pageSize);
         if ((Objects.isNull(request.getFromDate()) && Objects.nonNull(request.getToDate()))
                 || (Objects.nonNull(request.getFromDate()) && Objects.isNull(request.getToDate()))) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("params.date.request.invalid"));
+            throw new BusinessException(
+                    CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("params.date.request.invalid"));
         }
-        if (!Objects.isNull(request.getFromDate()) && request.getFromDate()
-                .isAfter(request.getToDate().plusDays(1))) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("params.from-date.larger.to-date"));
+        if (!Objects.isNull(request.getFromDate())
+                && request.getFromDate().isAfter(request.getToDate().plusDays(1))) {
+            throw new BusinessException(
+                    CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("params.from-date.larger.to-date"));
         }
         if ((Objects.isNull(request.getFromExpiredDate()) && Objects.nonNull(request.getToExpiredDate()))
                 || (Objects.nonNull(request.getFromExpiredDate()) && Objects.isNull(request.getToExpiredDate()))) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("params.date.request.invalid"));
+            throw new BusinessException(
+                    CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("params.date.request.invalid"));
         }
-        if (!Objects.isNull(request.getFromExpiredDate()) && request.getFromExpiredDate()
-                .isAfter(request.getToExpiredDate().plusDays(1))) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("params.from-date.larger.to-date"));
+        if (!Objects.isNull(request.getFromExpiredDate())
+                && request.getFromExpiredDate()
+                        .isAfter(request.getToExpiredDate().plusDays(1))) {
+            throw new BusinessException(
+                    CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("params.from-date.larger.to-date"));
         }
         Flux<VoucherBatch> pages = voucherBatchRepositoryTemPlate.queryVoucherBatch(request);
         Mono<Long> countMono = voucherBatchRepositoryTemPlate.countVoucherBatch(request);

@@ -7,7 +7,6 @@ import com.ezbuy.searchservice.client.properties.IndexScore;
 import com.reactify.util.DataUtil;
 import java.util.Base64;
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
@@ -27,6 +26,7 @@ import reactor.core.publisher.Mono;
 public class ElasticsearchClientImpl implements ElasticsearchClient {
     @Qualifier("elasticsearchClient")
     private final WebClient elasticsearchClient;
+
     private final ElasticsearchClientProperties elasticsearchClientProperties;
     private final IndexProperties indexProperties;
 

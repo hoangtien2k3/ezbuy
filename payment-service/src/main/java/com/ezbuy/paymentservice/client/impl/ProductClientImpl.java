@@ -4,14 +4,12 @@ import com.ezbuy.paymentmodel.constants.ClientUris;
 import com.ezbuy.paymentmodel.dto.response.IdentityProductPrice;
 import com.ezbuy.paymentservice.client.ProductClient;
 import com.ezbuy.productmodel.dto.FilterProductTemplateDTO;
-import com.ezbuy.productmodel.dto.request.FilterGetListSubscriberActive;
 import com.ezbuy.productmodel.dto.response.ProductOfferTemplateDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.reactify.client.BaseRestClient;
 import com.reactify.model.response.DataResponse;
 import com.reactify.util.DataUtil;
 import java.util.*;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -66,31 +64,33 @@ public class ProductClientImpl implements ProductClient {
                 .onErrorResume(throwable -> Mono.just(new ArrayList<>()));
     }
 
-//    @Override
-//    public Mono<List<Subscriber>> getListSubscriberActive(String idNo, List<String> lstTelecomServiceId) {
-//        FilterGetListSubscriberActive filterGetListSubscriberActive = new FilterGetListSubscriberActive();
-//        filterGetListSubscriberActive.setIdNo(idNo);
-//        filterGetListSubscriberActive.setLstTelecomServiceId(lstTelecomServiceId);
-//
-//        return baseRestClient
-//                .post(
-//                        webClient,
-//                        "/v1/get-list-subscriber-active",
-//                        null,
-//                        filterGetListSubscriberActive,
-//                        DataResponse.class)
-//                .map(resp -> {
-//                    Optional<DataResponse> respOptional = (Optional<DataResponse>) resp;
-//                    if (respOptional.isEmpty() || respOptional.get().getData() == null) {
-//                        return new ArrayList<>();
-//                    }
-//
-//                    Map<String, Object> dataMap =
-//                            (Map<String, Object>) respOptional.get().getData();
-//                    String dataJson = DataUtil.parseObjectToString(dataMap.get("data"));
-//                    return DataUtil.parseStringToObject(
-//                            dataJson, new TypeReference<List<Subscriber>>() {}, new ArrayList<>());
-//                })
-//                .onErrorResume(throwable -> Mono.just(new ArrayList<>()));
-//    }
+    // @Override
+    // public Mono<List<Subscriber>> getListSubscriberActive(String idNo,
+    // List<String> lstTelecomServiceId) {
+    // FilterGetListSubscriberActive filterGetListSubscriberActive = new
+    // FilterGetListSubscriberActive();
+    // filterGetListSubscriberActive.setIdNo(idNo);
+    // filterGetListSubscriberActive.setLstTelecomServiceId(lstTelecomServiceId);
+    //
+    // return baseRestClient
+    // .post(
+    // webClient,
+    // "/v1/get-list-subscriber-active",
+    // null,
+    // filterGetListSubscriberActive,
+    // DataResponse.class)
+    // .map(resp -> {
+    // Optional<DataResponse> respOptional = (Optional<DataResponse>) resp;
+    // if (respOptional.isEmpty() || respOptional.get().getData() == null) {
+    // return new ArrayList<>();
+    // }
+    //
+    // Map<String, Object> dataMap =
+    // (Map<String, Object>) respOptional.get().getData();
+    // String dataJson = DataUtil.parseObjectToString(dataMap.get("data"));
+    // return DataUtil.parseStringToObject(
+    // dataJson, new TypeReference<List<Subscriber>>() {}, new ArrayList<>());
+    // })
+    // .onErrorResume(throwable -> Mono.just(new ArrayList<>()));
+    // }
 }

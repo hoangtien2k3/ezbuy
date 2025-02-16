@@ -47,31 +47,31 @@ public class Constants {
         public static final String VBHXH = "VBHXH";
     }
 
-    //trang thai state bang voucher
+    // trang thai state bang voucher
     public static final class VOUCHER_STATE {
         public static final String NEW = "new"; // voucher moi chua su dung
         public static final String LOCKED = "locked"; // voucher da lock de thuc hien thanh toan
         public static final String USED = "used"; // voucher da duoc gan cho user
         public static final String INACTIVE = "inactive"; // voucher khong hieu luc
     }
-    //trang thai state bang voucher_batch
+    // trang thai state bang voucher_batch
     public static final class VOUCHER_BATCH_STATE {
         public static final String NEW = "NEW"; // lo voucher dang trang thai chua su dung
         public static final String INPROGRESS = "INPROGRESS"; // trang thai lo voucher dang duoc xu ly
-        public static final String COMPLETE = "DONE";//trang thai lo voucher da xu ly xong
+        public static final String COMPLETE = "DONE"; // trang thai lo voucher da xu ly xong
         public static final String FAILED = "FAILED";
     }
 
-    //trang thai state bang voucher_use
+    // trang thai state bang voucher_use
     public static final class VOUCHER_USE_STATE {
         public static final String ACTIVE = "active";
         public static final String PRE_ACTIVE = "preActive";
         public static final String INACTIVE = "inactive";
-        public static final String USING = "using";// dang trong luong don hang
+        public static final String USING = "using"; // dang trong luong don hang
         public static final String USED = "used";
     }
 
-    //trang thai state bang voucher_transaction
+    // trang thai state bang voucher_transaction
     public static final class VOUCHER_TRANSACTION_STATE {
         public static final String ACTIVE = "active"; // trang thai trong khi giao dich thanh toan thanh cong
         public static final String PRE_ACTIVE = "preActive";
@@ -79,7 +79,7 @@ public class Constants {
         public static final String USED = "used";
     }
 
-    //trang thai transaction_type bang voucher_transaction
+    // trang thai transaction_type bang voucher_transaction
     public static final class VOUCHER_TRANSACTION_TYPE {
         public static final String CONNECT = "CONNECT";
         public static final String AFTER = "AFTER";

@@ -18,6 +18,7 @@ import org.springframework.data.relational.core.mapping.Table;
 public class CartItem implements Persistable<String> {
     @Id
     private String id;
+
     private String productId;
     private String telecomServiceId;
     private String serviceAlias;

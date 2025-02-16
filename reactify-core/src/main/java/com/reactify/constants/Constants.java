@@ -466,5 +466,4 @@ public final class Constants {
     public static final class ArrayLimit {
         public static final Integer COMMON = 100;
     }
-
 }

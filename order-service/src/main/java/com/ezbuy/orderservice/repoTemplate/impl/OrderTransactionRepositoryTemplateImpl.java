@@ -3,30 +3,38 @@ package com.ezbuy.orderservice.repoTemplate.impl;
 import com.ezbuy.ordermodel.dto.response.OrderTransmissionDTO;
 import com.ezbuy.orderservice.repoTemplate.OrderTransactionRepositoryTemplate;
 import com.reactify.util.DataUtil;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-
 @Repository
 @RequiredArgsConstructor
-public class OrderTransactionRepositoryTemplateImpl extends BaseRepositoryTemplate implements OrderTransactionRepositoryTemplate {
+public class OrderTransactionRepositoryTemplateImpl extends BaseRepositoryTemplate
+        implements OrderTransactionRepositoryTemplate {
 
     private final R2dbcEntityTemplate template;
 
     @Override
-    public Flux<OrderTransmissionDTO> searchOrderTransmission(String email, String orderCode, String idNo, String phone, LocalDateTime from, LocalDateTime to, int offset, int limit, String sort) {
+    public Flux<OrderTransmissionDTO> searchOrderTransmission(
+            String email,
+            String orderCode,
+            String idNo,
+            String phone,
+            LocalDateTime from,
+            LocalDateTime to,
+            int offset,
+            int limit,
+            String sort) {
         StringBuilder sb = new StringBuilder();
-        sb.append("SELECT od.id, od.order_code, od.total_fee, od.currency, od.status, od.state, od.detail_address, od.type, oi.rating \n" +
-                "oi.duration, od.id_no, od.name, od.email, od.phone, od.create_at, od.create_by, od.update_at, od.update_by \n" +
-                "FROM `order` od \n" +
-                "INNER JOIN order_item oi ON od.id = oi.order_id \n" +
-                "WHERE 1=1 ");
+        sb.append(
+                "SELECT od.id, od.order_code, od.total_fee, od.currency, od.status, od.state, od.detail_address, od.type, oi.rating \n"
+                        + "oi.duration, od.id_no, od.name, od.email, od.phone, od.create_at, od.create_by, od.update_at, od.update_by \n"
+                        + "FROM `order` od \n" + "INNER JOIN order_item oi ON od.id = oi.order_id \n" + "WHERE 1=1 ");
         if (!DataUtil.isNullOrEmpty(email)) {
             sb.append(" AND od.email = :email ");
         }
@@ -73,13 +81,13 @@ public class OrderTransactionRepositoryTemplateImpl extends BaseRepositoryTempla
     }
 
     @Override
-    public Mono<Long> countOrderTransmission(String email, String orderCode, String idNo, String phone, LocalDateTime from, LocalDateTime to) {
+    public Mono<Long> countOrderTransmission(
+            String email, String orderCode, String idNo, String phone, LocalDateTime from, LocalDateTime to) {
         StringBuilder sb = new StringBuilder();
-        sb.append("SELECT od.id, od.order_code, od.total_fee, od.currency, od.status, od.state, od.detail_address, od.type,\n" +
-                "oi.rating, oi.duration, od.id_no, od.name, od.email, od.phone, od.create_at, od.create_by, od.update_at, od.update_by\n" +
-                "FROM `order` od\n" +
-                "INNER JOIN order_item oi ON od.id = oi.order_id\n" +
-                "WHERE 1=1 ");
+        sb.append(
+                "SELECT od.id, od.order_code, od.total_fee, od.currency, od.status, od.state, od.detail_address, od.type,\n"
+                        + "oi.rating, oi.duration, od.id_no, od.name, od.email, od.phone, od.create_at, od.create_by, od.update_at, od.update_by\n"
+                        + "FROM `order` od\n" + "INNER JOIN order_item oi ON od.id = oi.order_id\n" + "WHERE 1=1 ");
         if (!DataUtil.isNullOrEmpty(email)) {
             sb.append(" and od.email = :email ");
         }

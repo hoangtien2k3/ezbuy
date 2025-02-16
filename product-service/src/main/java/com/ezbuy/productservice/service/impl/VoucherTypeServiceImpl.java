@@ -1,5 +1,8 @@
 package com.ezbuy.productservice.service.impl;
 
+import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
+import static com.reactify.constants.Constants.STATUS.INACTIVE;
+
 import com.ezbuy.productmodel.constants.Constants;
 import com.ezbuy.productmodel.dto.VoucherTypeV2DTO;
 import com.ezbuy.productmodel.dto.request.SearchVoucherTypeRequest;
@@ -17,21 +20,17 @@ import com.reactify.util.AppUtils;
 import com.reactify.util.DataUtil;
 import com.reactify.util.SecurityUtils;
 import com.reactify.util.Translator;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import reactor.core.publisher.Mono;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
-import static com.reactify.constants.Constants.STATUS.INACTIVE;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
@@ -49,7 +48,9 @@ public class VoucherTypeServiceImpl extends BaseServiceHandler implements Vouche
 
     @Override
     public Mono<DataResponse<List<VoucherType>>> getAllVoucherTypeActive() {
-        return voucherTypeRepository.getAllVoucherTypeActive().collectList()
+        return voucherTypeRepository
+                .getAllVoucherTypeActive()
+                .collectList()
                 .flatMap(response -> Mono.just(new DataResponse<>(Translator.toLocale("Success"), response)));
     }
 
@@ -59,7 +60,8 @@ public class VoucherTypeServiceImpl extends BaseServiceHandler implements Vouche
         String code = DataUtil.safeTrim(request.getCode());
         return Mono.zip(
                         SecurityUtils.getCurrentUser()
-                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
+                                .switchIfEmpty(
+                                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
                         validateExistedCode(code, true, null))
                 .flatMap(data -> {
                     String voucherTypeId = UUID.randomUUID().toString();
@@ -81,27 +83,34 @@ public class VoucherTypeServiceImpl extends BaseServiceHandler implements Vouche
                             .isNew(true)
                             .build();
                     return AppUtils.insertData(voucherTypeRepository.save(newVoucherType))
-                            .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "voucher-type.insert.failed")))
-                            .flatMap(x -> Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), newVoucherType)));
+                            .switchIfEmpty(Mono.error(new BusinessException(
+                                    CommonErrorCode.INTERNAL_SERVER_ERROR, "voucher-type.insert.failed")))
+                            .flatMap(
+                                    x -> Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), newVoucherType)));
                 });
     }
 
     /**
-     * Ham nay de kiem tra hop le de them moi hoac cap nhat ban ghi
-     * neu ban ghi voi code da cho ton tai thi khong cho phep them moi nua
+     * Ham nay de kiem tra hop le de them moi hoac cap nhat ban ghi neu ban ghi voi
+     * code da cho ton tai thi khong cho phep them moi nua
      *
      * @param code
-     * @param isInsert true neu them moi, false neu cap nhat
+     * @param isInsert
+     *            true neu them moi, false neu cap nhat
      * @param id
      * @return tra ve loi hoac tra ve ban ghi loai khuyen mai neu thoa man
      */
     public Mono<Object> validateExistedCode(String code, Boolean isInsert, String id) {
-        return voucherTypeRepository.findByCode(code).defaultIfEmpty(new VoucherType())
+        return voucherTypeRepository
+                .findByCode(code)
+                .defaultIfEmpty(new VoucherType())
                 .map(voucherType -> {
-                    if ((isInsert && voucherType.getCode() != null) ||
-                            (!isInsert && voucherType.getCode() != null &&
-                                    !DataUtil.safeEqual(voucherType.getId(), id))) {
-                        return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "voucher-type.validate.code.is.exist"));
+                    if ((isInsert && voucherType.getCode() != null)
+                            || (!isInsert
+                                    && voucherType.getCode() != null
+                                    && !DataUtil.safeEqual(voucherType.getId(), id))) {
+                        return Mono.error(new BusinessException(
+                                CommonErrorCode.NOT_FOUND, "voucher-type.validate.code.is.exist"));
                     }
                     return voucherType;
                 });
@@ -130,7 +139,8 @@ public class VoucherTypeServiceImpl extends BaseServiceHandler implements Vouche
         String description = DataUtil.safeTrim(request.getDescription());
         if (!DataUtil.isNullOrEmpty(description)) {
             if (description.length() > Constants.VOUCHER_TYPE.DESCRIPTION_MAX_LENGTH) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher-type.validate.description.max.length");
+                throw new BusinessException(
+                        CommonErrorCode.INVALID_PARAMS, "voucher-type.validate.description.max.length");
             }
         }
 
@@ -156,9 +166,9 @@ public class VoucherTypeServiceImpl extends BaseServiceHandler implements Vouche
         }
 
         String actionType = DataUtil.safeTrim(request.getActionType());
-        if (!actionType.equals(Constants.VOUCHER_TYPE.ACTION_TYPE_DISCOUNT) &&
-                !actionType.equals(Constants.VOUCHER_TYPE.ACTION_TYPE_FIXED) &&
-                !actionType.equals(Constants.VOUCHER_TYPE.ACTION_TYPE_ITEM)) {
+        if (!actionType.equals(Constants.VOUCHER_TYPE.ACTION_TYPE_DISCOUNT)
+                && !actionType.equals(Constants.VOUCHER_TYPE.ACTION_TYPE_FIXED)
+                && !actionType.equals(Constants.VOUCHER_TYPE.ACTION_TYPE_ITEM)) {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher-type.validate.action.type");
         }
     }
@@ -169,64 +179,72 @@ public class VoucherTypeServiceImpl extends BaseServiceHandler implements Vouche
         String code = DataUtil.safeTrim(request.getCode());
 
         return Mono.zip(
-                SecurityUtils.getCurrentUser() //get info user
-                        .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
-                validateExistedCode(code, false, id)).flatMap(data -> {
-            VoucherType fetchedVoucherType = (VoucherType) data.getT2();
-            VoucherType updateVoucherType = VoucherType.builder()
-                    .id(id)
-                    .code(code)
-                    .createBy(fetchedVoucherType.getCreateBy())
-                    .description(request.getDescription())
-                    .createAt(fetchedVoucherType.getCreateAt())
-                    .createBy(fetchedVoucherType.getCreateBy())
-                    .updateAt(LocalDateTime.now())
-                    .updateBy(data.getT1().getUsername())
-                    .state(request.getState())
-                    .status(request.getStatus())
-                    .name(request.getName())
-                    .actionType(request.getActionType())
-                    .actionValue(request.getActionValue())
-                    .priorityLevel(request.getPriorityLevel())
-                    .payment(request.getPayment())
-                    .conditionUse(request.getConditionUse())
-                    .build();
-            return voucherTypeRepository.save(updateVoucherType)
-                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "voucher-type.update.failed")))
-                    .flatMap(x -> Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), updateVoucherType)));
-        });
+                        SecurityUtils.getCurrentUser() // get info user
+                                .switchIfEmpty(
+                                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
+                        validateExistedCode(code, false, id))
+                .flatMap(data -> {
+                    VoucherType fetchedVoucherType = (VoucherType) data.getT2();
+                    VoucherType updateVoucherType = VoucherType.builder()
+                            .id(id)
+                            .code(code)
+                            .createBy(fetchedVoucherType.getCreateBy())
+                            .description(request.getDescription())
+                            .createAt(fetchedVoucherType.getCreateAt())
+                            .createBy(fetchedVoucherType.getCreateBy())
+                            .updateAt(LocalDateTime.now())
+                            .updateBy(data.getT1().getUsername())
+                            .state(request.getState())
+                            .status(request.getStatus())
+                            .name(request.getName())
+                            .actionType(request.getActionType())
+                            .actionValue(request.getActionValue())
+                            .priorityLevel(request.getPriorityLevel())
+                            .payment(request.getPayment())
+                            .conditionUse(request.getConditionUse())
+                            .build();
+                    return voucherTypeRepository
+                            .save(updateVoucherType)
+                            .switchIfEmpty(Mono.error(new BusinessException(
+                                    CommonErrorCode.INTERNAL_SERVER_ERROR, "voucher-type.update.failed")))
+                            .flatMap(x ->
+                                    Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), updateVoucherType)));
+                });
     }
 
     @Override
     public Mono<SearchVoucherTypeResponse> search(SearchVoucherTypeRequest request) {
-        //validate request
+        // validate request
         int pageIndex = validatePageIndex(request.getPageIndex());
         request.setPageIndex(pageIndex);
         int pageSize = validatePageSize(request.getPageSize(), 10);
         request.setPageSize(pageSize);
 
-        //validate bat buoc nhap tu ngay den ngay
+        // validate bat buoc nhap tu ngay den ngay
         if ((Objects.isNull(request.getCreateFromDate()) && Objects.nonNull(request.getCreateToDate()))
                 || (Objects.nonNull(request.getCreateFromDate()) && Objects.isNull(request.getCreateToDate()))) {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.date.request.invalid");
         }
-        //validate tu ngay khong duoc lon hon den ngay
+        // validate tu ngay khong duoc lon hon den ngay
         if (!Objects.isNull(request.getCreateFromDate()) && !Objects.isNull(request.getCreateToDate())) {
             if (request.getCreateFromDate().isAfter(request.getCreateToDate())) {
                 throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.from-date.larger.to-date");
             }
         }
 
-        return Mono.zip(voucherTypeRepositoryTemplate.search(request).collectList(), voucherTypeRepositoryTemplate.count(request)).map(zip -> {
-            PaginationDTO pagination = new PaginationDTO();
-            pagination.setPageIndex((request.getPageIndex()));
-            pagination.setPageSize(request.getPageSize());
-            pagination.setTotalRecords(zip.getT2());
-            SearchVoucherTypeResponse response = new SearchVoucherTypeResponse();
-            response.setListVoucherType(zip.getT1());
-            response.setPagination(pagination);
-            return response;
-        });
+        return Mono.zip(
+                        voucherTypeRepositoryTemplate.search(request).collectList(),
+                        voucherTypeRepositoryTemplate.count(request))
+                .map(zip -> {
+                    PaginationDTO pagination = new PaginationDTO();
+                    pagination.setPageIndex((request.getPageIndex()));
+                    pagination.setPageSize(request.getPageSize());
+                    pagination.setTotalRecords(zip.getT2());
+                    SearchVoucherTypeResponse response = new SearchVoucherTypeResponse();
+                    response.setListVoucherType(zip.getT1());
+                    response.setPagination(pagination);
+                    return response;
+                });
     }
 
     @Override
@@ -235,17 +253,25 @@ public class VoucherTypeServiceImpl extends BaseServiceHandler implements Vouche
         if (DataUtil.isNullOrEmpty(id)) {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "vouchertype.validate.id.null");
         }
-        return Mono.zip(SecurityUtils.getCurrentUser() //lay thong tin user
-                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
-                        voucherTypeRepository.getById(id) //lay thong tin voucherType theo id
-                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "voucher-type.validate.find.by.id.null"))))
-                .flatMap(tuple -> voucherTypeRepository.updateStatus(voucherTypeId, INACTIVE, tuple.getT1().getUsername())
-                        .defaultIfEmpty(new VoucherType()).flatMap(response -> Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), null))));
+        return Mono.zip(
+                        SecurityUtils.getCurrentUser() // lay thong tin user
+                                .switchIfEmpty(
+                                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
+                        voucherTypeRepository
+                                .getById(id) // lay thong tin voucherType theo id
+                                .switchIfEmpty(Mono.error(new BusinessException(
+                                        CommonErrorCode.NOT_FOUND, "voucher-type.validate.find.by.id.null"))))
+                .flatMap(tuple -> voucherTypeRepository
+                        .updateStatus(voucherTypeId, INACTIVE, tuple.getT1().getUsername())
+                        .defaultIfEmpty(new VoucherType())
+                        .flatMap(response -> Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), null))));
     }
 
     @Override
     public Mono<DataResponse<List<VoucherTypeV2DTO>>> findVoucherTypeByVoucherCode(String voucherCode) {
-        return voucherTypeRepositoryTemplate.findVoucherTypeByVoucherCodeUsed(voucherCode).collectList()
+        return voucherTypeRepositoryTemplate
+                .findVoucherTypeByVoucherCodeUsed(voucherCode)
+                .collectList()
                 .map(voucherTypeList -> new DataResponse<>(Translator.toLocaleVi(SUCCESS), voucherTypeList));
     }
 }

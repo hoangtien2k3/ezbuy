@@ -20,14 +20,16 @@ public class UtilController {
 
     /**
      * add role admin for old user
+     *
      * @param request
      * @return
      */
     @PostMapping(value = UrlPaths.Util.JOB_ADD_ROLE_ADMIN_FOR_OLD_USER)
     @PreAuthorize("hasAnyAuthority('system')")
-    public Mono<ResponseEntity<DataResponse>> jobAddRoleAdminForOldUser(@Valid @RequestBody JobAddRoleAdminForOldUserRequest request) {
-        return utilService.jobAddRoleAdminForOldUser(request)
+    public Mono<ResponseEntity<DataResponse>> jobAddRoleAdminForOldUser(
+            @Valid @RequestBody JobAddRoleAdminForOldUserRequest request) {
+        return utilService
+                .jobAddRoleAdminForOldUser(request)
                 .map(rs -> ResponseEntity.ok(new DataResponse("common.success", rs.getData())));
     }
-
 }

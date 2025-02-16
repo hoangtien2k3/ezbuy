@@ -15,18 +15,17 @@ import com.reactify.util.AppUtils;
 import com.reactify.util.DataUtil;
 import com.reactify.util.SecurityUtils;
 import com.reactify.util.Translator;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -54,7 +53,8 @@ public class PartnerLicenseKeyServiceImpl implements PartnerLicenseKeyService {
                 .map(PartnerLicenseKeyDTO::getServiceAlias)
                 .collect(Collectors.toList());
         return partnerLicenseKeyRepository.getlstAliasKeyExsit(userId, organizationId, lstAliasCreate);
-    };
+    }
+    ;
 
     public Mono<List<OptionSetValue>> getLstAcronym(List<String> lstServiceAlias) {
         if (DataUtil.isNullOrEmpty(lstServiceAlias)) {

@@ -10,12 +10,11 @@ import com.ezbuy.settingmodel.response.SearchMarketInfoResponse;
 import com.ezbuy.settingservice.service.MarketInfoService;
 import com.reactify.model.response.DataResponse;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

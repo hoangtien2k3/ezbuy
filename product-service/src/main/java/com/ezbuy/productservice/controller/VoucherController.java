@@ -1,5 +1,8 @@
 package com.ezbuy.productservice.controller;
 
+import static com.ezbuy.productmodel.constants.UrlPaths.DEFAULT_V1_PREFIX;
+import static com.ezbuy.productmodel.constants.UrlPaths.Voucher.*;
+
 import com.ezbuy.productmodel.constants.UrlPaths;
 import com.ezbuy.productmodel.dto.request.*;
 import com.ezbuy.productmodel.dto.response.VoucherSearchResponse;
@@ -15,9 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-import static com.ezbuy.productmodel.constants.UrlPaths.DEFAULT_V1_PREFIX;
-import static com.ezbuy.productmodel.constants.UrlPaths.Voucher.*;
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -28,19 +28,20 @@ public class VoucherController {
 
     @GetMapping(value = SEARCH_VOUCHER)
     public Mono<ResponseEntity<DataResponse<VoucherSearchResponse>>> searchVoucher(SearchVoucherRequest request) {
-    return voucherService.searchVoucher(request)
-        .map(rs -> ResponseEntity.ok(
-            new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), rs)));
+        return voucherService
+                .searchVoucher(request)
+                .map(rs -> ResponseEntity.ok(new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), rs)));
     }
 
     @PostMapping(value = CREATE_VOUCHER)
     public Mono<DataResponse<Voucher>> createVoucher(@Valid @RequestBody VoucherRequest request) {
-    return voucherService.createVoucher(request);
+        return voucherService.createVoucher(request);
     }
 
-    @PutMapping(value =UPDATE_VOUCHER )
-    public Mono<DataResponse<Boolean>> updateVoucher(@PathVariable String id,@Valid @RequestBody VoucherRequest request) {
-    return voucherService.updateVoucher(id,request);
+    @PutMapping(value = UPDATE_VOUCHER)
+    public Mono<DataResponse<Boolean>> updateVoucher(
+            @PathVariable String id, @Valid @RequestBody VoucherRequest request) {
+        return voucherService.updateVoucher(id, request);
     }
 
     /**
@@ -51,13 +52,15 @@ public class VoucherController {
      */
     @PostMapping(UrlPaths.Voucher.UPDATE_STATE)
     public Mono<DataResponse<Voucher>> updateStateVoucher(@RequestBody CreateVoucherRequest request) {
-        return voucherService.updateStateVoucher(request.getVoucherId(), request.getVoucherTypeId(), request.getState());
+        return voucherService.updateStateVoucher(
+                request.getVoucherId(), request.getVoucherTypeId(), request.getState());
     }
 
     /**
      * ham lay thong tin voucher hoat dong
      *
-     * @param code ma voucher type
+     * @param code
+     *            ma voucher type
      * @return
      */
     @GetMapping(value = UrlPaths.Voucher.NEW_BY_CODE)
@@ -68,7 +71,8 @@ public class VoucherController {
     /**
      * ham lay thong tin voucher hoat dong
      *
-     * @param code ma voucher type
+     * @param code
+     *            ma voucher type
      * @return
      */
     @GetMapping(value = UrlPaths.Voucher.GET_BY_CODE)

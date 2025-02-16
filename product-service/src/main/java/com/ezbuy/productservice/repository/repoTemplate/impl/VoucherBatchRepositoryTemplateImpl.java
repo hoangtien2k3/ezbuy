@@ -6,20 +6,20 @@ import com.ezbuy.productservice.repository.repoTemplate.BaseRepositoryTemplate;
 import com.ezbuy.productservice.repository.repoTemplate.VoucherBatchRepositoryTemPlate;
 import com.reactify.util.DataUtil;
 import com.reactify.util.SortingUtils;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Repository
 @RequiredArgsConstructor
-public class VoucherBatchRepositoryTemplateImpl extends BaseRepositoryTemplate implements VoucherBatchRepositoryTemPlate {
+public class VoucherBatchRepositoryTemplateImpl extends BaseRepositoryTemplate
+        implements VoucherBatchRepositoryTemPlate {
 
     @Override
     public Flux<VoucherBatch> queryVoucherBatch(VoucherBatchRequest request) {
@@ -32,9 +32,7 @@ public class VoucherBatchRepositoryTemplateImpl extends BaseRepositoryTemplate i
         Map<String, Object> params = new HashMap<>();
         StringBuilder query = new StringBuilder();
         buildQueryPages(query, params, request);
-        query.append("ORDER BY ").append(sorting).append(" \n")
-                .append(" LIMIT :pageSize  \n" +
-                        "OFFSET :index ");
+        query.append("ORDER BY ").append(sorting).append(" \n").append(" LIMIT :pageSize  \n" + "OFFSET :index ");
         params.put("pageSize", request.getPageSize());
         BigDecimal index = (new BigDecimal(request.getPageIndex() - 1)).multiply(new BigDecimal(request.getPageSize()));
         params.put("index", index);
@@ -52,8 +50,7 @@ public class VoucherBatchRepositoryTemplateImpl extends BaseRepositoryTemplate i
     }
 
     private void buildQueryPages(StringBuilder builder, Map<String, Object> params, VoucherBatchRequest request) {
-        builder.append("select * from voucher_batch " +
-                " where 1 = 1 ");
+        builder.append("select * from voucher_batch " + " where 1 = 1 ");
         if (!DataUtil.isNullOrEmpty(request.getId())) {
             builder.append(" and id = :id ");
             params.put("id", request.getId());

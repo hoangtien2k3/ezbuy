@@ -8,11 +8,9 @@ import com.reactify.util.DataUtil;
 import com.reactify.util.SQLUtils;
 import com.reactify.util.SortingUtils;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -20,8 +18,6 @@ import reactor.core.publisher.Mono;
 @Repository
 @RequiredArgsConstructor
 public class RatingRepositoryTemplateImpl extends BaseRepositoryTemplate implements RatingRepositoryTemplate {
-
-    private final R2dbcEntityTemplate template;
 
     @Override
     public Flux<RatingDTO> findRating(FindRatingRequest request) {
@@ -38,23 +34,19 @@ public class RatingRepositoryTemplateImpl extends BaseRepositoryTemplate impleme
         params.put("pageSize", request.getPageSize());
         BigDecimal index = (new BigDecimal(request.getPageIndex() - 1)).multiply(new BigDecimal(request.getPageSize()));
         params.put("index", index);
-
         return listQuery(query.toString(), params, RatingDTO.class);
     }
 
     private void buildQueryServiceRating(StringBuilder builder, Map<String, Object> params, FindRatingRequest request) {
         builder.append("select * from rating \n" + "where 1=1");
-
         if (!DataUtil.isNullOrEmpty(request.getRatingTypeCode())) {
             builder.append(" and rating_type_code = :ratingTypeCode ");
             params.put("ratingTypeCode", request.getRatingTypeCode());
         }
-
         if (!DataUtil.isNullOrEmpty(request.getTargetId())) {
             builder.append(" and target_id = :targetId ");
             params.put("targetId", request.getTargetId());
         }
-
         if (!DataUtil.isNullOrEmpty(request.getUsername())) {
             builder.append(" and username = :username ");
             params.put("username", request.getUsername());

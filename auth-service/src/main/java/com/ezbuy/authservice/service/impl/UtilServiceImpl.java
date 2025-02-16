@@ -42,8 +42,7 @@ public class UtilServiceImpl implements UtilService {
     public Mono<DataResponse<Object>> jobAddRoleAdminForOldUser(JobAddRoleAdminForOldUserRequest request) {
         return getAccessToken()
                 .flatMap(token -> {
-                    var orgIndId =
-                            indOrgPermissionRepo.getOrgIndIdByUsername(request.getUsername());
+                    var orgIndId = indOrgPermissionRepo.getOrgIndIdByUsername(request.getUsername());
                     if (DataUtil.isNullOrEmpty(request.getUsername())) {
                         Integer offset = request.getLimit() * request.getOffset();
                         orgIndId = indOrgPermissionRepo.getOrgIndId(offset, request.getLimit());
@@ -55,7 +54,8 @@ public class UtilServiceImpl implements UtilService {
                                 roleRepresentation.setComposite(Boolean.FALSE);
                                 roleRepresentation.setClientRole(Boolean.TRUE);
                                 roleRepresentation.setContainerId(request.getClientId());
-                                return keyCloakClient.addRoleForUserInClientId(
+                                return keyCloakClient
+                                        .addRoleForUserInClientId(
                                                 request.getClientId(),
                                                 token,
                                                 roleRepresentation,
@@ -65,7 +65,8 @@ public class UtilServiceImpl implements UtilService {
                                                     getEmployeePermissionRequests(request);
                                             Individual individual = new Individual();
                                             individual.setId(orgIndIdDTO.getIndividualId());
-                                            return indOrgPermissionRepo.checkExistRoleInHub(
+                                            return indOrgPermissionRepo
+                                                    .checkExistRoleInHub(
                                                             orgIndIdDTO.getIndividualId(),
                                                             request.getRoleName(),
                                                             request.getClientId(),
@@ -78,7 +79,10 @@ public class UtilServiceImpl implements UtilService {
                                                             return Mono.just(true);
                                                         }
                                                         // save 2 table
-                                                        return createEmployeePermission(employeePermissionRequests, individual, orgIndIdDTO.getOrgId());
+                                                        return createEmployeePermission(
+                                                                employeePermissionRequests,
+                                                                individual,
+                                                                orgIndIdDTO.getOrgId());
                                                     });
                                         });
                             })
@@ -109,8 +113,7 @@ public class UtilServiceImpl implements UtilService {
             List<EmployeePermissionRequest> employeeUpdateRequest, Individual individual, String organizationId) {
         return Flux.fromIterable(employeeUpdateRequest)
                 .flatMap(employeePermissionRequest -> indOrgPermissionRepo
-                        .getIndOrgPerIdByClientIdAndIndId(
-                                employeePermissionRequest.getClientId(), individual.getId())
+                        .getIndOrgPerIdByClientIdAndIndId(employeePermissionRequest.getClientId(), individual.getId())
                         .collectList()
                         .flatMap(rs -> {
                             TokenUser tokenUser = new TokenUser();

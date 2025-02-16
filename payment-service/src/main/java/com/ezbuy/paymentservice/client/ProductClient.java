@@ -12,5 +12,6 @@ public interface ProductClient {
 
     Mono<List<ProductOfferTemplateDTO>> getProductInfo(List<String> templateIds);
 
-//    Mono<List<Subscriber>> getListSubscriberActive(String idNo, List<String> lstTelecomServiceId);
+    // Mono<List<Subscriber>> getListSubscriberActive(String idNo, List<String>
+    // lstTelecomServiceId);
 }

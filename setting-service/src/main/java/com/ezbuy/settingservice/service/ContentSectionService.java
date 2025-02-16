@@ -8,10 +8,9 @@ import com.ezbuy.settingmodel.request.ContentSectionRequest;
 import com.ezbuy.settingmodel.request.SearchContentSectionRequest;
 import com.ezbuy.settingmodel.response.SearchContentSectionResponse;
 import com.reactify.model.response.DataResponse;
+import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 public interface ContentSectionService {
     @Transactional

@@ -1,9 +1,8 @@
 package com.ezbuy.authmodel.constants;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.Getter;
-
 import java.util.Arrays;
+import lombok.Getter;
 
 @Getter
 public enum State {

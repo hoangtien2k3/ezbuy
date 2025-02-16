@@ -1,6 +1,5 @@
 package com.ezbuy.ratingservice.service.impl;
 
-import com.ezbuy.ratingmodel.model.Rating;
 import com.ezbuy.ratingmodel.model.RatingHistory;
 import com.ezbuy.ratingservice.repository.RatingHistoryRepository;
 import com.ezbuy.ratingservice.service.RatingHistoryService;
@@ -32,7 +31,8 @@ public class RatingHistoryServiceImpl extends BaseServiceHandler implements Rati
             String state) {
         var getSysDate = ratingHistoryRepository.getSysDate();
         return Mono.zip(
-                        SecurityUtils.getCurrentUser().switchIfEmpty(
+                        SecurityUtils.getCurrentUser()
+                                .switchIfEmpty(
                                         Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
                         getSysDate)
                 .flatMap(tuple -> {

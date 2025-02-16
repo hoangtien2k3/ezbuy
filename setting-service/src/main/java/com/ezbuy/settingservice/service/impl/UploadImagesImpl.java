@@ -1,5 +1,7 @@
 package com.ezbuy.settingservice.service.impl;
 
+import static com.reactify.constants.MessageConstant.SUCCESS;
+
 import com.ezbuy.settingmodel.constants.Constants;
 import com.ezbuy.settingmodel.dto.FileDTO;
 import com.ezbuy.settingmodel.dto.PaginationDTO;
@@ -18,6 +20,10 @@ import com.reactify.util.DataUtil;
 import com.reactify.util.MinioUtils;
 import com.reactify.util.SecurityUtils;
 import com.reactify.util.Translator;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+import javax.activation.MimetypesFileTypeMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
@@ -26,13 +32,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import javax.activation.MimetypesFileTypeMap;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static com.reactify.constants.MessageConstant.SUCCESS;
 
 @Slf4j
 @Service
@@ -526,9 +525,8 @@ public class UploadImagesImpl implements UploadImagesService {
             dto.setPath(newPath);
         }
         if (!DataUtil.isNullOrEmpty(dto.getPreviewImages())) {
-            List<String> previewFullPaths = dto.getPreviewImages().stream()
-                            .map(this::appendFullPath)
-                            .collect(Collectors.toList());
+            List<String> previewFullPaths =
+                    dto.getPreviewImages().stream().map(this::appendFullPath).collect(Collectors.toList());
             dto.setPreviewImages(previewFullPaths);
         }
     }

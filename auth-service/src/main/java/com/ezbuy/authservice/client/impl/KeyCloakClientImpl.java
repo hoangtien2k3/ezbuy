@@ -16,11 +16,9 @@ import com.reactify.constants.CommonErrorCode;
 import com.reactify.constants.Constants;
 import com.reactify.exception.BusinessException;
 import com.reactify.util.DataUtil;
-
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.representations.idm.GroupRepresentation;
@@ -53,17 +51,22 @@ public class KeyCloakClientImpl implements KeyCloakClient {
 
     @Qualifier("keycloak")
     private final WebClient keycloak;
+
     private final KeycloakProvider keycloakProvider;
     private final KeycloakClientProperties keyCloakConfig;
 
     @Value("${keycloak.serverUrl}")
     private String keycloakUrl;
+
     @Value("${keycloak.realm}")
     public String realm;
+
     @Value("${keycloak.clientId}")
     public String clientID;
+
     @Value("${keycloak.clientSecret}")
     public String clientSecret;
+
     @Value("${keycloak.host}")
     private String hostKeycloak;
 
@@ -231,8 +234,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {
-                })
+                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {})
                 .map(result -> result.stream()
                         .map(record -> {
                             ClientResource res = new ClientResource();
@@ -251,8 +253,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<GroupPolicyRepresentation>>() {
-                })
+                .bodyToMono(new ParameterizedTypeReference<List<GroupPolicyRepresentation>>() {})
                 .onErrorReturn(new ArrayList<>());
     }
 
@@ -264,8 +265,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<RolePolicyRepresentation>>() {
-                })
+                .bodyToMono(new ParameterizedTypeReference<List<RolePolicyRepresentation>>() {})
                 .onErrorReturn(new ArrayList<>());
     }
 
@@ -431,8 +431,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .bodyToMono(String.class)
                 .map(response -> {
                     Gson gson = new Gson();
-                    Type listType = new TypeToken<List<RoleDTO>>() {
-                    }.getType();
+                    Type listType = new TypeToken<List<RoleDTO>>() {}.getType();
                     log.info("response when login {}", response);
                     return gson.<List<RoleDTO>>fromJson(response, listType);
                 })
@@ -462,8 +461,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {
-                })
+                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {})
                 .doOnError(err -> log.error("Error when get all resource ", err))
                 .map(result -> result.stream()
                         .map(record -> (String) record.get("name"))

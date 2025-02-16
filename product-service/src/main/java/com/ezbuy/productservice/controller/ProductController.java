@@ -36,8 +36,7 @@ public class ProductController {
     @PreAuthorize("hasAnyAuthority('user')")
     public Mono<DataResponse<ProductSearchResult>> searchProduct(
             SearchProductRequest request, @RequestHeader(value = "ORGANIZATION-ID") String organizationId) {
-        return productService.searchProduct(request, organizationId)
-                .map(DataResponse::success);
+        return productService.searchProduct(request, organizationId).map(DataResponse::success);
     }
 
     @GetMapping(value = DETAIL_PRODUCT)
@@ -60,17 +59,15 @@ public class ProductController {
 
     @PostMapping(value = PRODUCT_VALIDATE_IMPORT, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyAuthority('user')")
-    public Mono<ResponseEntity<DataResponse<ProductImportListDTO>>> validateImportProduct(@RequestPart("file") FilePart filePart) {
-        return productService
-                .validateImportProduct(filePart)
-                .map(rs -> ResponseEntity.ok(DataResponse.success(rs)));
+    public Mono<ResponseEntity<DataResponse<ProductImportListDTO>>> validateImportProduct(
+            @RequestPart("file") FilePart filePart) {
+        return productService.validateImportProduct(filePart).map(rs -> ResponseEntity.ok(DataResponse.success(rs)));
     }
 
     @PostMapping(value = GET_PRODUCT_INFO)
-    public Mono<ResponseEntity<DataResponse<GetProductInfoResponse>>> getProductInfo(@RequestBody GetProductInfoRequest request) {
-        return productService
-                .getProductInfo(request)
-                .map(rs -> ResponseEntity.ok(DataResponse.success(rs)));
+    public Mono<ResponseEntity<DataResponse<GetProductInfoResponse>>> getProductInfo(
+            @RequestBody GetProductInfoRequest request) {
+        return productService.getProductInfo(request).map(rs -> ResponseEntity.ok(DataResponse.success(rs)));
     }
 
     @PostMapping(value = EXPORT_REPORT)

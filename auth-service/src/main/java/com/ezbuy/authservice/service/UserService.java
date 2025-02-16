@@ -8,7 +8,6 @@ import com.ezbuy.authmodel.model.UserProfile;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.core.io.Resource;
 import reactor.core.publisher.Flux;

@@ -7,12 +7,11 @@ import com.ezbuy.productmodel.dto.request.CreateVoucherUseRequest;
 import com.ezbuy.productmodel.model.VoucherUse;
 import com.ezbuy.productservice.service.VoucherUseService;
 import com.reactify.model.response.DataResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -46,7 +45,8 @@ public class VoucherUseController {
     /**
      * ham lay thong tin su dung voucher
      *
-     * @param orderId ma voucher
+     * @param orderId
+     *            ma voucher
      * @return
      */
     @GetMapping(value = UrlPaths.VoucherUse.GET_BY_SOURCE_ORDER_ID)
@@ -57,11 +57,13 @@ public class VoucherUseController {
     /**
      * ham validate thong tin voucher co the su dung hay khong
      *
-     * @param code ma voucher
+     * @param code
+     *            ma voucher
      * @return
      */
     @GetMapping(value = UrlPaths.VoucherUse.VALIDATE_VOUCHER_USED)
-    public Mono<DataResponse<Boolean>> validateVoucherUsed(@RequestParam String code, @RequestParam String organizationId) {
+    public Mono<DataResponse<Boolean>> validateVoucherUsed(
+            @RequestParam String code, @RequestParam String organizationId) {
         return voucherUseService.validateVoucherUsed(code, organizationId).map(rs -> rs);
     }
 
@@ -72,8 +74,11 @@ public class VoucherUseController {
      * @return
      */
     @PostMapping(value = UrlPaths.VoucherUse.VOUCHER_GIFT_BY_TYPE_CODE)
-    public Mono<DataResponse<Boolean>> updateVoucherGiftInfoByVoucherGiftCode(@RequestBody UpdateVoucherGiftRequest request) {
-        return voucherUseService.updateVoucherGiftInfoByVoucherGiftCode(request).map(rs -> new DataResponse<>("common.success", rs));
+    public Mono<DataResponse<Boolean>> updateVoucherGiftInfoByVoucherGiftCode(
+            @RequestBody UpdateVoucherGiftRequest request) {
+        return voucherUseService
+                .updateVoucherGiftInfoByVoucherGiftCode(request)
+                .map(rs -> new DataResponse<>("common.success", rs));
     }
 
     /**

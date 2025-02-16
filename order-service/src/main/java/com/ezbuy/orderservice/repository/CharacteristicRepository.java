@@ -1,8 +1,7 @@
 package com.ezbuy.orderservice.repository;
 
-import java.util.UUID;
-
 import com.ezbuy.ordermodel.model.Characteristic;
+import java.util.UUID;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import org.springframework.stereotype.Repository;
 

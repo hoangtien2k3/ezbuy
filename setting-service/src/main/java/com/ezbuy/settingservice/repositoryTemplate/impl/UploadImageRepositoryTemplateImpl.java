@@ -8,6 +8,12 @@ import com.reactify.util.DataUtil;
 import com.reactify.util.SQLUtils;
 import com.reactify.util.SortingUtils;
 import io.r2dbc.spi.Row;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
@@ -15,13 +21,6 @@ import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
@@ -62,12 +61,12 @@ public class UploadImageRepositoryTemplateImpl implements UploadImageRepositoryT
     }
 
     private void buildQuery(StringBuilder builder, Map<String, Object> params, SearchImageRequest request) {
-        builder.append("""
-                        SELECT u.*, COUNT(c.id) AS total_images,\s
-                        STRING_AGG(c.path, ',' ORDER BY c.update_at DESC) AS preview_images\s
-                        FROM upload_images u\s
-                        """
-        );
+        builder.append(
+                """
+        SELECT u.*, COUNT(c.id) AS total_images,\s
+        STRING_AGG(c.path, ',' ORDER BY c.update_at DESC) AS preview_images\s
+        FROM upload_images u\s
+        """);
         builder.append("LEFT JOIN upload_images c ON c.parent_id = u.id AND c.status = 1 \n");
         builder.append("WHERE u.status = 1 \n");
         if (!DataUtil.isNullOrEmpty(request.getFromDate())) {
@@ -80,13 +79,15 @@ public class UploadImageRepositoryTemplateImpl implements UploadImageRepositoryT
         }
         if (!DataUtil.isNullOrEmpty(request.getName())) {
             builder.append("AND LOWER(u.name) LIKE '%' || :name || '%' \n");
-            params.put("name", SQLUtils.replaceSpecialDigit(request.getName().trim().toLowerCase()));
+            params.put(
+                    "name",
+                    SQLUtils.replaceSpecialDigit(request.getName().trim().toLowerCase()));
         }
-        builder.append("""
-                GROUP BY u.id, u.name, u.type, u.path, u.parent_id, u.status,\s
-                u.create_at, u.create_by, u.update_at, u.update_by\s
+        builder.append(
                 """
-        );
+        GROUP BY u.id, u.name, u.type, u.path, u.parent_id, u.status,\s
+        u.create_at, u.create_by, u.update_at, u.update_by\s
+        """);
         builder.append("ORDER BY ");
         String otherSort = DataUtil.safeToString(request.getSort(), "+updateAt");
         builder.append(SortingUtils.parseSorting("-type," + otherSort, UploadImages.class));
