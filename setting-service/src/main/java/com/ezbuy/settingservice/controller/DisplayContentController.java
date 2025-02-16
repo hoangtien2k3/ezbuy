@@ -7,13 +7,12 @@ import com.ezbuy.settingmodel.response.SearchingComponentResponse;
 import com.ezbuy.settingservice.service.ContentDisplayService;
 import com.reactify.model.response.DataResponse;
 import com.reactify.util.DataUtil;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j

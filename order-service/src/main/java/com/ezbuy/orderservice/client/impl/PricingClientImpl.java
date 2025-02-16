@@ -9,14 +9,13 @@ import com.reactify.client.BaseSoapClient;
 import com.reactify.constants.Constants;
 import com.reactify.util.DataUtil;
 import com.reactify.util.DataWsUtil;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -29,9 +28,10 @@ public class PricingClientImpl implements PricingClient {
 
     private final PricingProperties pricingProperties;
 
-    public PricingClientImpl(BaseSoapClient soapClient,
-                             @Qualifier("pricingClient") WebClient pricingClient,
-                             PricingProperties pricingProperties) {
+    public PricingClientImpl(
+            BaseSoapClient soapClient,
+            @Qualifier("pricingClient") WebClient pricingClient,
+            PricingProperties pricingProperties) {
         this.soapClient = soapClient;
         this.pricingClient = pricingClient;
         this.pricingProperties = pricingProperties;
@@ -39,15 +39,18 @@ public class PricingClientImpl implements PricingClient {
 
     @Override
     public Mono<Optional<PricingProductWSResponse>> getPricingProduct(PricingProductRequest request) {
-        String payload = PricingClientUtils.getPricingProduct(request, pricingProperties.getUsername(), pricingProperties.getPassword());
-        return soapClient.callRaw(pricingClient, null, payload)
+        String payload = PricingClientUtils.getPricingProduct(
+                request, pricingProperties.getUsername(), pricingProperties.getPassword());
+        return soapClient
+                .callRaw(pricingClient, null, payload)
                 .map(response -> {
                     if (DataUtil.isNullOrEmpty(response)) {
                         return "";
                     }
                     String formattedSOAPResponse = DataWsUtil.formatXML(DataUtil.safeToString(response));
                     String realData = DataWsUtil.getDataByTag(
-                            formattedSOAPResponse.replaceAll(Constants.XmlConst.AND_LT_SEMICOLON, Constants.XmlConst.LT_CHARACTER)
+                            formattedSOAPResponse
+                                    .replaceAll(Constants.XmlConst.AND_LT_SEMICOLON, Constants.XmlConst.LT_CHARACTER)
                                     .replaceAll(Constants.XmlConst.AND_GT_SEMICOLON, Constants.XmlConst.GT_CHARACTER),
                             "<ns2:pricingProductsWithViewModeExtResponse xmlns:ns2=\"http://service.order.bccs.viettel.com/\">",
                             "</ns2:pricingProductsWithViewModeExtResponse>");

@@ -5,9 +5,8 @@ import com.ezbuy.settingmodel.model.GroupNews;
 import com.ezbuy.settingmodel.request.CreateGroupNewsRequest;
 import com.ezbuy.settingmodel.response.SearchGroupNewsResponse;
 import com.reactify.model.response.DataResponse;
-import reactor.core.publisher.Mono;
-
 import java.util.List;
+import reactor.core.publisher.Mono;
 
 public interface GroupNewsService {
     Mono<DataResponse<GroupNews>> createGroupNews(CreateGroupNewsRequest request);

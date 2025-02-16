@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Data
@@ -12,7 +13,9 @@ import org.springframework.data.relational.core.mapping.Table;
 @SuperBuilder
 @Table(name = "notification_category")
 public class NotificationCategory {
+    @Id
     private String id;
+
     private Integer status;
     private String type;
 }

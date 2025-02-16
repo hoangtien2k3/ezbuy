@@ -18,6 +18,7 @@ import org.springframework.data.relational.core.mapping.Table;
 public class PermissionPolicy extends EntityBase implements Persistable<String> {
     @Id
     private String id;
+
     private String type;
     private String value;
     private String code;

@@ -5,9 +5,8 @@ import com.ezbuy.settingmodel.request.MarketPageRequest;
 import com.ezbuy.settingmodel.request.SearchMarketPageRequest;
 import com.ezbuy.settingmodel.response.SearchMarketPageResponse;
 import com.reactify.model.response.DataResponse;
-import reactor.core.publisher.Mono;
-
 import java.util.List;
+import reactor.core.publisher.Mono;
 
 public interface MarketPageService {
     Mono<SearchMarketPageResponse> searchMarketPage(SearchMarketPageRequest request);

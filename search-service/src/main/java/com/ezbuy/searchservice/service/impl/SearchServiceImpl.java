@@ -100,7 +100,8 @@ public class SearchServiceImpl implements SearchService {
                                 .score(hitDTO.getScore())
                                 .build());
                     });
-                    searchDTOResponse.setResult(searchDTOList.stream().distinct().collect(Collectors.toList()));
+                    searchDTOResponse.setResult(
+                            searchDTOList.stream().distinct().collect(Collectors.toList()));
                     DataResponse<Object> dataResponse = new DataResponse<>();
                     dataResponse.setMessage(Translator.toLocale("success"));
                     dataResponse.setData(searchDTOResponse);

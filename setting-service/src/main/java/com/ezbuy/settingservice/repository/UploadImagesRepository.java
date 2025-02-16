@@ -16,6 +16,9 @@ public interface UploadImagesRepository extends R2dbcRepository<UploadImages, St
     @Query("select * from upload_images u where u.parent_id = :parent_id and u.status = 1;")
     Mono<UploadImages> findByParentId(String parentId);
 
+    @Query("select * from upload_images u where u.id = :id and u.status = 1;")
+    Mono<UploadImages> findById(String id);
+
     @Query(
             "select * from upload_images u where u.status = 1 and ((:parentId is null and u.parent_id is null) or (u.parent_id = :parentId)) and lower(u.name) like lower(:name)")
     Flux<UploadImages> findByParentIdAndName(String parentId, String name);

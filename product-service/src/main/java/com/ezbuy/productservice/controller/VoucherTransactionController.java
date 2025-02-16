@@ -28,7 +28,8 @@ public class VoucherTransactionController {
      * @return
      */
     @PostMapping(UrlPaths.VoucherTransaction.CREATE)
-    public Mono<DataResponse<VoucherTransaction>> createVoucherTransaction(@RequestBody CreateVoucherTransactionRequest request) {
+    public Mono<DataResponse<VoucherTransaction>> createVoucherTransaction(
+            @RequestBody CreateVoucherTransactionRequest request) {
         return voucherTransactionService.createVoucherTransaction(request);
     }
     /**
@@ -37,7 +38,9 @@ public class VoucherTransactionController {
      * @return
      */
     @PostMapping(value = UrlPaths.VoucherTransaction.UNLOCK)
-    public Mono<DataResponse> unlockVoucherTransaction(@RequestBody UnlockVoucherRequest unlockVoucherRequest) {
-        return voucherTransactionService.unlockVoucherTransaction(unlockVoucherRequest).map(rs -> rs);
+    public Mono<DataResponse<String>> unlockVoucherTransaction(@RequestBody UnlockVoucherRequest unlockVoucherRequest) {
+        return voucherTransactionService
+                .unlockVoucherTransaction(unlockVoucherRequest)
+                .map(rs -> rs);
     }
 }

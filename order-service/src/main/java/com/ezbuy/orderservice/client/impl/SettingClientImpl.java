@@ -1,11 +1,11 @@
 package com.ezbuy.orderservice.client.impl;
 
 import com.ezbuy.orderservice.client.SettingClient;
-import com.ezbuy.settingmodel.model.Telecom;
 import com.ezbuy.settingmodel.dto.AreaDTO;
 import com.ezbuy.settingmodel.dto.OptionSetValueDTO;
 import com.ezbuy.settingmodel.dto.TelecomDTO;
 import com.ezbuy.settingmodel.model.OptionSetValue;
+import com.ezbuy.settingmodel.model.Telecom;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.reactify.client.BaseRestClient;
 import com.reactify.constants.CommonErrorCode;

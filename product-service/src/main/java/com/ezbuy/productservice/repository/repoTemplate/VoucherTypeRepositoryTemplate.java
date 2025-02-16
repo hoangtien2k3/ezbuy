@@ -9,13 +9,15 @@ import reactor.core.publisher.Mono;
 public interface VoucherTypeRepositoryTemplate {
     /**
      * Ham nay de thuc hien tim kiem
+     *
      * @param request
      * @return tra ve mot list DTO cua cac loai khuyen mai thoa man yeu cau
      */
-    Flux<VoucherTypeDTO> search (SearchVoucherTypeRequest request);
+    Flux<VoucherTypeDTO> search(SearchVoucherTypeRequest request);
 
     /**
      * Ham nay dung de dem so luong ban ghi thoa man
+     *
      * @param request
      * @return
      */
@@ -23,6 +25,7 @@ public interface VoucherTypeRepositoryTemplate {
 
     /**
      * Ham lay thong tin voucher type theo voucher code
+     *
      * @param code
      * @return
      */

@@ -3,11 +3,10 @@ package com.ezbuy.productservice.service;
 import com.ezbuy.authmodel.model.OrganizationUnit;
 import com.ezbuy.productmodel.dto.ProductImportDTO;
 import com.ezbuy.productmodel.dto.ProductImportListDTO;
-import com.ezbuy.productmodel.dto.ServiceDTO;
 import com.ezbuy.productmodel.dto.request.*;
-import com.ezbuy.productmodel.model.Product;
 import com.ezbuy.productmodel.dto.response.GetProductInfoResponse;
 import com.ezbuy.productmodel.dto.response.ProductSearchResult;
+import com.ezbuy.productmodel.model.Product;
 import com.reactify.model.response.DataResponse;
 import java.util.List;
 import org.springframework.core.io.Resource;
@@ -123,5 +122,4 @@ public interface ProductService {
     Mono<GetProductInfoResponse> getProductInfo(GetProductInfoRequest request);
 
     Mono<Resource> exportReport(QueryReport request);
-
 }

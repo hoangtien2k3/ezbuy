@@ -43,6 +43,7 @@ public interface AuthClient {
 
     /**
      * Ham lay individual theo user dang nhap
+     *
      * @param userId
      * @param organizationId
      * @return

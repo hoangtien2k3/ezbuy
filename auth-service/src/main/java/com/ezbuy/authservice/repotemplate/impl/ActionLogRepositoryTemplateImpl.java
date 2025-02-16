@@ -38,8 +38,8 @@ public class ActionLogRepositoryTemplateImpl extends BaseTemplateRepository impl
             query.append("LIMIT :pageSize \n");
             query.append("OFFSET :index \n");
             params.put("pageSize", request.getPageSize());
-            BigDecimal index = (new BigDecimal(request.getPageIndex() - 1))
-                    .multiply(new BigDecimal(request.getPageSize()));
+            BigDecimal index =
+                    (new BigDecimal(request.getPageIndex() - 1)).multiply(new BigDecimal(request.getPageSize()));
             params.put("index", index);
         }
         return listQuery(query.toString(), params, ActionLog.class);

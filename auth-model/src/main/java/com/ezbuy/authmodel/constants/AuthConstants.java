@@ -1,7 +1,6 @@
 package com.ezbuy.authmodel.constants;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public final class AuthConstants {

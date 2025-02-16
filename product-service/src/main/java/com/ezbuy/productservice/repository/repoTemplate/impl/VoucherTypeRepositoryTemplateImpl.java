@@ -9,19 +9,18 @@ import com.ezbuy.productservice.repository.repoTemplate.VoucherTypeRepositoryTem
 import com.reactify.util.DataUtil;
 import com.reactify.util.SortingUtils;
 import io.r2dbc.spi.Row;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
-import org.springframework.r2dbc.core.DatabaseClient;
-import org.springframework.stereotype.Repository;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
+import org.springframework.r2dbc.core.DatabaseClient;
+import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
 @Repository
@@ -40,9 +39,7 @@ public class VoucherTypeRepositoryTemplateImpl extends BaseRepositoryTemplate im
         Map<String, Object> params = new HashMap<>();
         StringBuilder query = new StringBuilder();
         buildQuery(query, params, request);
-        query.append("ORDER BY ").append(sorting).append(" ")
-                .append(" LIMIT :pageSize  " +
-                        "OFFSET :index ");
+        query.append("ORDER BY ").append(sorting).append(" ").append(" LIMIT :pageSize  " + "OFFSET :index ");
         params.put("pageSize", request.getPageSize());
         BigDecimal index = (new BigDecimal(request.getPageIndex() - 1)).multiply(new BigDecimal(request.getPageSize()));
         params.put("index", index);
@@ -98,7 +95,9 @@ public class VoucherTypeRepositoryTemplateImpl extends BaseRepositoryTemplate im
     }
 
     private LocalDateTime getFromDate(LocalDate fromDate) {
-        return fromDate == null ? LocalDateTime.from(LocalDate.now().atStartOfDay().minusDays(30)) : fromDate.atTime(0, 0, 0);
+        return fromDate == null
+                ? LocalDateTime.from(LocalDate.now().atStartOfDay().minusDays(30))
+                : fromDate.atTime(0, 0, 0);
     }
 
     private LocalDateTime getToDate(LocalDate toDate) {
@@ -122,9 +121,12 @@ public class VoucherTypeRepositoryTemplateImpl extends BaseRepositoryTemplate im
         builder.append("where vt.status = 1 ");
         builder.append("and v.code = :code ");
         builder.append("and UPPER(v.state) = 'USED' ");
-        DatabaseClient.GenericExecuteSpec executeSpec = template.getDatabaseClient().sql(builder.toString());
+        DatabaseClient.GenericExecuteSpec executeSpec =
+                template.getDatabaseClient().sql(builder.toString());
         executeSpec = executeSpec.bind("code", code);
-        return executeSpec.map((row, rowMetaData) -> buildFindVoucherTypeByVoucherCodeUsedResponse(row)).all();
+        return executeSpec
+                .map((row, rowMetaData) -> buildFindVoucherTypeByVoucherCodeUsedResponse(row))
+                .all();
     }
 
     private VoucherTypeV2DTO buildFindVoucherTypeByVoucherCodeUsedResponse(Row row) {

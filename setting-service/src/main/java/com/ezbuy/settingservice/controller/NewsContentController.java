@@ -7,11 +7,10 @@ import com.ezbuy.settingmodel.request.CreateNewsContentRequest;
 import com.ezbuy.settingservice.service.NewsContentService;
 import com.reactify.model.response.DataResponse;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

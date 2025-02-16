@@ -9,9 +9,8 @@ import com.ezbuy.settingmodel.request.StatusLockingRequest;
 import com.ezbuy.settingmodel.request.TelecomSearchingRequest;
 import com.ezbuy.settingmodel.response.*;
 import com.reactify.model.response.DataResponse;
-import reactor.core.publisher.Mono;
-
 import java.util.List;
+import reactor.core.publisher.Mono;
 
 public interface TelecomService {
     Mono<DataResponse<List<TelecomDTO>>> getTelecomService(

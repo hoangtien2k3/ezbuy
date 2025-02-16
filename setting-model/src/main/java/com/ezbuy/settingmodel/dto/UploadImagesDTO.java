@@ -19,9 +19,11 @@ public class UploadImagesDTO {
     private Integer type;
     private String parentId;
     private String path;
+    private Integer status;
     private LocalDateTime createAt;
     private String createBy;
     private LocalDateTime updateAt;
+    private LocalDateTime updateBy;
     private List<FileDTO> files;
     private Long totalImages;
     private List<String> previewImages;

@@ -1,5 +1,7 @@
 package com.ezbuy.settingservice.service.impl;
 
+import static com.reactify.constants.MessageConstant.SUCCESS;
+
 import com.ezbuy.settingmodel.constants.Constants;
 import com.ezbuy.settingmodel.dto.FileDTO;
 import com.ezbuy.settingmodel.dto.PaginationDTO;
@@ -11,7 +13,6 @@ import com.ezbuy.settingservice.repository.UploadImagesRepository;
 import com.ezbuy.settingservice.repositoryTemplate.UploadImageRepositoryTemplate;
 import com.ezbuy.settingservice.service.UploadImagesService;
 import com.reactify.constants.CommonErrorCode;
-import com.reactify.constants.MessageConstant;
 import com.reactify.exception.BusinessException;
 import com.reactify.model.TokenUser;
 import com.reactify.model.response.DataResponse;
@@ -19,6 +20,10 @@ import com.reactify.util.DataUtil;
 import com.reactify.util.MinioUtils;
 import com.reactify.util.SecurityUtils;
 import com.reactify.util.Translator;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+import javax.activation.MimetypesFileTypeMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
@@ -27,11 +32,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import javax.activation.MimetypesFileTypeMap;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -65,7 +65,7 @@ public class UploadImagesImpl implements UploadImagesService {
             parentInfoMono = Mono.just(newUploadImage);
         } else {
             parentInfoMono = uploadImagesRepository
-                    .findByParentId(request.getParentId())
+                    .findById(request.getParentId())
                     .switchIfEmpty(Mono.error(
                             new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.root.folder.notfound")));
         }
@@ -89,7 +89,7 @@ public class UploadImagesImpl implements UploadImagesService {
                             .map(this::mapToDto);
                 })
                 .collectList()
-                .map(res -> new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), res));
+                .map(res -> new DataResponse<>(Translator.toLocaleVi(SUCCESS), res));
     }
 
     /**
@@ -464,7 +464,7 @@ public class UploadImagesImpl implements UploadImagesService {
                             .build();
                     return Mono.just(response);
                 })
-                .map(res -> new DataResponse<>("success", res));
+                .map(res -> new DataResponse<>(SUCCESS, res));
     }
 
     @Override
@@ -480,7 +480,7 @@ public class UploadImagesImpl implements UploadImagesService {
                     return uploadImagesRepository.save(uploadImages);
                 })
                 .map(this::mapToDto)
-                .map(dto -> new DataResponse<>("success", dto));
+                .map(dto -> new DataResponse<>(SUCCESS, dto));
     }
 
     @Override
@@ -497,7 +497,7 @@ public class UploadImagesImpl implements UploadImagesService {
                             .doOnNext(dto::setChildren)
                             .thenReturn(dto);
                 })
-                .map(dto -> new DataResponse<>("success", dto));
+                .map(dto -> new DataResponse<>(SUCCESS, dto));
     }
 
     @Override
@@ -506,7 +506,7 @@ public class UploadImagesImpl implements UploadImagesService {
                 .findAllFolder()
                 .map(this::mapToDto)
                 .collectList()
-                .map(folders -> new DataResponse<>("success", folders));
+                .map(folders -> new DataResponse<>(SUCCESS, folders));
     }
 
     private UploadImagesDTO mapToDto(UploadImages uploadImage) {

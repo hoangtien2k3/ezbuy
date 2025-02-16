@@ -18,6 +18,7 @@ import org.springframework.data.relational.core.mapping.Table;
 public class Cart implements Persistable<String> {
     @Id
     private String id;
+
     private String userId;
     private Integer status;
     private LocalDateTime createAt;

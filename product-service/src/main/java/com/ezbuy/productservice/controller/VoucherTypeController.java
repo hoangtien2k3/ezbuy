@@ -1,6 +1,7 @@
 package com.ezbuy.productservice.controller;
 
 import com.ezbuy.productmodel.constants.UrlPaths;
+import com.ezbuy.productmodel.dto.VoucherTypeV2DTO;
 import com.ezbuy.productmodel.dto.request.SearchVoucherTypeRequest;
 import com.ezbuy.productmodel.dto.request.VoucherTypeRequest;
 import com.ezbuy.productmodel.dto.response.SearchVoucherTypeResponse;
@@ -10,6 +11,7 @@ import com.reactify.constants.MessageConstant;
 import com.reactify.model.response.DataResponse;
 import com.reactify.util.Translator;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +22,7 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping(value = UrlPaths.VoucherType.PREFIX)
 public class VoucherTypeController {
-    private final VoucherTypeService voucherTypeService ;
+    private final VoucherTypeService voucherTypeService;
 
     /**
      * Ham lay danh sach voucher type hieu luc
@@ -28,12 +30,15 @@ public class VoucherTypeController {
      * @return
      */
     @GetMapping(value = UrlPaths.VoucherType.ALL_ACTIVE)
-    public Mono<DataResponse> getAllVoucherTypeActive() {
+    public Mono<DataResponse<List<VoucherType>>> getAllVoucherTypeActive() {
         return voucherTypeService.getAllVoucherTypeActive().map(rs -> rs);
     }
+
     @GetMapping(value = UrlPaths.VoucherType.LIST)
-    public Mono<DataResponse> getAll() {
-        return voucherTypeService.getAll().map(result -> new DataResponse(Translator.toLocaleVi(MessageConstant.SUCCESS), result));
+    public Mono<DataResponse<List<VoucherType>>> getAll() {
+        return voucherTypeService
+                .getAll()
+                .map(result -> new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), result));
     }
 
     @PostMapping(UrlPaths.VoucherType.CREATE)
@@ -42,11 +47,12 @@ public class VoucherTypeController {
     }
 
     @PutMapping(value = UrlPaths.VoucherType.UPDATE)
-    public Mono<DataResponse<VoucherType>> update(@PathVariable String id, @Valid @RequestBody VoucherTypeRequest request) {
+    public Mono<DataResponse<VoucherType>> update(
+            @PathVariable String id, @Valid @RequestBody VoucherTypeRequest request) {
         return voucherTypeService.update(id, request);
     }
 
-    @GetMapping(value=UrlPaths.VoucherType.SEARCH)
+    @GetMapping(value = UrlPaths.VoucherType.SEARCH)
     public Mono<SearchVoucherTypeResponse> search(SearchVoucherTypeRequest request) {
         return voucherTypeService.search(request);
     }
@@ -62,7 +68,7 @@ public class VoucherTypeController {
      * @return
      */
     @GetMapping(value = UrlPaths.VoucherType.FIND_BY_VOUCHER_CODE)
-    public Mono<DataResponse> findVoucherTypeByVoucherCode(@RequestParam String code) {
+    public Mono<DataResponse<List<VoucherTypeV2DTO>>> findVoucherTypeByVoucherCode(@RequestParam String code) {
         return voucherTypeService.findVoucherTypeByVoucherCode(code).map(rs -> rs);
     }
 }

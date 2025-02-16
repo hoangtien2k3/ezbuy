@@ -18,6 +18,7 @@ import org.springframework.data.relational.core.mapping.Table;
 public class SyncHistory implements Persistable<String> {
     @Id
     private String id;
+
     private String orgId; // id doanh nghiep organization id
     private String idNo; // mst doanh nghiep
     private String action; // tac dong INSERT, UPDATE, DELETE

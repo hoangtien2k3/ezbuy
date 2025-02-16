@@ -4,9 +4,8 @@ import com.ezbuy.settingmodel.dto.UploadImagesDTO;
 import com.ezbuy.settingmodel.dto.request.*;
 import com.ezbuy.settingmodel.dto.response.SearchImageResponse;
 import com.reactify.model.response.DataResponse;
-import reactor.core.publisher.Mono;
-
 import java.util.List;
+import reactor.core.publisher.Mono;
 
 public interface UploadImagesService {
     Mono<DataResponse<List<UploadImagesDTO>>> uploadFile(UploadImageRequest request);

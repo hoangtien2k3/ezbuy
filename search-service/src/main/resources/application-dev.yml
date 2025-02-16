@@ -57,11 +57,11 @@ keycloak:
   grantType: password
   host: localhost
 
-#client-elastic
+#client-elasticsearch
 client:
   elasticsearch:
     address: http://localhost:9200
-    name: elasticsearchClient
+    name: elasticSearchClient
 
 # unauthenticated endpoints config
 application:

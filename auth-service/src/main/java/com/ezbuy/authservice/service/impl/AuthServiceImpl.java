@@ -108,13 +108,15 @@ public class AuthServiceImpl implements AuthService {
                 .onErrorResume(WebClientResponseException.class, this::handleKeyCloakError);
     }
 
-    private Mono<Optional<AccessToken>> getTokenWithClientLogin(ClientLogin clientLogin, ServerWebExchange serverWebExchange) {
+    private Mono<Optional<AccessToken>> getTokenWithClientLogin(
+            ClientLogin clientLogin, ServerWebExchange serverWebExchange) {
         return keyCloakClient
                 .getToken(clientLogin)
                 .flatMap(accessToken -> {
                     if (EZBUY_CLIENT.equals(clientLogin.getClientId()) && accessToken.isPresent()) {
                         // get user info
-                        UserDTO userDTO = SecurityUtils.getUserByAccessToken(accessToken.get().getToken());
+                        UserDTO userDTO = SecurityUtils.getUserByAccessToken(
+                                accessToken.get().getToken());
                         if (userDTO != null) {
                             AppUtils.runHiddenStream(saveLog(
                                     userDTO.getId(),
@@ -761,9 +763,8 @@ public class AuthServiceImpl implements AuthService {
         // save password into table user_credential
         String hashedPassword = cipherManager.encrypt(password, publicKey);
         // bo sung danh dau khong can doi mat khau cho tk tao tu hub
-        int pwdChanged = AuthConstants.System.EZBUY.equals(system)
-                ? AuthConstants.STATUS_ACTIVE
-                : AuthConstants.STATUS_INACTIVE;
+        int pwdChanged =
+                AuthConstants.System.EZBUY.equals(system) ? AuthConstants.STATUS_ACTIVE : AuthConstants.STATUS_INACTIVE;
         UserCredential userCredential = UserCredential.builder()
                 .id(String.valueOf(UUID.randomUUID()))
                 .userId(userId)
@@ -861,7 +862,8 @@ public class AuthServiceImpl implements AuthService {
         if (DataUtil.isNullOrEmpty(request.getDateReport())) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "dateReport.not.empty"));
         }
-        return actionLogRepository.countLoginInOneDay(request.getDateReport(), ActionLogType.LOGIN)
+        return actionLogRepository
+                .countLoginInOneDay(request.getDateReport(), ActionLogType.LOGIN)
                 .switchIfEmpty(
                         Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "action-log.login.not.found")))
                 .flatMap(rs -> Mono.just(

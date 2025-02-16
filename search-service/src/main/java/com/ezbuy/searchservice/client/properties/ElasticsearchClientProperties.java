@@ -6,11 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Getter
-@Component("elasticsearchClientProperties")
+@Component("elasticSearchClientProperties")
 @ConfigurationProperties(prefix = "client.elasticsearch", ignoreInvalidFields = true)
 @AllArgsConstructor
-@RequiredArgsConstructor
-public class ElasticsearchClientProperties extends WebClientProperties {
-    private String username;
-    private String password;
-}
+public class ElasticsearchClientProperties extends WebClientProperties { }

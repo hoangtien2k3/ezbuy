@@ -4,6 +4,7 @@ import com.ezbuy.orderservice.client.ProductClient;
 import com.ezbuy.productmodel.dto.FilterProductTemplateDTO;
 import com.ezbuy.productmodel.dto.request.FilterGetListSubscriberActive;
 import com.ezbuy.productmodel.dto.response.ProductOfferTemplateDTO;
+import com.ezbuy.settingmodel.model.Telecom;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.reactify.client.BaseRestClient;
 import com.reactify.model.response.DataResponse;

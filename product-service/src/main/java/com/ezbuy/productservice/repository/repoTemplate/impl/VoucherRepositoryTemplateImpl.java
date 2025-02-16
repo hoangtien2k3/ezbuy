@@ -9,19 +9,18 @@ import com.ezbuy.productservice.repository.repoTemplate.VoucherRepositoryTemplat
 import com.reactify.util.DataUtil;
 import com.reactify.util.SortingUtils;
 import io.r2dbc.spi.Row;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
-import org.springframework.r2dbc.core.DatabaseClient;
-import org.springframework.stereotype.Repository;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
+import org.springframework.r2dbc.core.DatabaseClient;
+import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Repository
 @RequiredArgsConstructor
@@ -40,9 +39,7 @@ public class VoucherRepositoryTemplateImpl extends BaseRepositoryTemplate implem
         Map<String, Object> params = new HashMap<>();
         StringBuilder query = new StringBuilder();
         buildQueryPages(query, params, request);
-        query.append("ORDER BY ").append(sorting).append(" \n")
-                .append(" LIMIT :pageSize  \n" +
-                        "OFFSET :index ");
+        query.append("ORDER BY ").append(sorting).append(" \n").append(" LIMIT :pageSize  \n" + "OFFSET :index ");
         params.put("pageSize", request.getPageSize());
         BigDecimal index = (new BigDecimal(request.getPageIndex() - 1)).multiply(new BigDecimal(request.getPageSize()));
         params.put("index", index);
@@ -62,14 +59,14 @@ public class VoucherRepositoryTemplateImpl extends BaseRepositoryTemplate implem
     @Override
     public Flux<VoucherTypeExtDTO> validateVoucher(String userId, String extCode, List<String> voucherCodeList) {
         Map<String, Object> params = new HashMap<>();
-        StringBuilder query = new StringBuilder("select vt.*, v.code as voucherCode " +
-                " from  voucher_type vt " +
-                " inner join voucher v on v.voucher_type_id = vt.id " +
-                " inner join voucher_use vu on v.id = vu.voucher_id ");
+        StringBuilder query = new StringBuilder("select vt.*, v.code as voucherCode " + " from  voucher_type vt "
+                + " inner join voucher v on v.voucher_type_id = vt.id "
+                + " inner join voucher_use vu on v.id = vu.voucher_id ");
         if (!DataUtil.isNullOrEmpty(extCode)) {
             query.append(" inner join voucher_transaction vs on v.id = vs.voucher_id ");
         }
-        query.append(" where v.state = 'used' and vu.state = 'active' and (vu.expired_date >= NOW() || vu.expired_date IS NULL) ");
+        query.append(
+                " where v.state = 'used' and vu.state = 'active' and (vu.expired_date >= NOW() || vu.expired_date IS NULL) ");
         if (!DataUtil.isNullOrEmpty(extCode)) {
             query.append(" and vs.state = 'preActive' and vs.user_id = :userId ");
             query.append(" and (vs.transaction_code = :orderId or :orderId = '') ");
@@ -77,7 +74,8 @@ public class VoucherRepositoryTemplateImpl extends BaseRepositoryTemplate implem
             query.append(" and vu.user_id = :userId ");
         }
         query.append(" and UPPER(v.code) in (:codeList)");
-        DatabaseClient.GenericExecuteSpec executeSpec = template.getDatabaseClient().sql(query.toString());
+        DatabaseClient.GenericExecuteSpec executeSpec =
+                template.getDatabaseClient().sql(query.toString());
         executeSpec = executeSpec.bind("userId", userId);
         if (!DataUtil.isNullOrEmpty(extCode)) {
             executeSpec = executeSpec.bind("orderId", extCode);
@@ -87,7 +85,9 @@ public class VoucherRepositoryTemplateImpl extends BaseRepositoryTemplate implem
         params.put("userId", userId);
         params.put("orderId", extCode);
         params.put("codeList", voucherCodeList);
-        return executeSpec.map((row, rowMetadata) -> buildValidateVoucherResponse(row)).all();
+        return executeSpec
+                .map((row, rowMetadata) -> buildValidateVoucherResponse(row))
+                .all();
     }
 
     private VoucherTypeExtDTO buildValidateVoucherResponse(Row row) {
@@ -114,8 +114,7 @@ public class VoucherRepositoryTemplateImpl extends BaseRepositoryTemplate implem
     }
 
     private void buildQueryPages(StringBuilder builder, Map<String, Object> params, SearchVoucherRequest request) {
-        builder.append("select * from voucher " +
-                " where 1 = 1 ");
+        builder.append("select * from voucher " + " where 1 = 1 ");
         if (!DataUtil.isNullOrEmpty(request.getId())) {
             builder.append(" and id = :id ");
             params.put("id", request.getId());
@@ -165,5 +164,4 @@ public class VoucherRepositoryTemplateImpl extends BaseRepositoryTemplate implem
     private LocalDateTime getToDate(LocalDate toDate) {
         return toDate.atTime(23, 59, 59);
     }
-
 }

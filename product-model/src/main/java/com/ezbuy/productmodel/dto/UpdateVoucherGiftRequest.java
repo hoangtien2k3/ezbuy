@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class UpdateVoucherGiftRequest {
-    private String orderId; //Id bang order
-    private Integer orderState; //trang thai ban ghi order: 3: thanh cong, 4: that bai
+    private String orderId; // Id bang order
+    private Integer orderState; // trang thai ban ghi order: 3: thanh cong, 4: that bai
 }

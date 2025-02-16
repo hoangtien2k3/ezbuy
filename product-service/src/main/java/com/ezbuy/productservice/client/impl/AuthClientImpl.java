@@ -1,5 +1,8 @@
 package com.ezbuy.productservice.client.impl;
 
+import static com.ezbuy.authmodel.constants.AuthConstants.Field.ORGANIZATION_ID;
+import static com.ezbuy.ordermodel.constants.MessageConstant.AUTH_SERVICE_ERROR;
+
 import com.ezbuy.authmodel.dto.response.GetActionLoginReportResponse;
 import com.ezbuy.authmodel.dto.response.TenantIdentifyDTO;
 import com.ezbuy.authmodel.model.Individual;
@@ -27,9 +30,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
-import static com.ezbuy.authmodel.constants.AuthConstants.Field.ORGANIZATION_ID;
-import static com.ezbuy.ordermodel.constants.MessageConstant.AUTH_SERVICE_ERROR;
 
 @Log4j2
 @Service
@@ -262,18 +262,24 @@ public class AuthClientImpl implements AuthClient {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("userId", userId);
         params.add(ORGANIZATION_ID, organizationId);
-        return baseRestClient.get(authClient, "/individual/user-and-org", null, params, DataResponse.class)
+        return baseRestClient
+                .get(authClient, "/individual/user-and-org", null, params, DataResponse.class)
                 .map(dataResponse -> {
                     if (DataUtil.isNullOrEmpty(dataResponse)) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, AUTH_SERVICE_ERROR));
+                        return Mono.error(
+                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, AUTH_SERVICE_ERROR));
                     }
                     Optional<DataResponse> dataResponseOptional = (Optional<DataResponse>) dataResponse;
                     if (dataResponseOptional.isEmpty()) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, AUTH_SERVICE_ERROR));
-                    };
-                    return ObjectMapperFactory.getInstance().convertValue(dataResponseOptional.get().getData(), Individual.class);
+                        return Mono.error(
+                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, AUTH_SERVICE_ERROR));
+                    }
+                    ;
+                    return ObjectMapperFactory.getInstance()
+                            .convertValue(dataResponseOptional.get().getData(), Individual.class);
                 })
                 .doOnError(err -> log.error("Exception when call auth service /individual/user-id: ", err))
-                .onErrorResume(throwable -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, AUTH_SERVICE_ERROR)));
+                .onErrorResume(throwable ->
+                        Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, AUTH_SERVICE_ERROR)));
     }
 }

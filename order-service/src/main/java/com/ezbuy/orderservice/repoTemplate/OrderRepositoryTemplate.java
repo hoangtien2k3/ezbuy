@@ -2,14 +2,10 @@ package com.ezbuy.orderservice.repoTemplate;
 
 import com.ezbuy.ordermodel.dto.OrderDetailDTO;
 import com.ezbuy.ordermodel.dto.OrderSyncDTO;
-import com.ezbuy.ordermodel.dto.response.OrderTransmissionDTO;
 import com.ezbuy.ordermodel.model.response.CustomerSubscriberSmeInfoDTO;
-
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 public interface OrderRepositoryTemplate {
 

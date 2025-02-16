@@ -206,9 +206,9 @@ minio:
   bucket: ezbuy-bucket
   enabled: true
   baseUrl: http://localhost:9000
-  publicUrl: http://localhost:9000/ezbuy-bucket
-  accessKey: 4DoaZ0KdzpXdDlVK104t
-  secretKey: nuRiQUIJNVygMOHhmtR4LT1etAa7F8PQOsRGP5oj
+  publicUrl: http://localhost:9000
+  accessKey: q875aHMpdL6IJ3n9ruil
+  secretKey: Q43tehRDv55Sw67ktA0pQdztEbtQjvinLOk6zwB3
   private:
     bucket: ezbuy-private
 

@@ -7,14 +7,13 @@ import com.ezbuy.settingmodel.dto.response.SearchImageResponse;
 import com.ezbuy.settingservice.service.UploadImagesService;
 import com.reactify.model.response.DataResponse;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -52,7 +51,7 @@ public class UploadImagesController {
         return uploadImagesService.renameFolder(request);
     }
 
-    @PreAuthorize("hasAnyAuthority('user')")
+    @PreAuthorize("hasAnyAuthority('user', 'admin', 'system')")
     @GetMapping(UrlPaths.Upload.SEARCH)
     public Mono<DataResponse<SearchImageResponse>> search(SearchImageRequest request) {
         return uploadImagesService.searchImages(request);
@@ -70,7 +69,7 @@ public class UploadImagesController {
         return uploadImagesService.getInfo(id);
     }
 
-    @PreAuthorize("hasAnyAuthority('user')")
+    @PreAuthorize("hasAnyAuthority('user', 'admin', 'system')")
     @GetMapping(UrlPaths.Upload.FOLDER)
     public Mono<DataResponse<List<UploadImagesDTO>>> getAllFolder() {
         return uploadImagesService.getAllFolder();

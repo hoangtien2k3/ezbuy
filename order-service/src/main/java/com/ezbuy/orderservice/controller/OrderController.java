@@ -14,7 +14,6 @@ import com.reactify.util.DataUtil;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -127,15 +126,17 @@ public class OrderController {
         return orderService.connectCASelfcare(request).map(ResponseEntity::ok);
     }
 
-//    @GetMapping(UrlPaths.Order.CA_GET_NUMBER_SIGN)
-//    public Mono<ResponseEntity<DataResponse>> getCAsubNumberSign(GetGroupsCAinfoRequest request) {
-//        return orderService.getCAsubNumberSign(request).map(ResponseEntity::ok);
-//    }
+    // @GetMapping(UrlPaths.Order.CA_GET_NUMBER_SIGN)
+    // public Mono<ResponseEntity<DataResponse>>
+    // getCAsubNumberSign(GetGroupsCAinfoRequest request) {
+    // return orderService.getCAsubNumberSign(request).map(ResponseEntity::ok);
+    // }
 
-//    @GetMapping(UrlPaths.Order.CA_GET_TOTAL_SIGN)
-//    public Mono<ResponseEntity<DataResponse>> getCAsubTotalSign(GetGroupsCAinfoRequest request) {
-//        return orderService.getCAsubTotalSign(request).map(ResponseEntity::ok);
-//    }
+    // @GetMapping(UrlPaths.Order.CA_GET_TOTAL_SIGN)
+    // public Mono<ResponseEntity<DataResponse>>
+    // getCAsubTotalSign(GetGroupsCAinfoRequest request) {
+    // return orderService.getCAsubTotalSign(request).map(ResponseEntity::ok);
+    // }
 
     /**
      * Order-005 Bo sung them alias PYCXXX/LuongToanTrinhScontract
@@ -262,21 +263,20 @@ public class OrderController {
             @RequestParam(required = false) String to,
             @RequestParam(required = false, defaultValue = "1") Integer pageIndex,
             @RequestParam(required = false, defaultValue = "10") Integer pageSize,
-            @RequestParam(required = false, defaultValue = "-create_at") String sort
-    ) {
+            @RequestParam(required = false, defaultValue = "-create_at") String sort) {
         pageIndex = Math.max(pageIndex, 1);
         var request = GetOrderTransactionToRequest.builder()
                 .orderCode(DataUtil.safeTrim(orderCode))
                 .username(DataUtil.safeTrim(username))
                 .idNo(DataUtil.safeTrim(idNo))
                 .phone(DataUtil.safeTrim(phone))
-                .from(from).to(to)
+                .from(from)
+                .to(to)
                 .pageIndex(pageIndex)
                 .pageSize(pageSize)
                 .limit(pageSize)
                 .sort(sort)
                 .build();
-        return orderService.getOrderTransactionFromTo(request)
-                .map(ResponseEntity::ok);
+        return orderService.getOrderTransactionFromTo(request).map(ResponseEntity::ok);
     }
 }

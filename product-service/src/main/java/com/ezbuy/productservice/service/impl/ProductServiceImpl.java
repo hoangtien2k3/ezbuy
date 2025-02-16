@@ -12,9 +12,9 @@ import com.ezbuy.authmodel.constants.AuthConstants;
 import com.ezbuy.authmodel.model.OrganizationUnit;
 import com.ezbuy.productmodel.dto.*;
 import com.ezbuy.productmodel.dto.request.*;
-import com.ezbuy.productmodel.model.Product;
 import com.ezbuy.productmodel.dto.response.GetProductInfoResponse;
 import com.ezbuy.productmodel.dto.response.ProductSearchResult;
+import com.ezbuy.productmodel.model.Product;
 import com.ezbuy.productservice.client.AuthClient;
 import com.ezbuy.productservice.repository.ProductRepository;
 import com.ezbuy.productservice.repository.repoTemplate.ProductCustomRepository;
@@ -27,7 +27,6 @@ import com.reactify.model.response.DataResponse;
 import com.reactify.util.DataUtil;
 import com.reactify.util.SecurityUtils;
 import com.reactify.util.Translator;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +37,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -159,8 +157,11 @@ public class ProductServiceImpl implements ProductService {
         if (request.getPageSize() == null) {
             request.setPageSize(10);
         }
-        return Mono.zip(productCustomRepository.countProduct(request, organizationId),
-                        productCustomRepository.searchProduct(request, organizationId).collectList())
+        return Mono.zip(
+                        productCustomRepository.countProduct(request, organizationId),
+                        productCustomRepository
+                                .searchProduct(request, organizationId)
+                                .collectList())
                 .flatMap(searchResult -> Mono.just(ProductSearchResult.builder()
                         .total(searchResult.getT1())
                         .pageIndex(request.getPageIndex())
@@ -330,7 +331,8 @@ public class ProductServiceImpl implements ProductService {
     /**
      * validate import item
      *
-     * @param request request
+     * @param request
+     *            request
      * @return
      */
     private Mono<ProductImportDTO> validateImport(ProductImportDTO request) {
@@ -371,7 +373,7 @@ public class ProductServiceImpl implements ProductService {
         }
         if (!DataUtil.isNullOrEmpty(product.getPriceImportStr())
                 && (product.getPriceImportStr().length() > 10
-                || !product.getPriceImportStr().matches(PRICE_REGEX))) {
+                        || !product.getPriceImportStr().matches(PRICE_REGEX))) {
             return Mono.error(
                     new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.price.import.invalid"));
         }
@@ -382,13 +384,13 @@ public class ProductServiceImpl implements ProductService {
         }
         if (!DataUtil.isNullOrEmpty(product.getPriceExportStr())
                 && (product.getPriceExportStr().length() > 10
-                || !product.getPriceExportStr().matches(PRICE_REGEX))) {
+                        || !product.getPriceExportStr().matches(PRICE_REGEX))) {
             return Mono.error(
                     new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.price.export.invalid"));
         }
         if (!DataUtil.isNullOrEmpty(product.getDiscountStr())
                 && (product.getDiscountStr().length() > 10
-                || !product.getDiscountStr().matches(PRICE_REGEX))) {
+                        || !product.getDiscountStr().matches(PRICE_REGEX))) {
             return Mono.error(
                     new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.import.error.discount.invalid"));
         }
@@ -441,22 +443,22 @@ public class ProductServiceImpl implements ProductService {
                                     DataUtil.safeTrim(this.getValueInCell(row, formatter, i++));
 
                             if (!(Translator.toLocaleVi(ROW_TEMPLATE_NAME.CODE) + ROW_TEMPLATE_NAME.OBLIGATORY)
-                                    .equals(DataUtil.safeTrim(codeTemplateRow))
+                                            .equals(DataUtil.safeTrim(codeTemplateRow))
                                     || !(Translator.toLocaleVi(ROW_TEMPLATE_NAME.NAME) + ROW_TEMPLATE_NAME.OBLIGATORY)
-                                    .equals(DataUtil.safeTrim(nameTemplateRow))
+                                            .equals(DataUtil.safeTrim(nameTemplateRow))
                                     || !Translator.toLocaleVi(ROW_TEMPLATE_NAME.PRICE_IMPORT)
-                                    .equals(DataUtil.safeTrim(priceImportTemplateRow))
+                                            .equals(DataUtil.safeTrim(priceImportTemplateRow))
                                     || !Translator.toLocaleVi(ROW_TEMPLATE_NAME.PRICE_EXPORT)
-                                    .equals(DataUtil.safeTrim(priceExportTemplateRow))
+                                            .equals(DataUtil.safeTrim(priceExportTemplateRow))
                                     || !Translator.toLocaleVi(ROW_TEMPLATE_NAME.UNIT)
-                                    .equals(DataUtil.safeTrim(unitTemplateRow))
+                                            .equals(DataUtil.safeTrim(unitTemplateRow))
                                     || !(Translator.toLocaleVi(ROW_TEMPLATE_NAME.TAX_RATIO)
-                                    + ROW_TEMPLATE_NAME.OBLIGATORY)
-                                    .equals(DataUtil.safeTrim(taxRatioRow))
+                                                    + ROW_TEMPLATE_NAME.OBLIGATORY)
+                                            .equals(DataUtil.safeTrim(taxRatioRow))
                                     || !Translator.toLocaleVi(ROW_TEMPLATE_NAME.DISCOUNT)
-                                    .equals(DataUtil.safeTrim(discountTemplateRow))
+                                            .equals(DataUtil.safeTrim(discountTemplateRow))
                                     || !Translator.toLocaleVi(ROW_TEMPLATE_NAME.REVENUE_RATIO)
-                                    .equals(DataUtil.safeTrim(revenueRatioTemplateRow))) {
+                                            .equals(DataUtil.safeTrim(revenueRatioTemplateRow))) {
                                 return Mono.error(new BusinessException(
                                         String.valueOf(HttpStatus.BAD_REQUEST.value()),
                                         Translator.toLocaleVi("product.import.error.template.invalid")));
@@ -711,7 +713,7 @@ public class ProductServiceImpl implements ProductService {
     // Ghi vao file excel
     private ByteArrayResource writeExcel(Workbook workbook) {
         try (ByteArrayOutputStream os = new ByteArrayOutputStream();
-             workbook) {
+                workbook) {
             workbook.write(os);
             return new ByteArrayResource(os.toByteArray()) {
                 @Override
@@ -743,7 +745,7 @@ public class ProductServiceImpl implements ProductService {
     // set style va data vao file exel
     private Workbook writeReport(QueryReport queryReport) {
         try (InputStream templateInputStream =
-                     new ClassPathResource("template/template_export_report.xlsx").getInputStream()) {
+                new ClassPathResource("template/template_export_report.xlsx").getInputStream()) {
 
             Workbook workbook = new XSSFWorkbook(templateInputStream);
             Sheet sheet = workbook.getSheetAt(0);
@@ -769,16 +771,19 @@ public class ProductServiceImpl implements ProductService {
             style.setTopBorderColor(IndexedColors.BLACK.getIndex());
             style.setBorderLeft(BorderStyle.THIN);
             style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-            writeRow(row, style, 0, Arrays.asList(
-                    String.valueOf(index),
-                    formatCurrency(DataUtil.safeToDouble(queryReport.getAccess())),
-                    formatCurrency(DataUtil.safeToDouble(queryReport.getTotalProducts())),
-                    formatCurrency(DataUtil.safeToDouble(queryReport.getNewProducts())),
-                    formatCurrency(DataUtil.safeToDouble(queryReport.getTotalOrders())),
-                    formatCurrency(DataUtil.safeToDouble(queryReport.getSuccessfulOrders())),
-                    formatCurrency(DataUtil.safeToDouble(queryReport.getFailedOrders())),
-                    formatCurrency(DataUtil.safeToDouble(queryReport.getTransactionValue())))
-            );
+            writeRow(
+                    row,
+                    style,
+                    0,
+                    Arrays.asList(
+                            String.valueOf(index),
+                            formatCurrency(DataUtil.safeToDouble(queryReport.getAccess())),
+                            formatCurrency(DataUtil.safeToDouble(queryReport.getTotalProducts())),
+                            formatCurrency(DataUtil.safeToDouble(queryReport.getNewProducts())),
+                            formatCurrency(DataUtil.safeToDouble(queryReport.getTotalOrders())),
+                            formatCurrency(DataUtil.safeToDouble(queryReport.getSuccessfulOrders())),
+                            formatCurrency(DataUtil.safeToDouble(queryReport.getFailedOrders())),
+                            formatCurrency(DataUtil.safeToDouble(queryReport.getTransactionValue()))));
             return workbook;
         } catch (IOException e) {
             log.error(e.getMessage(), e);
@@ -810,5 +815,4 @@ public class ProductServiceImpl implements ProductService {
     private LocalDateTime getToDate(LocalDate toDate) {
         return toDate == null ? LocalDateTime.from(LocalDate.now().atTime(LocalTime.MAX)) : toDate.atTime(23, 59, 59);
     }
-
 }
