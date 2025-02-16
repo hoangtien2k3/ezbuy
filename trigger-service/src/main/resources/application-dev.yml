@@ -3,6 +3,9 @@ server:
   port: 8081
 timezone:
   default: GMT+7
+logging:
+  level:
+    org.quartz: DEBUG
 spring:
   application:
     name: trigger_service
@@ -59,7 +62,7 @@ spring:
       org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
       org.quartz.dataSource.jobDataSource.driver: org.postgresql.Driver
       org.quartz.dataSource.jobDataSource.provider: hikaricp
-      org.quartz.dataSource.jobDataSource.URL: jdbc:postgresql://localhost:5434/trigger
+      org.quartz.dataSource.jobDataSource.jdbc-url: jdbc:postgresql://localhost:5434/trigger
       org.quartz.dataSource.jobDataSource.user: admin
       org.quartz.dataSource.jobDataSource.password: admin
     wait-for-jobs-to-complete-on-shutdown: true
