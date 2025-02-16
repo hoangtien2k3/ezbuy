@@ -18,7 +18,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
             SecurityAutoConfiguration.class,
             R2dbcAutoConfiguration.class
         })
-@ComponentScan(basePackages = "com.ezbuy")
+@ComponentScan(basePackages = {"com.ezbuy", "com.reactify"})
 @EnableScheduling
 public class SearchServiceApplication {
     public static void main(String[] args) {

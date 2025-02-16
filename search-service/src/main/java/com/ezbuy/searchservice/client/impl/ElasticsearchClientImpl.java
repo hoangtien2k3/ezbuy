@@ -3,10 +3,10 @@ package com.ezbuy.searchservice.client.impl;
 import com.ezbuy.searchservice.client.ElasticsearchClient;
 import com.ezbuy.searchservice.client.properties.ElasticsearchClientProperties;
 import com.ezbuy.searchservice.client.properties.IndexProperties;
-import com.ezbuy.searchservice.client.properties.IndexScore;
 import com.reactify.util.DataUtil;
 import java.util.Base64;
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -24,23 +25,18 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @DependsOn("webClientFactory")
 public class ElasticsearchClientImpl implements ElasticsearchClient {
-    @Qualifier("elasticsearchClient")
+    @Qualifier("elasticSearchClient")
     private final WebClient elasticsearchClient;
-
     private final ElasticsearchClientProperties elasticsearchClientProperties;
     private final IndexProperties indexProperties;
 
     @Override
     public Mono<String> search(String keyword, List<String> indices, Integer from, Integer size) {
-        List<IndexScore> indexScoreList = indexProperties.getIndexScores();
-
-        // object all
-        JSONObject queryAll = new JSONObject();
-
+        List<IndexProperties.IndexScore> indexScoreList = indexProperties.getIndexScores();
         // indicesBoost
         JSONArray indicesBoost = new JSONArray();
         for (String index : indices) {
-            for (IndexScore indexScore : indexScoreList) {
+            for (IndexProperties.IndexScore indexScore : indexScoreList) {
                 if (indexScore.getName().equals(index)) {
                     indicesBoost.put(new JSONObject().put(index, Float.parseFloat(indexScore.getScore())));
                 }
@@ -72,7 +68,8 @@ public class ElasticsearchClientImpl implements ElasticsearchClient {
         JSONObject highlight = new JSONObject();
         highlight.put("fields", new JSONObject().put("title", new JSONObject()).put("content", new JSONObject()));
 
-        // build query
+        // object all
+        JSONObject queryAll = new JSONObject();
         queryAll.put("indices_boost", indicesBoost);
         queryAll.put("query", new JSONObject().put("bool", bool));
         queryAll.put("highlight", highlight);
@@ -100,7 +97,7 @@ public class ElasticsearchClientImpl implements ElasticsearchClient {
         return elasticsearchClient
                 .method(HttpMethod.GET)
                 .uri("/" + indexString + "/_search")
-                .header("Content-Type", "application/json")
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .header(HttpHeaders.AUTHORIZATION, basicAuthHeader)
                 .body(Mono.just(queryAll.toString()), String.class)
                 .retrieve()
