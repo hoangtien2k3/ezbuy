@@ -6,6 +6,8 @@ timezone:
 logging:
   level:
     org.quartz: DEBUG
+
+#spring configuration
 spring:
   application:
     name: trigger_service
@@ -14,17 +16,6 @@ spring:
     default: vi,en
   main:
     allow-bean-definition-overriding: true
-  #connect-r2dbc
-  r2dbc:
-    url: r2dbc:postgresql://localhost:5434/trigger
-    username: admin
-    password: admin
-    pool:
-      initial-size: 50
-      max-size: 100
-      enabled: true
-      validation-query: select 1
-      max-life-time: 9223372036854775807
   #security
   security:
     oauth2:
@@ -43,31 +34,41 @@ spring:
       keycloak:
         client-id: ${keycloak.clientId}
         client-secret: ${keycloak.clientSecret}
+
   #quartz scheduler
   quartz:
     job-store-type: jdbc
     properties:
-      org.quartz.threadPool.threadCount: 25
-      org.quartz.threadPool.threadPriority: 5
-      org.quartz.scheduler.instanceName: MyClusteredScheduler
-      org.quartz.scheduler.instanceId: AUTO
-      org.quartz.scheduler.batchTriggerAcquisitionMaxCount: 5
-      org.quartz.jobStore.misfireThreshold: 60000
-      org.quartz.jobStore.class: org.quartz.impl.jdbcjobstore.JobStoreTX
-      org.quartz.jobStore.acquireTriggersWithinLock: true
-      org.quartz.jobStore.dataSource: jobDataSource
-      org.quartz.jobStore.clusterCheckinInterval: 20000
-      org.quartz.jobStore.useProperties: true
-      org.quartz.jobStore.isClustered: true
-      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
-      org.quartz.dataSource.jobDataSource.driver: org.postgresql.Driver
-      org.quartz.dataSource.jobDataSource.provider: hikaricp
-      org.quartz.dataSource.jobDataSource.URL: jdbc:postgresql://localhost:5434/trigger
-      org.quartz.dataSource.jobDataSource.user: admin
-      org.quartz.dataSource.jobDataSource.password: admin
+      org:
+        quartz:
+          threadPool:
+            threadCount: 25
+            threadPriority: 5
+          scheduler:
+            instanceName: MyClusteredScheduler
+            instanceId: AUTO
+            batchTriggerAcquisitionMaxCount: 5
+          jobStore:
+            misfireThreshold: 60000
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            acquireTriggersWithinLock: true
+            dataSource: jobDataSource
+            clusterCheckinInterval: 20000
+            useProperties: true
+            isClustered: true
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+          dataSource:
+            jobDataSource:
+              driver: org.postgresql.Driver
+              provider: hikaricp
+              URL: jdbc:postgresql://localhost:5434/trigger
+              user: admin
+              password: admin
     wait-for-jobs-to-complete-on-shutdown: true
     jdbc:
       initialize-schema: never
+
+  #jpa config
   jpa:
     hibernate:
       ddl-auto: none
@@ -83,8 +84,11 @@ spring:
         query:
           fail_on_pagination_over_collection_fetch: true
           in_clause_parameter_padding: true
+
+  #jackson config
   jackson:
     time-zone: GMT+7
+
 # quartz
 distributed:
   jackson:
@@ -93,6 +97,7 @@ distributed:
 jhipster:
   clientApp:
     name: trigger-service
+
 #keycloak client config
 keycloak:
   clientId: ezbuy-client
@@ -101,6 +106,7 @@ keycloak:
   serverUrl: http://localhost:8080
   grantType: password
   host: localhost
+
 # config cron-job here. Name is unix
 cron-job:
   profiles:
@@ -136,6 +142,7 @@ cron-job:
       cron-job: 0 */1 * * * ?
     - name: INSERT_VOUCHER
       cron-job: 0 */1 * * * ?
+
 #config client here
 client:
   product:

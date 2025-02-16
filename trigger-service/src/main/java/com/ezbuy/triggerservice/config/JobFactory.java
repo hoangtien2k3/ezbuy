@@ -34,7 +34,7 @@ public class JobFactory {
         for (JobProfile jobProfile : jobProfiles) {
             String name = jobProfile.getName();
             if (!DataUtil.isNullOrEmpty(name)) {
-                String existedCronJob = jobMap.get(jobProfile.getName());
+                String existedCronJob = getCronJobByName(jobProfile.getName());
                 if (existedCronJob != null) {
                     log.error("Job existed, will be override {}", name);
                 } else {
