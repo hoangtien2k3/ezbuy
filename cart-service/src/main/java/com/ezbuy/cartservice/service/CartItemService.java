@@ -1,4 +1,4 @@
-package com.ezbuy.sme.cartservice.service;
+package com.ezbuy.cartservice.service;
 
 import com.ezbuy.cartmodel.dto.DeleteUserProductCartDTO;
 import com.ezbuy.cartmodel.dto.request.Product;

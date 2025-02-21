@@ -1,4 +1,4 @@
-package com.ezbuy.sme.cartservice.service.impl;
+package com.ezbuy.cartservice.service.impl;
 
 import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
 import static com.reactify.constants.MessageConstant.QUERY_CART_ITEM_NOT_FOUND;
@@ -15,12 +15,12 @@ import com.ezbuy.ordermodel.dto.PaginationDTO;
 import com.ezbuy.paymentmodel.dto.request.ProductItem;
 import com.ezbuy.paymentmodel.dto.request.ProductPriceRequest;
 import com.ezbuy.productmodel.dto.response.ProductOfferTemplateDTO;
-import com.ezbuy.sme.cartservice.client.PaymentClient;
-import com.ezbuy.sme.cartservice.client.ProductClient;
-import com.ezbuy.sme.cartservice.client.SettingClient;
-import com.ezbuy.sme.cartservice.repository.CartItemRepository;
-import com.ezbuy.sme.cartservice.repository.CartRepository;
-import com.ezbuy.sme.cartservice.service.CartItemService;
+import com.ezbuy.cartservice.client.PaymentClient;
+import com.ezbuy.cartservice.client.ProductClient;
+import com.ezbuy.cartservice.client.SettingClient;
+import com.ezbuy.cartservice.repository.CartItemRepository;
+import com.ezbuy.cartservice.repository.CartRepository;
+import com.ezbuy.cartservice.service.CartItemService;
 import com.reactify.constants.CommonErrorCode;
 import com.reactify.exception.BusinessException;
 import com.reactify.model.response.DataResponse;

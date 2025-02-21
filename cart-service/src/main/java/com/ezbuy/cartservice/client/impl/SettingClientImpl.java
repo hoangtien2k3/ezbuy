@@ -1,7 +1,7 @@
-package com.ezbuy.sme.cartservice.client.impl;
+package com.ezbuy.cartservice.client.impl;
 
 import com.ezbuy.cartmodel.dto.CartTelecomDTO;
-import com.ezbuy.sme.cartservice.client.SettingClient;
+import com.ezbuy.cartservice.client.SettingClient;
 import com.reactify.client.BaseRestClient;
 import com.reactify.factory.ObjectMapperFactory;
 import com.reactify.model.response.DataResponse;

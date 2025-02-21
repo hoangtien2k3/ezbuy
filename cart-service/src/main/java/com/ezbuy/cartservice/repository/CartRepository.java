@@ -1,4 +1,4 @@
-package com.ezbuy.sme.cartservice.repository;
+package com.ezbuy.cartservice.repository;
 
 import com.ezbuy.cartmodel.model.Cart;
 import java.util.UUID;

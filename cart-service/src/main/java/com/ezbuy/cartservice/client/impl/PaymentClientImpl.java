@@ -1,8 +1,8 @@
-package com.ezbuy.sme.cartservice.client.impl;
+package com.ezbuy.cartservice.client.impl;
 
 import com.ezbuy.cartmodel.dto.EstimatePriceDTO;
 import com.ezbuy.paymentmodel.dto.request.ProductPriceRequest;
-import com.ezbuy.sme.cartservice.client.PaymentClient;
+import com.ezbuy.cartservice.client.PaymentClient;
 import com.reactify.client.BaseRestClient;
 import com.reactify.constants.CommonErrorCode;
 import com.reactify.exception.BusinessException;

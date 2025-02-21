@@ -1,4 +1,4 @@
-package com.ezbuy.sme.cartservice.client;
+package com.ezbuy.cartservice.client;
 
 import com.ezbuy.productmodel.dto.response.ListProductOfferResponse;
 import java.util.List;

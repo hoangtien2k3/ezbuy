@@ -1,4 +1,4 @@
-package com.ezbuy.sme.cartservice.repository;
+package com.ezbuy.cartservice.repository;
 
 import com.ezbuy.cartmodel.model.CartItem;
 import java.util.List;

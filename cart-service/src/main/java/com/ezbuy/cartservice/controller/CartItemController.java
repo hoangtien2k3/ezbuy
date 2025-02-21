@@ -1,11 +1,11 @@
-package com.ezbuy.sme.cartservice.controller;
+package com.ezbuy.cartservice.controller;
 
 import com.ezbuy.cartmodel.constants.UrlPaths;
 import com.ezbuy.cartmodel.dto.DeleteUserProductCartDTO;
 import com.ezbuy.cartmodel.dto.request.Product;
 import com.ezbuy.cartmodel.dto.response.PageCart;
 import com.ezbuy.cartmodel.model.CartItem;
-import com.ezbuy.sme.cartservice.service.CartItemService;
+import com.ezbuy.cartservice.service.CartItemService;
 import com.reactify.model.response.DataResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

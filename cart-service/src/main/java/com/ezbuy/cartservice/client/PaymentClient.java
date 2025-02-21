@@ -1,4 +1,4 @@
-package com.ezbuy.sme.cartservice.client;
+package com.ezbuy.cartservice.client;
 
 import com.ezbuy.paymentmodel.dto.request.ProductPriceRequest;
 import java.util.Optional;

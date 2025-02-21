@@ -1,8 +1,8 @@
-package com.ezbuy.sme.cartservice.client.config;
+package com.ezbuy.cartservice.client.config;
 
-import com.ezbuy.sme.cartservice.client.properties.PaymentProperties;
-import com.ezbuy.sme.cartservice.client.properties.ProductProperties;
-import com.ezbuy.sme.cartservice.client.properties.SettingProperties;
+import com.ezbuy.cartservice.client.properties.PaymentProperties;
+import com.ezbuy.cartservice.client.properties.ProductProperties;
+import com.ezbuy.cartservice.client.properties.SettingProperties;
 import com.reactify.client.WebClientFactory;
 import com.reactify.client.properties.WebClientProperties;
 import java.util.List;
