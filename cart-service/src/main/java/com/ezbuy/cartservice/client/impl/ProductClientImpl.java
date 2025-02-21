@@ -1,9 +1,9 @@
 package com.ezbuy.cartservice.client.impl;
 
-import com.ezbuy.productmodel.dto.FilterProductTemplateDTO;
-import com.ezbuy.productmodel.dto.response.ListProductOfferResponse;
 import com.ezbuy.cartservice.client.ProductClient;
 import com.ezbuy.cartservice.client.properties.ProductProperties;
+import com.ezbuy.productmodel.dto.FilterProductTemplateDTO;
+import com.ezbuy.productmodel.dto.response.ListProductOfferResponse;
 import com.reactify.client.BaseRestClient;
 import com.reactify.constants.CommonErrorCode;
 import com.reactify.exception.BusinessException;
