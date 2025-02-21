@@ -24,9 +24,9 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @DependsOn("webClientFactory")
 public class ElasticsearchClientImpl implements ElasticsearchClient {
+
     @Qualifier("elasticSearchClient")
     private final WebClient elasticsearchClient;
-
     private final ElasticsearchClientProperties elasticsearchClientProperties;
     private final IndexProperties indexProperties;
 
