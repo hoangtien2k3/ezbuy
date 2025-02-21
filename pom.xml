@@ -34,7 +34,6 @@
         <developerConnection>scm:git:ssh://git@github.com:hoangtien2k3/ezbuy.git</developerConnection>
         <url>https://github.com/hoangtien2k3/ezbuy</url>
     </scm>
-
     <modules>
         <module>auth-model</module>
         <module>auth-service</module>
@@ -58,7 +57,6 @@
         <module>search-service</module>
         <module>trigger-service</module>
     </modules>
-
     <properties>
         <java.version>21</java.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
@@ -70,7 +68,6 @@
         <spotless.version>2.43.0</spotless.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
