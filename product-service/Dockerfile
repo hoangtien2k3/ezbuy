@@ -3,11 +3,11 @@ WORKDIR application
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
-FROM  openjdk:11.0.12-oracle
-LABEL com.ezbuy.ecom.product.version="1.0.0"
+FROM  amazoncorretto:21.0.3
+LABEL com.ezbuy.productservice.version="1.0.0"
 LABEL version="1.0.0"
 LABEL description="product service"
-LABEL author="Viettel Company"
+LABEL author="Ezbuy Flatform"
 WORKDIR application
 
 # additional timezone +7

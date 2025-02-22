@@ -3,10 +3,9 @@ WORKDIR application
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
-
-FROM amazoncorretto:21.0.4
+FROM amazoncorretto:21.0.3
 ENV TZ="Asia/Ho_Chi_Minh"
-LABEL com.ezbuy.ecom.setting.version="1.0.0"
+LABEL com.ezbuy.settingservice.version="1.0.0"
 LABEL version="1.0.0"
 LABEL description="setting service"
 LABEL author="Ezbuy Platform"

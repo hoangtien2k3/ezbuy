@@ -3,8 +3,8 @@ WORKDIR application
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
-FROM  openjdk:11.0.12-oracle
-LABEL com.ezbuy.ecom.auth.version="1.0.0"
+FROM  amazoncorretto:21.0.3
+LABEL com.ezbuy.orderservice.version="1.0.0"
 LABEL version="1.0.0"
 LABEL description="order service"
 LABEL author="Ezbuy Platform"
