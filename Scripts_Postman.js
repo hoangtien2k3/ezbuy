@@ -10,7 +10,7 @@ const postRequest = {
         mode: 'raw',
         raw: JSON.stringify({
             "username" : "hoangtien2k3dev25@gmail.com",
-            "password" : "tienha@!@#",
+            "password" : "Tienha@!@#1",
             "clientId" : "ezbuy-client"
         })
     }
