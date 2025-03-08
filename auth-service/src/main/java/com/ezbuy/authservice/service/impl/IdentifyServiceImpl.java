@@ -26,7 +26,7 @@ public class IdentifyServiceImpl implements IdentifyService {
     private final OrganizationRepo organizationRepo;
 
     @Value("${minio.private.bucket}")
-    public String smePrivateBucket;
+    public String ezBuyPrivateBucket;
 
     @Override
     public Mono<Boolean> existedTrustedOrgIdentify(List<TenantIdentify> identifies) {

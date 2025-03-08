@@ -31,11 +31,6 @@ import reactor.core.publisher.Mono;
 public class ResponseUtils {
 
     /**
-     * Constructs a new instance of {@code ResponseUtils}.
-     */
-    public ResponseUtils() {}
-
-    /**
      * Creates a ResponseEntity with a DataResponse containing the given data and a
      * success message.
      *

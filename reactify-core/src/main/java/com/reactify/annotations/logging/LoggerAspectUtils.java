@@ -122,7 +122,6 @@ public class LoggerAspectUtils {
         }
 
         Span newSpan = tracer.nextSpan().name(name);
-
         var result = joinPoint.proceed();
         if (result instanceof Mono) {
             return logMonoResult(

@@ -44,11 +44,6 @@ import javax.crypto.Cipher;
 public class RSACryptoExample {
 
     /**
-     * Constructs a new instance of {@code RSACryptoExample}.
-     */
-    public RSACryptoExample() {}
-
-    /**
      * Converts a Base64 encoded string representation of a public key to a
      * {@link PublicKey} object.
      *

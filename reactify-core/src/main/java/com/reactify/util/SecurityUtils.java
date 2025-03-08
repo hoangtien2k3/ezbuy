@@ -40,11 +40,6 @@ import reactor.core.publisher.Mono;
 public class SecurityUtils {
 
     /**
-     * Constructs a new instance of {@code SecurityUtils}.
-     */
-    public SecurityUtils() {}
-
-    /**
      * Retrieves the current authenticated user as a TokenUser.
      *
      * @return a Mono containing the TokenUser, or empty if no user is authenticated

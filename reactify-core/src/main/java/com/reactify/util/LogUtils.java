@@ -37,11 +37,6 @@ import org.springframework.http.MediaType;
 public class LogUtils {
 
     /**
-     * Constructs a new instance of {@code LogUtils}.
-     */
-    public LogUtils() {}
-
-    /**
      * List of media types that are considered legal for logging.
      */
     public static final List<MediaType> legalLogMediaTypes = Arrays.asList(

@@ -37,8 +37,6 @@ public class CacheUtils {
 
     private static final String FIXED_KEY = "FIXED_KEY";
 
-    private CacheUtils() {}
-
     /**
      * <p>
      * of.

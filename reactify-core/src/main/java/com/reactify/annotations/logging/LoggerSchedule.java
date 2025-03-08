@@ -73,12 +73,8 @@ import reactor.core.publisher.Mono;
 @Configuration
 @Slf4j
 public class LoggerSchedule {
-    private static final Logger logPerf = LoggerFactory.getLogger("perfLogger");
 
-    /**
-     * Constructs a new instance of {@code LoggerSchedule}.
-     */
-    public LoggerSchedule() {}
+    private static final Logger logPerf = LoggerFactory.getLogger("perfLogger");
 
     /**
      * <p>
