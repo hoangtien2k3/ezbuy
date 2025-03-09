@@ -166,8 +166,9 @@ public class SecurityUtils {
     public static Mono<Boolean> hasAuthority(String authority) {
         return ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)
-                .map(auth -> auth != null && auth.getAuthorities().stream()
-                        .anyMatch(granted -> granted.getAuthority().equals(authority)))
+                .map(auth -> auth != null
+                        && auth.getAuthorities().stream()
+                                .anyMatch(granted -> granted.getAuthority().equals(authority)))
                 .switchIfEmpty(Mono.just(false));
     }
 }
