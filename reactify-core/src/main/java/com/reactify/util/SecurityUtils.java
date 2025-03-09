@@ -150,7 +150,7 @@ public class SecurityUtils {
      * @return the UserDTO, or null if an error occurs during extraction
      */
     public static UserDTO getUserByAccessToken(String accessToken) {
-        SignedJWT signedJWT = null;
+        SignedJWT signedJWT;
         try {
             signedJWT = SignedJWT.parse(accessToken);
             String data = signedJWT.getPayload().toString();
