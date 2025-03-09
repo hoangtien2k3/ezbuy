@@ -159,4 +159,15 @@ public class SecurityUtils {
             return null;
         }
     }
+
+    /**
+     * Checks if the current user has a specific authority/role.
+     */
+    public static Mono<Boolean> hasAuthority(String authority) {
+        return ReactiveSecurityContextHolder.getContext()
+                .map(SecurityContext::getAuthentication)
+                .map(auth -> auth != null && auth.getAuthorities().stream()
+                        .anyMatch(granted -> granted.getAuthority().equals(authority)))
+                .switchIfEmpty(Mono.just(false));
+    }
 }
