@@ -16,7 +16,6 @@ import com.ezbuy.authmodel.dto.response.Permission;
 import com.ezbuy.authmodel.model.*;
 import com.ezbuy.authservice.client.KeyCloakClient;
 import com.ezbuy.authservice.client.NotiServiceClient;
-import com.ezbuy.authservice.client.impl.KeyCloakClientImpl;
 import com.ezbuy.authservice.config.KeycloakProvider;
 import com.ezbuy.authservice.constants.ActionLogType;
 import com.ezbuy.authservice.repository.ActionLogRepository;
@@ -26,7 +25,6 @@ import com.ezbuy.authservice.repository.OrganizationRepo;
 import com.ezbuy.authservice.repository.OtpRepository;
 import com.ezbuy.authservice.repository.UserCredentialRepo;
 import com.ezbuy.authservice.service.AuthService;
-import com.ezbuy.authservice.service.IdentifyService;
 import com.ezbuy.notificationmodel.dto.request.CreateNotificationDTO;
 import com.ezbuy.notificationmodel.dto.request.NotiContentDTO;
 import com.ezbuy.notificationmodel.dto.request.ReceiverDataDTO;
@@ -73,31 +71,22 @@ import reactor.util.function.Tuple2;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
+
     private final ObjectMapperUtil objectMapperUtil;
-    // keycloak client
     private final KeyCloakClient keyCloakClient;
     private final KeycloakProvider kcProvider;
-    // notification service client
     private final NotiServiceClient notiServiceClient;
-
-    // repositories
     private final OtpRepository otpRepository;
     private final IndividualRepository individualRepository;
     private final IndOrgPermissionRepo indOrgPermissionRepo;
     private final OrganizationRepo organizationRepo;
-    private final IdentifyService identifyService;
     private final UserCredentialRepo userCredentialRepo;
-    // private final OrganizationService organizationService;
-
     private final CipherManager cipherManager;
     private final ActionLogRepository actionLogRepository;
-
     private final KeycloakProvider keycloakProvider;
-    private final KeyCloakClientImpl keyCloakClientImpl;
 
     @Value("${hashing-password.public-key}")
     private String publicKey;
-
     @Value("${keycloak.clientId}")
     private String clientId;
 
@@ -359,17 +348,6 @@ public class AuthServiceImpl implements AuthService {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "danh.sach.giay.to.khong.hop.le");
         }
         return identifyMap;
-    }
-
-    private CreateOrganizationRequest buildOrgDTO(CreateOrgAccount createOrgAccount) {
-        CreateOrganizationRequest createOrganizationRequest = new CreateOrganizationRequest();
-        createOrganizationRequest.setName(createOrgAccount.getName());
-        createOrganizationRequest.setEmail(createOrgAccount.getEmail());
-        createOrganizationRequest.setPhone(createOrgAccount.getPhone());
-        createOrganizationRequest.setFoundingDate(createOrgAccount.getFoundingDate());
-        createOrganizationRequest.setIdentifies(createOrgAccount.getIdentifies());
-        createOrganizationRequest.setRepresentative(createOrgAccount.getRepresentative());
-        return createOrganizationRequest;
     }
 
     @Override
@@ -871,7 +849,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Mono<DataResponse> confirmOTP(ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange) {
+    public Mono<DataResponse<Map<String, String>>> confirmOTP(ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange) {
         String otp = DataUtil.safeTrim(confirmOTPRequest.getOtp());
         if (DataUtil.isNullOrEmpty(otp)) {
             return Mono.error(new BusinessException(ErrorCode.OtpErrorCode.OTP_EMPTY, "dto.otp.not.empty"));
@@ -881,9 +859,9 @@ public class AuthServiceImpl implements AuthService {
         return otpRepository.confirmOtp(email, type, otp, 1).flatMap(result -> {
             if (Boolean.FALSE.equals(result)) {
                 return Mono.error(new BusinessException(
-                        ErrorCode.OtpErrorCode.OTP_NOT_MATCH, Translator.toLocaleVi("otp.not.match")));
+                        ErrorCode.OtpErrorCode.OTP_NOT_MATCH, "otp.not.match"));
             }
-            return Mono.just(new DataResponse<>("success", null));
+            return Mono.just(new DataResponse<>("success", Map.of("message", Translator.toLocaleVi("otp.success.match"))));
         });
     }
 

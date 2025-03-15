@@ -39,7 +39,7 @@ public class PermissionPolicyServiceImpl implements PermissionPolicyService {
     private static final String PERMISSION_PARTTERN = "^[a-z0-9_]{3,50}$";
 
     @Override
-    public Mono<DataResponse> getPermissionPolicyDto(
+    public Mono<DataResponse<SearchPermissionPolicyResponse>> getPermissionPolicyDto(
             String filter, Integer state, Integer pageIndex, Integer pagesize, String sort) {
         int size = DataUtil.safeToInt(pagesize, 0);
         if (size == 0) {
@@ -70,7 +70,6 @@ public class PermissionPolicyServiceImpl implements PermissionPolicyService {
                     .pageSize(size)
                     .totalRecords(response.getT1().longValue())
                     .build();
-
             SearchPermissionPolicyResponse permissionPolicyResponse = SearchPermissionPolicyResponse.builder()
                     .content(response.getT2())
                     .pagination(pagination)

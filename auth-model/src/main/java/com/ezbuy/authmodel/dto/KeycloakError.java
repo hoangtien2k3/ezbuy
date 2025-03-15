@@ -15,7 +15,6 @@ import lombok.ToString;
 public class KeycloakError {
     @JsonProperty("error")
     private String error;
-
     @JsonProperty("error_description")
     private String message;
 }

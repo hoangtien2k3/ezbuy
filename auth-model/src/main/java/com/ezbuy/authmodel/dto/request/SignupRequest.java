@@ -11,7 +11,6 @@ import lombok.NonNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SignupRequest {
-
     @NotEmpty(message = "dto.email.not.empty")
     @Size(max = 200, message = "dto.email.over.length")
     private String email;

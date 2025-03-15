@@ -34,7 +34,6 @@ public class UtilServiceImpl implements UtilService {
     private final IndOrgPermissionRepo indOrgPermissionRepo;
     private final KeyCloakClient keyCloakClient;
     private final KeycloakProvider keycloakProvider;
-    // private final IndividualService individualService;
     private final IndividualOrgPermissionRepo individualOrgPermissionRepo;
     private final PermissionPolicyService permissionPolicyService;
 
@@ -94,60 +93,62 @@ public class UtilServiceImpl implements UtilService {
     private static List<EmployeePermissionRequest> getEmployeePermissionRequests(
             JobAddRoleAdminForOldUserRequest request) {
         List<EmployeePermissionRequest> employeePermissionRequests = new ArrayList<>();
-        EmployeePermissionRequest employeePermissionRequest = new EmployeePermissionRequest();
-        employeePermissionRequest.setRoleId(request.getRoleId());
-        employeePermissionRequest.setClientId(request.getClientId());
-        employeePermissionRequest.setRoleCode(request.getRoleName());
-        employeePermissionRequest.setPolicyId(request.getPolicyId());
-        employeePermissionRequests.add(employeePermissionRequest);
+        employeePermissionRequests.add(EmployeePermissionRequest.builder()
+                .roleId(request.getRoleId())
+                .clientId(request.getClientId())
+                .roleCode(request.getRoleName())
+                .policyId(request.getPolicyId())
+                .build());
         return employeePermissionRequests;
     }
 
     private Mono<String> getAccessToken() {
-        return Mono.fromCallable(
-                () -> keycloakProvider.getInstance().tokenManager().getAccessTokenString());
+        return Mono.fromCallable(() -> keycloakProvider
+                .getInstance()
+                .tokenManager()
+                .getAccessTokenString());
     }
 
     // save role in 2 table individualOrgPermissionRepo va
     public Mono<List<PermissionPolicy>> createEmployeePermission(
             List<EmployeePermissionRequest> employeeUpdateRequest, Individual individual, String organizationId) {
         return Flux.fromIterable(employeeUpdateRequest)
-                .flatMap(employeePermissionRequest -> indOrgPermissionRepo
-                        .getIndOrgPerIdByClientIdAndIndId(employeePermissionRequest.getClientId(), individual.getId())
+                .flatMap(employeePr -> indOrgPermissionRepo
+                        .getIndOrgPerIdByClientIdAndIndId(employeePr.getClientId(), individual.getId())
                         .collectList()
                         .flatMap(rs -> {
                             TokenUser tokenUser = new TokenUser();
                             tokenUser.setUsername("system");
-                            IndividualOrganizationPermissions individualOrganizationPermissions =
+                            IndividualOrganizationPermissions individualOrg =
                                     new IndividualOrganizationPermissions();
                             if (rs.isEmpty()) {
-                                individualOrganizationPermissions.setId(String.valueOf(UUID.randomUUID()));
-                                individualOrganizationPermissions.setIndividualId(individual.getId());
-                                individualOrganizationPermissions.setOrganizationId(organizationId);
-                                individualOrganizationPermissions.setClientId(employeePermissionRequest.getClientId());
-                                individualOrganizationPermissions.setCreateAt(LocalDateTime.now());
-                                individualOrganizationPermissions.setUpdateAt(LocalDateTime.now());
-                                individualOrganizationPermissions.setCreateBy("system");
-                                individualOrganizationPermissions.setUpdateBy("system");
-                                individualOrganizationPermissions.setStatus(Constants.STATUS.ACTIVE);
+                                individualOrg.setId(String.valueOf(UUID.randomUUID()));
+                                individualOrg.setIndividualId(individual.getId());
+                                individualOrg.setOrganizationId(organizationId);
+                                individualOrg.setClientId(employeePr.getClientId());
+                                individualOrg.setCreateAt(LocalDateTime.now());
+                                individualOrg.setUpdateAt(LocalDateTime.now());
+                                individualOrg.setCreateBy("system");
+                                individualOrg.setUpdateBy("system");
+                                individualOrg.setStatus(Constants.STATUS.ACTIVE);
                                 return individualOrgPermissionRepo
-                                        .save(individualOrganizationPermissions)
+                                        .save(individualOrg)
                                         .flatMap(data -> permissionPolicyService.createPermissionPolicy(
                                                 Constants.PERMISSION_TYPE.ROLE,
-                                                employeePermissionRequest.getRoleId(),
-                                                employeePermissionRequest.getRoleCode(),
-                                                employeePermissionRequest.getPolicyId(),
-                                                individualOrganizationPermissions,
+                                                employeePr.getRoleId(),
+                                                employeePr.getRoleCode(),
+                                                employeePr.getPolicyId(),
+                                                individualOrg,
                                                 LocalDateTime.now(),
                                                 tokenUser));
                             }
-                            individualOrganizationPermissions.setId(rs.getFirst());
+                            individualOrg.setId(rs.getFirst());
                             return permissionPolicyService.createPermissionPolicy(
                                     Constants.PERMISSION_TYPE.ROLE,
-                                    employeePermissionRequest.getRoleId(),
-                                    employeePermissionRequest.getRoleCode(),
-                                    employeePermissionRequest.getPolicyId(),
-                                    individualOrganizationPermissions,
+                                    employeePr.getRoleId(),
+                                    employeePr.getRoleCode(),
+                                    employeePr.getPolicyId(),
+                                    individualOrg,
                                     LocalDateTime.now(),
                                     tokenUser);
                         }))

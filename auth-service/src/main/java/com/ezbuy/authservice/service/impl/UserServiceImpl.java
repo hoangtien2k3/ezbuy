@@ -9,9 +9,7 @@ import com.ezbuy.authmodel.model.UserProfile;
 import com.ezbuy.authservice.client.SettingClient;
 import com.ezbuy.authservice.config.KeycloakProvider;
 import com.ezbuy.authservice.repository.IndividualRepository;
-import com.ezbuy.authservice.repository.TenantIdentifyRepo;
 import com.ezbuy.authservice.repository.UserRepository;
-import com.ezbuy.authservice.service.IdentifyService;
 import com.ezbuy.authservice.service.UserService;
 import com.ezbuy.settingmodel.dto.AreaDTO;
 import com.reactify.constants.CommonErrorCode;
@@ -30,8 +28,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.UserRepresentation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
@@ -46,19 +42,12 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
-
     private final UserRepository userRepository;
-    private final IndividualRepository individualRepository;
-    private final TenantIdentifyRepo tenantIdentifyRepo;
     private final KeycloakProvider kcProvider;
     private final SettingClient settingClient;
-    private final IdentifyService identifyService;
-    private final MinioUtils minioUtils;
 
     @Value("${keycloak.realm}")
     public String realm;
-
     @Value("${minio.bucket}")
     public String mySignBucket;
 
@@ -104,10 +93,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Flux<UserContact> getUserContacts(List<UUID> userIds) {
         if (userIds == null) {
-            return Flux.just((UserContact) null);
+            return Flux.just(new UserContact());
         }
         Set<UUID> unixUserIds = new HashSet<>(userIds);
-        if (unixUserIds.size() > Constants.ArrayLimit.COMMON) {
+        if (unixUserIds.size() > 100) {
             return Flux.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "array.limit"));
         }
         UsersResource usersResource = kcProvider.getRealmResource().users();

@@ -14,9 +14,9 @@ import org.springframework.data.relational.core.mapping.Table;
 @Data
 @SuperBuilder
 public class OrganizationUnit extends EntityBase {
+
     @Id
     private String id;
-
     private String name;
     private String shortName;
     private String code;

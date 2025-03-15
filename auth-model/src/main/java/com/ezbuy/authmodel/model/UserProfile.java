@@ -17,9 +17,9 @@ import org.springframework.data.relational.core.mapping.Table;
 @SuperBuilder
 @Table(name = "user_profile")
 public class UserProfile extends EntityBase implements Persistable<String> {
+
     @Id
     private String id;
-
     private String image;
     private String companyName;
     private String representative;

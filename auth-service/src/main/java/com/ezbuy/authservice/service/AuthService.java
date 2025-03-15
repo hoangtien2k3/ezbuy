@@ -9,6 +9,7 @@ import com.ezbuy.authmodel.model.Individual;
 import com.ezbuy.authmodel.model.UserOtp;
 import com.reactify.model.response.DataResponse;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -204,7 +205,7 @@ public interface AuthService {
      * @return a Mono emitting a DataResponse indicating the result of the OTP
      *         confirmation
      */
-    Mono<DataResponse> confirmOTP(ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange);
+    Mono<DataResponse<Map<String, String>>> confirmOTP(ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange);
 
     /**
      * Generates an OTP based on the given request and server exchange.
