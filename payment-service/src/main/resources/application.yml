@@ -1,8 +1,8 @@
 server:
   port: 8089
 logging:
-#  pattern:
-#    console: "%d{dd/MM/yy HH:mm:ss}|%X{traceId}|%m%n"
+  pattern:
+    console: "%d{dd/MM/yy HH:mm:ss}|%X{traceId}|%m%n"
   level:
     root: INFO
     io.r2dbc.postgresql.QUERY: DEBUG
@@ -74,21 +74,19 @@ client:
     timeout:
       read: 60000
       write: 1000
-
   product:
-    address: http://10.207.252.223/sme-product
-    name: product
+    address: http://localhost:8083
+    name: productClient
   order:
     internal-oauth: true
-    address: http://10.207.252.223/sme-order
+    address: http://localhost:8081
     name: orderClient
   auth:
     internal-oauth: true
-    address: http://10.207.252.223/sme-auth/v1
+    address: http://localhost:8089
     name: authClient
   payment:
-    address: http://10.207.252.223/mvt-api/myviettel.php/merchant
-    #    address: http://localhost:8088/sme-payment
+    address: http://localhost:8088
     merchantCode: PORTAL_SME_CA
     accessCode: 54c08f1d6d0a9a797247ffe5df85799a817acd363e6d2ee1fd1ebeb341f09c39
     hashCode: e0476743357d9e62ce711dbebb52f2f8fc48085af2e5083805a74ad05a529c4c

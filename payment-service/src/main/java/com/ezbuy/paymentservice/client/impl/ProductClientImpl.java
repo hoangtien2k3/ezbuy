@@ -27,7 +27,6 @@ public class ProductClientImpl implements ProductClient {
 
     @Qualifier("productClient")
     private final WebClient webClient;
-
     private final BaseRestClient baseRestClient;
 
     @Override
@@ -46,7 +45,6 @@ public class ProductClientImpl implements ProductClient {
     public Mono<List<ProductOfferTemplateDTO>> getProductInfo(List<String> templateIds) {
         FilterProductTemplateDTO filterProductTemplateDTO = new FilterProductTemplateDTO();
         filterProductTemplateDTO.setListId(templateIds);
-
         return baseRestClient
                 .post(webClient, "/v1/filter-product-template", null, filterProductTemplateDTO, DataResponse.class)
                 .map(resp -> {
@@ -63,34 +61,4 @@ public class ProductClientImpl implements ProductClient {
                 })
                 .onErrorResume(throwable -> Mono.just(new ArrayList<>()));
     }
-
-    // @Override
-    // public Mono<List<Subscriber>> getListSubscriberActive(String idNo,
-    // List<String> lstTelecomServiceId) {
-    // FilterGetListSubscriberActive filterGetListSubscriberActive = new
-    // FilterGetListSubscriberActive();
-    // filterGetListSubscriberActive.setIdNo(idNo);
-    // filterGetListSubscriberActive.setLstTelecomServiceId(lstTelecomServiceId);
-    //
-    // return baseRestClient
-    // .post(
-    // webClient,
-    // "/v1/get-list-subscriber-active",
-    // null,
-    // filterGetListSubscriberActive,
-    // DataResponse.class)
-    // .map(resp -> {
-    // Optional<DataResponse> respOptional = (Optional<DataResponse>) resp;
-    // if (respOptional.isEmpty() || respOptional.get().getData() == null) {
-    // return new ArrayList<>();
-    // }
-    //
-    // Map<String, Object> dataMap =
-    // (Map<String, Object>) respOptional.get().getData();
-    // String dataJson = DataUtil.parseObjectToString(dataMap.get("data"));
-    // return DataUtil.parseStringToObject(
-    // dataJson, new TypeReference<List<Subscriber>>() {}, new ArrayList<>());
-    // })
-    // .onErrorResume(throwable -> Mono.just(new ArrayList<>()));
-    // }
 }

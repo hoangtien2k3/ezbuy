@@ -169,7 +169,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Mono<DataResponse> getResultFromMyViettel(PaymentResultRequest request) {
+    public Mono<DataResponse> getResultFromVnPay(PaymentResultRequest request) {
         var getListOptionSet = settingClient.findByOptionSetCode(PaymentConstants.OptionSet.MERCHANT_CODE_PAYGATE);
         return Mono.zip(validatePaymentResultRequest(request), getListOptionSet).flatMap(tuple -> {
             String accessCode = paymentProperties.getAccessCode();
@@ -431,29 +431,23 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private Mono<Boolean> validateUpdateOrderStateRequest(UpdateOrderStateRequest request) {
-
         if (request.getUpdateOrderStateDTOList().size() < 1) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.state.request.null"));
         }
-
         for (UpdateOrderStateDTO updateOrderStateDTO : request.getUpdateOrderStateDTOList()) {
             if (DataUtil.isNullOrEmpty(updateOrderStateDTO.getOrderCode())) {
                 return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.code.null"));
             }
-
             if (DataUtil.isNullOrEmpty(updateOrderStateDTO.getOrderType())) {
                 return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.type.null"));
             }
-
             if (DataUtil.isNullOrEmpty(updateOrderStateDTO.getOrderState())) {
                 return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.state.null"));
             }
-
             if (updateOrderStateDTO.getOrderState() != OrderState.COMPLETED.getValue()) {
                 return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.state.invalid"));
             }
         }
-
         return Mono.just(true);
     }
 

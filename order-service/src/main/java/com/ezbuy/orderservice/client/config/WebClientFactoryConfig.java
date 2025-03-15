@@ -26,10 +26,8 @@ public class WebClientFactoryConfig {
     private final ProductProperties productProperties;
 
     @Bean(name = "webClientFactory")
-    public WebClientFactory webClientFactory(
-            ApplicationContext applicationContext, ReactiveOAuth2AuthorizedClientManager authorizedClientManager) {
-        WebClientFactory factory = new WebClientFactory(applicationContext, authorizedClientManager);
-        factory.setWebClients(List.of(
+    public WebClientFactory webClientFactory() {
+        return new WebClientFactory(List.of(
                 authProperties,
                 cartProperties,
                 cmPortalProperties,
@@ -41,7 +39,8 @@ public class WebClientFactoryConfig {
                 pricingProperties,
                 profileProperties,
                 settingClientProperties,
-                productProperties));
-        return factory;
+                productProperties
+            )
+        );
     }
 }

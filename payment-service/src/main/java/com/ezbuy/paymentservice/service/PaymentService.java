@@ -12,7 +12,7 @@ public interface PaymentService {
 
     Mono<DataResponse> createLinkCheckout(ProductPaymentRequest request) throws SignatureException;
 
-    Mono<DataResponse> getResultFromMyViettel(PaymentResultRequest request);
+    Mono<DataResponse> getResultFromVnPay(PaymentResultRequest request);
 
     Mono<DataResponse> updateOrderState(UpdateOrderStateRequest request);
 

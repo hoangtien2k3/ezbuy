@@ -15,7 +15,6 @@ import org.springframework.data.relational.core.mapping.Table;
 public class Channel {
     @Id
     private String id;
-
     private Integer status;
     private String type;
 }

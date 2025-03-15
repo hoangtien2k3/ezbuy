@@ -27,10 +27,9 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class SettingClientImpl implements SettingClient {
 
-    private final BaseRestClient baseRestClient;
-
     @Qualifier("settingClient")
     private final WebClient settingClient;
+    private final BaseRestClient baseRestClient;
 
     @Override
     public Mono<List<TelecomDTO>> getTelecomData(List<String> ids, List<String> aliases, List<String> origins) {
@@ -44,7 +43,6 @@ public class SettingClientImpl implements SettingClient {
         if (!DataUtil.isNullOrEmpty(origins)) {
             paramMap.set("origins", joinStringList(origins));
         }
-
         return baseRestClient
                 .get(settingClient, "/v1/telecom-services", null, paramMap, DataResponse.class)
                 .flatMap(dataResponse -> {

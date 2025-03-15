@@ -20,11 +20,10 @@ import reactor.core.publisher.Mono;
 @DependsOn("webClientFactory")
 @RequiredArgsConstructor
 public class OrderClientImpl implements OrderClient {
-    private final BaseRestClient baseRestClient;
 
     @Qualifier("orderClient")
     private final WebClient orderClient;
-
+    private final BaseRestClient baseRestClient;
     private final OrderClientProperties orderProperties;
 
     @Override

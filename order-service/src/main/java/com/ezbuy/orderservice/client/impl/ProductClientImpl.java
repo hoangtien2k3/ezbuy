@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
@@ -26,22 +28,17 @@ import reactor.core.publisher.Mono;
 @Service
 @Slf4j
 @DependsOn("webClientFactory")
+@RequiredArgsConstructor
 public class ProductClientImpl implements ProductClient {
 
-    private final BaseRestClient baseRestClient;
-
+    @Qualifier("productClient")
     private final WebClient productClient;
-
-    public ProductClientImpl(BaseRestClient baseRestClient, @Qualifier("productClient") WebClient product) {
-        this.baseRestClient = baseRestClient;
-        this.productClient = product;
-    }
+    private final BaseRestClient baseRestClient;
 
     @Override
     public Mono<List<ProductOfferTemplateDTO>> getProductInfo(List<String> templateIds) {
         FilterProductTemplateDTO filterProductTemplateDTO = new FilterProductTemplateDTO();
         filterProductTemplateDTO.setListId(templateIds);
-
         return baseRestClient
                 .post(productClient, "/v1/filter-product-template", null, filterProductTemplateDTO, DataResponse.class)
                 .map(resp -> {
@@ -55,34 +52,6 @@ public class ProductClientImpl implements ProductClient {
                     String dataJson = DataUtil.parseObjectToString(dataMap.get("data"));
                     return DataUtil.parseStringToObject(
                             dataJson, new TypeReference<List<ProductOfferTemplateDTO>>() {}, new ArrayList<>());
-                })
-                .onErrorResume(throwable -> Mono.just(new ArrayList<>()));
-    }
-
-    @Override
-    public Mono<List<Subscriber>> getListSubscriberActive(String idNo, List<String> lstTelecomServiceId) {
-        FilterGetListSubscriberActive filterGetListSubscriberActive = new FilterGetListSubscriberActive();
-        filterGetListSubscriberActive.setIdNo(idNo);
-        filterGetListSubscriberActive.setLstTelecomServiceId(lstTelecomServiceId);
-
-        return baseRestClient
-                .post(
-                        productClient,
-                        "/v1/get-list-subscriber-active",
-                        null,
-                        filterGetListSubscriberActive,
-                        DataResponse.class)
-                .map(resp -> {
-                    Optional<DataResponse> respOptional = (Optional<DataResponse>) resp;
-                    if (respOptional.isEmpty() || respOptional.get().getData() == null) {
-                        return new ArrayList<>();
-                    }
-
-                    Map<String, Object> dataMap =
-                            (Map<String, Object>) respOptional.get().getData();
-                    String dataJson = DataUtil.parseObjectToString(dataMap.get("data"));
-                    return DataUtil.parseStringToObject(
-                            dataJson, new TypeReference<List<Subscriber>>() {}, new ArrayList<>());
                 })
                 .onErrorResume(throwable -> Mono.just(new ArrayList<>()));
     }

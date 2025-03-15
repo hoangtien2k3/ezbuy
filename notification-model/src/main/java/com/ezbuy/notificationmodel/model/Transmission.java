@@ -16,9 +16,9 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Data
 public class Transmission extends EntityBase {
+
     @Id
     private String id;
-
     private String notificationId;
     private String receiver;
     private String email;

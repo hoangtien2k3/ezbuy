@@ -41,12 +41,6 @@ public class OrderController {
         return orderService.findDetail(orderId).map(ResponseEntity::ok);
     }
 
-    @PostMapping(UrlPaths.Order.PRE_ORDER)
-    @PreAuthorize("hasAnyAuthority('user')")
-    public Mono<ResponseEntity<DataResponse>> createPreOrder(@RequestBody CreatePreOrderRequest request) {
-        return orderService.createPreOrder(request).map(ResponseEntity::ok);
-    }
-
     @PostMapping(UrlPaths.Order.SYNC_ORDER)
     @PreAuthorize("hasAnyAuthority('system')")
     public Mono<ResponseEntity<DataResponse>> syncOrder(@RequestBody SyncOrderStateRequest request) {
@@ -86,12 +80,6 @@ public class OrderController {
     @PostMapping(UrlPaths.Order.ORDER_HISTORY)
     public Mono<ResponseEntity<DataResponse>> createOrderHistory(@RequestBody CreateOrderHistoryRequest request) {
         return orderService.createOrderHistory(request).map(ResponseEntity::ok);
-    }
-
-    @PostMapping(UrlPaths.Order.VALIDATE_CONNECT_FIRST)
-    @PreAuthorize("hasAnyAuthority('system')")
-    public Mono<ResponseEntity<DataResponse>> validateConnectFirst(@RequestBody ValidateConnectServiceRequest request) {
-        return orderService.validateConnectFirst(request).map(ResponseEntity::ok);
     }
 
     @GetMapping(UrlPaths.Order.CA_GET_GROUP_INFO)

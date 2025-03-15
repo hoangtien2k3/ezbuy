@@ -14,9 +14,9 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NotificationContent extends EntityBase {
+
     @Id
     private String id;
-
     private String title;
     private String subTitle;
     private String imageUrl;

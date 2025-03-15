@@ -12,21 +12,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class GetTransmissionByEmailAndFromToRequest {
     private String username;
-
     private String email;
-
     @JsonProperty("template_mail")
     private String templateMail;
-
     private String from;
-
     private String to;
-
     private Integer pageIndex;
-
     private Integer pageSize;
-
     private Integer limit;
-
     private String sort;
 }

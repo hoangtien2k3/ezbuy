@@ -28,7 +28,6 @@ public class PaymentClientImpl implements PaymentClient {
 
     @Qualifier("paymentClient")
     private final WebClient paymentClient;
-
     private final BaseRestClient baseRestClient;
 
     @Override

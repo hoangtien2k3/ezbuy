@@ -28,10 +28,9 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class AuthClientImpl implements AuthClient {
 
-    private final BaseRestClient baseRestClient;
-
     @Qualifier("authClient")
     private final WebClient authClient;
+    private final BaseRestClient baseRestClient;
 
     @Override
     public Mono<List<String>> getTrustedIdNoOrganization(String organizationId) {

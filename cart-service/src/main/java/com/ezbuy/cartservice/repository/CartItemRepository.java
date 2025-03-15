@@ -12,9 +12,7 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface CartItemRepository extends R2dbcRepository<CartItem, UUID> {
 
-    @Query(
-            value =
-                    "update cart_item set status = 0, update_by=:user, update_at = CURRENT_TIMESTAMP() where id = :cartItemId")
+    @Query(value = "update cart_item set status = 0, update_by=:user, update_at = CURRENT_TIMESTAMP() where id = :cartItemId")
     Mono<CartItem> deleteCartItem(String cartItemId, String user);
 
     @Query(
