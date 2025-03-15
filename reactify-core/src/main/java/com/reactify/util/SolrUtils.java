@@ -22,8 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 
@@ -32,8 +30,7 @@ import org.apache.commons.lang3.StringUtils;
  * standard Solr query parameters such as start, rows, q, and sort.
  */
 @Log4j2
-@Getter
-@Setter
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class SolrUtils {
 
     private Map<String, String> queryParams = new HashMap<>();
@@ -43,11 +40,35 @@ public class SolrUtils {
      */
     public static final List<String> ALLOW_PARAMS = List.of("start", "rows", "q", "sort");
 
+    /**
+     * The query parameter key used for search queries.
+     */
     public static final String QUERY_PARAM = "q";
+
+    /**
+     * The query parameter key used to specify the starting index for pagination.
+     */
     public static final String START_PARAM = "start";
+
+    /**
+     * The query parameter key used to specify the maximum number of results to
+     * return.
+     */
     public static final String LIMIT_PARAM = "rows";
+
+    /**
+     * The query parameter key used to specify the sorting criteria.
+     */
     public static final String SORT_PARAM = "sort";
+
+    /**
+     * The value used to specify ascending order in sorting.
+     */
     public static final String SORT_ASC = "ASC";
+
+    /**
+     * The value used to specify descending order in sorting.
+     */
     public static final String SORT_DESC = "desc";
 
     /**

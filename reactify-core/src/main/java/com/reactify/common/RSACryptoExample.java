@@ -39,7 +39,6 @@ import javax.crypto.Cipher;
  * dependencies.
  * </p>
  *
- * @author hoangtien2k3
  */
 public class RSACryptoExample {
 

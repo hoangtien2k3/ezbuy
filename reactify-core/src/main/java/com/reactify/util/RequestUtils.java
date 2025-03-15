@@ -25,6 +25,7 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
  *
  * @author hoangtien2k3
  */
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class RequestUtils {
 
     // Define constants for header names

@@ -34,6 +34,7 @@ import reactor.core.scheduler.Schedulers;
  * @author hoangtien2k3
  */
 @Component
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class Translator {
 
     private static final Locale defaultLocale = Locale.forLanguageTag("vi");

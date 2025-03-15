@@ -26,6 +26,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
  * static methods for various data-related operations.
  */
 @Slf4j
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class MessageUtils {
 
     private static final String BASE_NAME = "messages";

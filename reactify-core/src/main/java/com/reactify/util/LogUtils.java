@@ -36,6 +36,7 @@ import org.springframework.http.MediaType;
  * @author hoangtien2k3
  */
 @Slf4j
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class LogUtils {
 
     /**

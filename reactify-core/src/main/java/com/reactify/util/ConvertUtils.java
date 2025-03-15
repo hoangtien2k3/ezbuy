@@ -26,6 +26,7 @@ import org.apache.logging.log4j.Logger;
  * Utility class providing methods for string manipulation, number conversion,
  * and comparison operations.
  */
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class ConvertUtils {
 
     private static final Logger log = LogManager.getLogger(ConvertUtils.class);

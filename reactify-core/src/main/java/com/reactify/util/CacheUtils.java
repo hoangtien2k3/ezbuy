@@ -33,6 +33,7 @@ import reactor.core.publisher.Mono;
  * static methods for various data-related operations.
  */
 @Log4j2
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class CacheUtils {
 
     private static final String FIXED_KEY = "FIXED_KEY";

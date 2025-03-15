@@ -22,6 +22,7 @@ import org.springframework.security.oauth2.client.registration.ReactiveClientReg
  * Utility class for data manipulation and processing. This class contains
  * static methods for various data-related operations.
  */
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class ReactiveOAuth2Utils {
 
     /**

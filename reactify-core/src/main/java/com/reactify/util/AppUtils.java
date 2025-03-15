@@ -25,6 +25,7 @@ import reactor.core.scheduler.Schedulers;
  * static methods for various data-related operations.
  */
 @Slf4j
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class AppUtils {
 
     /**
