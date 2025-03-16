@@ -30,7 +30,6 @@ import org.apache.commons.lang3.StringUtils;
  * standard Solr query parameters such as start, rows, q, and sort.
  */
 @Log4j2
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class SolrUtils {
 
     private Map<String, String> queryParams = new HashMap<>();

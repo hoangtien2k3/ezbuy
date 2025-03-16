@@ -8,7 +8,6 @@ import com.ezbuy.authmodel.dto.response.*;
 import com.ezbuy.authmodel.model.UserProfile;
 import com.ezbuy.authservice.client.SettingClient;
 import com.ezbuy.authservice.config.KeycloakProvider;
-import com.ezbuy.authservice.repository.IndividualRepository;
 import com.ezbuy.authservice.repository.UserRepository;
 import com.ezbuy.authservice.service.UserService;
 import com.ezbuy.settingmodel.dto.AreaDTO;
@@ -48,6 +47,7 @@ public class UserServiceImpl implements UserService {
 
     @Value("${keycloak.realm}")
     public String realm;
+
     @Value("${minio.bucket}")
     public String mySignBucket;
 

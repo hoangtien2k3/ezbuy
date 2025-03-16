@@ -18,10 +18,6 @@ public class WebClientFactoryConfig {
 
     @Bean(name = "webClientFactory")
     public WebClientFactory webClientFactory() {
-        return new WebClientFactory(List.of(
-                keycloakClientProperties,
-                notiServiceProperties,
-                settingClientProperties
-        ));
+        return new WebClientFactory(List.of(keycloakClientProperties, notiServiceProperties, settingClientProperties));
     }
 }

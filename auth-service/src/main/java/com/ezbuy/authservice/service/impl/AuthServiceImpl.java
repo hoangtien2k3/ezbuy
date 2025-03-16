@@ -42,12 +42,10 @@ import java.security.SecureRandom;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.mina.util.Base64;
-import org.apache.poi.ss.formula.functions.T;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UserResource;
@@ -89,6 +87,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Value("${hashing-password.public-key}")
     private String publicKey;
+
     @Value("${keycloak.clientId}")
     private String clientId;
 
@@ -239,7 +238,7 @@ public class AuthServiceImpl implements AuthService {
                         && DecisionEffect.PERMIT.equals(policy.getStatus()));
     }
 
-    //    Function<? super Throwable, Mono<? extends BusinessException>>
+    // Function<? super Throwable, Mono<? extends BusinessException>>
     private Mono handleKeyCloakError(WebClientResponseException err) {
         String bodyResponse = err.getResponseBodyAsString();
         KeycloakErrorResponse errorResponse =
@@ -852,7 +851,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Mono<DataResponse<Map<String, String>>> confirmOTP(ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange) {
+    public Mono<DataResponse<Map<String, String>>> confirmOTP(
+            ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange) {
         String otp = DataUtil.safeTrim(confirmOTPRequest.getOtp());
         if (DataUtil.isNullOrEmpty(otp)) {
             return Mono.error(new BusinessException(ErrorCode.OtpErrorCode.OTP_EMPTY, "dto.otp.not.empty"));
@@ -861,10 +861,10 @@ public class AuthServiceImpl implements AuthService {
         String type = DataUtil.safeTrim(confirmOTPRequest.getType());
         return otpRepository.confirmOtp(email, type, otp, 1).flatMap(result -> {
             if (Boolean.FALSE.equals(result)) {
-                return Mono.error(new BusinessException(
-                        ErrorCode.OtpErrorCode.OTP_NOT_MATCH, "otp.not.match"));
+                return Mono.error(new BusinessException(ErrorCode.OtpErrorCode.OTP_NOT_MATCH, "otp.not.match"));
             }
-            return Mono.just(new DataResponse<>("success", Map.of("message", Translator.toLocaleVi("otp.success.match"))));
+            return Mono.just(
+                    new DataResponse<>("success", Map.of("message", Translator.toLocaleVi("otp.success.match"))));
         });
     }
 

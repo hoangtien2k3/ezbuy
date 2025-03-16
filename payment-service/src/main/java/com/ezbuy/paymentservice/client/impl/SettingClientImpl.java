@@ -29,6 +29,7 @@ public class SettingClientImpl implements SettingClient {
 
     @Qualifier("settingClient")
     private final WebClient settingClient;
+
     private final BaseRestClient baseRestClient;
 
     @Override

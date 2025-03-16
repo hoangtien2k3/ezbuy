@@ -17,18 +17,15 @@ package com.reactify.annotations.logging;
 
 import static com.reactify.constants.Constants.MAX_BYTE;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.reactify.factory.ObjectMapperFactory;
 import com.reactify.model.logging.LogField;
 import com.reactify.model.logging.LoggerDTO;
 import com.reactify.util.DataUtil;
 import com.reactify.util.RequestUtils;
 import com.reactify.util.TruncateUtils;
-
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -187,8 +184,7 @@ public class LoggerSchedule {
                 record.title(),
                 inputs,
                 resStr,
-                record.result())
-        );
+                record.result()));
     }
 
     /**

@@ -30,6 +30,7 @@ public class AuthClientImpl implements AuthClient {
 
     @Qualifier("authClient")
     private final WebClient authClient;
+
     private final BaseRestClient baseRestClient;
 
     @Override

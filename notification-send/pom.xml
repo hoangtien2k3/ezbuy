@@ -32,7 +32,7 @@
 		</dependency>
 		<!-- internal dependencies-->
 		<dependency>
-			<groupId>com.ezbuy.platform</groupId>
+			<groupId>io.github.hoangtien2k3</groupId>
 			<artifactId>reactify-core</artifactId>
 			<version>1.2.0</version>
 		</dependency>

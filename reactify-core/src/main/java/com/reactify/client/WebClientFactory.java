@@ -33,7 +33,6 @@ import java.time.Duration;
 import java.util.Base64;
 import java.util.List;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,24 +83,28 @@ import reactor.netty.transport.ProxyProvider;
 public class WebClientFactory implements InitializingBean {
     @Autowired
     private ApplicationContext applicationContext;
+
     @Autowired
     private ReactiveOAuth2AuthorizedClientManager authorizedClientManager;
 
     private List<WebClientProperties> webClients;
 
     /**
-     * Creates a default instance of {@code WebClientFactory} with no initial configuration.
-     * This constructor is typically used by Spring for dependency injection.
+     * Creates a default instance of {@code WebClientFactory} with no initial
+     * configuration. This constructor is typically used by Spring for dependency
+     * injection.
      */
-    public WebClientFactory() {
-    }
+    public WebClientFactory() {}
 
     /**
-     * Creates an instance of {@code WebClientFactory} with a specified list of {@code WebClientProperties}.
-     * This constructor allows pre-configuring the factory with properties that define how {@code WebClient} instances
-     * will be created.
+     * Creates an instance of {@code WebClientFactory} with a specified list of
+     * {@code WebClientProperties}. This constructor allows pre-configuring the
+     * factory with properties that define how {@code WebClient} instances will be
+     * created.
      *
-     * @param webClients a list of {@code WebClientProperties} containing configuration details for creating {@code WebClient} instances
+     * @param webClients
+     *            a list of {@code WebClientProperties} containing configuration
+     *            details for creating {@code WebClient} instances
      */
     public WebClientFactory(List<WebClientProperties> webClients) {
         this.webClients = webClients;

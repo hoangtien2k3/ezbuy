@@ -97,7 +97,8 @@ public class CacheAspect {
                 .onCacheMissResume((Mono<Object>) joinPoint.proceed(args))
                 .andWriteWith((k, sig) -> Mono.fromRunnable(() -> {
                     if (sig != null && sig.get() != null) {
-                        if (!(sig.get() instanceof Optional && ((Optional<?>) Objects.requireNonNull(sig.get())).isEmpty())) {
+                        if (!(sig.get() instanceof Optional
+                                && ((Optional<?>) Objects.requireNonNull(sig.get())).isEmpty())) {
                             cache.put(k, sig.get());
                         }
                     }

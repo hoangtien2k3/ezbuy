@@ -103,10 +103,8 @@ public class UtilServiceImpl implements UtilService {
     }
 
     private Mono<String> getAccessToken() {
-        return Mono.fromCallable(() -> keycloakProvider
-                .getInstance()
-                .tokenManager()
-                .getAccessTokenString());
+        return Mono.fromCallable(
+                () -> keycloakProvider.getInstance().tokenManager().getAccessTokenString());
     }
 
     // save role in 2 table individualOrgPermissionRepo va
@@ -119,8 +117,7 @@ public class UtilServiceImpl implements UtilService {
                         .flatMap(rs -> {
                             TokenUser tokenUser = new TokenUser();
                             tokenUser.setUsername("system");
-                            IndividualOrganizationPermissions individualOrg =
-                                    new IndividualOrganizationPermissions();
+                            IndividualOrganizationPermissions individualOrg = new IndividualOrganizationPermissions();
                             if (rs.isEmpty()) {
                                 individualOrg.setId(String.valueOf(UUID.randomUUID()));
                                 individualOrg.setIndividualId(individual.getId());

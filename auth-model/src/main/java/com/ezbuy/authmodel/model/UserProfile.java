@@ -20,6 +20,7 @@ public class UserProfile extends EntityBase implements Persistable<String> {
 
     @Id
     private String id;
+
     private String image;
     private String companyName;
     private String representative;

@@ -23,10 +23,9 @@
         <version>3.3.5</version>
         <relativePath/>
     </parent>
-<!--    <groupId>io.github.hoangtien2k3</groupId>-->
-    <groupId>com.ezbuy.platform</groupId>
+    <groupId>io.github.hoangtien2k3</groupId>
     <artifactId>reactify-core</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.5</version>
     <name>reactify-core</name>
     <description>Java library for developing reactive programming(reactor-core) backend systems in microservices</description>
     <url>https://github.com/hoangtien2k3/reactify-core</url>
@@ -82,7 +81,7 @@
         <maven-surefire-plugin.version>3.4.0</maven-surefire-plugin.version>
         <central-publishing-maven-plugin.version>0.6.0</central-publishing-maven-plugin.version>
         <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
-        <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
+        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <maven-javadoc-plugin.version>3.8.0</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <reactor-extra.version>3.5.2</reactor-extra.version>
@@ -229,8 +228,6 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
-                    <autoPublish>true</autoPublish>
-                    <waitUntil>published</waitUntil>
                 </configuration>
             </plugin>
             <plugin>
@@ -283,6 +280,13 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <gpgArguments>
+                        <arg>--batch</arg>
+                        <arg>--pinentry-mode</arg>
+                        <arg>loopback</arg>
+                    </gpgArguments>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>

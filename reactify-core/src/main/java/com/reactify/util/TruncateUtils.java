@@ -29,7 +29,6 @@ import org.springframework.util.MultiValueMap;
  * @author hoangtien2k3
  */
 @Slf4j
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class TruncateUtils {
 
     /**

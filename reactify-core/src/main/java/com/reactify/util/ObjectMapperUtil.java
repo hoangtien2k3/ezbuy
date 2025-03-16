@@ -38,7 +38,6 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class ObjectMapperUtil {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();

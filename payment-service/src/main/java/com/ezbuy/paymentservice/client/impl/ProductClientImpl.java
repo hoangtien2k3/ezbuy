@@ -27,6 +27,7 @@ public class ProductClientImpl implements ProductClient {
 
     @Qualifier("productClient")
     private final WebClient webClient;
+
     private final BaseRestClient baseRestClient;
 
     @Override

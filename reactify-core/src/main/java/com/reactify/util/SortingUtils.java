@@ -28,7 +28,6 @@ import lombok.extern.slf4j.Slf4j;
  * static methods for various data-related operations.
  */
 @Slf4j
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class SortingUtils {
 
     /**

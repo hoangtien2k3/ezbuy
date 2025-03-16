@@ -125,11 +125,29 @@ public class LoggerAspectUtils {
         var result = joinPoint.proceed();
         if (result instanceof Mono) {
             return logMonoResult(
-                    joinPoint, start, (Mono<Object>) result, newSpan, name, logType, actionType, logOutput, logInput, title);
+                    joinPoint,
+                    start,
+                    (Mono<Object>) result,
+                    newSpan,
+                    name,
+                    logType,
+                    actionType,
+                    logOutput,
+                    logInput,
+                    title);
         }
         if (result instanceof Flux) {
             return logFluxResult(
-                    joinPoint, start, (Flux<Object>) result, newSpan, name, logType, actionType, logOutput, logInput, title)
+                            joinPoint,
+                            start,
+                            (Flux<Object>) result,
+                            newSpan,
+                            name,
+                            logType,
+                            actionType,
+                            logOutput,
+                            logInput,
+                            title)
                     .collectList()
                     .map(list -> (Object) list);
         } else {

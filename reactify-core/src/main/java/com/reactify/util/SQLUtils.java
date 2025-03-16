@@ -21,7 +21,6 @@ import org.apache.commons.lang3.StringUtils;
  * Utility class for data manipulation and processing. This class contains
  * static methods for various data-related operations.
  */
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class SQLUtils {
 
     /**

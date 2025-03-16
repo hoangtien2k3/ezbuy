@@ -17,6 +17,7 @@ import org.springframework.data.relational.core.mapping.Table;
 public class Notification extends EntityBase {
     @Id
     private String id;
+
     private String sender;
     private String severity;
     private String notificationContentId;

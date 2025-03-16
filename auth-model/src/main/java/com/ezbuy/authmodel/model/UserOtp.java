@@ -22,16 +22,22 @@ public class UserOtp extends EntityBase implements Persistable<String> {
     @Id
     @Column("id")
     private String id;
+
     @Column("type")
     private String type;
+
     @Column("email")
     private String email;
+
     @Column("otp")
     private String otp;
+
     @Column("exp_time")
     private LocalDateTime expTime;
+
     @Column("tries")
     private Integer tries;
+
     @Column("status")
     private Integer status;
 

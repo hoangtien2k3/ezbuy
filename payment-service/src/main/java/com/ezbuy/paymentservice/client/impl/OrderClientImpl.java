@@ -23,6 +23,7 @@ public class OrderClientImpl implements OrderClient {
 
     @Qualifier("orderClient")
     private final WebClient orderClient;
+
     private final BaseRestClient baseRestClient;
     private final OrderClientProperties orderProperties;
 

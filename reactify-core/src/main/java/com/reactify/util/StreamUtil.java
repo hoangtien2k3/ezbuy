@@ -27,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author hoangtien2k3
  */
 @Slf4j
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class StreamUtil {
 
     /**

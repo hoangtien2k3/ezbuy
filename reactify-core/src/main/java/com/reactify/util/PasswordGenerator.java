@@ -26,7 +26,6 @@ import org.apache.commons.lang3.RandomStringUtils;
  *
  * @author hoangtien2k3
  */
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class PasswordGenerator {
 
     /**

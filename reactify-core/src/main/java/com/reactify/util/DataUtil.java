@@ -67,7 +67,6 @@ import reactor.core.publisher.Mono;
  * static methods for various data-related operations.
  */
 @Slf4j
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class DataUtil {
 
     /** Constant <code>FORMAT_YMD</code> */

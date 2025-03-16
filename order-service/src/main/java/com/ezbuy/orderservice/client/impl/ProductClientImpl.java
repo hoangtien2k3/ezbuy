@@ -2,7 +2,6 @@ package com.ezbuy.orderservice.client.impl;
 
 import com.ezbuy.orderservice.client.ProductClient;
 import com.ezbuy.productmodel.dto.FilterProductTemplateDTO;
-import com.ezbuy.productmodel.dto.request.FilterGetListSubscriberActive;
 import com.ezbuy.productmodel.dto.response.ProductOfferTemplateDTO;
 import com.ezbuy.settingmodel.model.Telecom;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -14,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,6 +31,7 @@ public class ProductClientImpl implements ProductClient {
 
     @Qualifier("productClient")
     private final WebClient productClient;
+
     private final BaseRestClient baseRestClient;
 
     @Override

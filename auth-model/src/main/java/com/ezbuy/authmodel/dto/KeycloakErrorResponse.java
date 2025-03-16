@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 public class KeycloakErrorResponse extends AccessToken {
     @JsonProperty("error")
     protected String error;
+
     @JsonProperty("error_description")
     protected String errorDescription;
 }

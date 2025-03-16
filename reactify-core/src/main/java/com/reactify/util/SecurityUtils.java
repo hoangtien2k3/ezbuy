@@ -37,7 +37,6 @@ import reactor.core.publisher.Mono;
  *
  * @author hoangtien2k3
  */
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class SecurityUtils {
 
     /**

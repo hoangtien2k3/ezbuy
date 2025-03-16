@@ -71,12 +71,9 @@ public class LoggerAspect {
      * client packages that should be logged for performance metrics.
      * </p>
      */
-    @Pointcut("execution(* com.reactify.*.controller..*(..)) || " +
-            "execution(* com.reactify.*.service..*(..)) || " +
-            "execution(* com.reactify.*.repository..*(..)) || " +
-            "execution(* com.reactify.*.client..*(..)) && " +
-            "!execution(* org.springframework.boot.actuate..*(..)) && " +
-            "!within(com.reactify.*.config..*)")
+    @Pointcut("execution(* com.reactify.*.controller..*(..)) || " + "execution(* com.reactify.*.service..*(..)) || "
+            + "execution(* com.reactify.*.repository..*(..)) || " + "execution(* com.reactify.*.client..*(..)) && "
+            + "!execution(* org.springframework.boot.actuate..*(..)) && " + "!within(com.reactify.*.config..*)")
     public void performancePointCut() {}
 
     /**

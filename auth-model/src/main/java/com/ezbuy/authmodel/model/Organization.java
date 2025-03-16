@@ -18,6 +18,7 @@ public class Organization extends EntityBase {
 
     @Id
     private String id;
+
     private String name;
     private String image;
     private String businessType;
