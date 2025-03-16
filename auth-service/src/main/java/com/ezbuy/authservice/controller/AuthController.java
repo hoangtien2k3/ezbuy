@@ -121,16 +121,6 @@ public class AuthController {
         return authService.getAllUserId();
     }
 
-    @PostMapping(UrlPaths.Auth.CREATE_TEST_PERFORMANCE_USER)
-    @PreAuthorize("hasAnyAuthority('system')")
-    public Mono<ResponseEntity<DataResponse<Void>>> confirmOtpAndCreateAccount(
-            @RequestParam(name = "startIndex") Integer startIndex,
-            @RequestParam(name = "numAccount") Integer numAccount) {
-        return authService
-                .createUserTestPerformence(startIndex, numAccount)
-                .then(Mono.fromCallable(() -> ResponseEntity.ok(new DataResponse<>("success", null))));
-    }
-
     @GetMapping(UrlPaths.Auth.GET_TWO_WAY_PASSWORD)
     @PreAuthorize("hasAnyAuthority('system')")
     public Mono<ResponseEntity<DataResponse<GetTwoWayPasswordResponse>>> getTwoWayPassword(

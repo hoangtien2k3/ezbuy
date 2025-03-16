@@ -1,9 +1,5 @@
 package com.ezbuy.authservice.service.impl;
 
-import static com.ezbuy.authmodel.constants.AuthConstants.ClientName.EZBUY_CLIENT;
-import static com.reactify.constants.Constants.ActionUser.SYSTEM;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
 import com.ezbuy.authmodel.constants.AuthConstants;
 import com.ezbuy.authmodel.constants.ErrorCode;
 import com.ezbuy.authmodel.dto.AccessToken;
@@ -11,7 +7,6 @@ import com.ezbuy.authmodel.dto.KeycloakErrorResponse;
 import com.ezbuy.authmodel.dto.request.*;
 import com.ezbuy.authmodel.dto.response.GetActionLoginReportResponse;
 import com.ezbuy.authmodel.dto.response.GetTwoWayPasswordResponse;
-import com.ezbuy.authmodel.dto.response.IndividualDTO;
 import com.ezbuy.authmodel.dto.response.Permission;
 import com.ezbuy.authmodel.model.*;
 import com.ezbuy.authservice.client.KeyCloakClient;
@@ -34,7 +29,6 @@ import com.reactify.constants.Constants;
 import com.reactify.constants.Regex;
 import com.reactify.exception.BusinessException;
 import com.reactify.model.TokenUser;
-import com.reactify.model.UserDTO;
 import com.reactify.model.response.DataResponse;
 import com.reactify.util.*;
 import jakarta.ws.rs.core.Response;
@@ -45,9 +39,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.mina.util.Base64;
 import org.keycloak.admin.client.CreatedResponseUtil;
-import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
@@ -83,7 +75,6 @@ public class AuthServiceImpl implements AuthService {
     private final UserCredentialRepo userCredentialRepo;
     private final CipherManager cipherManager;
     private final ActionLogRepository actionLogRepository;
-    private final KeycloakProvider keycloakProvider;
 
     @Value("${hashing-password.public-key}")
     private String publicKey;
@@ -95,28 +86,6 @@ public class AuthServiceImpl implements AuthService {
     public Mono<Optional<AccessToken>> getToken(LoginRequest loginRequest) {
         return keyCloakClient
                 .getToken(loginRequest)
-                .onErrorResume(WebClientResponseException.class, this::handleKeyCloakError);
-    }
-
-    private Mono<Optional<AccessToken>> getTokenWithClientLogin(
-            ClientLogin clientLogin, ServerWebExchange serverWebExchange) {
-        return keyCloakClient
-                .getToken(clientLogin)
-                .flatMap(accessToken -> {
-                    if (EZBUY_CLIENT.equals(clientLogin.getClientId()) && accessToken.isPresent()) {
-                        // get user info
-                        UserDTO userDTO = SecurityUtils.getUserByAccessToken(
-                                accessToken.get().getToken());
-                        if (userDTO != null) {
-                            AppUtils.runHiddenStream(saveLog(
-                                    userDTO.getId(),
-                                    userDTO.getUsername(),
-                                    ActionLogType.LOGIN,
-                                    serverWebExchange.getRequest()));
-                        }
-                    }
-                    return Mono.just(accessToken);
-                })
                 .onErrorResume(WebClientResponseException.class, this::handleKeyCloakError);
     }
 
@@ -166,13 +135,9 @@ public class AuthServiceImpl implements AuthService {
     public Mono<List<Permission>> getPermission(String clientId, String orgId, String userId) {
         return indOrgPermissionRepo.getOrgIds(userId).flatMap(orgNumber -> {
             log.debug("Organization number for user {}: {}", userId, orgNumber);
-
-            // orgNumber = 1 => 1 doanh nghiệp
-            // orgNumber = 0 => owner đấu nối từ mbccs
             if (orgNumber < 2) {
                 return getPermission(clientId);
             }
-
             return kcProvider
                     .getClient(clientId)
                     .switchIfEmpty(
@@ -265,93 +230,6 @@ public class AuthServiceImpl implements AuthService {
         return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorDescription));
     }
 
-    private void validateRepresentative(IndividualDTO individualDTO) {
-        if (DataUtil.isNullOrEmpty(individualDTO.getName())) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "individual.representative.name.null");
-        }
-        if (DataUtil.isNullOrEmpty(individualDTO.getIdentifies())) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "individual.representative.identify.null");
-        }
-    }
-
-    private String getPrimaryIdNo(List<TenantIdentify> identifies) {
-        return identifies.stream()
-                .filter(identify -> Constants.Activation.ACTIVE.equals(identify.getPrimaryIdentify()))
-                .findFirst()
-                .map(TenantIdentify::getIdNo)
-                .orElse(null);
-    }
-
-    private List<TenantIdentify> settingIdentifies(List<TenantIdentify> identifies) {
-        if (DataUtil.isNullOrEmpty(identifies)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "danh.sach.giay.to.khong.hop.le");
-        }
-
-        Map<String, Long> idTypeCounts = identifies.stream()
-                .peek(this::validateIdentifyOrg)
-                .collect(Collectors.groupingBy(TenantIdentify::getIdType, Collectors.counting()));
-
-        long mstCount = idTypeCounts.getOrDefault(AuthConstants.IDType.MST, 0L);
-        long gpkdCount = idTypeCounts.getOrDefault(AuthConstants.IDType.GPKD, 0L);
-
-        if (mstCount > 1) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "identify.mst.over.size");
-        }
-        if (gpkdCount > 1) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "identify.gpkd.over.size");
-        }
-        if (mstCount == 0 && gpkdCount == 0) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "indentify.invalid");
-        }
-
-        String primaryIdentifyType = mstCount == 1 ? AuthConstants.IDType.MST : AuthConstants.IDType.GPKD;
-
-        return identifies.stream()
-                .peek(identify -> {
-                    identify.setPrimaryIdentify(
-                            identify.getIdType().equals(primaryIdentifyType)
-                                    ? Constants.Activation.ACTIVE
-                                    : Constants.Activation.INACTIVE);
-                    identify.setTrustStatus(Constants.Activation.ACTIVE);
-                })
-                .collect(Collectors.toList());
-    }
-
-    private void validateIdentifyOrg(TenantIdentify tenantIdentify) {
-        if (DataUtil.isNullOrEmpty(tenantIdentify.getIdType())) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "identify.id.type.invalid");
-        }
-        if (DataUtil.isNullOrEmpty(tenantIdentify.getIdNo())) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "identify.id.no.invalid");
-        }
-    }
-
-    private Map<String, String> validateAndSetPrimaryIdentifies(List<TenantIdentify> identifies) {
-        Map<String, String> identifyMap = new HashMap<>();
-        if (identifies == null || identifies.isEmpty()) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "danh.sach.giay.to.khong.hop.le");
-        }
-        for (TenantIdentify identify : identifies) {
-            String idType = identify.getIdType();
-            String idNo = identify.getIdNo();
-            if (AuthConstants.IDType.MST.equalsIgnoreCase(idType)
-                    || AuthConstants.IDType.GPKD.equalsIgnoreCase(idType)) {
-                String existedValue = identifyMap.get(idType);
-                if (existedValue != null) {
-                    throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "khong.xac.dinh.duoc.so.giay.to");
-                }
-                identifyMap.put(idType, idNo);
-            } else {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "loai.giay.to.khong.duoc.ho.tro");
-            }
-        }
-        // validate just only: MST & GPKD
-        if (identifyMap.keySet().size() == 0) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "danh.sach.giay.to.khong.hop.le");
-        }
-        return identifyMap;
-    }
-
     @Override
     @Transactional
     public Mono<UserOtp> signUp(SignupRequest signupRequest) {
@@ -367,44 +245,30 @@ public class AuthServiceImpl implements AuthService {
         CreateNotificationDTO createNotificationDTO = createNotificationDTO(
                 otpValue,
                 Translator.toLocaleVi("email.title.signup"),
-                Constants.TemplateMail.SIGN_UP,
+                AuthConstants.TemplateMail.SIGN_UP,
                 ReceiverDataDTO.builder().email(requestEmail).build(),
                 null);
         return otpRepository.currentTimeDB().flatMap(localDateTime -> {
             UserOtp otp = UserOtp.builder()
                     .id(String.valueOf(UUID.randomUUID()))
                     .otp(otpValue)
-                    .createBy(SYSTEM)
-                    .updateBy(SYSTEM)
+                    .createBy(AuthConstants.RoleName.SYSTEM)
+                    .updateBy(AuthConstants.RoleName.SYSTEM)
                     .email(requestEmail)
                     .tries(0)
-                    .expTime(localDateTime.plusMinutes(Constants.Otp.EXP_MINUTE))
-                    .type(Constants.Otp.REGISTER)
+                    .expTime(localDateTime.plusMinutes(AuthConstants.Otp.EXP_MINUTE))
+                    .type(AuthConstants.Otp.REGISTER)
                     .build();
-            AppUtils.runHiddenStream(otpRepository.disableOtp(requestEmail, Constants.Otp.REGISTER, SYSTEM));
+            AppUtils.runHiddenStream(otpRepository.disableOtp(requestEmail, AuthConstants.Otp.REGISTER, AuthConstants.RoleName.SYSTEM));
             AppUtils.runHiddenStream(generateOtpAndSave(otp));
-            return notiServiceClient
-                    .insertTransmission(createNotificationDTO)
-                    .flatMap(objects -> {
-                        if (objects.isPresent()
-                                && ErrorCode.ResponseErrorCode.ERROR_CODE_SUCCESS.equals(
-                                        objects.get().getErrorCode())
-                                && !DataUtil.isNullOrEmpty(objects.get().getMessage())) {
-                            return Mono.just(otp);
-                        }
-                        return Mono.error(new BusinessException(
-                                CommonErrorCode.INVALID_PARAMS,
-                                (objects.isPresent()) ? objects.get().getMessage() : "params.invalid"));
-                    })
-                    .onErrorResume(throwable -> Mono.error(
-                            new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "noti.service.error")));
+            return insertTransmission(createNotificationDTO, otp);
         });
     }
 
     private CreateNotificationDTO createNotificationDTO(
             String subTitle, String title, String template, ReceiverDataDTO data, String externalData) {
         CreateNotificationDTO createNotificationDTO = new CreateNotificationDTO();
-        createNotificationDTO.setSender(SYSTEM);
+        createNotificationDTO.setSender(AuthConstants.RoleName.SYSTEM);
         createNotificationDTO.setSeverity(AuthConstants.Notification.SEVERITY);
         createNotificationDTO.setTemplateMail(template);
         createNotificationDTO.setNotiContentDTO(NotiContentDTO.builder()
@@ -438,7 +302,7 @@ public class AuthServiceImpl implements AuthService {
         CreateNotificationDTO createNotificationDTO = createNotificationDTO(
                 otpValue,
                 Translator.toLocaleVi("email.title.forgot.password"),
-                Constants.TemplateMail.FORGOT_PASSWORD,
+                AuthConstants.TemplateMail.FORGOT_PASSWORD,
                 ReceiverDataDTO.builder()
                         .userId(user.getId())
                         .email(requestEmail)
@@ -450,33 +314,39 @@ public class AuthServiceImpl implements AuthService {
                     UserOtp otpBuild = UserOtp.builder()
                             .id(String.valueOf(UUID.randomUUID()))
                             .otp(otpValue)
-                            .createBy(SYSTEM)
-                            .updateBy(SYSTEM)
+                            .createBy(AuthConstants.RoleName.SYSTEM)
+                            .updateBy(AuthConstants.RoleName.SYSTEM)
                             .tries(0)
                             .status(Constants.Activation.ACTIVE)
                             .email(requestEmail)
-                            .expTime(time.plusMinutes(Constants.Otp.EXP_MINUTE))
-                            .type(Constants.Otp.FORGOT_PASSWORD)
+                            .expTime(time.plusMinutes(AuthConstants.Otp.EXP_MINUTE))
+                            .type(AuthConstants.Otp.FORGOT_PASSWORD)
                             .build();
                     AppUtils.runHiddenStream(
-                            otpRepository.disableOtp(requestEmail, Constants.Otp.FORGOT_PASSWORD, SYSTEM));
+                            otpRepository.disableOtp(requestEmail, AuthConstants.Otp.FORGOT_PASSWORD, AuthConstants.RoleName.SYSTEM));
                     AppUtils.runHiddenStream(generateOtpAndSave(otpBuild));
-                    return notiServiceClient
-                            .insertTransmission(createNotificationDTO)
-                            .flatMap(objects -> {
-                                if (objects.isPresent()
-                                        && ErrorCode.ResponseErrorCode.ERROR_CODE_SUCCESS.equals(
-                                                objects.get().getErrorCode())
-                                        && !DataUtil.isNullOrEmpty(objects.get().getMessage())) {
-                                    return Mono.just(otpBuild);
-                                }
-                                return Mono.error(new BusinessException(
-                                        CommonErrorCode.INVALID_PARAMS,
-                                        (objects.isPresent()) ? objects.get().getMessage() : "params.invalid"));
-                            });
+                    return insertTransmission(createNotificationDTO, otpBuild);
                 })
                 .onErrorResume(throwable ->
                         Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "noti.service.error")));
+    }
+
+    private Mono<UserOtp> insertTransmission(CreateNotificationDTO createNotificationDTO, UserOtp userOtp) {
+        return notiServiceClient
+                .insertTransmission(createNotificationDTO)
+                .flatMap(objects -> {
+                    if (objects.isPresent()
+                            && ErrorCode.ResponseErrorCode.ERROR_CODE_SUCCESS.equals(
+                            objects.get().getErrorCode())
+                            && !DataUtil.isNullOrEmpty(objects.get().getMessage())) {
+                        return Mono.just(userOtp);
+                    }
+                    return Mono.error(new BusinessException(
+                            CommonErrorCode.INVALID_PARAMS,
+                            (objects.isPresent()) ? objects.get().getMessage() : "params.invalid"));
+                })
+                .onErrorResume(throwable -> Mono.error(
+                        new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "noti.service.error")));
     }
 
     private Mono<UserOtp> generateOtpAndSave(UserOtp otp) {
@@ -489,10 +359,6 @@ public class AuthServiceImpl implements AuthService {
 
     private boolean isExistedEmail(String email) {
         return !kcProvider.getRealmResource().users().searchByEmail(email, true).isEmpty();
-    }
-
-    private Integer countAccountByEmail(String email) {
-        return kcProvider.getRealmResource().users().searchByEmail(email, true).size();
     }
 
     private boolean isExistedUsername(String username) {
@@ -520,7 +386,7 @@ public class AuthServiceImpl implements AuthService {
         RoleRepresentation userRealmRole = kcProvider
                 .getRealmResource()
                 .roles()
-                .get(Constants.RoleName.USER)
+                .get(AuthConstants.RoleName.USER)
                 .toRepresentation();
         userResource.roles().realmLevel().add(Collections.singletonList(userRealmRole));
         // get and add role 'user' for ezbuy-client
@@ -535,28 +401,10 @@ public class AuthServiceImpl implements AuthService {
                 .clients()
                 .get(clientIdOfHub)
                 .roles()
-                .get(Constants.RoleName.USER)
+                .get(AuthConstants.RoleName.USER)
                 .toRepresentation();
         userResource.roles().clientLevel(clientIdOfHub).add(Collections.singletonList(adminRoleWebclient));
         return userId;
-    }
-
-    public void checkAssignedRoles() {
-        Keycloak keycloak = keycloakProvider.getInstance();
-        String serviceAccountUserId = keycloak.realm(keycloakProvider.getRealm())
-                .clients()
-                .findByClientId(keycloakProvider.getClientID())
-                .getFirst()
-                .getClientId();
-
-        List<RoleRepresentation> assignedRealmRoles = keycloak.realm(keycloakProvider.getRealm())
-                .users()
-                .get(serviceAccountUserId)
-                .roles()
-                .realmLevel()
-                .listEffective();
-
-        assignedRealmRoles.forEach(role -> System.out.println("Assigned role: " + role.getName()));
     }
 
     @Override
@@ -564,10 +412,6 @@ public class AuthServiceImpl implements AuthService {
             ResetPasswordRequest resetPasswordRequest, ServerWebExchange serverWebExchange) {
         String requestEmail = DataUtil.safeTrim(resetPasswordRequest.getEmail());
         String requestOtp = DataUtil.safeTrim(resetPasswordRequest.getOtp());
-        // if (!ValidateUtils.validateRegex(requestEmail, Regex.EMAIL_REGEX)) {
-        // return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS,
-        // "dto.email.invalid"));
-        // }
         if (!requestOtp.matches(Regex.OTP_REGEX)) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "dto.otp.invalid"));
         }
@@ -585,7 +429,7 @@ public class AuthServiceImpl implements AuthService {
         }
         UserRepresentation user = listUser.getFirst();
         return otpRepository
-                .confirmOtp(user.getEmail(), Constants.Otp.FORGOT_PASSWORD, requestOtp, 1)
+                .confirmOtp(user.getEmail(), AuthConstants.Otp.FORGOT_PASSWORD, requestOtp, 1)
                 .flatMap(result -> {
                     if (Boolean.FALSE.equals(result)) {
                         return Mono.error(new BusinessException(ErrorCode.OtpErrorCode.OTP_NOT_MATCH, "otp.not.match"));
@@ -596,7 +440,6 @@ public class AuthServiceImpl implements AuthService {
                     passwordCred.setTemporary(false);
                     passwordCred.setType(CredentialRepresentation.PASSWORD);
                     passwordCred.setValue(resetPasswordRequest.getPassword());
-
                     userResource.resetPassword(passwordCred);
 
                     var saveUserCredential = userCredentialRepo
@@ -626,7 +469,7 @@ public class AuthServiceImpl implements AuthService {
                                 return userCredentialRepo.save(userCredential);
                             });
                     var saveDisableOtp = AppUtils.insertData(
-                            otpRepository.disableOtp(user.getEmail(), Constants.Otp.FORGOT_PASSWORD, SYSTEM));
+                            otpRepository.disableOtp(user.getEmail(), AuthConstants.Otp.FORGOT_PASSWORD, AuthConstants.RoleName.SYSTEM));
                     return Mono.zip(saveUserCredential, saveDisableOtp)
                             .switchIfEmpty(Mono.error(new BusinessException(
                                     CommonErrorCode.INTERNAL_SERVER_ERROR, "update.user-credential-or-user-otp.error")))
@@ -726,7 +569,7 @@ public class AuthServiceImpl implements AuthService {
         if (!password.matches(Regex.PASSWORD_REGEX)) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "dto.password.invalid"));
         }
-        return otpRepository.confirmOtp(email, Constants.Otp.REGISTER, otp, 1).flatMap(isConfirmOtp -> {
+        return otpRepository.confirmOtp(email, AuthConstants.Otp.REGISTER, otp, 1).flatMap(isConfirmOtp -> {
             if (!isConfirmOtp) {
                 return Mono.error(new BusinessException(ErrorCode.OtpErrorCode.OTP_NOT_MATCH, "otp.not.match"));
             }
@@ -771,7 +614,7 @@ public class AuthServiceImpl implements AuthService {
         var saveUserCredential = userCredentialRepo.save(userCredential);
         return Mono.zip(saveIndividual, saveUserCredential)
                 .flatMap(rs -> otpRepository
-                        .disableOtp(username, Constants.Otp.REGISTER, SYSTEM)
+                        .disableOtp(username, AuthConstants.Otp.REGISTER, AuthConstants.RoleName.SYSTEM)
                         .doOnError(err -> log.error("Disable OTP failed ", err))
                         .thenReturn(rs.getT1()))
                 .onErrorResume(error -> {
@@ -786,7 +629,7 @@ public class AuthServiceImpl implements AuthService {
         Set<UserRepresentation> set = kcProvider
                 .getRealmResource()
                 .roles()
-                .get(Constants.RoleName.USER)
+                .get(AuthConstants.RoleName.USER)
                 .getRoleUserMembers();
         for (UserRepresentation u : set) {
             if (Boolean.TRUE.equals(u.isEnabled())) {
@@ -794,18 +637,6 @@ public class AuthServiceImpl implements AuthService {
             }
         }
         return Mono.just(list);
-    }
-
-    @Override
-    @Transactional
-    public Mono<Void> createUserTestPerformence(int startIndex, int numAccount) {
-        for (int i = 0; i < numAccount; i++) {
-            String email = "hoangtien2k3qx1" + startIndex + "@gmail.com";
-            String password = "tienha@!@#";
-            createUserInKeyCloak(email, password, email, EMPTY);
-            startIndex++;
-        }
-        return Mono.empty();
     }
 
     @Override
@@ -881,44 +712,20 @@ public class AuthServiceImpl implements AuthService {
                     .type(type)
                     .email(email)
                     .otp(otpValue)
-                    .expTime(localDateTime.plusMinutes(Constants.Otp.EXP_OTP_AM_MINUTE))
+                    .expTime(localDateTime.plusMinutes(AuthConstants.Otp.EXP_OTP_AM_MINUTE))
                     .tries(0)
                     .status(1)
-                    .createBy(Constants.RoleName.SYSTEM)
-                    .updateBy(Constants.RoleName.SYSTEM)
+                    .createBy(AuthConstants.RoleName.SYSTEM)
+                    .updateBy(AuthConstants.RoleName.SYSTEM)
                     .newOtp(true)
                     .build();
-            var disableOtpMono = AppUtils.insertData(otpRepository.disableOtp(email, type, Constants.RoleName.SYSTEM));
+            var disableOtpMono = AppUtils.insertData(otpRepository.disableOtp(email, type, AuthConstants.RoleName.SYSTEM));
             var saveOtpMono = AppUtils.insertData(otpRepository.save(otp));
             return Mono.zip(disableOtpMono, saveOtpMono)
                     .map(tuple -> new DataResponse<>("success", otpValue))
                     .onErrorResume(throwable -> Mono.error(
                             new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, throwable.getMessage())));
         });
-    }
-
-    private String encodeBase64String(String input) {
-        if (DataUtil.isNullOrEmpty(input)) {
-            return EMPTY;
-        }
-        try {
-            Base64 base64 = new Base64();
-            // com.nimbusds.jose.util.Base64.encode(rawHmac);
-            return new String(base64.encode(input.getBytes()));
-        } catch (Exception e) {
-            return EMPTY;
-        }
-    }
-
-    private Mono<DataResponse> validateConfig(Optional<DataResponse> rs) {
-        if (rs.isEmpty()) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "settingClient.not.found"));
-        }
-        DataResponse dataResponse = rs.get();
-        if (!DataUtil.isNullOrEmpty(dataResponse.getErrorCode())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "settingClient.not.found"));
-        }
-        return Mono.just(dataResponse);
     }
 
     // generate otp value random

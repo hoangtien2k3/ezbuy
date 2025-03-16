@@ -81,6 +81,7 @@ import reactor.netty.transport.ProxyProvider;
 @Slf4j
 @Data
 public class WebClientFactory implements InitializingBean {
+
     @Autowired
     private ApplicationContext applicationContext;
 

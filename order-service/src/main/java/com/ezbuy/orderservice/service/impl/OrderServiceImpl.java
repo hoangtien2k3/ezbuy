@@ -1,6 +1,5 @@
 package com.ezbuy.orderservice.service.impl;
 
-import static com.ezbuy.authmodel.constants.AuthConstants.MySign.SIGH_HASH_SUCCESS;
 import static com.ezbuy.ordermodel.constants.Constants.*;
 import static com.ezbuy.ordermodel.constants.Constants.Actor.SYSTEM;
 import static com.ezbuy.ordermodel.constants.Constants.CharacteristicKey.SUB_ISDN;
@@ -1742,7 +1741,7 @@ public class OrderServiceImpl implements OrderService {
             if (primaryIdentify.isEmpty()) {
                 throw new BusinessException(ErrorCode.ReNew.TRUST_MST_01, "organization.primary.empty");
             }
-            if (!SIGH_HASH_SUCCESS.equals(primaryIdentify.get().getTrustStatus())) {
+            if (!Integer.valueOf(1).equals(primaryIdentify.get().getTrustStatus())) {
                 throw new BusinessException(ErrorCode.ReNew.TRUST_MST_02, "organization.not.trusted");
             }
             return primaryIdentify.get().getIdNo();

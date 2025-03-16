@@ -1,5 +1,6 @@
 package com.ezbuy.authservice.service.impl;
 
+import com.ezbuy.authmodel.constants.AuthConstants;
 import com.ezbuy.authmodel.dto.request.EmployeePermissionRequest;
 import com.ezbuy.authmodel.dto.request.JobAddRoleAdminForOldUserRequest;
 import com.ezbuy.authmodel.model.Individual;
@@ -131,7 +132,7 @@ public class UtilServiceImpl implements UtilService {
                                 return individualOrgPermissionRepo
                                         .save(individualOrg)
                                         .flatMap(data -> permissionPolicyService.createPermissionPolicy(
-                                                Constants.PERMISSION_TYPE.ROLE,
+                                                AuthConstants.PERMISSION_TYPE.ROLE,
                                                 employeePr.getRoleId(),
                                                 employeePr.getRoleCode(),
                                                 employeePr.getPolicyId(),
@@ -141,7 +142,7 @@ public class UtilServiceImpl implements UtilService {
                             }
                             individualOrg.setId(rs.getFirst());
                             return permissionPolicyService.createPermissionPolicy(
-                                    Constants.PERMISSION_TYPE.ROLE,
+                                    AuthConstants.PERMISSION_TYPE.ROLE,
                                     employeePr.getRoleId(),
                                     employeePr.getRoleCode(),
                                     employeePr.getPolicyId(),

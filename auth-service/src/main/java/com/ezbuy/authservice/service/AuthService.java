@@ -166,18 +166,6 @@ public interface AuthService {
     Mono<List<String>> getAllUserId();
 
     /**
-     * Creates test performance users starting from the given index and number of
-     * accounts.
-     *
-     * @param startIndex
-     *            the starting index for creating test users
-     * @param numAccount
-     *            the number of test users to create
-     * @return a Mono indicating when the test user creation is complete
-     */
-    Mono<Void> createUserTestPerformence(int startIndex, int numAccount);
-
-    /**
      * Retrieves the two-way password for the given request.
      *
      * @param request

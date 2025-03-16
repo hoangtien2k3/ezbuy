@@ -81,6 +81,7 @@ import reactor.util.context.Context;
  */
 @Component
 public class PerformanceLogFilter implements WebFilter, Ordered {
+
     private final Tracer tracer;
     private static final Logger logPerf = LoggerFactory.getLogger("perfLogger");
     private static final Logger reqResLog = LoggerFactory.getLogger("reqResLogger");
