@@ -63,6 +63,12 @@
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>3.4.4</version>
                 <configuration>
+                    <from>
+                        <image>amazoncorretto:21.0.3</image>
+                    </from>
+                    <to>
+                        <image>hoangtien2k3/payment-service:latest</image>
+                    </to>
                     <container>
                         <jvmFlags>
                             <jvmFlag>-Dspring.profiles.active=dev</jvmFlag>
