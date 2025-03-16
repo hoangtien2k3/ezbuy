@@ -20,7 +20,7 @@ spring:
 
   #connect db r2dbc
   r2dbc:
-    url: r2dbc:postgresql://localhost:5434/auth
+    url: r2dbc:postgresql://postgres:5434/auth
     username: admin
     password: admin
     pool:
@@ -58,7 +58,7 @@ spring:
 client:
   #keycloak
   keycloak:
-    address: http://localhost:8080/realms/ezbuy-server/protocol/openid-connect
+    address: http://keycloak:8080/realms/ezbuy-server/protocol/openid-connect
     name: keycloak
     auth:
       client-id: ezbuy-client
@@ -197,7 +197,7 @@ keycloak:
   clientId: ezbuy-client
   clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
   realm: ezbuy-server
-  serverUrl: http://localhost:8080
+  serverUrl: http://keycloak:8080
   grantType: password
   host: localhost
 

@@ -62,6 +62,13 @@
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>3.4.4</version>
+                <configuration>
+                    <container>
+                        <jvmFlags>
+                            <jvmFlag>-Dspring.profiles.active=dev</jvmFlag>
+                        </jvmFlags>
+                    </container>
+                </configuration>
             </plugin>
         </plugins>
     </build>

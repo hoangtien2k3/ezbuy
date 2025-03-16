@@ -300,6 +300,7 @@ services:
   kong-database:
     image: postgres:13
     container_name: kong-database
+    restart: always
     environment:
       POSTGRES_USER: kong
       POSTGRES_DB: kong
@@ -326,6 +327,7 @@ services:
   kong-gateway:
     image: kong/kong-gateway:3.8.1.0
     container_name: kong-gateway
+    restart: always
     depends_on:
       - kong-database
     environment:
@@ -353,22 +355,44 @@ services:
     networks:
       - ezbuy-network
 
-  #mariadb
-#  mariadb:
-#    image: mariadb:latest
-#    container_name: mariadb
-#    restart: alway
-#    ports:
-#      - "9005:3306"
-#    environment:
-#      MYSQL_ROOT_PASSWORD: root
-#      MYSQL_DATABASE: sme_ezbuy
-#      MYSQL_USER: admin
-#      MYSQL_PASSWORD: admin
-#    volumes:
-#      - mariadb:/var/lib/mysql
-#    networks:
-#      - ezbuy-network
+  #portainer
+  portainer:
+    image: portainer/portainer-ce:2.27.1
+    container_name: portainer
+    restart: always
+    ports:
+      - "9999:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - ezbuy-network
+
+  #auth-service
+  auth-service:
+    build: ./auth-service
+    image: hoangtien2k3/auth-service:latest
+    environment:
+      - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/auth
+      - SPRING_R2DBC_USERNAME
+      - SPRING_R2DBC_PASSWORD
+      - KEYCLOAK_SERVERURL
+      - KEYCLOAK_REALM
+      - KEYCLOAK_CLIENTID
+      - KEYCLOAK_CLIENTSECRET
+      - KEYCLOAK_GRANTTYPE
+      - CLIENT_KEYCLOAK_ADDRESS
+      - MINIO_BASEURL
+      - MINIO_PUBLICURL
+      - MINIO_ACCESSKEY
+      - MINIO_SECRETKEY
+      - MINIO_BUCKET
+    volumes:
+      - ./deployment/app-config:/app-config
+    ports:
+      - "8089:8089"
+    networks:
+      - ezbuy-network
 
 # networks:
 networks:
@@ -390,4 +414,4 @@ volumes:
   elasticsearch:
   redis:
   redis_insight:
-#  mariadb:
+  portainer_data:

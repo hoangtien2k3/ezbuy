@@ -86,15 +86,13 @@
 				<groupId>com.google.cloud.tools</groupId>
 				<artifactId>jib-maven-plugin</artifactId>
 				<version>3.4.4</version>
-				<executions>
-					<execution>
-						<id>build-tar</id>
-						<phase>package</phase>
-						<goals>
-							<goal>buildTar</goal>
-						</goals>
-					</execution>
-				</executions>
+				<configuration>
+					<container>
+						<jvmFlags>
+							<jvmFlag>-Dspring.profiles.active=dev</jvmFlag>
+						</jvmFlags>
+					</container>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
