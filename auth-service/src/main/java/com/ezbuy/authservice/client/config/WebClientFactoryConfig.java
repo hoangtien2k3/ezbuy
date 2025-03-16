@@ -6,10 +6,8 @@ import com.ezbuy.authservice.client.properties.SettingClientProperties;
 import com.reactify.client.WebClientFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientManager;
 
 @Configuration
 @RequiredArgsConstructor
@@ -19,10 +17,7 @@ public class WebClientFactoryConfig {
     private final SettingClientProperties settingClientProperties;
 
     @Bean(name = "webClientFactory")
-    public WebClientFactory webClientFactory(
-            ApplicationContext applicationContext, ReactiveOAuth2AuthorizedClientManager authorizedClientManager) {
-        WebClientFactory factory = new WebClientFactory(applicationContext, authorizedClientManager);
-        factory.setWebClients(List.of(keycloakClientProperties, notiServiceProperties, settingClientProperties));
-        return factory;
+    public WebClientFactory webClientFactory() {
+        return new WebClientFactory(List.of(keycloakClientProperties, notiServiceProperties, settingClientProperties));
     }
 }

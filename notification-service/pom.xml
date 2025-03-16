@@ -18,20 +18,7 @@
 		<kotlin.version>1.9.25</kotlin.version>
 		<revision>1.0-SNAPSHOT</revision>
 		<keycloak.version>25.0.2</keycloak.version>
-		<spring-cloud.version>2023.0.2</spring-cloud.version>
 	</properties>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>${spring-cloud.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
@@ -46,14 +33,13 @@
 		<dependency>
 			<groupId>io.github.hoangtien2k3</groupId>
 			<artifactId>reactify-core</artifactId>
-			<version>1.1.7</version>
+			<version>1.2.5</version>
 		</dependency>
 		<dependency>
 			<groupId>com.ezbuy.platform</groupId>
 			<artifactId>notification-model</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
-
 		<!--Send mail with thymeleaf-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -90,6 +76,11 @@
 						<version>${kotlin.version}</version>
 					</dependency>
 				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<version>3.4.4</version>
 			</plugin>
 		</plugins>
 	</build>

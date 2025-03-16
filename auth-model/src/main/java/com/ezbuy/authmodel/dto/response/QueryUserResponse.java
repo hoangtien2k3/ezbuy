@@ -7,7 +7,6 @@ import lombok.Data;
 
 @Data
 public class QueryUserResponse {
-
     private List<UserProfileDTO> content;
     private PaginationDTO pagination;
 }

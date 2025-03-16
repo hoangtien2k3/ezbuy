@@ -33,11 +33,6 @@ import org.springframework.http.MediaType;
 public final class Constants {
 
     /**
-     * Constructs a new instance of {@code Constants}.
-     */
-    public Constants() {}
-
-    /**
      * Regular expression pattern for validating names.
      * <p>
      * The pattern allows uppercase and lowercase letters, as well as Vietnamese
@@ -232,19 +227,19 @@ public final class Constants {
      */
     public interface LoggingTitle {
         /** Title for the request log section. */
-        String REQUEST = "\n-- REQUEST --\n";
+        String REQUEST = "-- REQUEST --";
 
         /** Title for the request header log section. */
-        String REQUEST_HEADER = "\n-- REQUEST HEADER --\n";
+        String REQUEST_HEADER = "-- REQUEST HEADER --";
 
         /** Title for the request parameter log section. */
-        String REQUEST_PARAM = "-- REQUEST PARAM --\n";
+        String REQUEST_PARAM = "-- REQUEST PARAM --";
 
         /** Title for the request body log section. */
-        String REQUEST_BODY = "-- REQUEST BODY --\n";
+        String REQUEST_BODY = "-- REQUEST BODY --";
 
         /** Title for the response log section. */
-        String RESPONSE = "\n-- RESPONSE --\n";
+        String RESPONSE = "-- RESPONSE --";
 
         /** Prefix for logging entries. */
         String PREFIX = "|>";
@@ -254,43 +249,6 @@ public final class Constants {
 
         /** Maximum size for response body logs. */
         Integer BODY_SIZE_RESPONSE_MAX = 1000;
-    }
-
-    /**
-     * Contains constants related to OTP (One-Time Password) functionality.
-     */
-    public interface Otp {
-        /** Action type for OTP registration. */
-        String REGISTER = "REGISTER";
-
-        /** Action type for OTP during forgot password process. */
-        String FORGOT_PASSWORD = "FORGOT_PASSWORD";
-
-        /** Content description for OTP used for forgot password. */
-        String FORGOT_PASSWORD_CONTENT = "OTP for forgot password user";
-
-        /** Content description for OTP used for registration. */
-        String REGISTER_CONTENT = "OTP for register user";
-
-        /** Expiration time for OTP in minutes. */
-        Integer EXP_MINUTE = 2;
-
-        /** Expiration time for OTP during morning hours in minutes. */
-        Integer EXP_OTP_AM_MINUTE = 5;
-    }
-
-    /**
-     * Contains role name constants.
-     */
-    public interface RoleName {
-        /** Role name for system administrators. */
-        String SYSTEM = "system";
-
-        /** Role name for administrators. */
-        String ADMIN = "admin";
-
-        /** Role name for general users. */
-        String USER = "user";
     }
 
     /**
@@ -314,66 +272,6 @@ public final class Constants {
 
         /** Format for displaying field names in sorting. */
         String FILED_DISPLAY = "$1_$2";
-    }
-
-    /**
-     * Contains template names for email notifications.
-     */
-    public interface TemplateMail {
-        /** Template name for forgot password emails. */
-        String FORGOT_PASSWORD = "FORGOT_PASSWORD";
-
-        /** Template name for sign-up emails. */
-        String SIGN_UP = "SIGN_UP";
-
-        /** Template name for successful customer activation emails. */
-        String CUSTOMER_ACTIVE_SUCCESS = "CUSTOMER_ACTIVE_SUCCESS";
-
-        /** Template name for successful customer registration emails. */
-        String CUSTOMER_REGISTER_SUCCESS = "CUSTOMER_REGISTER_SUCCESS";
-
-        /** Template name for successful employee registration emails. */
-        String EMPLOYEE_REGISTER_SUCCESS = "EMPLOYEE_REGISTER_SUCCESS";
-
-        /** Template name for account activation emails. */
-        String ACCOUNT_ACTIVE = "ACCOUNT_ACTIVE";
-
-        /** Template name for sign-up password emails. */
-        String SIGN_UP_PASSWORD = "SIGN_UP_PASSWORD";
-
-        /** Template name for successful account verification emails. */
-        String VERIFY_ACCOUNT_SUCESS = "VERIFY_ACCOUNT_SUCESS";
-
-        /** Template name for notifications about account verification. */
-        String NOTI_VERIFY_ACCOUNT = "NOTI_VERIFY_ACCOUNT";
-    }
-
-    /**
-     * Contains actions related to user operations.
-     */
-    public interface ActionUser {
-        /** Action type for system operations. */
-        String SYSTEM = "system";
-    }
-
-    /**
-     * Contains common status constants.
-     */
-    public interface COMMON {
-        /** Constant representing active status. */
-        Integer STATUS_ACTIVE = 1;
-
-        /** Constant representing inactive status. */
-        Integer STATUS_INACTIVE = 0;
-
-        /** Constant representing invalid status. */
-        Integer STATUS_INVALID = -1;
-
-        /** Constant representing null status. */
-        Integer STATUS_NULL = -2;
-
-        /** String representation of inactive status. */
-        String STR_STATUS_INACTIVE = "0";
     }
 
     /**
@@ -404,22 +302,6 @@ public final class Constants {
         Integer ACTIVE = 1;
         /** Represents an inactive state. */
         Integer INACTIVE = 0;
-        /** Represents a deleted state. */
-        Integer DELETE = 3;
-    }
-
-    /**
-     * <p>
-     * PERMISSION_TYPE class defines constants representing types of permissions
-     * used within the application. These constants help in managing access control
-     * by categorizing permissions into roles and groups.
-     * </p>
-     */
-    public interface PERMISSION_TYPE {
-        /** Represents a permission type for roles. */
-        String ROLE = "ROLE";
-        /** Represents a permission type for groups. */
-        String GROUP = "GROUP";
     }
 
     /**
@@ -451,19 +333,5 @@ public final class Constants {
     public interface POOL {
         /** Name of the REST client pool for HTTPS proxy. */
         String REST_CLIENT_POLL = "Rest-client-Pool";
-    }
-
-    public interface MINIO_BUCKET_MARKET_INFO {
-        String URL_IMAGE = "market-info";
-    }
-
-    public interface MINIO_BUCKET_MARKET_SECTION {
-        String MARKET_SECTION = "market-section";
-    }
-
-    public static final String NULL_IMAGE_SRC = null;
-
-    public static final class ArrayLimit {
-        public static final Integer COMMON = 100;
     }
 }

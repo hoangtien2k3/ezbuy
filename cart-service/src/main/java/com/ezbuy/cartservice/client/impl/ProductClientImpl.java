@@ -30,7 +30,6 @@ public class ProductClientImpl implements ProductClient {
     private final WebClient product;
 
     private final BaseRestClient baseRestClient;
-
     private final ProductProperties productProperties;
 
     @Override

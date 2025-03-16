@@ -37,7 +37,7 @@ public class PaymentController {
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public Mono<ResponseEntity<DataResponse>> getResultFromMyViettel(PaymentResultRequest request) {
-        return paymentService.getResultFromMyViettel(request).map(ResponseEntity::ok);
+        return paymentService.getResultFromVnPay(request).map(ResponseEntity::ok);
     }
 
     @PostMapping(UrlPaths.Payment.ORDER_STATE)

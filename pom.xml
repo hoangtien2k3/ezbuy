@@ -34,6 +34,7 @@
         <developerConnection>scm:git:ssh://git@github.com:hoangtien2k3/ezbuy.git</developerConnection>
         <url>https://github.com/hoangtien2k3/ezbuy</url>
     </scm>
+
     <modules>
         <module>auth-model</module>
         <module>auth-service</module>
@@ -57,6 +58,7 @@
         <module>search-service</module>
         <module>trigger-service</module>
     </modules>
+
     <properties>
         <java.version>21</java.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
@@ -67,7 +69,21 @@
         <jackson.databind.version>2.17.1</jackson.databind.version>
         <spotless.version>2.43.0</spotless.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <spring-cloud.version>2023.0.2</spring-cloud.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -136,6 +152,18 @@
         <dependency>
             <groupId>io.r2dbc</groupId>
             <artifactId>r2dbc-pool</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>r2dbc-postgresql</artifactId>
+            <version>1.0.7.RELEASE</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.3</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

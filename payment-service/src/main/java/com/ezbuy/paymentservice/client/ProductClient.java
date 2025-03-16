@@ -11,7 +11,4 @@ public interface ProductClient {
     Flux<IdentityProductPrice> getExProductPrices(Set<String> templateIds);
 
     Mono<List<ProductOfferTemplateDTO>> getProductInfo(List<String> templateIds);
-
-    // Mono<List<Subscriber>> getListSubscriberActive(String idNo, List<String>
-    // lstTelecomServiceId);
 }

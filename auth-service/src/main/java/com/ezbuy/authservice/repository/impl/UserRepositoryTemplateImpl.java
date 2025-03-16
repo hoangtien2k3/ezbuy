@@ -50,52 +50,42 @@ public class UserRepositoryTemplateImpl extends BaseTemplateRepository implement
     private void buildQueryUserProfile(StringBuilder builder, Map<String, Object> params, QueryUserRequest request) {
         builder.append("select * from user_profile \n");
         builder.append("where 1 = 1 \n");
-
         String sort = DataUtil.safeToString(request.getSort(), "-createAt");
-
         if (!DataUtil.isNullOrEmpty(request.getFromDate())) {
             builder.append("and create_at >= :from \n");
             params.put("from", request.getFromDate().atStartOfDay());
         }
-
         if (!DataUtil.isNullOrEmpty(request.getToDate())) {
             builder.append("and create_at <= :to \n");
             params.put("to", request.getToDate().plusDays(1).atStartOfDay());
         }
-
         if (!DataUtil.isNullOrEmpty(request.getCompanyName())) {
             builder.append("and company_name like concat('%', :companyName, '%') \n");
             params.put(
                     "companyName",
                     SQLUtils.replaceSpecialDigit(request.getCompanyName().trim()));
         }
-
         if (!DataUtil.isNullOrEmpty(request.getPhoneNumber())) {
             builder.append("and phone like concat('%',:phone, '%') \n");
             params.put("phone", request.getPhoneNumber().trim());
         }
-
         if (!DataUtil.isNullOrEmpty(request.getTaxCode())) {
             builder.append("and tax_code like concat('%', :taxCode, '%') \n");
             params.put(
                     "taxCode", SQLUtils.replaceSpecialDigit(request.getTaxCode().trim()));
         }
-
         if (!DataUtil.isNullOrEmpty(request.getProvinceCode())) {
             builder.append("and province_code like :provinceCode \n");
             params.put("provinceCode", request.getProvinceCode().trim());
         }
-
         if (!DataUtil.isNullOrEmpty(request.getUserIds())) {
             builder.append("and user_id in (:kcUserIds) \n");
             params.put("kcUserIds", request.getUserIds());
         }
-
         if (!DataUtil.isNullOrEmpty(request.getIds())) {
             builder.append("and id in (:ids) \n");
             params.put("ids", request.getIds());
         }
-
         String sortValue = SortingUtils.parseSorting(sort, UserProfile.class);
         builder.append(" order by ");
         if (!DataUtil.isNullOrEmpty(sortValue)) {

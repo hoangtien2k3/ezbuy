@@ -13,6 +13,7 @@ import com.reactify.model.response.DataResponse;
 import com.reactify.util.DataUtil;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +28,8 @@ import reactor.core.publisher.Mono;
 @RequestMapping(UrlPaths.Auth.PREFIX)
 @RequiredArgsConstructor
 public class AuthController {
+
     private final AuthService authService;
-    // private final UserService userService;
 
     @PostMapping(value = UrlPaths.Auth.LOGIN)
     public Mono<ResponseEntity<DataResponse<Optional<AccessToken>>>> login(
@@ -47,9 +48,9 @@ public class AuthController {
     }
 
     @PostMapping(value = UrlPaths.Auth.GET_TOKEN_FROM_PROVIDER_CODE)
-    public Mono<ResponseEntity<DataResponse>> getTokenFromAuthorizationProviderCode(
-            @Valid @RequestBody ClientLogin clientLogin, ServerWebExchange serverWebExchange) {
-        return authService.getToken(clientLogin).map(rs -> ResponseEntity.ok(new DataResponse("common.success", rs)));
+    public Mono<ResponseEntity<DataResponse<Optional<AccessToken>>>> getTokenFromAuthorizationProviderCode(
+            @Valid @RequestBody ClientLogin clientLogin) {
+        return authService.getToken(clientLogin).map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
     }
 
     @GetMapping(value = UrlPaths.Auth.GET_PERMISSION)
@@ -120,16 +121,6 @@ public class AuthController {
         return authService.getAllUserId();
     }
 
-    @PostMapping(UrlPaths.Auth.CREATE_TEST_PERFORMANCE_USER)
-    @PreAuthorize("hasAnyAuthority('system')")
-    public Mono<ResponseEntity<DataResponse<Void>>> confirmOtpAndCreateAccount(
-            @RequestParam(name = "startIndex") Integer startIndex,
-            @RequestParam(name = "numAccount") Integer numAccount) {
-        return authService
-                .createUserTestPerformence(startIndex, numAccount)
-                .then(Mono.fromCallable(() -> ResponseEntity.ok(new DataResponse<>("success", null))));
-    }
-
     @GetMapping(UrlPaths.Auth.GET_TWO_WAY_PASSWORD)
     @PreAuthorize("hasAnyAuthority('system')")
     public Mono<ResponseEntity<DataResponse<GetTwoWayPasswordResponse>>> getTwoWayPassword(
@@ -148,11 +139,11 @@ public class AuthController {
     }
 
     @PostMapping(UrlPaths.Auth.CONFIRM_OTP)
-    public Mono<DataResponse> confirmOTP(
+    public Mono<DataResponse<Map<String, String>>> confirmOTP(
             @Valid @RequestBody ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange) {
         return authService
                 .confirmOTP(confirmOTPRequest, serverWebExchange)
-                .map(success -> new DataResponse<>(DataUtil.safeToString(success.getMessage()), null));
+                .map(success -> new DataResponse<>(DataUtil.safeToString(success.getMessage()), success.getData()));
     }
 
     @PostMapping(UrlPaths.Auth.GENERATE_OTP)

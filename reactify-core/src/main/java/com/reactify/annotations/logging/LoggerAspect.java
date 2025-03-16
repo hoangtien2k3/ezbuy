@@ -15,11 +15,13 @@
  */
 package com.reactify.annotations.logging;
 
+import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.context.annotation.Configuration;
+import reactor.core.publisher.Mono;
 
 /**
  * <p>
@@ -51,18 +53,10 @@ import org.springframework.context.annotation.Configuration;
  */
 @Aspect
 @Configuration
+@RequiredArgsConstructor
 public class LoggerAspect {
-    private final LoggerAspectUtils loggerAspectUtils;
 
-    /**
-     * Constructs a new instance of {@code LoggerAspect}.
-     *
-     * @param loggerAspectUtils
-     *            the utility class for logging aspects.
-     */
-    public LoggerAspect(LoggerAspectUtils loggerAspectUtils) {
-        this.loggerAspectUtils = loggerAspectUtils;
-    }
+    private final LoggerAspectUtils loggerAspectUtils;
 
     /**
      * <p>
@@ -70,8 +64,8 @@ public class LoggerAspect {
      * client packages that should be logged for performance metrics.
      * </p>
      */
-    @Pointcut("(execution(* com.reactify.*.controller..*(..)) || " + "execution(* com.reactify.*.service..*(..))  ||  "
-            + "execution(* com.reactify.*.repository..*(..)) || " + "execution(* com.reactify.*.client..*(..))) &&"
+    @Pointcut("execution(* com.reactify.*.controller..*(..)) || " + "execution(* com.reactify.*.service..*(..)) || "
+            + "execution(* com.reactify.*.repository..*(..)) || " + "execution(* com.reactify.*.client..*(..)) && "
             + "!execution(* org.springframework.boot.actuate..*(..))")
     public void performancePointCut() {}
 
@@ -96,7 +90,7 @@ public class LoggerAspect {
      *             if any.
      */
     @Around("performancePointCut() || logPerfMethods()")
-    public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Mono<Object> logAround(ProceedingJoinPoint joinPoint) throws Throwable {
         return loggerAspectUtils.logAround(joinPoint);
     }
 }

@@ -9,6 +9,7 @@ import com.ezbuy.authmodel.model.Individual;
 import com.ezbuy.authmodel.model.UserOtp;
 import com.reactify.model.response.DataResponse;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -165,18 +166,6 @@ public interface AuthService {
     Mono<List<String>> getAllUserId();
 
     /**
-     * Creates test performance users starting from the given index and number of
-     * accounts.
-     *
-     * @param startIndex
-     *            the starting index for creating test users
-     * @param numAccount
-     *            the number of test users to create
-     * @return a Mono indicating when the test user creation is complete
-     */
-    Mono<Void> createUserTestPerformence(int startIndex, int numAccount);
-
-    /**
      * Retrieves the two-way password for the given request.
      *
      * @param request
@@ -204,7 +193,8 @@ public interface AuthService {
      * @return a Mono emitting a DataResponse indicating the result of the OTP
      *         confirmation
      */
-    Mono<DataResponse> confirmOTP(ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange);
+    Mono<DataResponse<Map<String, String>>> confirmOTP(
+            ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange);
 
     /**
      * Generates an OTP based on the given request and server exchange.

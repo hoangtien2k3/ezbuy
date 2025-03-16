@@ -20,8 +20,6 @@ public interface OrderService {
 
     Mono<DataResponse> findDetail(String orderId);
 
-    Mono<DataResponse> createPreOrder(CreatePreOrderRequest request);
-
     Mono<DataResponse> syncOrderState(SyncOrderStateRequest request);
 
     Mono<DataResponse> createPaidOrder(CreatePaidOrderRequest request);
@@ -34,8 +32,6 @@ public interface OrderService {
 
     Mono<DataResponse> createOrderHistory(CreateOrderHistoryRequest request);
 
-    Mono<DataResponse> validateConnectFirst(ValidateConnectServiceRequest request);
-
     /**
      * Ham lay thong tin nhom
      *
@@ -43,10 +39,6 @@ public interface OrderService {
      * @return
      */
     Mono<DataResponse<GetGroupCAInfoResponse>> getGroupsCAInfo(GetGroupsCAinfoRequest request);
-
-    /**
-     * Ham lay thong tin thue bao tren tong dai ocs
-     */
 
     /**
      * Them thue bao vao nhom
@@ -89,22 +81,6 @@ public interface OrderService {
     Mono<DataResponse> connectCASelfcare(CreateOrderPaidRequest request);
 
     Mono<DataResponse<ProfileForBusinessCustDTO>> getProfileKHDN(CreateOrderPaidRequest createOrderPaidRequest);
-
-    /**
-     * Ham lay so luong da ky cua thue bao
-     *
-     * @param request
-     * @return
-     */
-    // Mono<DataResponse> getCAsubNumberSign(GetGroupsCAinfoRequest request);
-
-    /**
-     * Ham lay so luong chu ky con lai cua thue bao
-     *
-     * @param request
-     * @return
-     */
-    // Mono<DataResponse> getCAsubTotalSign(GetGroupsCAinfoRequest request);
 
     Mono<DataResponse> getAdvice(CreatePreOrderRequest request);
 

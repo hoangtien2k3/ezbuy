@@ -18,6 +18,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Table(name = "user_otp")
 @SuperBuilder
 public class UserOtp extends EntityBase implements Persistable<String> {
+
     @Id
     @Column("id")
     private String id;
