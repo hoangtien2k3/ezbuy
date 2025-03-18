@@ -19,6 +19,8 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <revision>1.0-SNAPSHOT</revision>
+        <ezbuy-product-service.tag>latest</ezbuy-product-service.tag>
+        <ezbuy-product-service.image>hoangtien2k3/ezbuy-product-service</ezbuy-product-service.image>
     </properties>
 
     <dependencies>
@@ -142,11 +144,11 @@
                         <image>amazoncorretto:21.0.3</image>
                     </from>
                     <to>
-                        <image>hoangtien2k3/product-service:latest</image>
+                        <image>${ezbuy-product-service.image}:${ezbuy-product-service.tag}</image>
                     </to>
                     <container>
                         <jvmFlags>
-                            <jvmFlag>-Dspring.profiles.active=dev</jvmFlag>
+                            <jvmFlag>-Dspring.profiles.active=pro</jvmFlag>
                         </jvmFlags>
                     </container>
                 </configuration>

@@ -1,0 +1,87 @@
+server:
+  port: 8918
+#login
+logging:
+  pattern:
+    console: "%d{dd/MM/yy HH:mm:ss}|%X{traceId}|%m%n"
+  level:
+    root: INFO
+    io.r2dbc.postgresql.QUERY: DEBUG
+    io.r2dbc.postgresql.PARAM: DEBUG
+
+#spring config
+spring:
+  application:
+    name: cart-service
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+  #file lang
+  messages:
+    basename: messages
+  #config r2dbc database
+  r2dbc:
+    url: r2dbc:postgresql://postgres:5434/cart
+    username: admin
+    password: admin
+    pool:
+      max-size: 10
+      initial-size: 5
+  codec:
+    max-in-memory-size: 100MB
+
+  #config keycloak
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            token-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/token
+        registration:
+          oidc:
+            client-id: ${keycloak.clientId}
+            client-secret: ${keycloak.clientSecret}
+            authorization-grant-type: ${keycloak.grantType} #password || #client_credentials
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/certs
+      keycloak:
+        client-id: ${keycloak.clientId}
+
+  plugin:
+    config:
+      readRequestData: true
+      readResponseData: true
+      logRequest: true
+      logResponse: true
+
+application:
+  whiteList:
+    - uri: /actuator/health
+      methods:
+        - GET
+    - uri: /**
+      methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+
+# web client config
+client:
+  keycloak:
+    address: http://keycloak:8080/realms/ezbuy-server/protocol/openid-connect
+    name: keycloak
+    auth:
+      client-id: ezbuy-client
+      client-secret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
+
+#keycloak client config
+keycloak:
+  clientId: ezbuy-client
+  clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
+  realm: ezbuy-server
+  serverUrl: http://keycloak:8080
+  grantType: password
+  host: localhost
+

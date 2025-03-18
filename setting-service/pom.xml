@@ -19,6 +19,8 @@
         <keycloak.version>25.0.2</keycloak.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
+        <ezbuy-setting-service.tag>latest</ezbuy-setting-service.tag>
+        <ezbuy-setting-service.image>hoangtien2k3/ezbuy-setting-service</ezbuy-setting-service.image>
     </properties>
 
     <dependencies>
@@ -66,11 +68,11 @@
                         <image>amazoncorretto:21.0.3</image>
                     </from>
                     <to>
-                        <image>hoangtien2k3/setting-service:latest</image>
+                        <image>${ezbuy-setting-service.image}:${ezbuy-setting-service.tag}</image>
                     </to>
                     <container>
                         <jvmFlags>
-                            <jvmFlag>-Dspring.profiles.active=dev</jvmFlag>
+                            <jvmFlag>-Dspring.profiles.active=pro</jvmFlag>
                         </jvmFlags>
                     </container>
                 </configuration>

@@ -17,6 +17,8 @@
 		<java.version>21</java.version>
 		<revision>1.0-SNAPSHOT</revision>
 		<keycloak.version>25.0.6</keycloak.version>
+		<ezbuy-auth-service.tag>latest</ezbuy-auth-service.tag>
+		<ezbuy-auth-service.image>hoangtien2k3/ezbuy-auth-service</ezbuy-auth-service.image>
 		<start-class>com.ezbuy.authservice.AuthServiceApplication</start-class>
 	</properties>
 
@@ -138,11 +140,11 @@
 						<image>amazoncorretto:21.0.3</image>
 					</from>
 					<to>
-						<image>hoangtien2k3/auth-service:latest</image>
+						<image>${ezbuy-auth-service.image}:${ezbuy-auth-service.tag}</image>
 					</to>
 					<container>
 						<jvmFlags>
-							<jvmFlag>-Dspring.profiles.active=dev</jvmFlag>
+							<jvmFlag>-Dspring.profiles.active=pro</jvmFlag>
 						</jvmFlags>
 					</container>
 				</configuration>

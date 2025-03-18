@@ -18,7 +18,8 @@
 		<kotlin.version>1.9.25</kotlin.version>
 		<revision>1.0-SNAPSHOT</revision>
 		<keycloak.version>25.0.2</keycloak.version>
-		<spring-cloud.version>2023.0.2</spring-cloud.version>
+		<ezbuy-notification-send.tag>latest</ezbuy-notification-send.tag>
+		<ezbuy-notification-send.image>hoangtien2k3/ezbuy-notification-send</ezbuy-notification-send.image>
 	</properties>
 
 	<dependencies>
@@ -91,11 +92,11 @@
 						<image>amazoncorretto:21.0.3</image>
 					</from>
 					<to>
-						<image>hoangtien2k3/notification-send:latest</image>
+						<image>${ezbuy-notification-send.image}:${ezbuy-notification-send.tag}</image>
 					</to>
 					<container>
 						<jvmFlags>
-							<jvmFlag>-Dspring.profiles.active=dev</jvmFlag>
+							<jvmFlag>-Dspring.profiles.active=pro</jvmFlag>
 						</jvmFlags>
 					</container>
 				</configuration>
