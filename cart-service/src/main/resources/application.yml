@@ -12,7 +12,7 @@ logging:
 #spring config
 spring:
   application:
-    name: auth-service
+    name: cart-service
   main:
     web-application-type: reactive
     allow-bean-definition-overriding: true
@@ -21,7 +21,7 @@ spring:
     basename: messages
   #config r2dbc database
   r2dbc:
-    url: r2dbc:postgresql://localhost:5434/cart
+    url: r2dbc:postgresql://postgres:5434/cart
     username: admin
     password: admin
     pool:
@@ -29,6 +29,7 @@ spring:
       initial-size: 5
   codec:
     max-in-memory-size: 100MB
+
   #config keycloak
   security:
     oauth2:
@@ -69,37 +70,18 @@ application:
 # web client config
 client:
   keycloak:
-    address: http://localhost:8080/realms/ezbuy-server/protocol/openid-connect
+    address: http://keycloak:8080/realms/ezbuy-server/protocol/openid-connect
     name: keycloak
     auth:
       client-id: ezbuy-client
       client-secret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
-  product:
-    address: http://10.207.252.223/sme-product/
-    name: product
-    pool:
-      max-size: 100
-      max-pending-acquire: 100
-  setting:
-    address: http://10.207.252.223/sme-setting/v1
-    name: setting
-    pool:
-      max-size: 100
-      max-pending-acquire: 100
-  payment:
-    internal-oauth: true
-    address: http://10.207.252.223/sme-payment/v1
-    name: payment
-    pool:
-      max-size: 100
-      max-pending-acquire: 100
 
 #keycloak client config
 keycloak:
   clientId: ezbuy-client
   clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
   realm: ezbuy-server
-  serverUrl: http://localhost:8080
+  serverUrl: http://keycloak:8080
   grantType: password
   host: localhost
 

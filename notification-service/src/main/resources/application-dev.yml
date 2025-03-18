@@ -13,7 +13,7 @@ spring:
     web-application-type: reactive
     allow-bean-definition-overriding: true
   r2dbc:
-    url: r2dbc:postgresql://postgres:5434/notification
+    url: r2dbc:postgresql://localhost:5434/notification
     username: admin
     password: admin
   mail:
@@ -41,20 +41,19 @@ spring:
           jwk-set-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/certs
       keycloak:
         client-id: ${keycloak.clientId}
-
 #keycloak client config
 keycloak:
   clientId: ezbuy-client
   clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
   realm: ezbuy-server
-  serverUrl: http://keycloak:8080
+  serverUrl: http://localhost:8080
   host: localhost
 
 #client
 client:
   auth:
     internal-oauth: true
-    address: http://ezbuy-auth-service:8089/v1
+    address: http://localhost:8089/v1
     name: auth
     pool:
       max-size: 100

@@ -20,7 +20,7 @@ spring:
 
   #connect db r2dbc
   r2dbc:
-    url: r2dbc:postgresql://localhost:5434/auth
+    url: r2dbc:postgresql://postgres:5434/auth
     username: admin
     password: admin
     pool:
@@ -58,7 +58,7 @@ spring:
 client:
   #keycloak
   keycloak:
-    address: http://localhost:8080/realms/ezbuy-server/protocol/openid-connect
+    address: http://keycloak:8080/realms/ezbuy-server/protocol/openid-connect
     name: keycloak
     auth:
       client-id: ezbuy-client
@@ -66,7 +66,7 @@ client:
   #notification
   notification:
     internal-oauth: true
-    address: http://localhost:7777/v1/transmission
+    address: http://ezbuy-notification-service:7777/v1/transmission
     name: notiServiceClient
     pool:
       max-size: 100
@@ -76,7 +76,7 @@ client:
       write: 1000
   #setting
   setting:
-    address: http://localhost:8081/
+    address: http://ezbuy-setting-service:8081/
     name: settingClient
 
 # unauthenticated endpoints config
@@ -197,7 +197,7 @@ keycloak:
   clientId: ezbuy-client
   clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
   realm: ezbuy-server
-  serverUrl: http://localhost:8080
+  serverUrl: http://keycloak:8080
   grantType: password
   host: localhost
 
@@ -205,8 +205,8 @@ keycloak:
 minio:
   bucket: ezbuy-bucket
   enabled: true
-  baseUrl: http://localhost:9000
-  publicUrl: http://localhost:9000
+  baseUrl: http://minio:9000
+  publicUrl: http://minio:9000
   accessKey: q875aHMpdL6IJ3n9ruil
   secretKey: Q43tehRDv55Sw67ktA0pQdztEbtQjvinLOk6zwB3
   private:

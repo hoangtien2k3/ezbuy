@@ -11,7 +11,7 @@ logging:
 # spring config
 spring:
   r2dbc:
-    url: r2dbc:postgresql://localhost:5434/notification
+    url: r2dbc:postgresql://postgres:5434/notification
     username: admin
     password: admin
   mail:
@@ -23,6 +23,8 @@ spring:
     properties.mail.smtp:
       auth: true
       starttls.enable: true
+
+  #security oauth2
   security:
     oauth2:
       client:
@@ -39,17 +41,19 @@ spring:
           jwk-set-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/certs
       keycloak:
         client-id: ${keycloak.clientId}
+
 #keycloak client config
 keycloak:
   clientId: ezbuy-client
   clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
   realm: ezbuy-server
-  serverUrl: http://localhost:8080
+  serverUrl: http://keycloak:8080
   host: localhost
+
 client:
   auth:
     internal-oauth: true
-    address: http://localhost/v1
+    address: http://ezbuy-auth-service:8089/v1
     name: auth
     pool:
       max-size: 100
