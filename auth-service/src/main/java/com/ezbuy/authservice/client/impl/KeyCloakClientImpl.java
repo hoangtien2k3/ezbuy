@@ -89,9 +89,9 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                             Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "client.id.not.valid")));
         } else {
             formParameters.add(
-                    OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().clientId());
+                    OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().getClientId());
             formParameters.add(
-                    OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().clientSecret());
+                    OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().getClientSecret());
         }
         return requestToken(formParameters);
     }
@@ -140,9 +140,9 @@ public class KeyCloakClientImpl implements KeyCloakClient {
         formParameters.add(OAuth2ParameterNames.CODE, providerLogin.getCode());
         formParameters.add(OAuth2ParameterNames.REDIRECT_URI, AuthConstants.OAuth.REDIRECT_URI);
         formParameters.add(
-                OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().clientId());
+                OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().getClientId());
         formParameters.add(
-                OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().clientSecret());
+                OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().getClientSecret());
         return requestToken(formParameters);
     }
 
@@ -150,7 +150,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
     public Mono<Optional<AccessToken>> refreshToken(RefreshTokenRequest refreshTokenRequest) {
         String clientId = refreshTokenRequest.getClientId();
         if (DataUtil.isNullOrEmpty(clientId)) {
-            clientId = keyCloakConfig.getAuth().clientId();
+            clientId = keyCloakConfig.getAuth().getClientId();
         }
         return keycloakProvider.getClientWithSecret(clientId).flatMap(clientRepresentation -> {
             MultiValueMap<String, String> formParameters = new LinkedMultiValueMap<>();
