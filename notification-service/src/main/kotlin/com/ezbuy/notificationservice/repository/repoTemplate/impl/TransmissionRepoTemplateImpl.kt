@@ -2,30 +2,16 @@ package com.ezbuy.notificationservice.repository.repoTemplate.impl
 
 import com.ezbuy.notificationmodel.dto.UserTransmissionDTO
 import com.ezbuy.notificationservice.repository.query.TransmissionQuery
-import com.ezbuy.notificationservice.repository.repoTemplate.BaseRepositoryTemplate
 import com.ezbuy.notificationservice.repository.repoTemplate.TransmissionRepoTemplate
-import com.fasterxml.jackson.databind.MapperFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.PropertyNamingStrategies
-import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.reactify.repository.BaseTemplateRepository
 import com.reactify.util.DataUtil
-import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 
 @Repository
-class TransmissionRepoTemplateImpl(
-    private val template: R2dbcEntityTemplate
-) : TransmissionRepoTemplate, BaseRepositoryTemplate(template) {
-
-    private val objectMapper: ObjectMapper = JsonMapper.builder()
-        .addModule(JavaTimeModule())
-        .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
-        .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
-        .build()
+class TransmissionRepoTemplateImpl : TransmissionRepoTemplate, BaseTemplateRepository() {
 
     override fun searchUserTransmission(
         email: String?,
@@ -36,7 +22,7 @@ class TransmissionRepoTemplateImpl(
         limit: Int,
         sort: String
     ): Flux<UserTransmissionDTO> {
-        val sb = StringBuilder(TransmissionQuery.findAllUserTransmissionFromTo)
+        val sb = StringBuilder(TransmissionQuery.FIND_ALL_USER_TRANSMISSION_FROM_TO)
 
         if (!DataUtil.isNullOrEmpty(email)) {
             sb.append(" AND t.email = :email ")
@@ -65,7 +51,7 @@ class TransmissionRepoTemplateImpl(
         from: LocalDateTime?,
         to: LocalDateTime?
     ): Mono<Long> {
-        val sb = StringBuilder(TransmissionQuery.findCountUserTransmissionFromTo)
+        val sb = StringBuilder(TransmissionQuery.FIND_COUNT_USER_TRANSMISSION_FROM_TO)
 
         if (!DataUtil.isNullOrEmpty(email)) {
             sb.append(" AND t.email = :email ")

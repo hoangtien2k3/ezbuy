@@ -10,6 +10,6 @@ interface ChannelRepository : R2dbcRepository<Channel, String> {
 
     override fun findById(id: String): Mono<Channel>
 
-    @Query(ChannelQuery.findChannelIdByType)
+    @Query(ChannelQuery.FIND_CHANNEL_ID_BY_TYPE)
     fun findChannelIdByType(channelType: String): Mono<String>
 }

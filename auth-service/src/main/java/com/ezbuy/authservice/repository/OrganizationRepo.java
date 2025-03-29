@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
 
 public interface OrganizationRepo extends R2dbcRepository<Organization, String> {
 
-    @Query(value = "select * from organization where id=:id and status=:status")
+    @Query(value = "select * from organization where id = :id and status = :status")
     Mono<Organization> findOrganizationByIdAndStatus(String id, int status);
 
     @Query(

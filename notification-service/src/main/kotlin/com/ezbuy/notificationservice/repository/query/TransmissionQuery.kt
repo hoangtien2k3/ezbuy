@@ -2,7 +2,7 @@ package com.ezbuy.notificationservice.repository.query
 
 interface TransmissionQuery {
     companion object {
-        const val getCountNoticeDTO = """
+        const val GET_COUNT_NOTICE_DTO = """
             SELECT c.type as type, COUNT(state) AS quantity
             FROM sme_notification.transmission tr
             INNER JOIN notification n ON tr.notification_id = n.id
@@ -17,14 +17,14 @@ interface TransmissionQuery {
             GROUP BY c.type;
         """
 
-        const val getAllByNotificationByCategoryType = """
+        const val GET_ALL_BY_NOTIFICATION_BY_CATEGORY_TYPE = """
             SELECT nc.*, tr.state 
             FROM notification_content nc
             INNER JOIN notification n ON n.notification_content_id = nc.id
             INNER JOIN notification_category nca ON n.category_id = nca.id
             INNER JOIN transmission tr ON tr.notification_id = n.id
             INNER JOIN channel c ON tr.channel_id = c.id
-            WHERE tr.receiver = (:receiver)  
+            WHERE tr.receiver = :receiver
             AND tr.status = 1
             AND tr.state IN ('NEW', 'UNREAD', 'READ')
             AND nc.status = 1
@@ -32,30 +32,32 @@ interface TransmissionQuery {
             AND nca.status = 1
             AND c.status = 1
             AND c.type = 'REST'
-            AND nca.type = (:categoryType) 
+            AND nca.type = :categoryType
             ORDER BY :sort 
             LIMIT :pageSize 
             OFFSET :index;
         """
 
-        const val changeStateTransmissionByType = """
+        const val CHANGE_STATE_TRANSMISSION_BY_TYPE = """
             UPDATE transmission tr
-            SET tr.state = :state, tr.update_at = Now(), tr.update_by = 'system'
-            WHERE tr.receiver = :receiver
-            AND tr.notification_id = (
-                SELECT notification.id
-                FROM notification
-                INNER JOIN notification_content c ON notification.notification_content_id = c.id
+            SET state = :state, update_at = CURRENT_TIMESTAMP, update_by = 'system'
+            WHERE receiver = :receiver
+            AND EXISTS (
+                SELECT 1
+                FROM notification n
+                INNER JOIN notification_content c ON n.notification_content_id = c.id
                 WHERE c.id = :notificationContentId
+                AND n.id = tr.notification_id
             );
         """
 
-        const val insertTransmission = """
+
+        const val INSERT_TRANSMISSION = """
             INSERT INTO transmission (id, receiver, state, status, resend_count, create_at, create_by, update_at, update_by, channel_id, notification_id)
             VALUES (:id, :receiver, :state, :status, :resendCount, :createAt, :createBy, :updateAt, :updateBy, :channelId, :notificationId);
         """
 
-        const val getAllNotificationContentByCreateAtAfter = """
+        const val GET_ALL_NOTIFICATION_CONTENT_BY_CREATE_AT_AFTER = """
             SELECT nc.* FROM notification_content nc
             INNER JOIN notification n ON nc.id = n.notification_content_id
             INNER JOIN transmission tr ON tr.notification_id = n.id
@@ -71,7 +73,7 @@ interface TransmissionQuery {
             ORDER BY tr.create_at DESC;
         """
 
-        const val getTransmissionsToSendMail = """
+        const val GET_TRANSMISSIONS_TO_SEND_MAIL = """
             SELECT tr.id, tr.receiver, no.sender, ch.type, noc.title, noc.sub_title
             FROM transmission tr
             INNER JOIN channel ch ON tr.channel_id = ch.id
@@ -86,24 +88,24 @@ interface TransmissionQuery {
             AND ch.status = 1;
         """
 
-        const val updateTransmissionState = """
+        const val UPDATE_TRANSMISSION_STATE = """
             UPDATE transmission
             SET state = 'NEW',
-                update_at = now(),
+                update_at = CURRENT_TIMESTAMP,
                 update_by = 'system'
             WHERE id IN (:transmissionIds);
         """
 
-        const val updateTransmissionStateAndResendCount = """
+        const val UPDATE_TRANSMISSION_STATE_AND_RESEND_COUNT = """
             UPDATE transmission
             SET state = 'FAILED',
                 resend_count = resend_count + 1,
-                update_at = now(),
+                update_at = CURRENT_TIMESTAMP,
                 update_by = 'system'
-            WHERE id IN (:transmissionIds);
+            WHERE id = ANY (:transmissionIds);
         """
 
-        const val getTransmissionByNotificationContentId = """
+        const val GET_TRANSMISSION_BY_NOTIFICATION_CONTENT_ID = """
             SELECT tr.id FROM transmission tr 
             INNER JOIN notification n ON tr.notification_id = n.id 
             INNER JOIN notification_content nc ON n.notification_content_id = nc.id 
@@ -114,28 +116,28 @@ interface TransmissionQuery {
             AND tr.receiver = :receiver;
         """
 
-        const val findByIdAndStatus = """
+        const val FIND_BY_ID_AND_STATUS = """
             SELECT * FROM transmission WHERE id = :id AND status = :status;
         """
 
-        const val updateStateById = """
+        const val UPDATE_STATE_BY_ID = """
             UPDATE transmission SET state = :state, update_by = 'system' WHERE id = :id;
         """
 
-        const val findAllUserTransmissionFromTo: String = """
+        const val FIND_ALL_USER_TRANSMISSION_FROM_TO: String = """
             SELECT t.id, t.email, t.create_at, t.create_by, t.state, c.template_mail
             FROM transmission t
             INNER JOIN notification n ON t.notification_id = n.id
             INNER JOIN notification_content c ON n.notification_content_id = c.id
-            WHERE 1=1
+            WHERE 1 = 1
         """
 
-        const val findCountUserTransmissionFromTo: String = """
+        const val FIND_COUNT_USER_TRANSMISSION_FROM_TO: String = """
             SELECT t.id, t.email, t.create_at, t.create_by, t.state, c.template_mail
             FROM transmission t
             INNER JOIN notification n ON t.notification_id = n.id
             INNER JOIN notification_content c ON n.notification_content_id = c.id
-            WHERE 1=1
+            WHERE 1 = 1
         """
     }
 }

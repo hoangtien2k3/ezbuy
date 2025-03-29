@@ -16,7 +16,7 @@ interface TransmissionQuery {
           AND no.status = 1
           AND ch.status = 1
           LIMIT :limit
-          FOR UPDATE;
+          FOR UPDATE SKIP LOCKED;
         """
 
         const val UPDATE_TRANSMISSION_REST_STATE = """
@@ -24,7 +24,7 @@ interface TransmissionQuery {
           SET state = 'NEW',
               update_at = now(),
               update_by = 'system'
-          WHERE id IN (:transmissionIds);
+          WHERE id = ANY (:transmissionIds);
         """
 
         const val UPDATE_TRANSMISSION_EMAIL_STATE = """
@@ -32,7 +32,7 @@ interface TransmissionQuery {
           SET state = 'SENT',
               update_at = now(),
               update_by = 'system'
-          WHERE id IN (:transmissionIds);
+          WHERE id = ANY (:transmissionIds);
         """
 
         const val UPDATE_TRANSMISSION_STATE_AND_RESEND_COUNT = """
@@ -41,7 +41,7 @@ interface TransmissionQuery {
               resend_count = resend_count + 1,
               update_at    = now(),
               update_by    = 'system'
-          WHERE id IN (:transmissionIds);
+          WHERE id = ANY (:transmissionIds);
         """
 
         const val UPDATE_STATE_BY_ID = """
@@ -72,17 +72,19 @@ interface TransmissionQuery {
 
         const val CHANGE_STATE_TRANSMISSION_BY_TYPE = """
           UPDATE transmission tr
-          SET tr.state = :state,
-              tr.update_at = now(),
-              tr.update_by = 'system'
+          SET state     = :state,
+              update_at = CURRENT_TIMESTAMP,
+              update_by = 'system'
           WHERE tr.receiver = :receiver
-            AND tr.notification_id = (
-                SELECT notification.id
-                FROM notification
-                INNER JOIN notification_content c
-                    ON notification.notification_content_id = c.id
-                WHERE c.id = :notificationContentId
-            );
+          AND EXISTS (
+            SELECT 1
+            FROM notification n
+            INNER JOIN notification_content c
+                ON n.notification_content_id = c.id
+            WHERE c.id = :notificationContentId
+            AND n.id = tr.notification_id
+          );
         """
+
     }
 }

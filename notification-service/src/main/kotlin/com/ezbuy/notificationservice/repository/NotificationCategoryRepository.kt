@@ -10,6 +10,6 @@ interface NotificationCategoryRepository : R2dbcRepository<NotificationCategory,
 
     override fun findById(id: String): Mono<NotificationCategory>
 
-    @Query(NotificationCategoryQuery.findCategoryIdByType)
+    @Query(NotificationCategoryQuery.FIND_CATEGORY_ID_BY_TYPE)
     fun findCategoryIdByType(categoryType: String): Mono<String>
 }

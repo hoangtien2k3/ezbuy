@@ -28,7 +28,7 @@ class AuthClientImpl(
             .bodyValue(userIds)
             .retrieve()
             .bodyToMono(ContactResponse::class.java)
-            .onErrorResume { throwable ->
+            .onErrorResume {
                 log.info("Email list not found")
                 Mono.just(ContactResponse())
             }

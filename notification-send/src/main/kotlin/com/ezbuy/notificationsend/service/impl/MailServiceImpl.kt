@@ -12,8 +12,8 @@ import com.ezbuy.notificationsend.constants.CommonConstants.TemplateMail.SIGN_UP
 import com.ezbuy.notificationsend.service.MailService
 import com.ezbuy.notificationmodel.dto.EmailResultDTO
 import com.ezbuy.notificationmodel.dto.TransmissionNotiDTO
+import com.ezbuy.notificationsend.constants.CommonConstants.TemplateMail.VERIFY_ACCOUNT_SUCCESS
 import com.reactify.util.DataUtil
-import com.reactify.constants.Constants.TemplateMail.VERIFY_ACCOUNT_SUCESS
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.javamail.JavaMailSender
@@ -58,7 +58,7 @@ class MailServiceImpl(
             CUSTOMER_REGISTER_SUCCESS -> mailAccountCustomerInfo(transmissionNoti)
             EMPLOYEE_REGISTER_SUCCESS -> mailRegisterUserSuccessContent(transmissionNoti)
             ACCOUNT_ACTIVE -> mailActiveAccountSuccessContent(transmissionNoti)
-            VERIFY_ACCOUNT_SUCESS -> mailVerifyAccountSuccessContent(transmissionNoti)
+            VERIFY_ACCOUNT_SUCCESS -> mailVerifyAccountSuccessContent(transmissionNoti)
             NOTI_VERIFY_ACCOUNT -> mailNotiVerifyAccountContent(transmissionNoti)
             else -> ""
         }
@@ -70,12 +70,10 @@ class MailServiceImpl(
                 setVariable("USERNAME", transmissionNoti.externalData)
                 setVariable("SUBTITLE", transmissionNoti.subTitle)
             }
-
             val templateMail = DataUtil.safeToString(
                 CommonConstants.TEMPLATE_MAIL_MAP[DataUtil.safeToString(transmissionNoti.templateMail)],
                 "mail/TransmissionOtpMailSignUp.html"
             )
-
             templateEngine.process(templateMail, context)
         } catch (ex: Exception) {
             logger.error("renderOtpMailContent error: $ex")
@@ -88,12 +86,10 @@ class MailServiceImpl(
             val context = Context().apply {
                 setVariable("USERNAME", transmissionNoti.subTitle)
             }
-
             val templateMail = DataUtil.safeToString(
                 CommonConstants.TEMPLATE_MAIL_MAP[DataUtil.safeToString(transmissionNoti.templateMail)],
                 CommonConstants.TEMP_ACTIVE_ACCOUNT_CUSTOMER
             )
-
             templateEngine.process(templateMail, context)
         } catch (ex: Exception) {
             logger.error("renderOtpMailContent error: ", ex)
@@ -104,11 +100,9 @@ class MailServiceImpl(
     private fun mailAccountCustomerInfo(transmissionNoti: TransmissionNotiDTO): String {
         return try {
             val context = Context()
-
             val userInfo = transmissionNoti.subTitle.split("-")
             context.setVariable("USERNAME", userInfo[0])
             context.setVariable("PASSWORD", userInfo[1])
-
             val templateMail = DataUtil.safeToString(
                 CommonConstants.TEMPLATE_MAIL_MAP[DataUtil.safeToString(transmissionNoti.templateMail)],
                 CommonConstants.TEMP_ACCOUNT_CUSTOMER_INFO
@@ -125,12 +119,10 @@ class MailServiceImpl(
             val context = Context().apply {
                 setVariable("USERNAME", transmissionNoti.externalData)
             }
-
             val templateMail = DataUtil.safeToString(
                 CommonConstants.TEMPLATE_MAIL_MAP[DataUtil.safeToString(transmissionNoti.templateMail)],
                 "mail/register_account_success.html"
             )
-
             templateEngine.process(templateMail, context)
         } catch (ex: Exception) {
             logger.error("renderOtpMailContent error: ", ex)
@@ -144,12 +136,10 @@ class MailServiceImpl(
                 setVariable("USERNAME", transmissionNoti.externalData)
                 setVariable("PASSWORD", transmissionNoti.subTitle)
             }
-
             val templateMail = DataUtil.safeToString(
                 CommonConstants.TEMPLATE_MAIL_MAP[DataUtil.safeToString(transmissionNoti.templateMail)],
                 "mail/register_account_success.html"
             )
-
             templateEngine.process(templateMail, context)
         } catch (ex: Exception) {
             logger.error("renderOtpMailContent error: ", ex)
@@ -183,12 +173,10 @@ class MailServiceImpl(
             val context = Context().apply {
                 setVariable("SUBTITLE", transmissionNoti.subTitle)
             }
-
             val templateMail = DataUtil.safeToString(
                 CommonConstants.TEMPLATE_MAIL_MAP[DataUtil.safeToString(transmissionNoti.templateMail)],
                 CommonConstants.TEMP_VERIFY_ACCOUNT_SUCCESS
             )
-
             templateEngine.process(templateMail, context)
         } catch (ex: Exception) {
             logger.error("renderOtpMailContent error: ", ex)
@@ -201,12 +189,10 @@ class MailServiceImpl(
             val context = Context().apply {
                 setVariable("SUBTITLE", transmissionNoti.subTitle)
             }
-
             val templateMail = DataUtil.safeToString(
                 CommonConstants.TEMPLATE_MAIL_MAP[DataUtil.safeToString(transmissionNoti.templateMail)],
                 CommonConstants.TEMP_NOTI_VERIFY_ACCOUNT
             )
-
             templateEngine.process(templateMail, context)
         } catch (ex: Exception) {
             logger.error("renderOtpMailContent error: ", ex)

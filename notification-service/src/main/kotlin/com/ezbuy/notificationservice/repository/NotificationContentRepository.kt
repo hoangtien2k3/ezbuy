@@ -11,7 +11,7 @@ interface NotificationContentRepository : R2dbcRepository<NotificationContent, S
 
     override fun findById(id: String): Mono<NotificationContent>
 
-    @Query(NotificationContentQuery.insertNotificationContent)
+    @Query(NotificationContentQuery.INSERT_NOTIFICATION_CONTENT)
     fun insert(
         id: String,
         title: String,

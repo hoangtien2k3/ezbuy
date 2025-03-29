@@ -56,7 +56,6 @@ class TransmissionServiceImpl(
                         true
                     }
                 }
-
                 if (emailTransmissions.all { DataUtil.isNullOrEmpty(it.email) }) {
                     log.info("Email transmission empty")
                 }
@@ -68,14 +67,12 @@ class TransmissionServiceImpl(
 
                 updateResultVar.flatMap {
                     successIds.clear()
-
                     val emailResultMono = if (emailTransmissions.isNotEmpty()) {
                         val transmissionHaveEmailList = emailTransmissions.filter {
                             !DataUtil.isNullOrEmpty(it.email) && ValidateUtils.validateRegex(
                                 DataUtil.safeTrim(it.email), Regex.EMAIL_REGEX
                             )
                         }
-
                         val receiverIds = emailTransmissions.filter {
                             !DataUtil.isNullOrEmpty(it.receiver) && (DataUtil.isNullOrEmpty(
                                 DataUtil.safeTrim(it.email))
@@ -84,12 +81,10 @@ class TransmissionServiceImpl(
                                 Regex.EMAIL_REGEX
                             ))
                         }.map { it.receiver }
-
                         handleEmails(receiverIds, transmissionHaveEmailList, emailTransmissions)
                     } else {
                         Mono.just(emptyList())
                     }
-
                     emailResultMono.flatMap { emailResults -> updateTransmissionStatus(emailResults, successIds) }
                 }
             }
@@ -127,9 +122,7 @@ class TransmissionServiceImpl(
         successIds: MutableList<String>
     ): Mono<DataResponse<Any>> {
         val failedIds = emailResults.filter { !it.isSuccess }.map { it.transmissionId }
-
         successIds.addAll(emailResults.filter { it.isSuccess }.map { it.transmissionId })
-
         val successUpdateMono = if (DataUtil.isNullOrEmpty(successIds)) {
             Mono.just(true)
         } else {
@@ -167,7 +160,6 @@ class TransmissionServiceImpl(
                 map
             }
         }
-
         return Mono.zip(emailMonoList) { results ->
             results.flatMap { (it as Map<String, String>).entries }.associate { it.toPair() }
         }
