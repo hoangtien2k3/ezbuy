@@ -11,7 +11,6 @@ logging:
     io.r2dbc.postgresql.QUERY: DEBUG
     io.r2dbc.postgresql.PARAM: DEBUG
     io.r2dbc.postgresql.CONNECTION: DEBUG
-
 # spring config
 spring:
   application:
@@ -22,7 +21,7 @@ spring:
   messages:
     basename: messages
   r2dbc:
-    url: r2dbc:postgresql://postgres:5434/rating
+    url: r2dbc:postgresql://localhost:5434/rating
     username: admin
     password: admin
 
@@ -49,6 +48,6 @@ keycloak:
   clientId: ezbuy-client
   clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
   realm: ezbuy-server
-  serverUrl: http://keycloak:8080
+  serverUrl: http://localhost:8080
   grantType: password  #client_credentials
   host: localhost

@@ -19,7 +19,7 @@ spring:
 
   #r2dbc postgresql
   r2dbc:
-    url: r2dbc:postgresql://postgres:5432/setting
+    url: r2dbc:postgresql://localhost:5434/setting
     username: admin
     password: admin
 
@@ -53,14 +53,14 @@ keycloak:
   clientId: ezbuy-client
   clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
   realm: ezbuy-server
-  serverUrl: http://keycloak:8080
+  serverUrl: http://localhost:8080
   grantType: password
   host: localhost
 
 #client-elasticsearch
 client:
   elasticsearch:
-    address: http://elasticsearch:9200
+    address: http://localhost:9200
     name: elasticSearchClient
 
 # unauthenticated endpoints config

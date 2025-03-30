@@ -26,13 +26,13 @@ public class SettingClientImpl implements SettingClient {
     public Mono<DataResponse> syncNews() {
         return baseRestClient
                 .post(settingClient, "/v1/global-search/news", null, null, DataResponse.class)
-                .map(rs -> new DataResponse());
+                .map(DataResponse::success);
     }
 
     @Override
     public Mono<DataResponse> syncServices() {
         return baseRestClient
                 .post(settingClient, "/v1/global-search/services", null, null, DataResponse.class)
-                .map(rs -> new DataResponse());
+                .map(DataResponse::success);
     }
 }

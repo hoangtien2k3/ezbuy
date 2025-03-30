@@ -33,14 +33,14 @@ public class ProductClientImpl implements ProductClient {
     public Mono<DataResponse> syncFilter() {
         return restClient
                 .post(productClient, "/v1/sync-filter-template", null, null, DataResponse.class)
-                .map(rs -> new DataResponse());
+                .map(DataResponse::success);
     }
 
     @Override
     public Mono<DataResponse> syncSubscriber() {
         return restClient
                 .post(productClient, "/v1/sync-subscriber", null, null, DataResponse.class)
-                .map(rs -> new DataResponse());
+                .map(DataResponse::success);
     }
 
     @Override
@@ -69,6 +69,6 @@ public class ProductClientImpl implements ProductClient {
     public Mono<DataResponse> insertVoucher() {
         return restClient
                 .post(productClient, "/v1/voucher/insert-voucher", null, null, DataResponse.class)
-                .map(rs -> new DataResponse());
+                .map(DataResponse::success);
     }
 }

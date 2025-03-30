@@ -27,6 +27,6 @@ public class OrderClientImpl implements OrderClient {
     public Mono<DataResponse> syncOrderState(SyncOrderStateRequest request) {
         return restClient
                 .post(orderClient, "/v1/order/sync-order", null, request, DataResponse.class)
-                .map(rs -> new DataResponse());
+                .map(DataResponse::success);
     }
 }

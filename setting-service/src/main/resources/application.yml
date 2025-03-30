@@ -26,7 +26,7 @@ spring:
 
   #r2dbc postgresql
   r2dbc:
-    url: r2dbc:postgresql://postgres:5434/setting
+    url: r2dbc:postgresql://localhost:5434/setting
     username: admin
     password: admin
 
@@ -35,7 +35,7 @@ spring:
       repositories:
         enabled: false
   elasticsearch:
-    uris: http://elasticsearch:9200
+    uris: http://localhost:9200
 
   #security config
   security:
@@ -66,7 +66,7 @@ spring:
 # web client config
 client:
   keycloak:
-    address: http://keycloak:8080/realms/ezbuy-server/protocol/openid-connect
+    address: http://localhost:8080/realms/ezbuy-server/protocol/openid-connect
     name: keycloak
     auth:
       client-id: ezbuy-client
@@ -116,8 +116,8 @@ keycloak:
 minio:
   bucket: ezbuy-bucket
   enabled: true
-  baseUrl: http://minio:9000
-  publicUrl: http://minio:9000
+  baseUrl: http://localhost:9000
+  publicUrl: http://localhost:9000
   accessKey: q875aHMpdL6IJ3n9ruil
   secretKey: Q43tehRDv55Sw67ktA0pQdztEbtQjvinLOk6zwB3
   private:

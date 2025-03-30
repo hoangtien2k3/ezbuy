@@ -21,7 +21,7 @@ spring:
     basename: messages
   #config r2dbc database
   r2dbc:
-    url: r2dbc:postgresql://postgres:5434/cart
+    url: r2dbc:postgresql://localhost:5434/cart
     username: admin
     password: admin
     pool:
@@ -29,7 +29,6 @@ spring:
       initial-size: 5
   codec:
     max-in-memory-size: 100MB
-
   #config keycloak
   security:
     oauth2:
@@ -70,7 +69,7 @@ application:
 # web client config
 client:
   keycloak:
-    address: http://keycloak:8080/realms/ezbuy-server/protocol/openid-connect
+    address: http://localhost:8080/realms/ezbuy-server/protocol/openid-connect
     name: keycloak
     auth:
       client-id: ezbuy-client
@@ -81,7 +80,7 @@ keycloak:
   clientId: ezbuy-client
   clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
   realm: ezbuy-server
-  serverUrl: http://keycloak:8080
+  serverUrl: http://localhost:8080
   grantType: password
   host: localhost
 
