@@ -25,10 +25,9 @@
 	<dependencies>
 		<!-- internal -->
 		<dependency>
-<!--			<groupId>io.github.hoangtien2k3</groupId>-->
-			<groupId>com.ezbuy.platform</groupId>
+			<groupId>io.github.hoangtien2k3</groupId>
 			<artifactId>reactify-core</artifactId>
-			<version>1.2.8</version>
+			<version>1.2.9</version>
 		</dependency>
 		<dependency>
 			<groupId>com.ezbuy.platform</groupId>

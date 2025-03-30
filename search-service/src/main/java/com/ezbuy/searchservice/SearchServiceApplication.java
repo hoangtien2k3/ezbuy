@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.r2dbc.R2dbcAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(
@@ -18,7 +17,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
             SecurityAutoConfiguration.class,
             R2dbcAutoConfiguration.class
         })
-@ComponentScan(basePackages = {"com.ezbuy", "com.reactify"})
 @EnableScheduling
 public class SearchServiceApplication {
     public static void main(String[] args) {
