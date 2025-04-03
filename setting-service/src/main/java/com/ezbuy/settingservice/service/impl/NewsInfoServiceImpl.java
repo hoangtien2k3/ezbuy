@@ -11,6 +11,7 @@ import com.ezbuy.settingmodel.response.SearchNewsInfoResponse;
 import com.ezbuy.settingservice.repository.NewsInfoRepository;
 import com.ezbuy.settingservice.repositoryTemplate.NewsInfoRepositoryTemplate;
 import com.ezbuy.settingservice.service.NewsInfoService;
+import com.reactify.config.MinioProperties;
 import com.reactify.constants.CommonErrorCode;
 import com.reactify.constants.Constants;
 import com.reactify.exception.BusinessException;
@@ -34,9 +35,11 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 public class NewsInfoServiceImpl extends BaseServiceHandler implements NewsInfoService {
+
     private final NewsInfoRepository newsInfoRepository;
     private final NewsInfoRepositoryTemplate newsInfoRepositoryTemplate;
     private final MinioUtils minioUtils;
+    private final MinioProperties minioProperties;
 
     @Override
     @Transactional
@@ -52,7 +55,7 @@ public class NewsInfoServiceImpl extends BaseServiceHandler implements NewsInfoS
                                         Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
                         validateExistNewsInfo(code, displayOrder, request.getGroupNewsId()),
                         getSysDate,
-                        uploadImage(request.getNavigatorUrl()))
+                        minioUtils.uploadMedia(request.getNavigatorUrl()))
                 .flatMap(
                         tuple -> { // validate ton tai thong tin code hoac
                             // displayOrder
@@ -174,7 +177,7 @@ public class NewsInfoServiceImpl extends BaseServiceHandler implements NewsInfoS
                     String urlFromDB = DataUtil.safeTrim(newsInfo.getNavigatorUrl());
                     Mono<String> url;
                     if (!DataUtil.safeEqual(navigatorUrl, urlFromDB)) {
-                        url = uploadImage(navigatorUrl);
+                        url = minioUtils.uploadMedia(navigatorUrl);
                     } else {
                         url = Mono.just(navigatorUrl);
                     }
@@ -246,32 +249,6 @@ public class NewsInfoServiceImpl extends BaseServiceHandler implements NewsInfoS
     @Transactional
     public Mono<List<NewsInfo>> getAllNewsInfoActive() {
         return newsInfoRepository.getAllNewsInfoActive().collectList();
-    }
-
-    /**
-     * save news content image
-     *
-     * @param dataImage
-     *            image dataImage base64
-     * @return image dataImage
-     */
-    private Mono<String> uploadImage(String dataImage) {
-        if (!dataImage.startsWith("data:")) {
-            return Mono.just(dataImage);
-        }
-        String base64Data = dataImage.split(",")[1];
-        String base64Head = dataImage.split(",")[0];
-
-        String extend = base64Head.split("/")[1].split(";")[0];
-        String path = UUID.randomUUID() + "_." + extend;
-        // byte[] bytes = Base64.getDecoder().decode(base64Data);
-        byte[] bytes = Base64.decodeBase64(base64Data);
-
-        String returnUrl = minioUtils.getMinioProperties().getPublicUrl() + "/"
-                + Constants.MINIO_BUCKET_MARKET_INFO.URL_IMAGE + "/" + path;
-        return minioUtils
-                .uploadFile(bytes, Constants.MINIO_BUCKET_MARKET_INFO.URL_IMAGE, path)
-                .thenReturn(returnUrl);
     }
 
     @Override

@@ -11,6 +11,7 @@ import com.ezbuy.settingservice.repository.MarketSectionRepository;
 import com.ezbuy.settingservice.repository.ServiceMediaRepository;
 import com.ezbuy.settingservice.repositoryTemplate.MarketSectionRepositoryTemplate;
 import com.ezbuy.settingservice.service.MarketSectionService;
+import com.reactify.config.MinioProperties;
 import com.reactify.constants.CommonErrorCode;
 import com.reactify.constants.Constants;
 import com.reactify.exception.BusinessException;
@@ -19,12 +20,8 @@ import com.reactify.model.response.DataResponse;
 import com.reactify.util.DataUtil;
 import com.reactify.util.MinioUtils;
 import com.reactify.util.SecurityUtils;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,14 +30,20 @@ import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class MarketSectionServiceImpl extends BaseServiceHandler implements MarketSectionService {
+
     private final MarketSectionRepository marketSectionRepository;
     private final MarketSectionRepositoryTemplate marketSectionRepositoryTemplate;
     private final MinioUtils minioUtils;
+    private final MinioProperties minioProperties;
     private final ServiceMediaRepository serviceMediaRepository;
 
     @Override
@@ -213,19 +216,19 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
                 return Mono.error(new BusinessException(
                         CommonErrorCode.INVALID_PARAMS, "market.section.error.header.info.icon.url.empty"));
             }
-            return uploadMedia(headerInfo.getIconUrl(), Constants.MINIO_BUCKET_MARKET_SECTION.MARKET_SECTION)
+            return minioUtils.uploadMedia(headerInfo.getIconUrl(), minioProperties.getBucket())
                     .switchIfEmpty(Mono.error(new BusinessException(
                             CommonErrorCode.INTERNAL_SERVER_ERROR, "market.section.error.insert.market.section.fail")))
                     .flatMap(url -> {
-                        headerInfo.setIconUrl(url.getUrl());
+                        headerInfo.setIconUrl(url);
                         // insert service media
                         LocalDateTime now = LocalDateTime.now();
                         ServiceMedia serviceMedia = new ServiceMedia();
                         serviceMedia.setId(UUID.randomUUID().toString());
                         serviceMedia.setServiceId(headerInfo.getServiceId());
                         serviceMedia.setType("image");
-                        serviceMedia.setUrl(url.getUrl());
-                        serviceMedia.setContentType(url.getExtend());
+                        serviceMedia.setUrl(url);
+                        serviceMedia.setContentType(url);
                         serviceMedia.setStatus(1);
                         serviceMedia.setCreateAt(now);
                         serviceMedia.setCreateBy(user.getUsername());
@@ -261,7 +264,7 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
         if (DataUtil.isNullOrEmpty(mediaDTO.getUrl())) {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.section.error.slide.media.empty");
         }
-        return uploadMedia(mediaDTO.getUrl(), Constants.MINIO_BUCKET_MARKET_SECTION.MARKET_SECTION)
+        return minioUtils.uploadMedia(mediaDTO.getUrl(), minioProperties.getBucket())
                 .switchIfEmpty(Mono.error(new BusinessException(
                         CommonErrorCode.INTERNAL_SERVER_ERROR, "market.section.error.insert.market.section.fail")))
                 .flatMap(url -> {
@@ -270,47 +273,19 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
                     ServiceMedia serviceMedia = new ServiceMedia();
                     serviceMedia.setId(UUID.randomUUID().toString());
                     serviceMedia.setType(mediaDTO.getType());
-                    serviceMedia.setUrl(url.getUrl());
-                    serviceMedia.setContentType(url.getExtend());
+                    serviceMedia.setUrl(url);
+                    serviceMedia.setContentType(url);
                     serviceMedia.setStatus(1);
                     serviceMedia.setCreateAt(now);
                     serviceMedia.setCreateBy(createUser);
                     serviceMedia.setCreateAt(now);
                     serviceMedia.setCreateBy(updateUser);
-                    mediaDTO.setUrl(url.getUrl());
+                    mediaDTO.setUrl(url);
                     return serviceMediaRepository.save(serviceMedia).map(insert -> {
                         mediaDTO.setMediaId(insert.getId());
                         return mediaDTO;
                     });
                 });
-    }
-
-    /**
-     * save medias (image, video)
-     *
-     * @param data
-     *            data base64
-     * @return image dataImage
-     */
-    private Mono<UploadMediaDTO> uploadMedia(String data, String bucketName) {
-        if (!data.startsWith("data:")) {
-            // lay duoi file media tu duong dan
-            List<String> list = Arrays.asList(data.split("\\."));
-            String extend = null;
-            if (!DataUtil.isNullOrEmpty(list)) {
-                extend = list.getLast();
-            }
-            return Mono.just(new UploadMediaDTO(data, extend));
-        }
-        String base64Data = data.split(",")[1];
-        String base64Head = data.split(",")[0];
-
-        String extend = base64Head.split("/")[1].split(";")[0];
-        String path = UUID.randomUUID() + "_." + extend;
-        byte[] bytes = Base64.decodeBase64(base64Data);
-
-        String returnUrl = minioUtils.getMinioProperties().getPublicUrl() + "/" + bucketName + "/" + path;
-        return minioUtils.uploadFile(bytes, bucketName, path).thenReturn(new UploadMediaDTO(returnUrl, extend));
     }
 
     @Override

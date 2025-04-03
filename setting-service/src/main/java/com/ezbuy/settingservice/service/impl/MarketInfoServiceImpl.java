@@ -10,6 +10,7 @@ import com.ezbuy.settingservice.repository.MarketInfoRepository;
 import com.ezbuy.settingservice.repositoryTemplate.MarketInfoRepositoryTemplate;
 import com.ezbuy.settingservice.service.MarketInfoService;
 import com.ezbuy.settingservice.service.TelecomService;
+import com.reactify.config.MinioProperties;
 import com.reactify.constants.CommonErrorCode;
 import com.reactify.constants.Constants;
 import com.reactify.exception.BusinessException;
@@ -35,9 +36,8 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class MarketInfoServiceImpl implements MarketInfoService {
 
-    // private final FileService fileService;
-    // @Autowired
     private final MinioUtils minioUtils;
+    private final MinioProperties minioProperties;
     private final MarketInfoRepository marketInfoRepository;
     private final MarketInfoRepositoryTemplate marketInfoRepositoryTemplate;
     private final TelecomService telecomService;
@@ -63,7 +63,7 @@ public class MarketInfoServiceImpl implements MarketInfoService {
                     for (MarketInfoDTO item : content) {
                         item.setBase64(addPrefixImageBase64(
                                 minioUtils.getBase64FromUrl(
-                                        Constants.MINIO_BUCKET_MARKET_INFO.URL_IMAGE, item.getMarketImageUrl()),
+                                        minioProperties.getBucket(), item.getMarketImageUrl()),
                                 item.getMarketImageUrl()));
                     }
                     Long totalRecords = zip.getT2();
@@ -112,11 +112,7 @@ public class MarketInfoServiceImpl implements MarketInfoService {
                                         new BusinessException(CommonErrorCode.NOT_FOUND, "market.info.not.found"))),
                         validateDuplicateMarketOrder(marketOrder),
                         validateDuplicateServiceId(request.getServiceId(), request.getServiceAlias()), // bo sung them
-                        // serviceAlias (khi
-                        // serviceAlias null
-                        // khong
-                        // anh huong den luong cu)
-                        uploadImage(request.getImage()))
+                        minioUtils.uploadMedia(request.getImage()))
                 .flatMap(zip -> {
                     String imageLink = zip.getT4();
                     TokenUser tokenUser = zip.getT1();
@@ -151,7 +147,7 @@ public class MarketInfoServiceImpl implements MarketInfoService {
                         SecurityUtils.getCurrentUser()
                                 .switchIfEmpty(Mono.error(
                                         new BusinessException(CommonErrorCode.NOT_FOUND, "market.info.not.found"))),
-                        uploadImage(request.getImage()),
+                        minioUtils.uploadMedia(request.getImage()),
                         marketInfoRepository.getById(id))
                 .flatMap(zip -> {
                     TokenUser tokenUser = zip.getT1();
@@ -274,40 +270,13 @@ public class MarketInfoServiceImpl implements MarketInfoService {
                 });
     }
 
-    /**
-     * save news content image
-     *
-     * @param dataImage
-     *            image dataImage base64
-     * @return image dataImage
-     */
-    private Mono<String> uploadImage(String dataImage) {
-        if (!dataImage.startsWith("data:")) {
-            return Mono.just(dataImage);
-        }
-        String base64Data = dataImage.split(",")[1];
-        String base64Head = dataImage.split(",")[0];
-
-        String extend = base64Head.split("/")[1].split(";")[0];
-        String path = UUID.randomUUID() + "_." + extend;
-        // byte[] bytes = Base64.getDecoder().decode(base64Data);
-        byte[] bytes = Base64.decodeBase64(base64Data);
-
-        String returnUrl = minioUtils.getMinioProperties().getPublicUrl() + "/"
-                + Constants.MINIO_BUCKET_MARKET_INFO.URL_IMAGE + "/" + path;
-        return minioUtils
-                .uploadFile(bytes, Constants.MINIO_BUCKET_MARKET_INFO.URL_IMAGE, path)
-                .thenReturn(returnUrl);
-    }
-
     private String addPrefixImageBase64(String base64, String url) {
         // anh cua mbccs can phai format lai data
         String[] lstUrl = url.split("\\/");
         String nameImage = lstUrl[lstUrl.length - 1];
         String extension = FilenameUtils.getExtension(nameImage); // lay duoi cua anh
         return DataUtil.isNullOrEmpty(extension)
-                ? Constants.NULL_IMAGE_SRC
-                : "data:image/" + extension.trim() + ";base64," + base64; // chuyen sang dang;
+                ? "" : "data:image/" + extension.trim() + ";base64," + base64; // chuyen sang dang;
     }
 
     @Override

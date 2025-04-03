@@ -140,8 +140,7 @@ public class MarketPageServiceImpl extends BaseServiceHandler implements MarketP
                             .createAt(now)
                             .updateBy(tokenUser.getUsername())
                             .updateAt(now)
-                            .serviceAlias(request.getServiceAlias()) // serviceAlias cua dich vu
-                            // PYCXXX/LuongToanTrinhScontract
+                            .serviceAlias(request.getServiceAlias())
                             .build();
                     return marketPageRepository
                             .save(marketPage)
@@ -209,7 +208,6 @@ public class MarketPageServiceImpl extends BaseServiceHandler implements MarketP
                 .map(marketPage -> new DataResponse<>(Translator.toLocale("Success"), marketPage));
     }
 
-    // lay danh sach cau hinh trang theo danh sach alias
     @Override
     public Mono<DataResponse<List<MarketPage>>> getMarketPageByServiceIdV2(List<String> lstAlias) {
         return marketPageRepository

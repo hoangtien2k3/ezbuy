@@ -21,15 +21,6 @@ import com.reactify.exception.BusinessException;
 import io.minio.*;
 import io.minio.errors.*;
 import io.minio.http.Method;
-import java.io.*;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-import javax.activation.MimetypesFileTypeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -38,6 +29,13 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+
+import javax.activation.MimetypesFileTypeMap;
+import java.io.*;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Utility class for data manipulation and processing. This class contains
@@ -53,15 +51,18 @@ public class MinioUtils {
     private static final Logger log = LoggerFactory.getLogger(MinioUtils.class);
 
     private final MinioProperties minioProperties;
-
     private final MinioClient minioClient;
 
     public MinioProperties getMinioProperties() {
-        return minioProperties;
+        return this.minioProperties;
     }
 
     public MinioClient getMinioClient() {
-        return minioClient;
+        return this.minioClient;
+    }
+
+    public String getBucket() {
+        return this.minioProperties.getBucket();
     }
 
     /**
@@ -79,53 +80,71 @@ public class MinioUtils {
 
     /** Constant <code>IMAGE_PNG_CONTENT_TYPE="image/png"</code> */
     public static final String IMAGE_PNG_CONTENT_TYPE = "image/png";
+
     /** Constant <code>IMAGE_JPEG_CONTENT_TYPE="image/jpeg"</code> */
     public static final String IMAGE_JPEG_CONTENT_TYPE = "image/jpeg";
+
     /** Constant <code>PDF_CONTENT_TYPE="application/pdf"</code> */
     public static final String PDF_CONTENT_TYPE = "application/pdf";
+
     /**
      * Constant
      * <code>XLSX_CONTENT_TYPE="application/vnd.openxmlformats-officedo"{trunked}</code>
      */
     public static final String XLSX_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
     /**
      * Constant
      * <code>DOCX_CONTENT_TYPE="application/vnd.openxmlformats-officedo"{trunked}</code>
      */
     public static final String DOCX_CONTENT_TYPE =
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
     /** Constant <code>TEXT_CONTENT_TYPE="text/plain"</code> */
     public static final String TEXT_CONTENT_TYPE = "text/plain";
+
     /** Constant <code>VIDEO_CONTENT_TYPE="video/mp4"</code> */
     public static final String VIDEO_CONTENT_TYPE = "video/mp4";
 
     /** Constant <code>IMAGE_FOLDER="images/"</code> */
     public static final String IMAGE_FOLDER = "images/";
+
     /** Constant <code>PDF_FOLDER="pdf/"</code> */
     public static final String PDF_FOLDER = "pdf/";
+
     /** Constant <code>EXCEL_FOLDER="excel/"</code> */
     public static final String EXCEL_FOLDER = "excel/";
+
     /** Constant <code>WORD_FOLDER="word/"</code> */
     public static final String WORD_FOLDER = "word/";
+
     /** Constant <code>TEXT_FOLDER="text/"</code> */
     public static final String TEXT_FOLDER = "text/";
+
     /** Constant <code>VIDEO_FOLDER="videos/"</code> */
     public static final String VIDEO_FOLDER = "videos/";
 
     /** Constant <code>PNG_END=".png"</code> */
     public static final String PNG_END = ".png";
+
     /** Constant <code>JPEG_END=".jpeg"</code> */
     public static final String JPEG_END = ".jpeg";
+
     /** Constant <code>PDF_END=".pdf"</code> */
     public static final String PDF_END = ".pdf";
+
     /** Constant <code>EXCEL_END=".xlsx"</code> */
     public static final String EXCEL_END = ".xlsx";
+
     /** Constant <code>WORD_END=".docx"</code> */
     public static final String WORD_END = ".docx";
+
     /** Constant <code>TEXT_END=".txt"</code> */
     public static final String TEXT_END = ".txt";
+
     /** Constant <code>VIDEO_END=".mp4"</code> */
     public static final String VIDEO_END = ".mp4";
+
     /** Constant <code>FOLDER_MAP</code> */
     public static final Map<String, String> FOLDER_MAP;
 
@@ -150,6 +169,87 @@ public class MinioUtils {
     }
 
     /**
+     * Uploads a media file (image or video) from a Base64-encoded string to MinIO storage.
+     * <p>
+     * This method processes Base64-encoded media data, extracts the file type,
+     * decodes it into binary format, and uploads it to the specified MinIO bucket.
+     * If a valid `bucketName` is provided, the media is stored there; otherwise,
+     * the default bucket from `this.minioProperties` is used.
+     * </p>
+     *
+     * @param data
+     *        The Base64-encoded media data. It must be in the format:
+     *        `"data:[media-type];base64,[encoded-data]"`.
+     *        If `data` is a URL (starting with "http://" or "https://"), it is returned as is.
+     * @return
+     *        A `Mono<String>` containing the public URL of the uploaded media file.
+     *        If `data` is already a URL, it is returned immediately.
+     */
+    public Mono<String> uploadMedia(String data) {
+        return this.uploadMediaMinio(data, this.minioProperties.getBucket());
+    }
+
+    /**
+     * Uploads a media file (image or video) from a Base64-encoded string to MinIO storage.
+     * <p>
+     * This method processes Base64-encoded media data, extracts the file type,
+     * decodes it into binary format, and uploads it to the specified MinIO bucket.
+     * If a valid `bucketName` is provided, the media is stored there; otherwise,
+     * the default bucket from `this.minioProperties` is used.
+     * </p>
+     *
+     * @param data
+     *        The Base64-encoded media data. It must be in the format:
+     *        `"data:[media-type];base64,[encoded-data]"`.
+     *        If `data` is a URL (starting with "http://" or "https://"), it is returned as is.
+     * @param bucketName
+     *        The name of the MinIO bucket where the file should be stored.
+     *        If `null` or empty, the default bucket from `this.minioProperties` is used.
+     * @return
+     *        A `Mono<String>` containing the public URL of the uploaded media file.
+     *        If `data` is already a URL, it is returned immediately.
+     */
+    public Mono<String> uploadMedia(String data, String bucketName) {
+        return this.uploadMediaMinio(data, bucketName);
+    }
+
+    private Mono<String> uploadMediaMinio(String data, String bucketName) {
+        if (!data.startsWith("data:") || !data.contains(",")) {
+            return Mono.justOrEmpty(data);
+        }
+        String[] parts = data.split(",", 2);
+        if (parts.length < 2) {
+            return Mono.error(new BusinessException("ULM0001", "Invalid base64 format"));
+        }
+        String base64Head = parts[0];
+        String base64Data = parts[1];
+
+        int slashIndex = base64Head.indexOf('/');
+        int semicolonIndex = base64Head.indexOf(';');
+        if (slashIndex == -1 || semicolonIndex == -1 || semicolonIndex <= slashIndex + 1) {
+            return Mono.error(new BusinessException("ULM0002", "Invalid base64 metadata"));
+        }
+        String extension = base64Head.substring(slashIndex + 1, semicolonIndex);
+        String path = UUID.randomUUID() + "." + extension;
+
+        byte[] bytes;
+        try {
+            bytes = org.apache.commons.codec.binary.Base64.decodeBase64(base64Data);
+        } catch (Exception e) {
+            return Mono.error(new BusinessException("ULM0003", "Failed to decode base64 data"));
+        }
+
+        String bucket = Optional.ofNullable(bucketName)
+                .filter(b -> !b.isEmpty())
+                .orElseGet(() -> Optional.ofNullable(this.minioProperties.getBucket())
+                        .filter(b -> !b.isEmpty())
+                        .orElseThrow(() -> new BusinessException("ULM0004", "Bucket is null or empty")));
+        String returnUrl = this.minioProperties.getPublicUrl() + "/" + bucket + "/" + path;
+
+        return uploadFile(bytes, bucket, path).thenReturn(returnUrl);
+    }
+
+    /**
      * <p>
      * isBucketExist.
      * </p>
@@ -159,7 +259,7 @@ public class MinioUtils {
      * @return a {@link reactor.core.publisher.Mono} object
      */
     public Mono<Boolean> isBucketExist(String bucketName) {
-        return Mono.fromCallable(() -> minioClient.bucketExists(
+        return Mono.fromCallable(() -> this.minioClient.bucketExists(
                         BucketExistsArgs.builder().bucket(bucketName).build()))
                 .subscribeOn(Schedulers.boundedElastic());
     }
@@ -167,7 +267,7 @@ public class MinioUtils {
     private void makeBucketSync(String bucketName) {
         try {
             log.info("Start making bucket with name {}", bucketName);
-            minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+            this.minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
             log.info("Make bucket successfully");
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -190,7 +290,7 @@ public class MinioUtils {
     private void makeFolderSync(String bucketName, String folderName) {
         try {
             log.info("Start making folder with name {}", folderName);
-            minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(folderName + "/").stream(
+            this.minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(folderName + "/").stream(
                             new ByteArrayInputStream(new byte[] {}), 0, -1)
                     .build());
             log.info("Make folder successfully");
@@ -211,7 +311,7 @@ public class MinioUtils {
      * @return a {@link reactor.core.publisher.Mono} object
      */
     public Mono<Void> makeFolder(String bucketName, String folderName) {
-        return Mono.fromRunnable(() -> makeFolderSync(bucketName, folderName));
+        return Mono.fromRunnable(() -> this.makeFolderSync(bucketName, folderName));
     }
 
     private String uploadFileToFolderSync(
@@ -222,12 +322,12 @@ public class MinioUtils {
             String objectName = UUID.randomUUID().toString().replace("-", ""); // dungbd5 remove dash
             String object = handleObjectName(contentType, objectName, folderName);
             log.info("Start upload file {} ", object);
-            minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(object).stream(
+            this.minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(object).stream(
                             new ByteArrayInputStream(buffer), buffer.length, -1)
                     .contentType(contentType)
                     .build());
             log.info(UPLOAD_SUCCESS_LOG);
-            return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
+            return this.minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
                     .method(Method.GET)
                     .bucket(bucketName)
                     .object(object)
@@ -274,7 +374,7 @@ public class MinioUtils {
     private void uploadSync(byte[] data, String bucketName, String fileName, String filePath, String contentType) {
         try {
             log.info("Start uploading {} ", fileName);
-            minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(filePath).stream(
+            this.minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(filePath).stream(
                             new ByteArrayInputStream(data), data.length, -1)
                     .contentType(contentType)
                     .build());
@@ -311,7 +411,7 @@ public class MinioUtils {
     private String updateObjectSync(String bucket, String object, byte[] bytes) {
         try {
             log.info("Start update object {}", object);
-            minioClient.putObject(PutObjectArgs.builder().bucket(bucket).object(object).stream(
+            this.minioClient.putObject(PutObjectArgs.builder().bucket(bucket).object(object).stream(
                             new ByteArrayInputStream(bytes), bytes.length, -1)
                     .build());
             log.info(UPLOAD_SUCCESS_LOG);
@@ -366,7 +466,7 @@ public class MinioUtils {
     }
 
     private void downloadSync(String bucket, String object, FluxSink<String> stringFluxSink) {
-        try (InputStream inputStream = minioClient.getObject(
+        try (InputStream inputStream = this.minioClient.getObject(
                 GetObjectArgs.builder().bucket(bucket).object(object).build())) {
             log.info("bucket,object: {} {}", bucket, object);
             BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
@@ -399,7 +499,7 @@ public class MinioUtils {
     private void downloadFileSync(String bucketName, String objectName, String fileName) {
         try {
             log.info("Start downloading object {}", objectName);
-            minioClient.downloadObject(DownloadObjectArgs.builder()
+            this.minioClient.downloadObject(DownloadObjectArgs.builder()
                     .bucket(bucketName)
                     .object(objectName)
                     .filename(fileName)
@@ -441,7 +541,7 @@ public class MinioUtils {
      */
     public void downloadFileBlock(String bucketName, String objectName, String fileName) {
         try {
-            minioClient.downloadObject(DownloadObjectArgs.builder()
+            this.minioClient.downloadObject(DownloadObjectArgs.builder()
                     .bucket(bucketName)
                     .object(objectName)
                     .filename(fileName)
@@ -454,7 +554,7 @@ public class MinioUtils {
     private ObjectWriteResponse copyObjectSync(String bucketName, String objectName) {
         try {
             log.info("Start downloading object {}", objectName);
-            ObjectWriteResponse o = minioClient.copyObject(CopyObjectArgs.builder()
+            ObjectWriteResponse o = this.minioClient.copyObject(CopyObjectArgs.builder()
                     .bucket(bucketName)
                     .object(objectName)
                     .build());
@@ -484,7 +584,7 @@ public class MinioUtils {
     private ObjectWriteResponse copyObjectSync(String bucketName, String sourceObject, String destinationObject) {
         try {
             log.info("Copy object from {} to {} ", sourceObject, destinationObject);
-            ObjectWriteResponse o = minioClient.copyObject(CopyObjectArgs.builder()
+            ObjectWriteResponse o = this.minioClient.copyObject(CopyObjectArgs.builder()
                     .bucket(bucketName)
                     .object(destinationObject)
                     .source(CopySource.builder()
@@ -532,7 +632,7 @@ public class MinioUtils {
     public Mono<String> getObjectUrl(String bucketName, String objectName) {
         return isBucketExist(bucketName).flatMap(isBucketExist -> {
             if (isBucketExist) {
-                String url = minioProperties.getBaseUrl() + "/" + bucketName + "/" + objectName;
+                String url = this.minioProperties.getBaseUrl() + "/" + bucketName + "/" + objectName;
                 return Mono.just(url);
             } else {
                 return Mono.error(new RuntimeException("Bucket not exist"));
@@ -561,7 +661,7 @@ public class MinioUtils {
                 byte[] imageBuffer = new byte[in.available()];
                 in.read(imageBuffer);
                 log.info("Start updating file with object name{}", objectName);
-                minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(objectName).stream(
+                this.minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(objectName).stream(
                                 new ByteArrayInputStream(imageBuffer), imageBuffer.length, -1)
                         .contentType(contentType)
                         .build());
@@ -583,7 +683,7 @@ public class MinioUtils {
      * @return a {@link java.lang.String} object
      */
     public String getObjectUrl(String objectName) {
-        return minioProperties.getBaseUrl() + "/" + minioProperties.getBucket() + "/" + objectName;
+        return this.minioProperties.getBaseUrl() + "/" + this.minioProperties.getBucket() + "/" + objectName;
     }
 
     /**
@@ -724,7 +824,7 @@ public class MinioUtils {
             byte[] buffer = new byte[inputStream.available()];
             inputStream.read(buffer);
             log.info("start uploadFileNoRename {}", objectName);
-            minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(objectName).stream(
+            this.minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(objectName).stream(
                             new ByteArrayInputStream(buffer), buffer.length, -1)
                     .contentType(contentType)
                     .build());
@@ -764,7 +864,7 @@ public class MinioUtils {
             byte[] buffer = new byte[inputStream.available()];
             inputStream.read(buffer);
             log.info("Start uploading object " + object);
-            minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(object).stream(
+            this.minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(object).stream(
                             new ByteArrayInputStream(buffer), buffer.length, -1)
                     .contentType(contentType)
                     .build());
@@ -803,7 +903,7 @@ public class MinioUtils {
     private void uploadFileSync(String filePath, byte[] file, String bucket) {
         try {
             log.info("Start uploadFile{} ", filePath);
-            minioClient.putObject(PutObjectArgs.builder().bucket(bucket).object(filePath).stream(
+            this.minioClient.putObject(PutObjectArgs.builder().bucket(bucket).object(filePath).stream(
                             new ByteArrayInputStream(file), file.length, -1)
                     .build());
             log.info(UPLOAD_SUCCESS_LOG);
@@ -857,7 +957,7 @@ public class MinioUtils {
                         byte[] buffer = new byte[inputStream.available()];
                         inputStream.read(buffer);
                         log.info("Start uploading object {}", object);
-                        minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(object).stream(
+                        this.minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(object).stream(
                                         new ByteArrayInputStream(buffer), buffer.length, -1)
                                 .contentType(contentType)
                                 .build());
@@ -920,7 +1020,7 @@ public class MinioUtils {
         try {
             log.info("Start uploadFile {} ", object);
             MimetypesFileTypeMap mtft = new MimetypesFileTypeMap();
-            minioClient.putObject(
+            this.minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(bucketName)
                             .object(object)
@@ -975,10 +1075,10 @@ public class MinioUtils {
      */
     public void createBucketIfNotExist(String bucketName, boolean objectLock) {
         try {
-            boolean isExist = minioClient.bucketExists(
+            boolean isExist = this.minioClient.bucketExists(
                     BucketExistsArgs.builder().bucket(bucketName).build());
             if (!isExist) {
-                minioClient.makeBucket(MakeBucketArgs.builder()
+                this.minioClient.makeBucket(MakeBucketArgs.builder()
                         .bucket(bucketName)
                         .objectLock(objectLock)
                         .build());
@@ -1017,7 +1117,7 @@ public class MinioUtils {
      */
     public String getBase64FromUrl(String bucketName, String url) {
         try {
-            InputStream objectData = minioClient.getObject(GetObjectArgs.builder()
+            InputStream objectData = this.minioClient.getObject(GetObjectArgs.builder()
                     .bucket(bucketName)
                     .object(url.substring(url.lastIndexOf('/') + 1))
                     .build());
@@ -1098,7 +1198,7 @@ public class MinioUtils {
             throws ServerException, InsufficientDataException, ErrorResponseException, IOException,
                     NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException,
                     InternalException {
-        return minioClient.getObject(
+        return this.minioClient.getObject(
                 GetObjectArgs.builder().bucket(bucketName).object(objectName).build());
     }
 }
