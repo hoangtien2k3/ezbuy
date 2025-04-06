@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
  * Jackson. Provides methods to convert objects to JSON strings and vice versa.
  * Also supports conversion of lists and byte arrays to objects.
  *
- * @since 20/07/2024
+ * @since 1.3.0
  * @author hoangtien2k3
  */
 @Component

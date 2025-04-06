@@ -32,7 +32,7 @@ import org.springframework.http.MediaType;
  * to log the content of DataBuffer objects. Supports various media types for
  * logging.
  *
- * @since 20/07/2024
+ * @since 1.3.0
  * @author hoangtien2k3
  */
 public class LogUtils {
