@@ -27,7 +27,8 @@
     <!-- =========================================== -->
     <!-- The maven central for all the library       -->
     <!-- =========================================== -->
-    <groupId>io.github.hoangtien2k3</groupId>
+<!--    <groupId>io.github.hoangtien2k3</groupId>-->
+    <groupId>com.ezbuy.platform</groupId>
     <artifactId>reactify-core</artifactId>
     <version>1.3.0</version>
     <name>reactify-core</name>
