@@ -167,7 +167,7 @@ public class ObjectMapperFactory {
      */
     private static class NumericBooleanDeserializer extends JsonDeserializer<Boolean> {
         @Override
-        public Boolean deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+        public Boolean deserialize(JsonParser p, DeserializationContext deserializationContext) throws IOException {
             String text = p.getText().trim();
             return switch (text) {
                 case "1", "true" -> Boolean.TRUE;

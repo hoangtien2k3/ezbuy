@@ -17,7 +17,6 @@ package com.reactify.client.properties;
 
 import com.reactify.filter.properties.*;
 import java.util.List;
-import java.util.Objects;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 
 /**
@@ -103,6 +102,21 @@ public class WebClientProperties {
      * WebClient will include an OAuth2 token in the request headers.
      */
     private boolean internalOauth = false;
+
+    /**
+     * Indicates whether token relay is enabled.
+     * <p>
+     * If set to {@code true}, the WebClient will forward the existing access token
+     * (e.g., from an incoming request) directly to the target service without
+     * generating a new one. This is typically used in systems where token
+     * propagation across service boundaries is required (e.g., service-to-service
+     * calls in a microservices architecture).
+     * <p>
+     * When {@code false}, a new token (if applicable) may be created or no token
+     * will be relayed, depending on other authentication settings such as
+     * {@code internalOauth}.
+     */
+    private boolean tokenRelay = false;
 
     /**
      * Constructs a new instance of {@code WebClientProperties}.
@@ -213,40 +227,11 @@ public class WebClientProperties {
         this.internalOauth = internalOauth;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof WebClientProperties that)) return false;
-        return isInternalOauth() == that.isInternalOauth()
-                && Objects.equals(getName(), that.getName())
-                && Objects.equals(getAddress(), that.getAddress())
-                && Objects.equals(getUsername(), that.getUsername())
-                && Objects.equals(getPassword(), that.getPassword())
-                && Objects.equals(getAuthorization(), that.getAuthorization())
-                && Objects.equals(getPool(), that.getPool())
-                && Objects.equals(getTimeout(), that.getTimeout())
-                && Objects.equals(getRetry(), that.getRetry())
-                && Objects.equals(getLog(), that.getLog())
-                && Objects.equals(getMonitoring(), that.getMonitoring())
-                && Objects.equals(getProxy(), that.getProxy())
-                && Objects.equals(getCustomFilters(), that.getCustomFilters());
+    public boolean isTokenRelay() {
+        return tokenRelay;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(
-                getName(),
-                getAddress(),
-                getUsername(),
-                getPassword(),
-                getAuthorization(),
-                getPool(),
-                getTimeout(),
-                getRetry(),
-                getLog(),
-                getMonitoring(),
-                getProxy(),
-                getCustomFilters(),
-                isInternalOauth());
+    public void setTokenRelay(boolean tokenRelay) {
+        this.tokenRelay = tokenRelay;
     }
 }

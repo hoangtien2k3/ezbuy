@@ -43,11 +43,6 @@ import reactor.util.context.Context;
  * one instance of the {@code LoggerQueue} exists throughout the application.
  * </p>
  *
- * <p>
- * This class is annotated with {@link lombok.extern.slf4j.Slf4j} for logging
- * functionality.
- * </p>
- *
  * @author hoangtien2k3
  */
 public class LoggerQueue {
@@ -166,8 +161,19 @@ public class LoggerQueue {
             Object[] args,
             String title) {
         try {
-            if (myQueue.add(new LoggerDTO(
-                    contextRef, newSpan, service, startTime, endTime, result, obj, logType, actionType, args, title))) {
+            if (myQueue.add(LoggerDTO.builder()
+                    .contextRef(contextRef)
+                    .newSpan(newSpan)
+                    .service(service)
+                    .startTime(startTime)
+                    .endTime(endTime)
+                    .result(result)
+                    .response(obj)
+                    .logType(logType)
+                    .actionType(actionType)
+                    .args(args)
+                    .title(title)
+                    .build())) {
                 countSuccess++;
                 return;
             }
@@ -194,7 +200,7 @@ public class LoggerQueue {
      * getQueueSize.
      * </p>
      *
-     * @return a int
+     * @return an int
      */
     public int getQueueSize() {
         return myQueue.size();

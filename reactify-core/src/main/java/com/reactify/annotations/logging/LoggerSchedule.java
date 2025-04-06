@@ -43,18 +43,6 @@ import reactor.core.publisher.Mono;
  * them at a fixed interval defined by the @Scheduled annotation.
  *
  * <p>
- * This class is marked as a Spring configuration and uses
- * Lombok's @RequiredArgsConstructor for automatic constructor injection,
- * ensuring that all required fields are initialized appropriately.
- * </p>
- *
- * <p>
- * Additionally, it uses Lombok's annotations for automatic constructor
- * injection and logging. The logging is performed using a dedicated performance
- * logger.
- * </p>
- *
- * <p>
  * Usage: This class is automatically instantiated by the Spring framework, and
  * the scheduleSaveLogClick method is invoked every 3 seconds. Ensure that
  * LoggerQueue is populated with LoggerDTO records before the scheduled task
@@ -96,7 +84,6 @@ public class LoggerSchedule {
      */
     @Scheduled(fixedDelay = 3000)
     public void scheduleSaveLogClick() {
-        long analyId = System.currentTimeMillis();
         AtomicInteger numSuccess = new AtomicInteger(0);
         AtomicInteger numFalse = new AtomicInteger(0);
 
@@ -111,7 +98,6 @@ public class LoggerSchedule {
             }
         });
 
-        log.info("Log Process - ID: {}, Success: {}, Failed: {}", analyId, numSuccess.get(), numFalse.get());
         LoggerQueue.getInstance().resetCount();
     }
 
@@ -177,20 +163,21 @@ public class LoggerSchedule {
             log.error("Truncate input/output error ", ex);
         }
 
-        logInfo(new LogField(
-                traceId,
-                requestId,
-                record.getService(),
-                record.getEndTime() - record.getStartTime(),
-                record.getLogType(),
-                record.getActionType(),
-                record.getStartTime(),
-                record.getEndTime(),
-                ipAddress,
-                record.getTitle(),
-                inputs,
-                resStr,
-                record.getResult()));
+        logInfo(LogField.builder()
+                .traceId(traceId)
+                .requestId(requestId)
+                .service(record.getService())
+                .duration(record.getEndTime() - record.getStartTime())
+                .logType(record.getLogType())
+                .actionType(record.getActionType())
+                .startTime(record.getStartTime())
+                .endTime(record.getEndTime())
+                .clientAddress(ipAddress)
+                .title(record.getTitle())
+                .inputs(inputs)
+                .response(resStr)
+                .result(record.getResult())
+                .build());
     }
 
     /**

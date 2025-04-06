@@ -20,6 +20,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import com.reactify.client.properties.WebClientProperties;
 import com.reactify.constants.Constants;
 import com.reactify.filter.properties.ProxyProperties;
+import com.reactify.filter.webclient.TokenRelayFilter;
 import com.reactify.filter.webclient.WebClientLoggingFilter;
 import com.reactify.filter.webclient.WebClientMonitoringFilter;
 import com.reactify.filter.webclient.WebClientRetryHandler;
@@ -39,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction;
@@ -194,7 +196,7 @@ public class WebClientFactory implements InitializingBean {
                 WebClient.builder().baseUrl(webClientProperties.getAddress()).exchangeStrategies(strategies);
         if (!DataUtil.isNullOrEmpty(webClientProperties.getUsername())) {
             exchangeStrategies.defaultHeader(
-                    Constants.Security.AUTHORIZATION,
+                    HttpHeaders.AUTHORIZATION,
                     Constants.Security.BEARER + " "
                             + Base64.getEncoder()
                                     .encodeToString((webClientProperties.getUsername() + ":"
@@ -220,6 +222,9 @@ public class WebClientFactory implements InitializingBean {
                     new ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);
             oauth2.setDefaultClientRegistrationId(Constants.Security.DEFAULT_REGISTRATION_ID);
             exchangeStrategies.filter(oauth2);
+        }
+        if (webClientProperties.isTokenRelay()) {
+            exchangeStrategies.filter(new TokenRelayFilter());
         }
 
         List<ExchangeFilterFunction> customFilters = webClientProperties.getCustomFilters();
