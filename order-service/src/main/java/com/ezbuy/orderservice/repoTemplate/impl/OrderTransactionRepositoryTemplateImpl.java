@@ -30,50 +30,41 @@ public class OrderTransactionRepositoryTemplateImpl extends BaseRepositoryTempla
             int offset,
             int limit,
             String sort) {
+
         StringBuilder sb = new StringBuilder();
-        sb.append(
-                "SELECT od.id, od.order_code, od.total_fee, od.currency, od.status, od.state, od.detail_address, od.type, oi.rating \n"
-                        + "oi.duration, od.id_no, od.name, od.email, od.phone, od.create_at, od.create_by, od.update_at, od.update_by \n"
-                        + "FROM `order` od \n" + "INNER JOIN order_item oi ON od.id = oi.order_id \n" + "WHERE 1=1 ");
-        if (!DataUtil.isNullOrEmpty(email)) {
-            sb.append(" AND od.email = :email ");
-        }
-        if (!DataUtil.isNullOrEmpty(orderCode)) {
-            sb.append(" AND od.order_code = :orderCode ");
-        }
-        if (!DataUtil.isNullOrEmpty(idNo)) {
-            sb.append(" AND od.id_no = :idNo ");
-        }
-        if (!DataUtil.isNullOrEmpty(phone)) {
-            sb.append(" AND od.phone = :phone ");
-        }
-        if (from != null) {
-            sb.append(" AND od.create_at >= :from ");
-        }
-        if (to != null) {
-            sb.append(" AND od.create_at <= :to ");
-        }
-        sb.append(" ").append(sort).append(" LIMIT :limit OFFSET :offset");
+        sb.append("""
+        SELECT od.id, od.order_code, od.total_fee, od.currency, od.status, od.state, od.detail_address, od.type,
+               oi.rating, oi.duration, od.id_no, od.name, od.email, od.phone,
+               od.create_at, od.create_by, od.update_at, od.update_by
+        FROM "order" od
+        INNER JOIN order_item oi ON od.id = oi.order_id
+        WHERE 1=1
+        """);
 
         Map<String, Object> params = new HashMap<>();
-        params.put("offset", offset);
-        params.put("limit", limit);
+
         if (!DataUtil.isNullOrEmpty(email)) {
+            sb.append(" AND od.email = :email ");
             params.put("email", email);
         }
         if (!DataUtil.isNullOrEmpty(orderCode)) {
+            sb.append(" AND od.order_code = :orderCode ");
             params.put("orderCode", orderCode);
         }
         if (!DataUtil.isNullOrEmpty(idNo)) {
+            sb.append(" AND od.id_no = :idNo ");
             params.put("idNo", idNo);
         }
         if (!DataUtil.isNullOrEmpty(phone)) {
+            sb.append(" AND od.phone = :phone ");
             params.put("phone", phone);
         }
         if (from != null) {
+            sb.append(" AND od.create_at >= :from ");
             params.put("from", from);
         }
         if (to != null) {
+            sb.append(" AND od.create_at <= :to ");
             params.put("to", to);
         }
 
@@ -83,50 +74,45 @@ public class OrderTransactionRepositoryTemplateImpl extends BaseRepositoryTempla
     @Override
     public Mono<Long> countOrderTransmission(
             String email, String orderCode, String idNo, String phone, LocalDateTime from, LocalDateTime to) {
+
         StringBuilder sb = new StringBuilder();
-        sb.append(
-                "SELECT od.id, od.order_code, od.total_fee, od.currency, od.status, od.state, od.detail_address, od.type,\n"
-                        + "oi.rating, oi.duration, od.id_no, od.name, od.email, od.phone, od.create_at, od.create_by, od.update_at, od.update_by\n"
-                        + "FROM `order` od\n" + "INNER JOIN order_item oi ON od.id = oi.order_id\n" + "WHERE 1=1 ");
+        sb.append("""
+        SELECT COUNT(*) FROM (
+            SELECT od.id
+            FROM "order" od
+            INNER JOIN order_item oi ON od.id = oi.order_id
+            WHERE 1=1
+        """);
+
+        Map<String, Object> params = new HashMap<>();
+
         if (!DataUtil.isNullOrEmpty(email)) {
-            sb.append(" and od.email = :email ");
+            sb.append(" AND od.email = :email ");
+            params.put("email", email);
         }
         if (!DataUtil.isNullOrEmpty(orderCode)) {
-            sb.append(" and od.order_code = :orderCode ");
+            sb.append(" AND od.order_code = :orderCode ");
+            params.put("orderCode", orderCode);
         }
         if (!DataUtil.isNullOrEmpty(idNo)) {
-            sb.append(" and od.id_no = :idNo ");
+            sb.append(" AND od.id_no = :idNo ");
+            params.put("idNo", idNo);
         }
         if (!DataUtil.isNullOrEmpty(phone)) {
-            sb.append(" and od.phone = :phone ");
+            sb.append(" AND od.phone = :phone ");
+            params.put("phone", phone);
         }
         if (from != null) {
-            sb.append(" and od.create_at >= :from ");
+            sb.append(" AND od.create_at >= :from ");
+            params.put("from", from);
         }
         if (to != null) {
-            sb.append(" and od.create_at <= :to ");
+            sb.append(" AND od.create_at <= :to ");
+            params.put("to", to);
         }
 
-        Map<String, Object> parrams = new HashMap<>();
-        if (!DataUtil.isNullOrEmpty(email)) {
-            parrams.put("email", email);
-        }
-        if (!DataUtil.isNullOrEmpty(orderCode)) {
-            parrams.put("orderCode", orderCode);
-        }
-        if (!DataUtil.isNullOrEmpty(idNo)) {
-            parrams.put("idNo", idNo);
-        }
-        if (!DataUtil.isNullOrEmpty(phone)) {
-            parrams.put("phone", phone);
-        }
-        if (from != null) {
-            parrams.put("from", from);
-        }
-        if (to != null) {
-            parrams.put("to", to);
-        }
+        sb.append(" ) as tmp");
 
-        return countQuery(sb.toString(), parrams);
+        return countQuery(sb.toString(), params);
     }
 }

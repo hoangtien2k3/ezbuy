@@ -6,8 +6,8 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-@Component("provisioningProperties")
-@ConfigurationProperties(prefix = "client.provisioning", ignoreInvalidFields = true)
+@Component("gatewayClientProperties")
+@ConfigurationProperties(prefix = "client.api-gateway", ignoreInvalidFields = true)
 @Data
 @AllArgsConstructor
-public class ProvisioningProperties extends WebClientProperties {}
+public class ApiGatewayProperties extends WebClientProperties {}

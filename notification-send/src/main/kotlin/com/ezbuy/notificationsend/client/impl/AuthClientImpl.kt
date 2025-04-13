@@ -1,8 +1,7 @@
 package com.ezbuy.notificationsend.client.impl
 
-import com.ezbuy.notificationsend.client.AuthClient
 import com.ezbuy.notificationmodel.dto.response.ContactResponse
-import com.reactify.client.BaseRestClient
+import com.ezbuy.notificationsend.client.AuthClient
 import lombok.extern.slf4j.Slf4j
 import org.reflections.Reflections.log
 import org.springframework.beans.factory.annotation.Qualifier
@@ -16,13 +15,10 @@ import reactor.core.publisher.Mono
 @Service
 @DependsOn("webClientFactory")
 class AuthClientImpl(
-    private val baseRestClient: BaseRestClient<ContactResponse>,
     @Qualifier("auth") private val auth: WebClient
 ) : AuthClient {
 
     override fun getContacts(userIds: List<String>): Mono<ContactResponse> {
-        // return baseRestClient.post(auth, "/user/contacts", null, userIds, ContactResponse::class.java)
-        // .onErrorResume { Optional.empty() }
         return auth.method(HttpMethod.GET)
             .uri("/user/contacts")
             .bodyValue(userIds)

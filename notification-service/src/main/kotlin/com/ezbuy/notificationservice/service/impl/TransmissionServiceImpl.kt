@@ -24,6 +24,7 @@ import com.ezbuy.notificationmodel.model.NotificationContent
 import com.ezbuy.notificationmodel.model.Transmission
 import com.ezbuy.notificationservice.client.AuthClient
 import com.ezbuy.notificationservice.repository.*
+import com.ezbuy.notificationservice.repository.repoTemplate.NotificationContentRepoTemplate
 import com.ezbuy.notificationservice.repository.repoTemplate.TransmissionRepoTemplate
 import com.ezbuy.notificationservice.service.TransmissionService
 import com.reactify.constants.CommonConstant.FORMAT_DATE_DMY_HYPHEN
@@ -56,6 +57,7 @@ class TransmissionServiceImpl(
     private val authClient: AuthClient,
     private val template: R2dbcEntityTemplate,
     private val transmissionRepoTemplate: TransmissionRepoTemplate,
+    private val notificationContentRepoTemplate: NotificationContentRepoTemplate,
     @Value("\${config.resendCount}")
     private val resendCount: Int
 ) : TransmissionService {
@@ -84,6 +86,15 @@ class TransmissionServiceImpl(
                     )
                 )
         }
+    }
+
+    override fun getNotificationContentListByCategoryType(
+        type: String,
+        pageIndex: Int?,
+        pageSize: Int?,
+        sort: String?
+    ): Mono<DataResponse<List<NotificationHeader>>> {
+        return notificationContentRepoTemplate.getNotificationContentListByCategoryType(type, pageIndex, pageSize, sort)
     }
 
     override fun changeTransmissionStateByIdAndReceiver(
@@ -204,23 +215,13 @@ class TransmissionServiceImpl(
                                             Mono.just(
                                                 DataResponse<Any>(
                                                     null,
-                                                    Translator.toLocaleVi(
-                                                        SUCCESS
-                                                    ),
+                                                    "success",
                                                     null
                                                 )
                                             )
                                         }
                                     ).switchIfEmpty(
-                                        Mono.just(
-                                            DataResponse<Any>(
-                                                null,
-                                                Translator.toLocaleVi(
-                                                    SUCCESS
-                                                ),
-                                                null
-                                            )
-                                        )
+                                        Mono.just(DataResponse.success(null))
                                     )
                             }
                         }
@@ -248,12 +249,18 @@ class TransmissionServiceImpl(
                 val notiId = UUID.randomUUID().toString()
                 val notiContentDTO = createNotificationDTO.notiContentDTO
 
-                val notificationContent = buildNotificationContent(
-                    notiContentId,
-                    notiContentDTO,
-                    createNotificationDTO.templateMail,
-                    tokenUser
-                )
+                val notificationContent =  NotificationContent.builder()
+                    .id(notiContentId.trim())
+                    .title(DataUtil.safeTrim(notiContentDTO.title))
+                    .subTitle(DataUtil.safeTrim(notiContentDTO.subTitle))
+                    .imageUrl(DataUtil.safeTrim(notiContentDTO.imageUrl))
+                    .url(DataUtil.safeTrim(notiContentDTO.url))
+                    .createBy(tokenUser.username)
+                    .updateBy(tokenUser.username)
+                    .status(ConstValue.Status.ACTIVE)
+                    .templateMail(DataUtil.safeToString(createNotificationDTO.templateMail))
+                    .externalData(notiContentDTO.externalData)
+                    .build()
                 notificationContentRepository.save(notificationContent)
                     .flatMap {
                         handleNotificationCreation(createNotificationDTO, tokenUser, notiContentId, notiId)
@@ -261,23 +268,6 @@ class TransmissionServiceImpl(
                         handleTransmissionCreation(createNotificationDTO, tokenUser, notiId)
                     }.map { transmissions -> DataResponse.success(transmissions) }
             }
-    }
-
-    private fun buildNotificationContent(
-        notiContentId: String, notiContentDTO: NotiContentDTO, templateMail: String?, tokenUser: TokenUser
-    ): NotificationContent {
-        return NotificationContent.builder()
-            .id(notiContentId.trim())
-            .title(DataUtil.safeTrim(notiContentDTO.title))
-            .subTitle(DataUtil.safeTrim(notiContentDTO.subTitle))
-            .imageUrl(DataUtil.safeTrim(notiContentDTO.imageUrl))
-            .url(DataUtil.safeTrim(notiContentDTO.url))
-            .createBy(tokenUser.username)
-            .updateBy(tokenUser.username)
-            .status(ConstValue.Status.ACTIVE)
-            .templateMail(DataUtil.safeToString(templateMail))
-            .externalData(notiContentDTO.externalData)
-            .build()
     }
 
     private fun handleNotificationCreation(
@@ -292,31 +282,19 @@ class TransmissionServiceImpl(
                 )
             ))
             .flatMap { categoryId ->
-                val notification =
-                    buildNotification(createNotificationDTO, tokenUser, notiContentId, notiId, categoryId)
-                notificationRepository.save(notification)
+                notificationRepository.save(Notification.builder()
+                    .id(notiId.trim())
+                    .contentType(DataUtil.safeTrim(createNotificationDTO.contentType))
+                    .createBy(tokenUser.username)
+                    .updateBy(tokenUser.username)
+                    .expectSendTime(createNotificationDTO.expectSendTime)
+                    .categoryId(categoryId)
+                    .notificationContentId(notiContentId)
+                    .sender(DataUtil.safeTrim(createNotificationDTO.sender))
+                    .severity(DataUtil.safeTrim(createNotificationDTO.severity))
+                    .status(ConstValue.Status.ACTIVE)
+                    .build())
             }
-    }
-
-    private fun buildNotification(
-        createNotificationDTO: CreateNotificationDTO,
-        tokenUser: TokenUser,
-        notiContentId: String,
-        notiId: String,
-        categoryId: String
-    ): Notification {
-        return Notification.builder()
-            .id(notiId.trim())
-            .contentType(DataUtil.safeTrim(createNotificationDTO.contentType))
-            .createBy(tokenUser.username)
-            .updateBy(tokenUser.username)
-            .expectSendTime(createNotificationDTO.expectSendTime)
-            .categoryId(categoryId)
-            .notificationContentId(notiContentId)
-            .sender(DataUtil.safeTrim(createNotificationDTO.sender))
-            .severity(DataUtil.safeTrim(createNotificationDTO.severity))
-            .status(ConstValue.Status.ACTIVE)
-            .build()
     }
 
     private fun handleTransmissionCreation(
@@ -324,10 +302,7 @@ class TransmissionServiceImpl(
     ): Mono<List<Transmission>> {
         if (DataUtil.isNullOrEmpty(createNotificationDTO.receiverList)) {
             return Mono.error(
-                BusinessException(
-                    NOT_FOUND,
-                    Translator.toLocaleVi("no.receiver")
-                )
+                BusinessException(NOT_FOUND, "no.receiver")
             )
         }
 
@@ -339,10 +314,7 @@ class TransmissionServiceImpl(
 
         if (invalidReceiver) {
             return Mono.error(
-                BusinessException(
-                    INVALID_PARAMS,
-                    Translator.toLocaleVi("receiver.string.invalid")
-                )
+                BusinessException(INVALID_PARAMS, "receiver.string.invalid")
             )
         }
 
@@ -433,81 +405,6 @@ class TransmissionServiceImpl(
                     DataResponse(
                         null,
                         Translator.toLocaleVi(SUCCESS),
-                        emptyList()
-                    )
-                ))
-        }
-    }
-
-    override fun getNotificationContentListByCategoryType(
-        categoryType: String,
-        pageIndex: Int?,
-        pageSize: Int?,
-        sort: String?
-    ): Mono<DataResponse<List<NotificationHeader>>> {
-        if (pageIndex?.let { it < 1 } == true) {
-            return Mono.error(
-                BusinessException(
-                    INVALID_PARAMS,
-                    "params.pageIndex.invalid"
-                )
-            )
-        }
-        if (pageSize?.let { it < 1 } == true) {
-            return Mono.error(
-                BusinessException(
-                    INVALID_PARAMS,
-                    "params.pageSize.invalid"
-                )
-            )
-        }
-        return SecurityUtils.getCurrentUser().flatMap { user ->
-            var sortingString = SortingUtils.parseSorting(sort, NotificationHeader::class.java)
-            if (DataUtil.isNullOrEmpty(sortingString)) {
-                sortingString = ""
-            }
-            val query = """
-          SELECT nc.*, tr.state
-          FROM notification_content nc
-          INNER JOIN notification n ON n.notification_content_id = nc.id
-          INNER JOIN notification_category nca ON n.category_id = nca.id
-          INNER JOIN transmission tr ON tr.notification_id = n.id
-          INNER JOIN channel c ON tr.channel_id = c.id
-          WHERE tr.receiver = :receiver
-          AND tr.status = 1
-          AND tr.state IN ('NEW', 'UNREAD', 'READ')
-          AND nc.status = 1
-          AND n.status = 1
-          AND nca.status = 1
-          AND c.status = 1
-          AND c.type = 'REST'
-          AND nca.type = :categoryType
-          ORDER BY %s
-          LIMIT :pageSize OFFSET :index
-        """.trimIndent().format(sortingString)
-
-            val index = ((pageIndex ?: 1) - 1) * (pageSize ?: 10)
-            template.databaseClient.sql(query)
-                .bind("receiver", user.id)
-                .bind("categoryType", DataUtil.safeTrim(categoryType))
-                .bind("pageSize", pageSize ?: 10)
-                .bind("index", index)
-                .map { row -> this.build(row as Row) }
-                .all()
-                .collectList()
-                .flatMap { notificationContent ->
-                    Mono.just(
-                        DataResponse(
-                            null,
-                            SUCCESS,
-                            notificationContent
-                        )
-                    )
-                }
-                .switchIfEmpty(Mono.just(
-                    DataResponse(
-                        null,
-                        SUCCESS,
                         emptyList()
                     )
                 ))
@@ -695,22 +592,6 @@ class TransmissionServiceImpl(
         }
     }
 
-    private fun build(row: Row): NotificationHeader {
-        return NotificationHeader.builder()
-            .id(DataUtil.safeToString(row.get("id")))
-            .title(DataUtil.safeToString(row.get("title")))
-            .subTitle(DataUtil.safeToString(row.get("sub_title")))
-            .imageUrl(DataUtil.safeToString(row.get("image_url")))
-            .url(DataUtil.safeToString(row.get("url")))
-            .status(DataUtil.safeToInt(row.get("status")))
-            .createAt(row.get("create_at") as LocalDateTime)
-            .createBy(DataUtil.safeToString(row.get("create_by")))
-            .updateAt(row.get("update_at") as LocalDateTime)
-            .updateBy(DataUtil.safeToString(row.get("update_by")))
-            .state(DataUtil.safeToString(row.get("state")))
-            .build()
-    }
-
     override fun getTransmissionByEmailAndFromTo(request: GetTransmissionByEmailAndFromToRequest): Mono<DataResponse<UserTransmissionPageDTO>> {
         var to: LocalDateTime? = null
         var from: LocalDateTime? = null
@@ -722,7 +603,7 @@ class TransmissionServiceImpl(
             to = DataUtil.convertDateStrToLocalDateTime(request.to, FORMAT_DATE_DMY_HYPHEN)
         }
         if (DataUtil.isNullOrEmpty(request.username) && DataUtil.isNullOrEmpty(request.email)) {
-            // Nếu không truyền username + email, lấy 30 ngày gần nhất
+            //neu khong truyen username + email, lau 30 ngay gan nhat
             to = to ?: LocalDateTime.now()
             if (DataUtil.isNullOrEmpty(request.from)) {
                 from = to?.minusDays(30)
@@ -738,7 +619,7 @@ class TransmissionServiceImpl(
         }
 
         return if (!DataUtil.isNullOrEmpty(request.username)) {
-            // Nếu có truyền username, gọi lên keycloak lấy email tương ứng với username
+            //neu truyen username, goi keycloak de lay email tuong ung voi username
             val finalFrom = from
             val finalTo = to
             authClient.getEmailsByUsername(request.username)
@@ -755,7 +636,7 @@ class TransmissionServiceImpl(
                     }
                 }.switchIfEmpty(Mono.just(mapPaginationResults(emptyList(), request.pageIndex, request.limit, 0L)))
         } else {
-            // Nếu không truyền username, tìm kiếm theo các điều kiện từ input
+            //neu khong truyen username, tim kiem theo dieu kien input
             Mono.zip(
                 transmissionRepoTemplate.searchUserTransmission(request.email, request.templateMail, from, to, offset, request.limit, sortQuery).collectList(),
                 transmissionRepoTemplate.countUserTransmission(request.email, request.templateMail, from, to)
@@ -780,5 +661,4 @@ class TransmissionServiceImpl(
             .results(userTransmissionDTOs).build()
         return DataResponse(Translator.toLocaleVi(SUCCESS), null, pageResponse)
     }
-
 }

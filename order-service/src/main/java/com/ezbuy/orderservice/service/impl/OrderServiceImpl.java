@@ -1153,7 +1153,7 @@ public class OrderServiceImpl implements OrderService {
                 return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "company.name.invalid"));
             }
 
-            return Mono.just(new DataResponse<>());
+            return Mono.just(DataResponse.builder().build());
         });
     }
 
@@ -1454,7 +1454,7 @@ public class OrderServiceImpl implements OrderService {
                                                 responseOptional.get().getLstCustomerDTO())
                                         || !"0".equals(responseOptional.get().getCode())) {
                                     log.error("CM not find customer subscriber");
-                                    return Mono.just(new DataResponse<>());
+                                    return Mono.just(DataResponse.builder().build());
                                 }
                                 return authClient
                                         .findIndividualIdByUserIdAndOrganizationId(
@@ -1475,7 +1475,7 @@ public class OrderServiceImpl implements OrderService {
                                                     .flatMap(placeOrderResponse -> {
                                                         log.info("Order response {}", placePaidOrderData);
                                                         if (placeOrderResponse.isEmpty()) {
-                                                            return Mono.just(new DataResponse<>());
+                                                            return Mono.just(DataResponse.builder().build());
                                                         }
                                                         if ("true"
                                                                 .equals(placeOrderResponse
@@ -1977,72 +1977,6 @@ public class OrderServiceImpl implements OrderService {
         });
     }
 
-    @Override
-    public Mono<DataResponse> addCAgroupMember(AfterSaleGroupCARequest request) {
-        // validate thong tin
-        String orderType = Constants.OrderType.ADD_MEMBER_GROUP_CA;
-        validateCreateOrderRequest(request, orderType);
-        return Mono.zip(
-                        SecurityUtils.getCurrentUser(),
-                        authClient.getTrustedIdNoOrganization(request.getOrganizationId()))
-                .flatMap(tuple1 -> {
-                    // kiem tra so giay to khac null
-                    if (DataUtil.isNullOrEmpty(tuple1.getT2())) {
-                        return Mono.error(new BusinessException(
-                                CommonErrorCode.COMPANY_NOT_FOUND_TRUST_INDENTITY, "organization.idno.notFound"));
-                    }
-                    GetGroupsCAinfoRequest requestGroupInfo = new GetGroupsCAinfoRequest();
-                    String groupCode = request.getGroupCode();
-                    requestGroupInfo.setGroupCode(groupCode);
-                    requestGroupInfo.setGroupId(request.getGroupId());
-                    if (request.getGroupId() == null) {
-                        requestGroupInfo.setGroupId(DataUtil.safeToLong(groupCode.replace("CA", "")));
-                    }
-                    requestGroupInfo.setIdNo(tuple1.getT2().get(0));
-                    requestGroupInfo.setStartAt(1);
-                    requestGroupInfo.setRowNum(10);
-
-                    TokenUser tokenUser = tuple1.getT1();
-                    String userName = tokenUser.getUsername();
-                    String userId = tokenUser.getId();
-
-                    return Mono.zip(
-                                    cmPortalClient.getGroupsInfo(requestGroupInfo),
-                                    authClient.findIndividualIdByUserId(userId, request.getOrganizationId()))
-                            .flatMap(result -> {
-                                if (result.getT1().isEmpty()) {
-                                    return Mono.error(new BusinessException(
-                                            CommonErrorCode.GROUP_INFO_NOT_FOUND, "group.info.not.found"));
-                                }
-                                ResponseCM responseCM = result.getT1().get();
-                                // neu khong phai ket qua thanh cong thi tra list rong
-                                if (!Constants.BCCSCmSystem.SUCCESS_CODE.equals(responseCM.getCode())
-                                        || DataUtil.isNullOrEmpty(responseCM.getGroupsDTOList())) {
-                                    return Mono.error(new BusinessException(
-                                            CommonErrorCode.GROUP_INFO_NOT_FOUND_2, "group.info.not.found"));
-                                }
-                                HandleCharacteristicDTO handleCharacteristicDTO =
-                                        handleProductCharacteristic(responseCM, requestGroupInfo.getGroupId());
-                                handleCharacteristicDTO
-                                        .getProductCharacteristic()
-                                        .add(new CharacteristicDTO(
-                                                Constants.CharacteristicKey.LIST_SUB_ISDN,
-                                                Constants.DataType.STRING,
-                                                DataUtil.parseObjectToString(request.getLstSubscriberCA()),
-                                                null,
-                                                null));
-                                // thuc hien tao don hang chua thanh toan
-                                return handleCreateNotPaidOrder(
-                                        handleCharacteristicDTO.getProductCharacteristic(),
-                                        handleCharacteristicDTO.getProductOfferingRef(),
-                                        orderType,
-                                        userId,
-                                        userName,
-                                        result.getT2());
-                            });
-                });
-    }
-
     /**
      * Ham xy ly lay thong tin product tu CM sau khi call getGroupsInfo
      *
@@ -2055,7 +1989,7 @@ public class OrderServiceImpl implements OrderService {
                 .findFirst()
                 .orElse(null);
         if (groupsDTO == null) {
-            throw new BusinessException(CommonErrorCode.GROUP_INFO_NOT_FOUND_2, "group.info.not.found");
+            throw new BusinessException("GROUP_INFO_NOT_FOUND_2", "group.info.not.found");
         }
         ProductOfferingRef productOfferingRef = new ProductOfferingRef();
         productOfferingRef.setTelecomServiceId(Constants.Common.CA_TELECOM_SERVICE_ID);
@@ -4326,113 +4260,6 @@ public class OrderServiceImpl implements OrderService {
         return Optional.ofNullable(row.getCell(i))
                 .map(value -> formatter.formatCellValue(value).trim())
                 .orElse(EMPTY);
-    }
-
-    /**
-     * Ham them thanh vien nhom CA theo file
-     *
-     * @param filePart
-     * @param groupCode
-     * @param organizationId
-     * @param groupId
-     * @param totalSign
-     * @return
-     */
-    @Override
-    public Mono<GroupMemberImportListDTO> importGroupMember(
-            FilePart filePart, String groupCode, String organizationId, String groupId, String totalSign) {
-        AfterSaleGroupCARequest request = new AfterSaleGroupCARequest();
-        request.setGroupCode(groupCode);
-        request.setOrganizationId(organizationId);
-        request.setGroupId(!DataUtil.isNullOrEmpty(groupId) ? DataUtil.safeToLong(groupId) : null);
-        // validate file trong
-        if (filePart == null || filePart.filename() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File must be provided.");
-        }
-        // validate dinh dang file
-        String filename = filePart.filename();
-        if (!filename.endsWith(".xlsx") && !filename.endsWith(".xls")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File must be .xlsx or .xls format.");
-        }
-        Flux<GroupMemberImportDTO> groupMemberImportRequests = getCreateGroupMemberRequestFlux(filePart);
-        // validate ban ghi
-        return groupMemberImportRequests.collectList().flatMap(groupMemberList -> {
-            List<String> isdnList = listDuplicateItems(groupMemberList.stream()
-                    .map(GroupMemberImportDTO::getSubIsdn)
-                    .collect(Collectors.toList()));
-            Flux<GroupMemberImportDTO> results =
-                    Flux.fromIterable(groupMemberList).flatMap(item -> validateImport(item, isdnList));
-            return results.collectList().flatMap(memberList -> {
-                // check tong so luot ky cac thanh vien trong nhom vuot qua tong so luot ky cua
-                // nhom
-                long signSum = 0L;
-                for (GroupMemberImportDTO member : memberList) {
-                    signSum = signSum + DataUtil.safeToLong(member.getNumberOfSign());
-                }
-                ;
-                if (signSum > DataUtil.safeToLong(totalSign)) {
-                    return Mono.error(new BusinessException(
-                            CommonErrorCode.INVALID_PARAMS, "order.import.error.sum.sign.reach.limit"));
-                }
-                GroupMemberImportListDTO result = new GroupMemberImportListDTO();
-                // neu validate 1 ban ghi khong hop le, set invalid tat ca cac ban ghi con lai
-                // de import lai
-                Boolean validateResult = true;
-                for (GroupMemberImportDTO member : memberList) {
-                    if (!member.isResult()) {
-                        validateResult = false;
-                    }
-                }
-                ;
-                if (!validateResult) {
-                    memberList.forEach(member -> {
-                        if (member.isResult()) {
-                            member.setResult(false);
-                        }
-                    });
-                    result.setItems(memberList);
-                    result.setTotalFailedItems(DataUtil.safeToLong(memberList.size()));
-                    result.setTotalSucceedItems(VALUE_0_LONG);
-                    return Mono.just(result);
-                }
-                // neu tat ca cac ban ghi deu validate thanh cong => thuc hien insert ban ghi
-                // thanh vien nhom CA
-                List<AddGroupCaDTO> addGroupCaList = new ArrayList<>();
-                memberList.forEach(groupMember -> {
-                    AddGroupCaDTO addGroupCa = new AddGroupCaDTO();
-                    ModelMapperFactory.getInstance().map(groupMember, addGroupCa);
-                    addGroupCaList.add(addGroupCa);
-                });
-                request.setLstSubscriberCA(new ArrayList<>());
-                request.getLstSubscriberCA().addAll(addGroupCaList);
-                // thuc hien call soap order tao don
-                return addCAgroupMember(request).flatMap(response -> {
-                    DataResponse<CreateOrderResponse> resp = response;
-                    CreateOrderResponse createOrderResponse = resp.getData();
-                    // neu tao don thanh cong => tat ca cac ban ghi duoc them thanh cong
-                    if (DataUtil.safeEqual(createOrderResponse.getErrorCode(), ERROR_CODE_SUCCESS)
-                            && DataUtil.safeEqual(createOrderResponse.getSuccess(), SUCCESS_TRUE)) {
-                        memberList.forEach(groupMemberImport -> {
-                            groupMemberImport.setErrMsg(EMPTY);
-                            groupMemberImport.setResult(true);
-                        });
-                        result.setItems(memberList);
-                        result.setTotalFailedItems(VALUE_0_LONG);
-                        result.setTotalSucceedItems(DataUtil.safeToLong(memberList.size()));
-
-                    } else { // neu tao don that bai => tat ca cac ban ghi duoc them khong thanh cong
-                        memberList.forEach(groupMemberImport -> {
-                            groupMemberImport.setErrMsg(createOrderResponse.getDescription());
-                            groupMemberImport.setResult(false);
-                        });
-                        result.setItems(memberList);
-                        result.setTotalFailedItems(DataUtil.safeToLong(memberList.size()));
-                        result.setTotalSucceedItems(VALUE_0_LONG);
-                    }
-                    return Mono.just(result);
-                });
-            });
-        });
     }
 
     @Override

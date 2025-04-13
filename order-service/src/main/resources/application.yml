@@ -55,30 +55,45 @@ keycloak:
 # web client config
 client:
   product:
-    internal-oauth: true
     token-relay: true
     address: http://localhost:8056/
     name: productClient
   product-v2:
-    internal-oauth: true
     address: http://localhost:8081/
     name: productClientV2
   setting:
-    internal-oauth: true
-    address: http://locahost:8081/
+    address: http://locahost:8082/
     name: settingClient
   payment:
-    internal-oauth: true
-    address: http://localhost:8081/
+    address: http://localhost:8083/
     name: paymentClient
   cart:
-    internal-oauth: true
-    address: http://localhost:8056/
+    address: http://localhost:8054/
     name: cartClient
   auth:
-    internal-oauth: true
     address: http://localhost:8089/v1
     name: authClient
+  api-gateway:
+    address: http://localhost:8032/v1
+    name: gatewayClient
+  cm:
+    address: http://localhost:8034/v1
+    name: cmClient
+  cmportal:
+    address: http://localhost:8035/v1
+    name: cmPortalClient
+  order:
+    address: http://localhost:8035/v1
+    name: orderClient
+  order-v2:
+    address: http://localhost:8036/v1
+    name: orderV2Client
+  pricing:
+    address: http://localhost:8038/v1
+    name: pricingClient
+  profile:
+    address: http://localhost:8037/v1
+    name: profileClient
 # unauthenticated endpoints config
 application:
   http-logging:

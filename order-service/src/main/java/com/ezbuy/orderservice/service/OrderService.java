@@ -41,14 +41,6 @@ public interface OrderService {
     Mono<DataResponse<GetGroupCAInfoResponse>> getGroupsCAInfo(GetGroupsCAinfoRequest request);
 
     /**
-     * Them thue bao vao nhom
-     *
-     * @param request
-     * @return
-     */
-    Mono<DataResponse> addCAgroupMember(AfterSaleGroupCARequest request);
-
-    /**
      * Cap nhat thue bao nhom
      *
      * @param request
@@ -144,15 +136,6 @@ public interface OrderService {
      * @return
      */
     Mono<GroupMemberImportListDTO> validateImportGroupMember(FilePart filePart, String totalSign);
-
-    /**
-     * Ham import thanh vien nhom CA
-     *
-     * @param filePart
-     * @return
-     */
-    Mono<GroupMemberImportListDTO> importGroupMember(
-            FilePart filePart, String groupCode, String organizationId, String groupId, String totalSign);
 
     /**
      * Ham tra ve ket qua import file

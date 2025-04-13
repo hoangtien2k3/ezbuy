@@ -35,6 +35,12 @@ public class ConstValue {
 
     public static final class ControllerPath {
         public static final String TRANSMISSION_PATH = "/v1/transmission";
+        public static final String UNREAD_NOTI = "unread-noti";
+        public static final String NOTI = "noti";
+        public static final String CHANGE_NOTI_STATE = "change-noti-state";
+        public static final String CREATE_NOTI = "create-noti";
+        public static final String NEW_NOTI = "new-noti";
+        public static final String GET_TRANS = "get-trans";
     }
 
     public static final class ContentTypeConstant {

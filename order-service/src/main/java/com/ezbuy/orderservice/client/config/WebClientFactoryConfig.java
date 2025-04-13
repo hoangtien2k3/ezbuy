@@ -22,6 +22,7 @@ public class WebClientFactoryConfig {
     private final ProfileProperties profileProperties;
     private final SettingProperties settingClientProperties;
     private final ProductProperties productProperties;
+    private final ApiGatewayProperties apiGatewayProperties;
 
     @Bean(name = "webClientFactory")
     public WebClientFactory webClientFactory() {
@@ -37,6 +38,8 @@ public class WebClientFactoryConfig {
                 pricingProperties,
                 profileProperties,
                 settingClientProperties,
-                productProperties));
+                productProperties,
+                apiGatewayProperties
+        ));
     }
 }

@@ -1,6 +1,6 @@
 package com.ezbuy.notificationservice.controller
 
-import com.ezbuy.notificationmodel.common.ConstValue.ControllerPath.TRANSMISSION_PATH
+import com.ezbuy.notificationmodel.common.ConstValue
 import com.ezbuy.notificationmodel.common.ConstValue.NotificationConstant.ANNOUNCEMENT
 import com.ezbuy.notificationmodel.dto.UserTransmissionPageDTO
 import com.ezbuy.notificationmodel.dto.request.CreateNotificationDTO
@@ -19,19 +19,18 @@ import reactor.core.publisher.Mono
 import kotlin.math.max
 
 @RestController
-@RequestMapping(TRANSMISSION_PATH)
+@RequestMapping(ConstValue.ControllerPath.TRANSMISSION_PATH)
 class TransmissionController(
     private val transmissionService: TransmissionService
 ) {
-
     @PreAuthorize("hasAnyAuthority('user')")
-    @GetMapping("/unread-noti")
+    @GetMapping(ConstValue.ControllerPath.UNREAD_NOTI)
     fun getQuantityUserNewNoti(): Mono<DataResponse<CountNoticeResponseDTO>> {
         return transmissionService.getCountNoticeResponseDTO()
     }
 
     @PreAuthorize("hasAnyAuthority('user')")
-    @GetMapping("/noti")
+    @GetMapping(ConstValue.ControllerPath.NOTI)
     fun getNotificationContentListByCategoryType(
         @Valid @RequestParam(required = false, defaultValue = ANNOUNCEMENT) categoryType: String,
         @Valid @RequestParam(required = false, defaultValue = "1") pageIndex: Int?,
@@ -42,7 +41,7 @@ class TransmissionController(
     }
 
     @PreAuthorize("hasAnyAuthority('user')")
-    @PutMapping("/change-noti-state")
+    @PutMapping(ConstValue.ControllerPath.CHANGE_NOTI_STATE)
     fun updateTransmissionState(
         @Valid @RequestParam(required = false) state: String,
         @Valid @RequestParam(required = false) notificationContentId: String,
@@ -52,7 +51,7 @@ class TransmissionController(
     }
 
     @PreAuthorize("hasAnyAuthority('admin','system')")
-    @PostMapping("/create-noti")
+    @PostMapping(ConstValue.ControllerPath.CREATE_NOTI)
     fun insertTransmission(
         @Valid @RequestBody createNotificationDTO: CreateNotificationDTO
     ): Mono<DataResponse<Any>> {
@@ -60,7 +59,7 @@ class TransmissionController(
     }
 
     @PreAuthorize("hasAnyAuthority('user')")
-    @GetMapping("/new-noti")
+    @GetMapping(ConstValue.ControllerPath.NEW_NOTI)
     fun getNewNotiWhenOnline(
         @RequestParam(required = false) @Size(message = "params.invalid.format", max = 50) newestNotiTime: String
     ): Mono<DataResponse<List<NotificationContent>>> {
@@ -68,7 +67,7 @@ class TransmissionController(
     }
 
     @PreAuthorize("hasAnyAuthority('admin','system')")
-    @GetMapping("/get-trans")
+    @GetMapping(ConstValue.ControllerPath.GET_TRANS)
     fun getUserTransmission(
         @RequestParam(required = false) email: String?,
         @RequestParam(required = false) username: String?,
@@ -79,18 +78,16 @@ class TransmissionController(
         @RequestParam(required = false, defaultValue = "10") pageSize: Int?,
         @RequestParam(required = false, defaultValue = "-create_at") sort: String?
     ): Mono<DataResponse<UserTransmissionPageDTO>> {
-        var pageIndex = pageIndex
-        pageIndex = max(pageIndex.toDouble(), 1.0).toInt()
+        val fixedPageIndex = max(pageIndex.toDouble(), 1.0).toInt()
         val request = GetTransmissionByEmailAndFromToRequest.builder()
             .email(DataUtil.safeTrim(email)).username(DataUtil.safeTrim(username))
             .templateMail(DataUtil.safeTrim(templateMail))
             .from(from).to(to)
-            .pageIndex(pageIndex)
+            .pageIndex(fixedPageIndex)
             .pageSize(pageSize)
             .limit(pageSize)
             .sort(sort)
             .build()
         return transmissionService.getTransmissionByEmailAndFromTo(request)
     }
-
 }

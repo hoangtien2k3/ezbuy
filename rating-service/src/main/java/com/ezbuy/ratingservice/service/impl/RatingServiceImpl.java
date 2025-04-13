@@ -24,14 +24,15 @@ import com.reactify.model.response.DataResponse;
 import com.reactify.util.DataUtil;
 import com.reactify.util.SecurityUtils;
 import com.reactify.util.Translator;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -121,7 +122,7 @@ public class RatingServiceImpl extends BaseServiceHandler implements RatingServi
                     rating.setNew(true);
                     Mono<RatingCount> ratingCountMono = Mono.just(new RatingCount());
                     // cap nhat rating count neu sumRateStatus = 1
-                    if (Constants.COMMON.STATUS_ACTIVE.equals(rating.getSumRateStatus())) {
+                    if (Constants.Activation.ACTIVE.equals(rating.getSumRateStatus())) {
                         ratingCountMono = ratingCountService.changeStatusRatingCount(
                                 rating.getRatingTypeCode(),
                                 rating.getTargetId(),
@@ -164,21 +165,21 @@ public class RatingServiceImpl extends BaseServiceHandler implements RatingServi
                     // neu thay doi trang thai tinh tong danh gia
                     if (!rating.getSumRateStatus().equals(request.getSumRateStatus())) {
                         // neu chuyen tu inactive -> active
-                        if (Constants.COMMON.STATUS_ACTIVE.equals(request.getSumRateStatus())) {
+                        if (Constants.Activation.ACTIVE.equals(request.getSumRateStatus())) {
                             // tinh them danh gia nay vao tong danh gia
                             ratingCountMono = ratingCountService.changeStatusRatingCount(
                                     request.getRatingTypeCode(),
                                     request.getTargetId(),
                                     request.getRating(),
-                                    Constants.COMMON.STATUS_ACTIVE);
+                                    Constants.Activation.ACTIVE);
                         } else { // neu chuyen tu active -> inactive
                             ratingCountMono = ratingCountService.changeStatusRatingCount(
                                     rating.getRatingTypeCode(),
                                     rating.getTargetId(),
                                     rating.getRating(),
-                                    Constants.COMMON.STATUS_INACTIVE);
+                                    Constants.Activation.INACTIVE);
                         }
-                    } else if (Constants.COMMON.STATUS_ACTIVE.equals(rating.getSumRateStatus())) {
+                    } else if (Constants.Activation.ACTIVE.equals(rating.getSumRateStatus())) {
                         if (!rating.getRating().equals(request.getRating())) {
                             ratingCountMono = ratingCountService.updateRatingCount(
                                     rating.getRatingTypeCode(),

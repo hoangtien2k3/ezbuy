@@ -55,7 +55,7 @@ public class OrderV2ClientImpl implements OrderV2Client {
         String payload = OrderClientUtils.getProfileKHDNRequest(
                 data, orderV2Properties.getUsername(), orderV2Properties.getPassword());
         return soapClient
-                .callApiGetProfileKHDN(orderV2Client, null, payload, CreateProfileKHDNResponse.class)
+                .callRaw(orderV2Client, null, payload)
                 .flatMap(response -> {
                     if (response == Optional.empty()) {
                         return new CreateProfileKHDNResponse();
@@ -80,7 +80,7 @@ public class OrderV2ClientImpl implements OrderV2Client {
         String payload = OrderClientUtils.createOrder(
                 orderType, data, orderV2Properties.getUsername(), orderV2Properties.getPassword());
         return soapClient
-                .callV2(orderV2Client, null, payload, CreateOrderResponse.class)
+                .callRaw(orderV2Client, null, payload)
                 .doOnError(err -> log.error("Exception when call soap: ", err))
                 .onErrorResume(throwable -> {
                     log.error("Exception when call soap: ", throwable);
@@ -177,7 +177,7 @@ public class OrderV2ClientImpl implements OrderV2Client {
         String payload = OrderClientUtils.getFileContractToView(
                 data, orderType, orderV2Properties.getUsername(), orderV2Properties.getPassword());
         return soapClient
-                .callApiGetProfileKHDN(orderV2Client, null, payload, CreateProfileKHDNResponse.class)
+                .call(orderV2Client, null, payload, CreateProfileKHDNResponse.class)
                 .flatMap(response -> {
                     if (response == Optional.empty()) {
                         return new CreateProfileKHDNResponse();

@@ -87,12 +87,6 @@ public class OrderController {
         return orderService.getGroupsCAInfo(request).map(ResponseEntity::ok);
     }
 
-    @PostMapping(UrlPaths.Order.CA_ADD_GROUP_MEMBER)
-    @CrossOrigin
-    public Mono<ResponseEntity<DataResponse>> addCAgroupMember(@RequestBody AfterSaleGroupCARequest request) {
-        return orderService.addCAgroupMember(request).map(ResponseEntity::ok);
-    }
-
     @PostMapping(UrlPaths.Order.CA_UPDATE_GROUP_MEMBER)
     public Mono<ResponseEntity<DataResponse>> updateCAgroupMember(@RequestBody AfterSaleGroupCARequest request) {
         return orderService.updateCAgroupMember(request).map(ResponseEntity::ok);
@@ -200,19 +194,6 @@ public class OrderController {
             @RequestPart("file") FilePart filePart, @RequestPart("totalSign") String totalSign) {
         return orderService
                 .validateImportGroupMember(filePart, totalSign)
-                .map(rs -> ResponseEntity.ok(new DataResponse(SUCCESS, rs)));
-    }
-
-    @PostMapping(value = UrlPaths.Order.CA_GROUP_MEMBER_IMPORT, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAnyAuthority('user')")
-    public Mono<ResponseEntity<DataResponse>> importGroupMember(
-            @RequestPart("file") FilePart filePart,
-            @RequestPart("groupCode") String groupCode,
-            @RequestPart("organizationId") String organizationId,
-            @RequestPart("groupId") String groupId,
-            @RequestPart("totalSign") String totalSign) {
-        return orderService
-                .importGroupMember(filePart, groupCode, organizationId, groupId, totalSign)
                 .map(rs -> ResponseEntity.ok(new DataResponse(SUCCESS, rs)));
     }
 

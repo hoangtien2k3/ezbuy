@@ -561,7 +561,7 @@ public class ProductServiceImpl implements ProductService {
                 .flatMap(productUser -> {
                     Product product = productUser.getT1();
                     product.setNew(false);
-                    product.setStatus(Constants.COMMON.STATUS_INACTIVE);
+                    product.setStatus(STATUS_ACTIVE);
                     product.setUpdateAt(LocalDateTime.now());
                     product.setUpdateBy(productUser.getT2().getUsername());
                     return productRepository

@@ -76,4 +76,8 @@ public class UrlPaths {
     public interface ActionLog {
         String PREFIX = "v1/action-log";
     }
+
+    public interface UserOtp {
+        String PREFIX = "v1/user-otp";
+    }
 }
