@@ -69,7 +69,7 @@
         <jackson.databind.version>2.17.1</jackson.databind.version>
         <spotless.version>2.43.0</spotless.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-        <spring-cloud.version>2023.0.2</spring-cloud.version>
+        <spring-cloud.version>2023.0.5</spring-cloud.version>
     </properties>
 
     <dependencyManagement>
