@@ -39,7 +39,6 @@ public class WebClientFactoryConfig {
                 profileProperties,
                 settingClientProperties,
                 productProperties,
-                apiGatewayProperties
-        ));
+                apiGatewayProperties));
     }
 }

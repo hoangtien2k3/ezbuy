@@ -32,10 +32,11 @@ public class OrderTransactionRepositoryTemplateImpl extends BaseRepositoryTempla
             String sort) {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("""
+        sb.append(
+                """
         SELECT od.id, od.order_code, od.total_fee, od.currency, od.status, od.state, od.detail_address, od.type,
-               oi.rating, oi.duration, od.id_no, od.name, od.email, od.phone,
-               od.create_at, od.create_by, od.update_at, od.update_by
+              oi.rating, oi.duration, od.id_no, od.name, od.email, od.phone,
+              od.create_at, od.create_by, od.update_at, od.update_by
         FROM "order" od
         INNER JOIN order_item oi ON od.id = oi.order_id
         WHERE 1=1
@@ -76,7 +77,8 @@ public class OrderTransactionRepositoryTemplateImpl extends BaseRepositoryTempla
             String email, String orderCode, String idNo, String phone, LocalDateTime from, LocalDateTime to) {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("""
+        sb.append(
+                """
         SELECT COUNT(*) FROM (
             SELECT od.id
             FROM "order" od

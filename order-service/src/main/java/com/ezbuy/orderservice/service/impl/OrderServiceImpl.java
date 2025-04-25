@@ -35,7 +35,6 @@ import com.ezbuy.ordermodel.dto.pricing.OrderPrice;
 import com.ezbuy.ordermodel.dto.request.*;
 import com.ezbuy.ordermodel.dto.response.*;
 import com.ezbuy.ordermodel.dto.sale.*;
-import com.ezbuy.ordermodel.dto.ws.CreateOrderResponse;
 import com.ezbuy.ordermodel.dto.ws.GetCustomerSubscriberSmeInfoResponse;
 import com.ezbuy.ordermodel.dto.ws.PricingProductWSResponse;
 import com.ezbuy.ordermodel.dto.ws.ProductOrderItemWsDTO;
@@ -63,7 +62,6 @@ import com.ezbuy.settingmodel.model.Telecom;
 import com.reactify.constants.CommonErrorCode;
 import com.reactify.constants.Regex;
 import com.reactify.exception.BusinessException;
-import com.reactify.factory.ModelMapperFactory;
 import com.reactify.factory.ObjectMapperFactory;
 import com.reactify.model.TokenUser;
 import com.reactify.model.response.DataResponse;
@@ -1475,7 +1473,8 @@ public class OrderServiceImpl implements OrderService {
                                                     .flatMap(placeOrderResponse -> {
                                                         log.info("Order response {}", placePaidOrderData);
                                                         if (placeOrderResponse.isEmpty()) {
-                                                            return Mono.just(DataResponse.builder().build());
+                                                            return Mono.just(DataResponse.builder()
+                                                                    .build());
                                                         }
                                                         if ("true"
                                                                 .equals(placeOrderResponse

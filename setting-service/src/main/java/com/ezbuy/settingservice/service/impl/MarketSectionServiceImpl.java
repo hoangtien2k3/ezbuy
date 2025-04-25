@@ -20,6 +20,9 @@ import com.reactify.model.response.DataResponse;
 import com.reactify.util.DataUtil;
 import com.reactify.util.MinioUtils;
 import com.reactify.util.SecurityUtils;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -29,10 +32,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
-
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -216,7 +215,8 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
                 return Mono.error(new BusinessException(
                         CommonErrorCode.INVALID_PARAMS, "market.section.error.header.info.icon.url.empty"));
             }
-            return minioUtils.uploadMedia(headerInfo.getIconUrl(), minioProperties.getBucket())
+            return minioUtils
+                    .uploadMedia(headerInfo.getIconUrl(), minioProperties.getBucket())
                     .switchIfEmpty(Mono.error(new BusinessException(
                             CommonErrorCode.INTERNAL_SERVER_ERROR, "market.section.error.insert.market.section.fail")))
                     .flatMap(url -> {
@@ -264,7 +264,8 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
         if (DataUtil.isNullOrEmpty(mediaDTO.getUrl())) {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.section.error.slide.media.empty");
         }
-        return minioUtils.uploadMedia(mediaDTO.getUrl(), minioProperties.getBucket())
+        return minioUtils
+                .uploadMedia(mediaDTO.getUrl(), minioProperties.getBucket())
                 .switchIfEmpty(Mono.error(new BusinessException(
                         CommonErrorCode.INTERNAL_SERVER_ERROR, "market.section.error.insert.market.section.fail")))
                 .flatMap(url -> {

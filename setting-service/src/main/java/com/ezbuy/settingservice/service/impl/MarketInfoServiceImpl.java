@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,8 +61,7 @@ public class MarketInfoServiceImpl implements MarketInfoService {
                     List<MarketInfoDTO> content = zip.getT1();
                     for (MarketInfoDTO item : content) {
                         item.setBase64(addPrefixImageBase64(
-                                minioUtils.getBase64FromUrl(
-                                        minioProperties.getBucket(), item.getMarketImageUrl()),
+                                minioUtils.getBase64FromUrl(minioProperties.getBucket(), item.getMarketImageUrl()),
                                 item.getMarketImageUrl()));
                     }
                     Long totalRecords = zip.getT2();
@@ -276,7 +274,10 @@ public class MarketInfoServiceImpl implements MarketInfoService {
         String nameImage = lstUrl[lstUrl.length - 1];
         String extension = FilenameUtils.getExtension(nameImage); // lay duoi cua anh
         return DataUtil.isNullOrEmpty(extension)
-                ? "" : "data:image/" + extension.trim() + ";base64," + base64; // chuyen sang dang;
+                ? ""
+                : "data:image/" + extension.trim() + ";base64," + base64; // chuyen
+        // sang
+        // dang;
     }
 
     @Override

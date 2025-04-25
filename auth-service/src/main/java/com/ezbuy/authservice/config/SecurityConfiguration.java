@@ -1,6 +1,7 @@
 package com.ezbuy.authservice.config;
 
 import java.util.Arrays;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
@@ -13,8 +14,11 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 @EnableReactiveMethodSecurity
 public class SecurityConfiguration {
 
-    private static final String FRONTEND_LOCALHOST = "http://localhost:3000";
-    private static final String FRONTEND_CMS = "http://localhost:8988";
+    @Value("${frontend-cors.ezbuyCms}")
+    private String frontendEzbuyCms;
+
+    @Value("${frontend-cors.ezbuy}")
+    private String frontendEzbuy;
 
     @Bean
     CorsConfigurationSource corsConfiguration() {
@@ -25,7 +29,7 @@ public class SecurityConfiguration {
         corsConfig.addAllowedMethod(HttpMethod.PUT);
         corsConfig.addAllowedMethod(HttpMethod.DELETE);
         corsConfig.addAllowedMethod(HttpMethod.POST);
-        corsConfig.setAllowedOrigins(Arrays.asList(FRONTEND_LOCALHOST, FRONTEND_CMS));
+        corsConfig.setAllowedOrigins(Arrays.asList(frontendEzbuyCms, frontendEzbuy));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfig);
         return source;
