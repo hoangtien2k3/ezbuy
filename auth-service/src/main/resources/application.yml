@@ -236,3 +236,8 @@ management:
   endpoint:
     health:
       show-details: always
+
+#config cors (cross origin resource sharing)
+frontend-cors:
+  ezbuyCms: http://localhost:3000
+  ezbuyWeb: http://localhost:3000

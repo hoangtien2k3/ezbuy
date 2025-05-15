@@ -36,7 +36,6 @@ import reactor.core.publisher.Mono;
 public class PermissionPolicyServiceImpl implements PermissionPolicyService {
     private final AuthServiceCustom authServiceCustom;
     private final PermissionPolicyRepository permissionPolicyRepository;
-    private static final String PERMISSION_PARTTERN = "^[a-z0-9_]{3,50}$";
 
     @Override
     public Mono<DataResponse<SearchPermissionPolicyResponse>> getPermissionPolicyDto(
@@ -111,7 +110,7 @@ public class PermissionPolicyServiceImpl implements PermissionPolicyService {
             Mono.error(new BusinessException(
                     HttpStatus.BAD_REQUEST.toString(), MessageUtils.getMessage("input.not.null", "Mã nhóm quyền")));
         }
-        if (!request.getGroupPermissionCode().matches(PERMISSION_PARTTERN)) {
+        if (!request.getGroupPermissionCode().matches("^[a-z0-9_]{3,50}$")) {
             Mono.error(new BusinessException(
                     HttpStatus.BAD_REQUEST.toString(),
                     MessageUtils.getMessage("input.invalid.format", "Mã nhóm quyền")));
