@@ -23,19 +23,27 @@ public final class AuthConstants {
         public static final String CUSTOMER_REGISTER_SUCCESS = "CUSTOMER_REGISTER_SUCCESS";
         public static final String EMPLOYEE_REGISTER_SUCCESS = "EMPLOYEE_REGISTER_SUCCESS";
         public static final String ACCOUNT_ACTIVE = "ACCOUNT_ACTIVE";
-        public static final String SIGN_UP_PASSWORD ="SIGN_UP_PASSWORD";
+        public static final String SIGN_UP_PASSWORD = "SIGN_UP_PASSWORD";
         public static final String VERIFY_ACCOUNT_SUCESS = "VERIFY_ACCOUNT_SUCESS";
         public static final String NOTI_VERIFY_ACCOUNT = "NOTI_VERIFY_ACCOUNT";
-        public static final String CREATE_ACCOUNT_SUCCESS ="CREATE_ACCOUNT_SUCCESS"; //luong mail thong bao tao tai khoan thanh cong
-        public static final String CHANGE_PASSWORD_SUCCESS ="CHANGE_PASSWORD_SUCCESS"; //luong mail thong bao doi mat khau thanh cong
-        public static final String APPROVE_ORDER_SUCCESS = "APPROVE_ORDER_SUCCESS"; //template gui mail thong bao phe duyet don hang thanh cong
-        public static final String APPROVE_ORDER_FAIL = "APPROVE_ORDER_FAIL"; //template gui mail thong bao phe duyet don hang that bai
-        public static final String NEED_APPROVE = "NEED_APPROVE";//template gui mail thong bao can phe duyet cho admin
-        public static final String VERIFY_IDENTIFY_REJECTED = "VERIFY_IDENTIFY_REJECTED";//template gui mail thong bao tu choi xac thuc danh tinh
-        public static final String VERIFY_IDENTIFY_SUCCESS = "VERIFY_IDENTIFY_SUCCESS";//template gui mail thong bao xac thuc danh tinh thanh cong
-        public static final String ADTECH_TERMINATE_NOTI = "ADTECH_TERMINATE_NOTI";//template gui mail thong bao cham dut hop dong voi adtech
-        public static final String ACCEPT_TENANT = "ACCEPT_TENANT";//quyen accept tenant
-        public static final String ACCEPT_TENANT_IDENTIFY= "ACCEPT_TENANT_IDENTIFY";//quyen accept tenant
+        public static final String CREATE_ACCOUNT_SUCCESS = "CREATE_ACCOUNT_SUCCESS"; // luong mail thong bao tao tai
+        // khoan thanh cong
+        public static final String CHANGE_PASSWORD_SUCCESS = "CHANGE_PASSWORD_SUCCESS"; // luong mail thong bao doi mat
+        // khau thanh cong
+        public static final String APPROVE_ORDER_SUCCESS = "APPROVE_ORDER_SUCCESS"; // template gui mail thong bao phe
+        // duyet don hang thanh cong
+        public static final String APPROVE_ORDER_FAIL = "APPROVE_ORDER_FAIL"; // template gui mail thong bao phe duyet
+        // don hang that bai
+        public static final String NEED_APPROVE = "NEED_APPROVE"; // template gui mail thong bao can phe duyet cho admin
+        public static final String VERIFY_IDENTIFY_REJECTED = "VERIFY_IDENTIFY_REJECTED"; // template gui mail thong bao
+        // tu choi xac thuc danh
+        // tinh
+        public static final String VERIFY_IDENTIFY_SUCCESS = "VERIFY_IDENTIFY_SUCCESS"; // template gui mail thong bao
+        // xac thuc danh tinh thanh cong
+        public static final String ADTECH_TERMINATE_NOTI = "ADTECH_TERMINATE_NOTI"; // template gui mail thong bao cham
+        // dut hop dong voi adtech
+        public static final String ACCEPT_TENANT = "ACCEPT_TENANT"; // quyen accept tenant
+        public static final String ACCEPT_TENANT_IDENTIFY = "ACCEPT_TENANT_IDENTIFY"; // quyen accept tenant
     }
 
     public static final class Otp {
@@ -43,7 +51,7 @@ public final class AuthConstants {
         public static final String FORGOT_PASSWORD = "FORGOT_PASSWORD";
         public static final String FORGOT_PASSWORD_CONTENT = "OTP for forgot password user";
         public static final String REGISTER_CONTENT = "OTP for register user";
-        public static final Integer EXP_MINUTE = 5; //tang so phut het han OTP
+        public static final Integer EXP_MINUTE = 5; // tang so phut het han OTP
         public static final Integer EXP_OTP_AM_MINUTE = 5;
     }
 

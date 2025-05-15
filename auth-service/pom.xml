@@ -19,7 +19,6 @@
 		<keycloak.version>25.0.6</keycloak.version>
 		<ezbuy-auth-service.tag>latest</ezbuy-auth-service.tag>
 		<ezbuy-auth-service.image>hoangtien2k3/ezbuy-auth-service</ezbuy-auth-service.image>
-		<start-class>com.ezbuy.authservice.AuthServiceApplication</start-class>
 	</properties>
 
 	<dependencies>
@@ -119,8 +118,9 @@
 					</execution>
 				</executions>
 				<configuration>
-					<mainClass>${start-class}</mainClass>
-					<includeSystemScope>true</includeSystemScope>
+					<layers>
+						<enabled>true</enabled>
+					</layers>
 				</configuration>
 			</plugin>
             <plugin>

@@ -1,5 +1,7 @@
 package com.ezbuy.notificationsend.service.impl
 
+import com.ezbuy.notificationmodel.dto.EmailResultDTO
+import com.ezbuy.notificationmodel.dto.TransmissionNotiDTO
 import com.ezbuy.notificationsend.constants.CommonConstants
 import com.ezbuy.notificationsend.constants.CommonConstants.TemplateMail.ACCOUNT_ACTIVE
 import com.ezbuy.notificationsend.constants.CommonConstants.TemplateMail.CUSTOMER_ACTIVE_SUCCESS
@@ -9,10 +11,8 @@ import com.ezbuy.notificationsend.constants.CommonConstants.TemplateMail.FORGOT_
 import com.ezbuy.notificationsend.constants.CommonConstants.TemplateMail.NOTI_VERIFY_ACCOUNT
 import com.ezbuy.notificationsend.constants.CommonConstants.TemplateMail.SIGN_UP
 import com.ezbuy.notificationsend.constants.CommonConstants.TemplateMail.SIGN_UP_PASSWORD
-import com.ezbuy.notificationsend.service.MailService
-import com.ezbuy.notificationmodel.dto.EmailResultDTO
-import com.ezbuy.notificationmodel.dto.TransmissionNotiDTO
 import com.ezbuy.notificationsend.constants.CommonConstants.TemplateMail.VERIFY_ACCOUNT_SUCCESS
+import com.ezbuy.notificationsend.service.MailService
 import com.reactify.util.DataUtil
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -29,7 +29,7 @@ import java.nio.charset.StandardCharsets
 class MailServiceImpl(
     private val templateEngine: SpringTemplateEngine,
     private val javaMailSender: JavaMailSender,
-    @Value("{spring.mail.username}") private val sender: String
+    @Value("\${spring.mail.username}") private val sender: String
 ) : MailService {
 
     private val logger = LoggerFactory.getLogger(MailServiceImpl::class.java)

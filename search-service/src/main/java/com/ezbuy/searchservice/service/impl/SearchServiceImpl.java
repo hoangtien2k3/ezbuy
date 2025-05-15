@@ -102,10 +102,7 @@ public class SearchServiceImpl implements SearchService {
                     });
                     searchDTOResponse.setResult(
                             searchDTOList.stream().distinct().collect(Collectors.toList()));
-                    DataResponse<Object> dataResponse = new DataResponse<>();
-                    dataResponse.setMessage(Translator.toLocale("success"));
-                    dataResponse.setData(searchDTOResponse);
-                    return Mono.just(dataResponse);
+                    return Mono.just(DataResponse.success(searchDTOResponse));
                 });
     }
 

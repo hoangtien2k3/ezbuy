@@ -67,3 +67,8 @@ application:
 config:
   resendCount: 2
   limit: 800
+
+#scheduled send mail
+scheduled:
+  fixedRate: 30000
+  initialDelay: 5000

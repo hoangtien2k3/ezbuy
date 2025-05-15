@@ -21,21 +21,6 @@ services:
     networks:
       - ezbuy-network
 
-  #pgadmin:
-  pgadmin:
-    image: dpage/pgadmin4:${PGADMIN_VERSION}
-    container_name: pgadmin
-    restart: unless-stopped
-    ports:
-      - "${PGADMIN_LISTEN_PORT}:80"
-    volumes:
-      - pgadmin:/var/lib/pgadmin
-    environment:
-      - PGADMIN_DEFAULT_EMAIL
-      - PGADMIN_DEFAULT_PASSWORD
-    networks:
-      - ezbuy-network
-
   #keycloak:
   keycloak:
     image: keycloak/keycloak:${KEYCLOAK_VERSION}
@@ -66,7 +51,7 @@ services:
       KC_HTTP_PORT: 8080
       KC_HTTPS_PORT: 8443
     volumes:
-#      - ./docker/keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
+      - ./docker/keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
       - ./docker/keycloak/themes/ezbuy/theme:/opt/keycloak/themes
       - keycloak:/opt/keycloak/data
     networks:
@@ -85,7 +70,6 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     volumes:
-#      - ./docker/minio/data:/data:ro
       - minio:/data:rw
     command: [ "server", "--address", ":9000", "--console-address", ":9001", "/data" ]
     healthcheck:
@@ -109,7 +93,12 @@ services:
     networks:
       - ezbuy-network
 
+  ###########################
   #zookeeper
+  #kafka
+  #kafka-connect
+  #kibana
+  ###########################
   zookeeper:
     image: debezium/zookeeper:${ZOOKEEPER_VERSION}
     restart: always
@@ -157,6 +146,21 @@ services:
       - GROUP_ID=1
       - CONFIG_STORAGE_TOPIC=kafka_connect_configs
       - OFFSET_STORAGE_TOPIC=kafka_connect_offsets
+    networks:
+      - ezbuy-network
+
+  #kafka-ui
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:${KAFKA_UI_VERSION}
+    environment:
+      DYNAMIC_CONFIG_ENABLED: 'true'
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+    ports:
+      - "8889:8080"
+    depends_on:
+      - kafka
+      - kafka-connect
     networks:
       - ezbuy-network
 
@@ -258,103 +262,9 @@ services:
     networks:
       - ezbuy-network
 
-  #redis
-  redis:
-    image: redis:${REDIS_VERSION}
-    container_name: redis
-    restart: always
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis:/data
-    environment:
-      - REDIS_PASSWORD
-      - REDIS_PORT
-      - REDIS_DATABASES
-    healthcheck:
-      test: [ "CMD", "sh", "-c", "redis-cli -a $${REDIS_PASSWORD} ping" ]
-      interval: 10s
-      retries: 3
-      start_period: 30s
-      timeout: 5s
-    networks:
-      - ezbuy-network
-
-  #redis_insight
-  redis_insight:
-    image: redislabs/redisinsight:latest
-    container_name: redis_insight
-    restart: always
-    ports:
-      - "8005:8001"
-    volumes:
-      - redis_insight:/db
-    networks:
-      - ezbuy-network
-
   ###########################
-  #kong-database
-  #kong-migrations
-  #kong-gateway
+  #portainer -> mini docker
   ###########################
-  kong-database:
-    image: postgres:13
-    container_name: kong-database
-    restart: always
-    environment:
-      POSTGRES_USER: kong
-      POSTGRES_DB: kong
-      POSTGRES_PASSWORD: kongpass
-    ports:
-      - "5435:5432"
-    networks:
-      - ezbuy-network
-
-  kong-migrations:
-    image: kong/kong-gateway:3.8.1.0
-    container_name: kong-migrations
-    depends_on:
-      - kong-database
-    environment:
-      KONG_DATABASE: ${KONG_DATABASE}
-      KONG_PG_HOST: ${KONG_PG_HOST}
-      KONG_PG_PASSWORD: ${KONG_PG_PASSWORD}
-      KONG_PASSWORD: test
-    command: "kong migrations bootstrap"
-    networks:
-      - ezbuy-network
-
-  kong-gateway:
-    image: kong/kong-gateway:3.8.1.0
-    container_name: kong-gateway
-    restart: always
-    depends_on:
-      - kong-database
-    environment:
-      KONG_DATABASE: ${KONG_DATABASE}
-      KONG_PG_HOST: ${KONG_PG_HOST}
-      KONG_PG_PORT: ${KONG_PG_PORT}
-      KONG_PG_USER: ${KONG_PG_USER}
-      KONG_PG_PASSWORD: ${KONG_PG_PASSWORD}
-      KONG_PROXY_ACCESS_LOG: /dev/stdout
-      KONG_ADMIN_ACCESS_LOG: /dev/stdout
-      KONG_PROXY_ERROR_LOG: /dev/stderr
-      KONG_ADMIN_ERROR_LOG: /dev/stderr
-      KONG_ADMIN_LISTEN: ${KONG_ADMIN_LISTEN}
-      KONG_ADMIN_GUI_URL: ${KONG_ADMIN_GUI_URL}
-      KONG_LICENSE_DATA: ""
-    ports:
-      - "8000:8000"
-      - "8443:8443"
-      - "8001:8001"
-      - "8444:8444"
-      - "8002:8002"
-      - "8445:8445"
-      - "8003:8003"
-      - "8004:8004"
-    networks:
-      - ezbuy-network
-
   #portainer
   portainer:
     image: portainer/portainer-ce:2.27.1
@@ -364,237 +274,7 @@ services:
       - "9999:9000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - portainer_data:/data
-    networks:
-      - ezbuy-network
-
-  #auth-service
-  auth-service:
-    build: ./auth-service
-    image: hoangtien2k3/ezbuy-auth-service:latest
-    container_name: ezbuy-auth-service
-    environment:
-      - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/auth
-      - SPRING_R2DBC_USERNAME
-      - SPRING_R2DBC_PASSWORD
-      - KEYCLOAK_SERVERURL
-      - KEYCLOAK_REALM
-      - KEYCLOAK_CLIENTID
-      - KEYCLOAK_CLIENTSECRET
-      - KEYCLOAK_GRANTTYPE
-      - CLIENT_KEYCLOAK_ADDRESS
-      - MINIO_BASEURL
-      - MINIO_PUBLICURL
-      - MINIO_ACCESSKEY
-      - MINIO_SECRETKEY
-      - MINIO_BUCKET
-    volumes:
-      - ./deployment/app-config:/app-config
-    ports:
-      - "8089:8089"
-    networks:
-      - ezbuy-network
-
-  #cart-service
-  cart-service:
-    build: ./cart-service
-    image: hoangtien2k3/ezbuy-cart-service:latest
-    container_name: ezbuy-cart-service
-    environment:
-      - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/cart
-      - SPRING_R2DBC_USERNAME
-      - SPRING_R2DBC_PASSWORD
-      - KEYCLOAK_SERVERURL
-      - KEYCLOAK_REALM
-      - KEYCLOAK_CLIENTID
-      - KEYCLOAK_CLIENTSECRET
-      - KEYCLOAK_GRANTTYPE
-      - CLIENT_KEYCLOAK_ADDRESS
-    volumes:
-      - ./deployment/app-config:/app-config
-    ports:
-      - "8918:8918"
-    networks:
-      - ezbuy-network
-
-  #notification-send
-  notification-send:
-    build: ./notification-send
-    image: hoangtien2k3/ezbuy-notification-send:latest
-    container_name: ezbuy-notification-send
-    environment:
-      - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/notification
-      - SPRING_R2DBC_USERNAME
-      - SPRING_R2DBC_PASSWORD
-      - KEYCLOAK_SERVERURL
-      - KEYCLOAK_REALM
-      - KEYCLOAK_CLIENTID
-      - KEYCLOAK_CLIENTSECRET
-      - KEYCLOAK_GRANTTYPE
-      - CLIENT_KEYCLOAK_ADDRESS
-    volumes:
-      - ./deployment/app-config:/app-config
-    ports:
-      - "8888:8888"
-    networks:
-      - ezbuy-network
-
-  #notification-service
-  notification-service:
-    build: ./auth-service
-    image: hoangtien2k3/ezbuy-notification-service:latest
-    container_name: ezbuy-notification-service
-    environment:
-      - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/notification
-      - SPRING_R2DBC_USERNAME
-      - SPRING_R2DBC_PASSWORD
-      - KEYCLOAK_SERVERURL
-      - KEYCLOAK_REALM
-      - KEYCLOAK_CLIENTID
-      - KEYCLOAK_CLIENTSECRET
-      - KEYCLOAK_GRANTTYPE
-      - CLIENT_KEYCLOAK_ADDRESS
-    volumes:
-      - ./deployment/app-config:/app-config
-    ports:
-      - "7777:7777"
-    networks:
-      - ezbuy-network
-
-  #payment-service
-  payment-service:
-    build: ./payment-service
-    image: hoangtien2k3/ezbuy-payment-service:latest
-    container_name: ezbuy-payment-service
-    environment:
-      - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/payment
-      - SPRING_R2DBC_USERNAME
-      - SPRING_R2DBC_PASSWORD
-      - KEYCLOAK_SERVERURL
-      - KEYCLOAK_REALM
-      - KEYCLOAK_CLIENTID
-      - KEYCLOAK_CLIENTSECRET
-      - KEYCLOAK_GRANTTYPE
-      - CLIENT_KEYCLOAK_ADDRESS
-    volumes:
-      - ./deployment/app-config:/app-config
-    ports:
-      - "8089:8089"
-    networks:
-      - ezbuy-network
-
-  #product-service
-  product-service:
-    build: ./product-service
-    image: hoangtien2k3/ezbuy-product-service:latest
-    container_name: ezbuy-product-service
-    environment:
-      - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/product
-      - SPRING_R2DBC_USERNAME
-      - SPRING_R2DBC_PASSWORD
-      - KEYCLOAK_SERVERURL
-      - KEYCLOAK_REALM
-      - KEYCLOAK_CLIENTID
-      - KEYCLOAK_CLIENTSECRET
-      - KEYCLOAK_GRANTTYPE
-      - CLIENT_KEYCLOAK_ADDRESS
-    volumes:
-      - ./deployment/app-config:/app-config
-    ports:
-      - "8950:8950"
-    networks:
-      - ezbuy-network
-
-  #rating-service
-  rating-service:
-    build: ./rating-service
-    image: hoangtien2k3/ezbuy-rating-service:latest
-    container_name: ezbuy-rating-service
-    environment:
-      - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/rating
-      - SPRING_R2DBC_USERNAME
-      - SPRING_R2DBC_PASSWORD
-      - KEYCLOAK_SERVERURL
-      - KEYCLOAK_REALM
-      - KEYCLOAK_CLIENTID
-      - KEYCLOAK_CLIENTSECRET
-      - KEYCLOAK_GRANTTYPE
-      - CLIENT_KEYCLOAK_ADDRESS
-    volumes:
-      - ./deployment/app-config:/app-config
-    ports:
-      - "8950:8950"
-    networks:
-      - ezbuy-network
-
-  #rating-service
-  search-service:
-    build: ./search-service
-    image: hoangtien2k3/ezbuy-search-service:latest
-    container_name: ezbuy-search-service
-    environment:
-      - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/search
-      - SPRING_R2DBC_USERNAME
-      - SPRING_R2DBC_PASSWORD
-      - KEYCLOAK_SERVERURL
-      - KEYCLOAK_REALM
-      - KEYCLOAK_CLIENTID
-      - KEYCLOAK_CLIENTSECRET
-      - KEYCLOAK_GRANTTYPE
-      - CLIENT_KEYCLOAK_ADDRESS
-    volumes:
-      - ./deployment/app-config:/app-config
-    ports:
-      - "8999:8999"
-    networks:
-      - ezbuy-network
-
-  #setting-service
-  setting-service:
-    build: ./setting-service
-    image: hoangtien2k3/ezbuy-setting-service:latest
-    container_name: ezbuy-setting-service
-    environment:
-      - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/setting
-      - SPRING_R2DBC_USERNAME
-      - SPRING_R2DBC_PASSWORD
-      - KEYCLOAK_SERVERURL
-      - KEYCLOAK_REALM
-      - KEYCLOAK_CLIENTID
-      - KEYCLOAK_CLIENTSECRET
-      - KEYCLOAK_GRANTTYPE
-      - CLIENT_KEYCLOAK_ADDRESS
-      - MINIO_BASEURL
-      - MINIO_PUBLICURL
-      - MINIO_ACCESSKEY
-      - MINIO_SECRETKEY
-      - MINIO_BUCKET
-    volumes:
-      - ./deployment/app-config:/app-config
-    ports:
-      - "8082:8082"
-    networks:
-      - ezbuy-network
-
-  #trigger-service
-  trigger-service:
-    build: ./trigger-service
-    image: hoangtien2k3/ezbuy-trigger-service:latest
-    container_name: ezbuy-trigger-service
-    environment:
-      - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/trigger
-      - SPRING_R2DBC_USERNAME
-      - SPRING_R2DBC_PASSWORD
-      - KEYCLOAK_SERVERURL
-      - KEYCLOAK_REALM
-      - KEYCLOAK_CLIENTID
-      - KEYCLOAK_CLIENTSECRET
-      - KEYCLOAK_GRANTTYPE
-      - CLIENT_KEYCLOAK_ADDRESS
-    volumes:
-      - ./deployment/app-config:/app-config
-    ports:
-      - "8999:8999"
+      - portainer:/data
     networks:
       - ezbuy-network
 
@@ -606,7 +286,6 @@ networks:
     external: true
 #  proxy:
 #    external: true
-#  keycloak:
 
 # volumes:
 volumes:
@@ -614,8 +293,5 @@ volumes:
   pgadmin:
   keycloak:
   minio:
-  memos:
   elasticsearch:
-  redis:
-  redis_insight:
-  portainer_data:
+  portainer:

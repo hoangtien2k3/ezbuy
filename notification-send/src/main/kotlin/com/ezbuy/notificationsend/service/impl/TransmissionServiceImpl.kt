@@ -28,6 +28,7 @@ class TransmissionServiceImpl(
 
     @Value("\${config.resendCount}")
     private var resendCount: Int = 0
+
     @Value("\${config.limit}")
     private var limit: Int = 0
 
@@ -38,12 +39,9 @@ class TransmissionServiceImpl(
             .collectList()
             .flatMap { transmissionNotis ->
                 if (DataUtil.isNullOrEmpty(transmissionNotis)) {
-                    log.info("transmissionList is empty")
+                    log.info("\t\t transmission list is empty")
                     return@flatMap Mono.just(
-                        DataResponse(
-                            null,
-                            "success"
-                        )
+                        DataResponse(null, "success")
                     )
                 }
 

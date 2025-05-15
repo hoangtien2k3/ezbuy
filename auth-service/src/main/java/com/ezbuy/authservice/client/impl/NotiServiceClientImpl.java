@@ -23,6 +23,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @DependsOn("webClientFactory")
 public class NotiServiceClientImpl implements NotiServiceClient {
+
     @Qualifier("notiServiceClient")
     private final WebClient notiServiceClient;
 

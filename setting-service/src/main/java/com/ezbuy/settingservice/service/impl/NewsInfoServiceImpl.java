@@ -25,7 +25,6 @@ import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -57,7 +56,8 @@ public class NewsInfoServiceImpl extends BaseServiceHandler implements NewsInfoS
                         getSysDate,
                         minioUtils.uploadMedia(request.getNavigatorUrl()))
                 .flatMap(
-                        tuple -> { // validate ton tai thong tin code hoac
+                        tuple -> { // validate ton tai thong tin code
+                            // hoac
                             // displayOrder
                             String NewsInfoId = UUID.randomUUID().toString();
                             LocalDateTime now = tuple.getT3();
