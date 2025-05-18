@@ -1,7 +1,6 @@
 package com.ezbuy.cartservice.service.impl;
 
 import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
-import static com.reactify.constants.MessageConstant.QUERY_CART_ITEM_NOT_FOUND;
 import static com.reactify.constants.Regex.PRODUCT_ID;
 
 import com.ezbuy.cartmodel.dto.CartItemProductDTO;
@@ -50,31 +49,29 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public Mono<DataResponse<CartItem>> deleteCartItem(String id) {
-        String message = QUERY_CART_ITEM_NOT_FOUND;
-        String messageSuccess = SUCCESS;
         String cartItemId = DataUtil.safeTrim(id);
         if (DataUtil.isNullOrEmpty(cartItemId)) {
             return SecurityUtils.getCurrentUser().flatMap(tokenUser -> cartRepository
                     .findByUserId(tokenUser.getId())
-                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, message)))
+                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "query.cart.item.not.found")))
                     .flatMap(cart -> {
                         String cartId = String.valueOf(cart.getId());
                         return cartItemRepository
                                 .findByCartId(cartId)
                                 .flatMap(cartItem -> Mono.just(Optional.ofNullable(cartItem)))
-                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, message)))
+                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "query.cart.item.not.found")))
                                 .flatMap(deletes -> {
                                     cartItemRepository
                                             .deleteAllByCartId(cartId, tokenUser.getUsername())
                                             .subscribe();
                                     return Mono.just(
-                                            new DataResponse<>(null, Translator.toLocaleVi(messageSuccess), null));
+                                            new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), null));
                                 });
                     }));
         } else {
             return SecurityUtils.getCurrentUser().flatMap(tokenUser -> cartItemRepository
                     .findById(cartItemId)
-                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, message)))
+                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "query.cart.item.not.found")))
                     .flatMap(cartItem -> {
                         String cartId = cartItem.getCartId();
 
@@ -88,7 +85,7 @@ public class CartItemServiceImpl implements CartItemService {
                                             .deleteCartItem(cartItemId, tokenUser.getUsername())
                                             .subscribe();
                                     return Mono.just(
-                                            new DataResponse<>(null, Translator.toLocaleVi(messageSuccess), null));
+                                            new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), null));
                                 });
                     }));
         }

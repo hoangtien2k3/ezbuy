@@ -54,6 +54,15 @@ spring:
       logRequest: true
       logResponse: true
 
+#keycloak client config
+keycloak:
+  clientId: ezbuy-client
+  clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
+  realm: ezbuy-server
+  serverUrl: http://localhost:8080
+  grantType: password
+  host: localhost
+
 application:
   whiteList:
     - uri: /actuator/health
@@ -66,21 +75,26 @@ application:
         - PUT
         - DELETE
 
-# web client config
+# client config
 client:
-  keycloak:
-    address: http://localhost:8080/realms/ezbuy-server/protocol/openid-connect
-    name: keycloak
-    auth:
-      client-id: ezbuy-client
-      client-secret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
+  product:
+    address: http://10.207.252.223/sme-product/
+    name: product
+    pool:
+      max-size: 100
+      max-pending-acquire: 100
+  setting:
+    address: http://10.207.252.223/sme-setting/v1
+    name: setting
+    pool:
+      max-size: 100
+      max-pending-acquire: 100
+  payment:
+    internal-oauth: true
+    address: http://10.207.252.223/sme-payment/v1
+    name: payment
+    pool:
+      max-size: 100
+      max-pending-acquire: 100
 
-#keycloak client config
-keycloak:
-  clientId: ezbuy-client
-  clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
-  realm: ezbuy-server
-  serverUrl: http://localhost:8080
-  grantType: password
-  host: localhost
 
