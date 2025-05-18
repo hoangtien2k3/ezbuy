@@ -1,0 +1,223 @@
+server:
+  port: 8090
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty.http.client: DEBUG
+    org.springframework.web: INFO
+
+#eureka-service config
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      default-zone: ${DISCOVERY_URL:http://localhost:8761}/eureka
+
+# Enable Actuator endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    config:
+      enabled: false
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]': # Apply CORS rules globally for all paths
+            allowed-origin-patterns:
+              - "http://localhost:*"
+            allowed-methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowed-headers: "*"
+            allow-credentials: true
+      #http connect timeout
+      httpclient:
+        connect-timeout: 5000
+        response-timeout: 10s
+      discovery:
+        locator:
+          enabled: true #Allow self-routing via service name
+          lower-case-service-id: true
+      routes:
+        # ============================
+        # AUTH SERVICE
+        # ============================
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/v1/**
+          filters:
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+                backoff:
+                  first-backoff: 500ms
+                  max-backoff: 2s
+                  factor: 2
+
+        # ============================
+        # CART SERVICE
+        # ============================
+        - id: cart-service
+          uri: lb://cart-service
+          predicates:
+            - Path=/v1/**
+          filters:
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+                backoff:
+                  first-backoff: 500ms
+                  max-backoff: 2s
+                  factor: 2
+
+        # ============================
+        # NOTIFICATION SERVICE
+        # ============================
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/v1/**
+          filters:
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+                backoff:
+                  first-backoff: 500ms
+                  max-backoff: 2s
+                  factor: 2
+
+        # ============================
+        # ORDER SERVICE
+        # ============================
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/v1/**
+          filters:
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+                backoff:
+                  first-backoff: 500ms
+                  max-backoff: 2s
+                  factor: 2
+
+        # ============================
+        # PAYMENT SERVICE
+        # ============================
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/v1/**
+          filters:
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+                backoff:
+                  first-backoff: 500ms
+                  max-backoff: 2s
+                  factor: 2
+
+        # ============================
+        # PRODUCT SERVICE
+        # ============================
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/v1/**
+          filters:
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+                backoff:
+                  first-backoff: 500ms
+                  max-backoff: 2s
+                  factor: 2
+
+        # ============================
+        # RATING SERVICE
+        # ============================
+        - id: rating-service
+          uri: lb://rating-service
+          predicates:
+            - Path=/v1/**
+          filters:
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+                backoff:
+                  first-backoff: 500ms
+                  max-backoff: 2s
+                  factor: 2
+
+        # ============================
+        # SEARCH SERVICE
+        # ============================
+        - id: search-service
+          uri: lb://search-service
+          predicates:
+            - Path=/v1/**
+          filters:
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+                backoff:
+                  first-backoff: 500ms
+                  max-backoff: 2s
+                  factor: 2
+
+        # ============================
+        # SETTING SERVICE
+        # ============================
+        - id: setting-service
+          uri: lb://setting-service
+          predicates:
+            - Path=/v1/**
+          filters:
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+                backoff:
+                  first-backoff: 500ms
+                  max-backoff: 2s
+                  factor: 2
+
+        # ============================
+        # TRIGGER SERVICE
+        # ============================
+        - id: trigger-service
+          uri: lb://trigger-service
+          predicates:
+            - Path=/v1/**
+          filters:
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+                backoff:
+                  first-backoff: 500ms
+                  max-backoff: 2s
+                  factor: 2

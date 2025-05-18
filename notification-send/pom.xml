@@ -20,7 +20,20 @@
 		<keycloak.version>25.0.2</keycloak.version>
 		<ezbuy-notification-send.tag>latest</ezbuy-notification-send.tag>
 		<ezbuy-notification-send.image>hoangtien2k3/ezbuy-notification-send</ezbuy-notification-send.image>
+		<spring-cloud.version>2023.0.1</spring-cloud.version>
 	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 		<dependency>

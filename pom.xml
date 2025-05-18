@@ -47,6 +47,8 @@
         <module>payment-service</module>
         <module>product-model</module>
         <module>product-service</module>
+        <module>eureka-service</module>
+        <module>gateway-service</module>
         <module>notification-model</module>
         <module>notification-send</module>
         <module>notification-service</module>

@@ -1,0 +1,22 @@
+server:
+  port: 8761
+spring:
+  application:
+    name: eureka-service
+
+eureka:
+  instance:
+    hostname: eureka-service
+    lease-renewal-interval-in-seconds: 5
+  client:
+    registry-fetch-interval-seconds: 5
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      default-zone: http://${eureka.instance.hostname}:${server.port}/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
