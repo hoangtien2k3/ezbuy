@@ -131,9 +131,9 @@ public class PaymentServiceImpl implements PaymentService {
                                 String.valueOf(totalFee).replace(",", ""));
 
                         String checksum = createChecksum(data, hashCode);
-                        Integer isCombo = Constants.COMMON.STATUS_INACTIVE; // khong phai luong combo
+                        Integer isCombo = PaymentConstants.PaymentStatus.STATUS_INACTIVE; // khong phai luong combo
                         if (!DataUtil.isNullOrEmpty(request.getLstPaymentOrderDetail())) {
-                            isCombo = Constants.COMMON.STATUS_ACTIVE; // luong combo
+                            isCombo = PaymentConstants.PaymentStatus.STATUS_ACTIVE; // luong combo
                             for (PaymentOrderDetailDTO paymentOrderDetailDTO : request.getLstPaymentOrderDetail()) {
                                 paymentOrderDetailDTO.setOrderCode(id.toString());
                             }
@@ -147,7 +147,7 @@ public class PaymentServiceImpl implements PaymentService {
                             log.error(e.getMessage());
                         }
                         String templateCheckoutLink = paymentProperties.getTemplateCheckoutLink();
-                        if (Constants.COMMON.STATUS_ACTIVE.equals(isCombo)) {
+                        if (PaymentConstants.PaymentStatus.STATUS_ACTIVE.equals(isCombo)) {
                             templateCheckoutLink = paymentProperties.getTemplateCheckoutComboLink();
                         }
                         String checkoutLink = MessageFormat.format(
@@ -215,7 +215,7 @@ public class PaymentServiceImpl implements PaymentService {
                         }
                         // update: neu payment_status = 1 => xu ly don hang, neu != 1 => cap nhat
                         // request_banking state = -1
-                        if (!Constants.COMMON.STATUS_ACTIVE.equals(request.getPayment_status())) {
+                        if (!PaymentConstants.PaymentStatus.STATUS_ACTIVE.equals(request.getPayment_status())) {
                             log.info("payment_status != 1");
                             return AppUtils.insertData(requestBankingRepository.updateRequestBankingById(
                                             request.getOrder_code(), request.getVt_transaction_id(), STATE_FAIL))
@@ -337,8 +337,8 @@ public class PaymentServiceImpl implements PaymentService {
                 OrderState.NEW.getValue(),
                 totalFee,
                 merchantCode,
-                Constants.RoleName.SYSTEM,
-                Constants.RoleName.SYSTEM);
+                PaymentConstants.RoleName.SYSTEM,
+                PaymentConstants.RoleName.SYSTEM);
 
         return saveRequestBanking.map(rs -> true).switchIfEmpty(Mono.just(true));
     }

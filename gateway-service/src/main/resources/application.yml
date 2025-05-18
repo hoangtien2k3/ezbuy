@@ -44,9 +44,9 @@ spring:
             allowed-headers: "*"
             allow-credentials: true
       #http connect timeout
-      httpclient:
-        connect-timeout: 5000
-        response-timeout: 10s
+#      httpclient:
+#        connect-timeout: 50000
+#        response-timeout: 10s
       discovery:
         locator:
           enabled: true #Allow self-routing via service name

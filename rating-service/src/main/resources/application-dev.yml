@@ -51,3 +51,22 @@ keycloak:
   serverUrl: http://localhost:8080
   grantType: password  #client_credentials
   host: localhost
+
+#eureka-service config
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      default-zone: http://localhost:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

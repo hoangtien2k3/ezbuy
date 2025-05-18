@@ -25,15 +25,16 @@ public class PaymentConstants {
 
     public static class PaymentStatus {
         public static final Integer SUCCESS = 1;
+        public static final Integer STATUS_ACTIVE = 1;
+        public static final Integer STATUS_INACTIVE = 0;
+    }
+
+    public static class RoleName {
+        public static final String SYSTEM = "system";
     }
 
     public static class OptionSet {
         public static final String MERCHANT_CODE = "MERCHANT_CODE";
         public static final String MERCHANT_CODE_PAYGATE = "MERCHANT_CODE_PAYGATE";
-    }
-
-    public static class TelecomServiceAlias {
-        public static final String CA = "CA"; // dich vu CA
-        public static final String EASYBOOKS = "EASYBOOKS"; // dich vu easyBook
     }
 }

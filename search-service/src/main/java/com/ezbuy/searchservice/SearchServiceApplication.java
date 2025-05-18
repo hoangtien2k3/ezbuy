@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.r2dbc.R2dbcAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(
@@ -18,6 +19,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
             R2dbcAutoConfiguration.class
         })
 @EnableScheduling
+@EnableDiscoveryClient
 public class SearchServiceApplication {
     public static void main(String[] args) {
         SpringApplication.run(SearchServiceApplication.class, args);

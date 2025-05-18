@@ -17,6 +17,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Table(name = "user_credential")
 @SuperBuilder
 public class UserCredential extends EntityBase implements Persistable<String> {
+
     @Id
     @Column("id")
     private String id;
@@ -43,19 +44,5 @@ public class UserCredential extends EntityBase implements Persistable<String> {
     @Override
     public boolean isNew() {
         return this.isNew || id == null;
-    }
-
-    public UserCredential(UserCredential userCredential) {
-        this.id = userCredential.id;
-        this.userId = userCredential.userId;
-        this.username = userCredential.username;
-        this.hashPwd = userCredential.hashPwd;
-        this.status = userCredential.status;
-        this.setCreateAt(userCredential.getCreateAt());
-        this.setCreateBy(userCredential.getCreateBy());
-        this.setUpdateAt(userCredential.getUpdateAt());
-        this.setUpdateBy(userCredential.getUpdateBy());
-        this.pwdChanged = userCredential.pwdChanged;
-        this.isNew = userCredential.isNew;
     }
 }

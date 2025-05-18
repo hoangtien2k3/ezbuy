@@ -122,3 +122,22 @@ minio:
   secretKey: Q43tehRDv55Sw67ktA0pQdztEbtQjvinLOk6zwB3
   private:
     bucket: ezbuy-private
+
+#eureka-service config
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      default-zone: http://localhost:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

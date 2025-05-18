@@ -82,10 +82,21 @@ application:
       methods:
         - GET
 
+#eureka-service config
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      default-zone: http://localhost:8761/eureka
+
 management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
   endpoint:
     health:
-      show-details: never
-  health:
-    elasticsearch:
-      enabled: false
+      show-details: always

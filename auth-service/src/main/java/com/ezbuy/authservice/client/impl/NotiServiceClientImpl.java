@@ -26,7 +26,6 @@ public class NotiServiceClientImpl implements NotiServiceClient {
 
     @Qualifier("notiServiceClient")
     private final WebClient notiServiceClient;
-
     private final BaseRestClient<DataResponse> baseRestClient;
 
     @Override

@@ -547,7 +547,8 @@ public class AuthServiceImpl implements AuthService {
                                 tokenUser.getId(),
                                 tokenUser.getUsername(),
                                 ActionLogType.CHANGE_PASSWORD,
-                                serverWebExchange.getRequest()));
+                                serverWebExchange.getRequest())
+                        );
                     });
                 });
     }
@@ -580,11 +581,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private Mono<Individual> createUserInKeyCloak(String username, String password, String email, String system) {
-        // create new user
         String userId = createUserKeycloak(username, password, email);
-        // save password into table user_credential
         String hashedPassword = cipherManager.encrypt(password, publicKey);
-        // bo sung danh dau khong can doi mat khau cho tk tao tu hub
         int pwdChanged =
                 AuthConstants.System.EZBUY.equals(system) ? AuthConstants.STATUS_ACTIVE : AuthConstants.STATUS_INACTIVE;
         UserCredential userCredential = UserCredential.builder()

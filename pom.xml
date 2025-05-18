@@ -49,9 +49,9 @@
         <module>product-service</module>
         <module>eureka-service</module>
         <module>gateway-service</module>
-        <module>notification-model</module>
-        <module>notification-send</module>
-        <module>notification-service</module>
+        <module>noti-model</module>
+        <module>noti-send-service</module>
+        <module>noti-service</module>
         <module>rating-model</module>
         <module>rating-service</module>
         <module>setting-model</module>

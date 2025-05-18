@@ -1,7 +1,7 @@
 const baseUrl = pm.environment.get("API_PREFIX");
 
 const postRequest = {
-    url: baseUrl + "/login",
+    url: baseUrl + "/v1/auth/login",
     method: 'POST',
     header: {
         'Content-Type': 'application/json',
@@ -9,26 +9,30 @@ const postRequest = {
     body: {
         mode: 'raw',
         raw: JSON.stringify({
-            "username" : "hoangtien2k3dev25@gmail.com",
-            "password" : "Tienha@!@#1",
-            "clientId" : "ezbuy-client"
+            "username": "hoangtien2k3qx1@gmail.com",
+            "password": "Tienha@!@#1",
+            "clientId": "ezbuy-client"
         })
     }
 };
 
 pm.sendRequest(postRequest, (error, response) => {
     if (error) {
-        console.error(error);
+        console.error("Request error:", error);
     } else {
-        if (response.code === 200) {
-            const access_token = JSON.parse(response.text()).data.access_token;
-            const refresh_token = JSON.parse(response.text()).data.refresh_token;
-            pm.environment.set("ACCESS_TOKEN", access_token);
-            pm.environment.set("REFRESH_TOKEN", refresh_token);
-            console.log(access_token);
-            console.log(refresh_token);
+        const jsonData = response.json();
+
+        if (response.code === 200 && jsonData.data) {
+            const accessToken = jsonData.data.access_token;
+            const refreshToken = jsonData.data.refresh_token;
+
+            pm.environment.set("ACCESS_TOKEN", accessToken);
+            pm.environment.set("REFRESH_TOKEN", refreshToken);
+
+            console.log("Access Token:", accessToken);
+            console.log("Refresh Token:", refreshToken);
         } else {
-            console.error("Unexpected response code:", response.code);
+            console.error("Login failed or unexpected response:", response);
         }
     }
 });
