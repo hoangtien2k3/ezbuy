@@ -40,12 +40,59 @@ Before you begin, ensure you have met the following requirements:
 - `Database`: Choose and specify the database system used (e.g., MySQL, PostgreSQL).
 - `Other Dependencies`: List any additional dependencies or libraries used.
 
+## Star History
+
+<a href="https://star-history.com/#hoangtien2k3/ezbuy&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=hoangtien2k3/ezbuy&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=hoangtien2k3/ezbuy&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=hoangtien2k3/ezbuy&type=Date" />
+ </picture>
+</a>
+
+## Contributing
+
+If you would like to contribute to the development of this project, please follow our contribution guidelines.
+
+![Alt](https://repobeats.axiom.co/api/embed/1897bc523b54b43aefb19c65195f32377f8aab85.svg "Repobeats analytics image")
+
+## Stargazers
+
+[![Stargazers repo roster for @hoangtien2k3/ezbuy](http://reporoster.com/stars/dark/hoangtien2k3/ezbuy)](https://github.com/hoangtien2k3/ezbuy/stargazers)
+
+## Forkers
+
+[![Forkers repo roster for @hoangtien2k3/ezbuy](http://reporoster.com/forks/dark/hoangtien2k3/ezbuy)](https://github.com/hoangtien2k3/ezbuy/network/members)
+
 ## Contributors ✨
 
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- ALL-CONTRIBUTORS-LIST: START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://www.linkedin.com/in/hoangtien2k3/"><img src="https://avatars.githubusercontent.com/u/122768076?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Hoàng Anh Tiến</b></sub></a><br /><a href="https://github.com/hoangtien2k3/news-app/commits?author=hoangtien2k3" title="Code">💻</a> <a href="#maintenance-hoangtien2k3" title="Maintenance">🚧</a> <a href="#ideas-hoangtien2k3" title="Ideas, Planning, & Feedback">🤔</a> <a href="#design-hoangtien2k3" title="Design">🎨</a> <a href="https://github.com/hoangtien2k3/news-app/issues?q=author%hoangtien2k3" title="Bug reports">🐛</a></td>
-  </tr>
+    <td align="center"><a href="https://www.linkedin.com/in/hoangtien2k3/"><img src="https://avatars.githubusercontent.com/u/122768076?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Hoàng Anh Tiến</b></sub></a><br /><a href="https://github.com/hoangtien2k3/ezbuy/commits?author=hoangtien2k3" title="Code">💻</a> <a href="#maintenance-hoangtien2k3" title="Maintenance">🚧</a> <a href="#ideas-hoangtien2k3" title="Ideas, Planning, & Feedback">🤔</a> <a href="#design-hoangtien2k3" title="Design">🎨</a> <a href="https://github.com/hoangtien2k3/ezbuy/issues?q=author%hoangtien2k3" title="Bug reports">🐛</a></td>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+# Sponsors
+
+Become a sponsor and get your logo in our README on GitHub with a link to your site. [[Become a sponsor](https://opencollective.com/ezbuy#sponsor)]
+
+<a href="https://opencollective.com/ezbuy/sponsor/0/website" target="_blank"><img src="https://opencollective.com/ezbuy/sponsor/0/avatar.svg"></a>
+<a href="https://opencollective.com/ezbuy/sponsor/1/website" target="_blank"><img src="https://opencollective.com/ezbuy/sponsor/1/avatar.svg"></a>
+<a href="https://opencollective.com/ezbuy/sponsor/2/website" target="_blank"><img src="https://opencollective.com/ezbuy/sponsor/2/avatar.svg"></a>
+<a href="https://opencollective.com/ezbuy/sponsor/3/website" target="_blank"><img src="https://opencollective.com/ezbuy/sponsor/3/avatar.svg"></a>
+<a href="https://opencollective.com/ezbuy/sponsor/4/website" target="_blank"><img src="https://opencollective.com/ezbuy/sponsor/4/avatar.svg"></a>
+
+## License
+
+This project is licensed under the [`MIT License`](LICENSE).
+
+```text
+MIT License
+Copyright (c) 2024 Hoàng Anh Tiến
+```
