@@ -11,7 +11,7 @@ logging:
 # spring config
 spring:
   application:
-    name: notification-send
+    name: noti-send
   main:
     web-application-type: reactive
     allow-bean-definition-overriding: true
@@ -23,7 +23,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: hoangtien2k3qx1@gmail.com
-    password: tjib jbht tlbp zwzo
+    password: ypfg qjuq posp fcsh
     protocol: smtp
     properties.mail.smtp:
       auth: true

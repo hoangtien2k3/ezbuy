@@ -27,13 +27,13 @@ public class TransmissionController {
     private final TransmissionService transmissionService;
 
     @PreAuthorize("hasAnyAuthority('user')")
-    @GetMapping("/unread-noti")
+    @GetMapping(ConstValue.ControllerPath.UNREAD_NOTI)
     public Mono<DataResponse<CountNoticeResponseDTO>> getQuantityUserNewNoti() {
         return transmissionService.getCountNoticeResponseDTO();
     }
 
     @PreAuthorize("hasAnyAuthority('user')")
-    @GetMapping("/noti")
+    @GetMapping(ConstValue.ControllerPath.NOTI)
     public Mono<DataResponse<List<NotificationHeader>>> getNotificationContentListByCategoryType(@Valid @RequestParam(required = false, defaultValue = ConstValue.NotificationConstant.ANNOUNCEMENT) String categoryType
             , @Valid @RequestParam(required = false, defaultValue = "1") Integer pageIndex
             , @Valid @RequestParam(required = false, defaultValue = "20") Integer pageSize
@@ -42,26 +42,26 @@ public class TransmissionController {
     }
 
     @PreAuthorize("hasAnyAuthority('user')")
-    @PutMapping("/change-noti-state")
+    @PutMapping(ConstValue.ControllerPath.CHANGE_NOTI_STATE)
     public Mono<DataResponse<Object>> updateTransmissionState(@Valid @RequestParam(required = false) String state
             , @Valid @RequestParam(required = false) String notificationContentId
             , @Valid @RequestParam(required = false) String transmissionId) {
         return transmissionService.changeTransmissionStateByIdAndReceiver(state, notificationContentId, transmissionId);
     }
 
-    @PreAuthorize("hasAnyAuthority('admin','system')")
-    @PostMapping("/create-noti")
+    @PreAuthorize("hasAnyAuthority('admin','system','user')")
+    @PostMapping(ConstValue.ControllerPath.CREATE_NOTI)
     public Mono<DataResponse<Object>> insertTransmission(@Valid @RequestBody CreateNotificationDTO createNotificationDTO) {
         return transmissionService.insertTransmission(createNotificationDTO);
     }
 
     @PreAuthorize("hasAnyAuthority('user')")
-    @GetMapping("/new-noti")
+    @GetMapping(ConstValue.ControllerPath.NEW_NOTI)
     public Mono<DataResponse<List<NotificationContent>>> getNewNotiWhenOnline(@RequestParam(required = false) @Size(message = "params.invalid.format", max = 50) String newestNotiTime) {
         return transmissionService.getNewNotiWhenOnline(newestNotiTime);
     }
 
-    @GetMapping("/get-trans")
+    @GetMapping(ConstValue.ControllerPath.GET_TRANS)
     @PreAuthorize("hasAnyAuthority('system')")
     public Mono<DataResponse<UserTransmissionPageDTO>> getUserTransmission(
             @RequestParam(required = false) String email,

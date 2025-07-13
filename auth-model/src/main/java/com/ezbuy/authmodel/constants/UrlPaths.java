@@ -38,12 +38,12 @@ public class UrlPaths {
     }
 
     public interface Noti {
-        String PREFIX = "/v1/transmission";
+        String PREFIX = "v1/noti/transmission";
         String CREATE_NOTI = "/create-noti";
     }
 
     public interface User {
-        String PREFIX = "v1/user";
+        String PREFIX = "v1/auth/user";
         String GET_USER = "";
         String UPDATE_USER = "update";
         String CONTACTS = "contacts";
@@ -60,24 +60,24 @@ public class UrlPaths {
     }
 
     public interface Util {
-        String PREFIX = "v1/util";
+        String PREFIX = "v1/auth/util";
         String JOB_ADD_ROLE_ADMIN_FOR_OLD_USER = "add-role-admin-for-old-user"; // add role admin of Hub for old user
     }
 
     public interface FILE {
-        String PREFIX = "v1/file";
+        String PREFIX = "v1/auth/file";
         String DOWNLOAD = "download";
     }
 
     public interface UserCredential {
-        String PREFIX = "v1/user-credential"; // api lay thong tin user dang nhap
+        String PREFIX = "v1/auth/user-credential"; // api lay thong tin user dang nhap
     }
 
     public interface ActionLog {
-        String PREFIX = "v1/action-log";
+        String PREFIX = "v1/auth/action-log";
     }
 
     public interface UserOtp {
-        String PREFIX = "v1/user-otp";
+        String PREFIX = "v1/auth/user-otp";
     }
 }

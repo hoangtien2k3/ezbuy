@@ -22,10 +22,5 @@ public interface TransmissionService {
 
     Mono<DataResponse<List<NotificationContent>>> getNewNotiWhenOnline(String newestNotiTime);
 
-    /**
-     * Ham tim kiem mail
-     * @param request
-     * @return
-     */
     Mono<DataResponse<UserTransmissionPageDTO>> getTransmissionByEmailAndFromTo(GetTransmissionByEmailAndFromToRequest request);
 }

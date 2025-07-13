@@ -68,7 +68,6 @@ public class TransmissionServiceImpl implements TransmissionService {
                             return new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), countNoticeResponseDTO);
                         })
                 );
-
     }
 
     @Override
@@ -129,7 +128,6 @@ public class TransmissionServiceImpl implements TransmissionService {
     @Transactional
     @Override
     public Mono<DataResponse<Object>> insertTransmission(CreateNotificationDTO createNotificationDTO) {
-
         return validateCreateNotificationDTO(createNotificationDTO)
                 .flatMap(validatedDTO -> SecurityUtils.getCurrentUser())
                 .flatMap(tokenUser -> {
@@ -202,15 +200,11 @@ public class TransmissionServiceImpl implements TransmissionService {
                                             return Mono.error(new BusinessException("IT00005", "no.receiver"));
                                         }
                                         return transmissionRepository.saveAll(transmissionList).collectList();
-
-
                                     })
                                     .switchIfEmpty(Mono.error(new BusinessException("IT00006", "resource.server.error")))
                                     .flatMap(result ->
                                             Mono.just(new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), result))))
                     );
-
-
                 });
     }
 

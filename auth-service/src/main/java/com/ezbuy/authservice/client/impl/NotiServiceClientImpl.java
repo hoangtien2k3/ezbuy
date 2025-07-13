@@ -6,7 +6,9 @@ import com.ezbuy.notificationmodel.dto.request.CreateNotificationDTO;
 import com.reactify.client.BaseRestClient;
 import com.reactify.model.response.DataResponse;
 import com.reactify.util.SecurityUtils;
+
 import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,18 +32,21 @@ public class NotiServiceClientImpl implements NotiServiceClient {
 
     @Override
     public Mono<Optional<DataResponse>> insertTransmission(CreateNotificationDTO createNotificationDTO) {
-        return SecurityUtils.getTokenUser().flatMap(token -> {
-            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-            headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-            return baseRestClient
-                    .post(
-                            notiServiceClient,
-                            UrlPaths.Noti.CREATE_NOTI,
-                            headers,
-                            createNotificationDTO,
-                            DataResponse.class)
-                    .doOnSuccess(result -> log.info("Call noti-service insert transmission result: {}", result))
-                    .doOnError(error -> log.error("Error calling noti-service: ", error));
-        });
+        return baseRestClient.post(notiServiceClient, "/v1/transmission/create-noti", null, createNotificationDTO, DataResponse.class);
+
+//        return SecurityUtils.getTokenUser()
+//                .flatMap(token -> {
+//                    MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+//                    headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+//                    return baseRestClient
+//                            .post(
+//                                    notiServiceClient,
+//                                    UrlPaths.Noti.CREATE_NOTI,
+//                                    headers,
+//                                    createNotificationDTO,
+//                                    DataResponse.class)
+//                            .doOnSuccess(result -> log.info("Call noti-service insert transmission result: {}", result))
+//                            .doOnError(error -> log.error("Error calling noti-service: ", error));
+//                });
     }
 }
