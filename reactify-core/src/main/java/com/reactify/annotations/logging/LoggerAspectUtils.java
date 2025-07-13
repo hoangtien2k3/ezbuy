@@ -123,11 +123,11 @@ public class LoggerAspectUtils {
 
         Span newSpan = tracer.nextSpan().name(name);
         var result = joinPoint.proceed();
-        if (result instanceof Mono<?> monoResult) {
+        if (result instanceof Mono) {
             return logMonoResult(
                     joinPoint,
                     start,
-                    monoResult.cast(Object.class),
+                    (Mono<Object>) result,
                     newSpan,
                     name,
                     logType,
@@ -136,11 +136,11 @@ public class LoggerAspectUtils {
                     logInput,
                     title);
         }
-        if (result instanceof Flux<?> fluxResult) {
+        if (result instanceof Flux) {
             return logFluxResult(
                             joinPoint,
                             start,
-                            fluxResult.cast(Object.class),
+                            (Flux<Object>) result,
                             newSpan,
                             name,
                             logType,
@@ -149,7 +149,7 @@ public class LoggerAspectUtils {
                             logInput,
                             title)
                     .collectList()
-                    .map(list -> list);
+                    .map(list -> (Object) list);
         } else {
             return Mono.just(result);
         }
@@ -264,30 +264,13 @@ public class LoggerAspectUtils {
             boolean logInput,
             String title) {
         var contextRef = new AtomicReference<Context>();
-        if (logInput) {
-            Object[] args = joinPoint.getArgs();
-            logPerf(contextRef, newSpan, name, start, "INPUT", null, logType, actionType, args, title);
-        }
-        return result.doOnNext(output -> {
-                    if (logOutput) {
-                        logPerf(
-                                contextRef,
-                                newSpan,
-                                name,
-                                start,
-                                "OUTPUT",
-                                null,
-                                logType,
-                                actionType,
-                                new Object[] {output},
-                                title);
-                    }
+        return result.doFinally(
+                        o -> logPerf(contextRef, newSpan, name, start, "1", null, logType, actionType, null, title))
+                .contextWrite(context -> {
+                    contextRef.set(context);
+                    return context;
                 })
-                .doOnError(error ->
-                        logPerf(contextRef, newSpan, name, start, "0", error, logType, actionType, null, title))
-                .doFinally(signalType ->
-                        logPerf(contextRef, newSpan, name, start, "1", null, logType, actionType, null, title))
-                .contextWrite(context -> contextRef.updateAndGet(ctx -> context));
+                .doOnError(o -> logPerf(contextRef, newSpan, name, start, "0", o, logType, actionType, null, title));
     }
 
     /**
@@ -311,41 +294,11 @@ public class LoggerAspectUtils {
      *            the output object from the method execution, may be {@code null}
      */
     private void logPerf(
-            AtomicReference<Context> contextRef,
-            Span newSpan,
-            String name,
-            long start,
-            String result,
-            Object data,
-            String logType,
-            String actionType,
-            String title) {
-        if (newSpan != null) {
-            newSpan.finish();
-        }
+            AtomicReference<Context> contextRef, Span newSpan, String name, Long start, String result, Object o) {
+        newSpan.finish();
         long duration = System.currentTimeMillis() - start;
         if (duration < 50) return;
-
-        Context context = contextRef != null ? contextRef.get() : Context.empty();
-        String contextInfo = context != null ? context.toString() : "-";
-        String dataInfo = "-";
-        if (data != null) {
-            if (data instanceof Throwable error) {
-                dataInfo = String.format("Error: %s - %s", error.getClass().getSimpleName(), error.getMessage());
-            } else {
-                dataInfo = data.toString();
-            }
-        }
-        logPerf.info(
-                "{} | {} | {} | {} | {} | {} | {} | {}",
-                title,
-                name,
-                duration,
-                result,
-                logType,
-                actionType,
-                contextInfo,
-                dataInfo);
+        logPerf.info("{} {} {} M2 {}", name, duration, result, o == null ? "-" : o.toString());
     }
 
     /**

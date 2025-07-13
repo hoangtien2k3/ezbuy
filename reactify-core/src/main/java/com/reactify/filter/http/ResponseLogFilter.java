@@ -128,11 +128,11 @@ public class ResponseLogFilter implements WebFilter, Ordered {
                 final MediaType contentType = super.getHeaders().getContentType();
                 if (LogUtils.legalLogMediaTypes.contains(contentType)) {
                     if (body instanceof Mono) {
-                        final Mono<DataBuffer> monoBody = Mono.from(body);
+                        final Mono<DataBuffer> monoBody = (Mono<DataBuffer>) body;
                         return super.writeWith(
                                 monoBody.publishOn(single()).map(buffer -> logRequestBody(buffer, exchange)));
                     } else if (body instanceof Flux) {
-                        final Flux<DataBuffer> monoBody = Flux.from(body);
+                        final Flux<DataBuffer> monoBody = (Flux<DataBuffer>) body;
                         return super.writeWith(
                                 monoBody.publishOn(single()).map(buffer -> logRequestBody(buffer, exchange)));
                     }
@@ -212,7 +212,11 @@ public class ResponseLogFilter implements WebFilter, Ordered {
             this.headers = headers;
             this.statusCode = statusCode;
             this.cookies = cookies;
-            flux = Flux.from(body);
+            if (body instanceof Flux) {
+                flux = (Flux<DataBuffer>) body;
+            } else {
+                flux = ((Mono<DataBuffer>) body).flux();
+            }
         }
 
         /**
