@@ -1,0 +1,61 @@
+[versions]
+com-google-code-gson-gson = "2.11.0"
+com-sun-activation-jakarta-activation = "2.0.1"
+com-zaxxer-hikaricp = "5.1.0"
+commons-io-commons-io = "2.16.1"
+commons-io-commons-io-x1 = "2.11.0"
+io-github-hoangtien2k3-reactify-core = "1.3.0"
+junit-junit = "4.13.1"
+org-apache-commons-commons-compress = "1.26.2"
+org-apache-commons-commons-compress-x1 = "1.21"
+org-apache-mina-mina-core = "2.2.3"
+org-apache-mina-mina-core-x1 = "2.0.0-M5"
+org-apache-poi-poi = "5.1.0"
+org-apache-poi-poi-ooxml = "5.1.0"
+org-awaitility-awaitility = "4.2.2"
+org-json-json = "20240303"
+org-jsoup-jsoup = "1.18.1"
+org-keycloak-bom-keycloak-adapter-bom = "25.0.6"
+org-keycloak-keycloak-admin-client = "25.0.6"
+org-springdoc-springdoc-openapi-starter-webflux-api = "2.2.0"
+org-springframework-boot-spring-boot-starter-data-elasticsearch = "3.3.5"
+org-springframework-boot-spring-boot-starter-mail = "3.3.5"
+org-springframework-boot-spring-boot-starter-quartz = "3.3.5"
+org-springframework-boot-spring-boot-starter-thymeleaf = "3.3.5"
+org-springframework-cloud-spring-cloud-gateway-server-webflux = "4.3.0"
+org-springframework-cloud-spring-cloud-starter-netflix-eureka-client = "4.1.1"
+org-springframework-cloud-spring-cloud-starter-netflix-eureka-server = "4.1.1"
+org-springframework-data-spring-data-elasticsearch = "5.4.1"
+org-springframework-data-spring-data-elasticsearch-x1 = "3.2.12.RELEASE"
+org-testcontainers-elasticsearch = "1.12.2"
+
+[libraries]
+com-google-code-gson-gson = { module = "com.google.code.gson:gson", version.ref = "com-google-code-gson-gson" }
+com-sun-activation-jakarta-activation = { module = "com.sun.activation:jakarta.activation", version.ref = "com-sun-activation-jakarta-activation" }
+com-zaxxer-hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "com-zaxxer-hikaricp" }
+commons-io-commons-io = { module = "commons-io:commons-io", version.ref = "commons-io-commons-io" }
+commons-io-commons-io-x1 = { module = "commons-io:commons-io", version.ref = "commons-io-commons-io-x1" }
+io-github-hoangtien2k3-reactify-core = { module = "io.github.hoangtien2k3:reactify-core", version.ref = "io-github-hoangtien2k3-reactify-core" }
+junit-junit = { module = "junit:junit", version.ref = "junit-junit" }
+org-apache-commons-commons-compress = { module = "org.apache.commons:commons-compress", version.ref = "org-apache-commons-commons-compress" }
+org-apache-commons-commons-compress-x1 = { module = "org.apache.commons:commons-compress", version.ref = "org-apache-commons-commons-compress-x1" }
+org-apache-mina-mina-core = { module = "org.apache.mina:mina-core", version.ref = "org-apache-mina-mina-core" }
+org-apache-mina-mina-core-x1 = { module = "org.apache.mina:mina-core", version.ref = "org-apache-mina-mina-core-x1" }
+org-apache-poi-poi = { module = "org.apache.poi:poi", version.ref = "org-apache-poi-poi" }
+org-apache-poi-poi-ooxml = { module = "org.apache.poi:poi-ooxml", version.ref = "org-apache-poi-poi-ooxml" }
+org-awaitility-awaitility = { module = "org.awaitility:awaitility", version.ref = "org-awaitility-awaitility" }
+org-json-json = { module = "org.json:json", version.ref = "org-json-json" }
+org-jsoup-jsoup = { module = "org.jsoup:jsoup", version.ref = "org-jsoup-jsoup" }
+org-keycloak-bom-keycloak-adapter-bom = { module = "org.keycloak.bom:keycloak-adapter-bom", version.ref = "org-keycloak-bom-keycloak-adapter-bom" }
+org-keycloak-keycloak-admin-client = { module = "org.keycloak:keycloak-admin-client", version.ref = "org-keycloak-keycloak-admin-client" }
+org-springdoc-springdoc-openapi-starter-webflux-api = { module = "org.springdoc:springdoc-openapi-starter-webflux-api", version.ref = "org-springdoc-springdoc-openapi-starter-webflux-api" }
+org-springframework-boot-spring-boot-starter-data-elasticsearch = { module = "org.springframework.boot:spring-boot-starter-data-elasticsearch", version.ref = "org-springframework-boot-spring-boot-starter-data-elasticsearch" }
+org-springframework-boot-spring-boot-starter-mail = { module = "org.springframework.boot:spring-boot-starter-mail", version.ref = "org-springframework-boot-spring-boot-starter-mail" }
+org-springframework-boot-spring-boot-starter-quartz = { module = "org.springframework.boot:spring-boot-starter-quartz", version.ref = "org-springframework-boot-spring-boot-starter-quartz" }
+org-springframework-boot-spring-boot-starter-thymeleaf = { module = "org.springframework.boot:spring-boot-starter-thymeleaf", version.ref = "org-springframework-boot-spring-boot-starter-thymeleaf" }
+org-springframework-cloud-spring-cloud-gateway-server-webflux = { module = "org.springframework.cloud:spring-cloud-gateway-server-webflux", version.ref = "org-springframework-cloud-spring-cloud-gateway-server-webflux" }
+org-springframework-cloud-spring-cloud-starter-netflix-eureka-client = { module = "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client", version.ref = "org-springframework-cloud-spring-cloud-starter-netflix-eureka-client" }
+org-springframework-cloud-spring-cloud-starter-netflix-eureka-server = { module = "org.springframework.cloud:spring-cloud-starter-netflix-eureka-server", version.ref = "org-springframework-cloud-spring-cloud-starter-netflix-eureka-server" }
+org-springframework-data-spring-data-elasticsearch = { module = "org.springframework.data:spring-data-elasticsearch", version.ref = "org-springframework-data-spring-data-elasticsearch" }
+org-springframework-data-spring-data-elasticsearch-x1 = { module = "org.springframework.data:spring-data-elasticsearch", version.ref = "org-springframework-data-spring-data-elasticsearch-x1" }
+org-testcontainers-elasticsearch = { module = "org.testcontainers:elasticsearch", version.ref = "org-testcontainers-elasticsearch" }

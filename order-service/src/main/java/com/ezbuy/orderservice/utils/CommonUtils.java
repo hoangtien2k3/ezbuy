@@ -2,8 +2,8 @@ package com.ezbuy.orderservice.utils;
 
 import java.io.StringReader;
 import java.util.Optional;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import jakarta.xml.parsers.DocumentBuilder;
+import jakarta.xml.parsers.DocumentBuilderFactory;
 import lombok.extern.log4j.Log4j2;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;

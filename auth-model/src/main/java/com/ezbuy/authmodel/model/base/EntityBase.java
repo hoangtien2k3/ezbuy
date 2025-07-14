@@ -9,7 +9,6 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.relational.core.mapping.Column;
 
-// @MappedSuperclass
 @Data
 @SuperBuilder
 @NoArgsConstructor

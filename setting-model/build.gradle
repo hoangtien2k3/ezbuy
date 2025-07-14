@@ -1,0 +1,9 @@
+plugins {
+    id 'buildlogic.java-conventions'
+}
+
+dependencies {
+    implementation libs.org.springframework.data.spring.data.elasticsearch.x1
+}
+
+description = 'setting-model'

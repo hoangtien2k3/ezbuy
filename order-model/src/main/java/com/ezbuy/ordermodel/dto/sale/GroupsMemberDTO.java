@@ -3,8 +3,7 @@ package com.ezbuy.ordermodel.dto.sale;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import javax.xml.bind.annotation.*;
-import javax.xml.datatype.XMLGregorianCalendar;
+import jakarta.xml.bind.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,7 +21,6 @@ public class GroupsMemberDTO extends BaseDTO {
     protected String actStatusSubscriber;
     protected String actStatusText;
     protected Date activeDatetime;
-    protected XMLGregorianCalendar activeGroups;
     protected String activeStatusText;
     protected String address;
     protected String balShareCode;
@@ -52,7 +50,6 @@ public class GroupsMemberDTO extends BaseDTO {
     protected String exchangeMainText;
     protected String extendDesc;
     protected boolean fellowChanged;
-    // protected List<GroupsFellowNumberDTO> fellowNumbers;
     protected Long groupId;
     protected Long groupMemberId;
     protected String groupType;
@@ -70,9 +67,7 @@ public class GroupsMemberDTO extends BaseDTO {
     protected String isdn;
     protected String isdnMainDataShare;
     protected List<SubAttDTO> listSubAttDTO;
-    // protected List<SubGoodsDTO> listSubGoods;
     protected List<Long> listSubIdAddGroup;
-    // protected List<PromotionTypeDTO> lstPromotion;
     protected String main;
     protected boolean mainDataShare;
     protected boolean mainOTP;
@@ -88,12 +83,10 @@ public class GroupsMemberDTO extends BaseDTO {
     protected String newPayMethod;
     protected int numErrorEnterOTP;
     protected Long offerId;
-    // protected List<GroupsFellowNumberDTO> oldFellowNumbers;
     protected boolean oldHotline;
     protected boolean oldMain;
     protected Long oldPayLimit;
     protected String oldPayMethod;
-    // protected OmniOrder omniOrder;
     protected Long orderNum;
     protected String otp;
     protected String otpCodeToCompare;
@@ -140,8 +133,4 @@ public class GroupsMemberDTO extends BaseDTO {
     protected String validateErrorMsg;
     protected boolean validated;
     protected boolean validatedTrue;
-    protected String voiceOtherCanUse;
-    protected String voiceOtherQuota;
-    protected String voiceViettelCanUse;
-    protected String voiceViettelQuota;
 }

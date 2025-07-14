@@ -21,15 +21,15 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+import jakarta.xml.XMLConstants;
+import jakarta.xml.parsers.DocumentBuilder;
+import jakarta.xml.parsers.DocumentBuilderFactory;
+import jakarta.xml.parsers.ParserConfigurationException;
+import jakarta.xml.transform.OutputKeys;
+import jakarta.xml.transform.Transformer;
+import jakarta.xml.transform.TransformerFactory;
+import jakarta.xml.transform.dom.DOMSource;
+import jakarta.xml.transform.stream.StreamResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -155,8 +155,8 @@ public class DataWsUtil {
      * </p>
      *
      * @param dbf
-     *            a {@link javax.xml.parsers.DocumentBuilderFactory} object
-     * @throws javax.xml.parsers.ParserConfigurationException
+     *            a {@link jakarta.xml.parsers.DocumentBuilderFactory} object
+     * @throws jakarta.xml.parsers.ParserConfigurationException
      *             if any.
      */
     public static void fixSecurityDocumentBuilder(DocumentBuilderFactory dbf) throws ParserConfigurationException {
@@ -188,8 +188,8 @@ public class DataWsUtil {
      * getDocumentBuilderFactory.
      * </p>
      *
-     * @return a {@link javax.xml.parsers.DocumentBuilderFactory} object
-     * @throws javax.xml.parsers.ParserConfigurationException
+     * @return a {@link jakarta.xml.parsers.DocumentBuilderFactory} object
+     * @throws jakarta.xml.parsers.ParserConfigurationException
      *             if any.
      */
     public static DocumentBuilderFactory getDocumentBuilderFactory() throws ParserConfigurationException {

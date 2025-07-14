@@ -21,14 +21,14 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
 
 /**
  * <p>
  * A factory class for managing and caching JAXB
- * {@link javax.xml.bind.Marshaller} instances, providing functionality to
+ * {@link jakarta.xml.bind.Marshaller} instances, providing functionality to
  * convert Java objects to XML format.
  * </p>
  *
@@ -65,14 +65,14 @@ public class MarshallerFactory {
      * Converts a given Java object to its XML representation.
      *
      * <p>
-     * This method checks if a cached {@link javax.xml.bind.Marshaller} instance is
+     * This method checks if a cached {@link jakarta.xml.bind.Marshaller} instance is
      * available for the provided class. If not, it creates a new marshaller, caches
      * it, and then converts the object to XML format. The XML output is formatted
      * for readability.
      * </p>
      *
      * <p>
-     * If the conversion fails due to a {@link javax.xml.bind.JAXBException}, an
+     * If the conversion fails due to a {@link jakarta.xml.bind.JAXBException}, an
      * error message is logged, and an empty string is returned.
      * </p>
      *
@@ -81,7 +81,7 @@ public class MarshallerFactory {
      * @param cls
      *            the {@link java.lang.Class} of the object being converted, used
      *            for creating and retrieving the appropriate
-     *            {@link javax.xml.bind.Marshaller} instance
+     *            {@link jakarta.xml.bind.Marshaller} instance
      * @return a {@link java.lang.String} representing the XML format of the object,
      *         or an empty string if an error occurs during conversion
      * @throws IllegalArgumentException

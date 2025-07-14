@@ -19,10 +19,10 @@ public class OptionSetValue extends EntityBase implements Persistable<String> {
     @Id
     private String id;
 
-    private Long optionSetId; // id cau hinh nhom mapping
-    private String code; // ma chi tiet cau hinh nhom
-    private String value; // gia tri chi tiet cau hinh nhom
-    private String description; // mo ta chi tiet cau hinh nhom
+    private Long optionSetId;
+    private String code;
+    private String value;
+    private String description;
 
     @Transient
     private boolean isNew = false;

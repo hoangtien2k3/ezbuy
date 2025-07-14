@@ -1,0 +1,9 @@
+plugins {
+    id 'buildlogic.java-conventions'
+}
+
+dependencies {
+    implementation project(':order-model')
+}
+
+description = 'payment-model'

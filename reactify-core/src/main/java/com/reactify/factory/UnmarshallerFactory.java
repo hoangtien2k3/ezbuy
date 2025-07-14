@@ -18,21 +18,21 @@ package com.reactify.factory;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * <p>
- * Factory class for providing instances of {@link javax.xml.bind.Unmarshaller}
+ * Factory class for providing instances of {@link jakarta.xml.bind.Unmarshaller}
  * for specific classes.
  * </p>
  *
  * <p>
  * This class leverages caching to avoid repeated creation of
- * {@link javax.xml.bind.Unmarshaller} instances for the same class, improving
+ * {@link jakarta.xml.bind.Unmarshaller} instances for the same class, improving
  * performance when unmarshalling XML to Java objects.
  * </p>
  *
@@ -72,16 +72,16 @@ public class UnmarshallerFactory {
 
     /**
      * <p>
-     * Provides an {@link javax.xml.bind.Unmarshaller} instance for the specified
-     * class. If an {@link javax.xml.bind.Unmarshaller} has already been created for
+     * Provides an {@link jakarta.xml.bind.Unmarshaller} instance for the specified
+     * class. If an {@link jakarta.xml.bind.Unmarshaller} has already been created for
      * the class, it is retrieved from the cache. Otherwise, a new instance is
      * created and cached.
      * </p>
      *
      * @param clz
      *            the {@link java.lang.Class} type for which to retrieve an
-     *            {@link javax.xml.bind.Unmarshaller}
-     * @return an {@link javax.xml.bind.Unmarshaller} instance configured for the
+     *            {@link jakarta.xml.bind.Unmarshaller}
+     * @return an {@link jakarta.xml.bind.Unmarshaller} instance configured for the
      *         specified class, or {@code null} if an error occurs during
      *         instantiation
      */

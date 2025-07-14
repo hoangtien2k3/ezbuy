@@ -1,0 +1,9 @@
+plugins {
+    id 'buildlogic.java-conventions'
+}
+
+dependencies {
+    testImplementation libs.junit.junit
+}
+
+description = 'noti-model'

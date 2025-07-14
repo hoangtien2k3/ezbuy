@@ -3,7 +3,7 @@ package com.ezbuy.ordermodel.dto.response;
 import com.ezbuy.ordermodel.dto.RecordTypeInfo;
 import com.ezbuy.ordermodel.dto.ServiceInfo;
 import java.util.List;
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

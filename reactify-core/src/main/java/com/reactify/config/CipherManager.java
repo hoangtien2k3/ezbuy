@@ -22,7 +22,7 @@ import java.security.PublicKey;
 import java.security.Security;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-import javax.crypto.Cipher;
+import jakarta.crypto.Cipher;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.stereotype.Component;
 

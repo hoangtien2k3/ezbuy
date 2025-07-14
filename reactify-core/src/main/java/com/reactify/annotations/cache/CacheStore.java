@@ -22,7 +22,7 @@ import com.reactify.annotations.LocalCache;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.*;
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;

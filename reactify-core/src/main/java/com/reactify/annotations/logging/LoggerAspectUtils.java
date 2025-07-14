@@ -22,7 +22,7 @@ import com.reactify.exception.BusinessException;
 import com.reactify.util.DataUtil;
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicReference;
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;

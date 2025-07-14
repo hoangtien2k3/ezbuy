@@ -2,7 +2,7 @@ package com.ezbuy.authservice.client.impl;
 
 import com.ezbuy.authmodel.constants.UrlPaths;
 import com.ezbuy.authservice.client.NotiServiceClient;
-import com.ezbuy.notificationmodel.dto.request.CreateNotificationDTO;
+import com.ezbuy.notimodel.dto.request.CreateNotificationDTO;
 import com.reactify.client.BaseRestClient;
 import com.reactify.model.response.DataResponse;
 import com.reactify.util.SecurityUtils;

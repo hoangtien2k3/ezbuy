@@ -1,0 +1,9 @@
+plugins {
+    id 'buildlogic.java-conventions'
+}
+
+dependencies {
+    implementation project(':product-model')
+}
+
+description = 'order-model'

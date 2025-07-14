@@ -53,8 +53,7 @@ public class PermissionPolicyDetailDto {
         PermissionPolicyDetailDto dto = new PermissionPolicyDetailDto();
         try {
             BeanUtils.copyProperties(dto, permissionPolicy);
-        } catch (Exception e) {
-            log.error("IndividualUnitPositionDto entityToDto error", e);
+        } catch (Exception ignored) {
         }
         return dto;
     }

@@ -1,0 +1,10 @@
+plugins {
+    id 'buildlogic.java-conventions'
+}
+
+dependencies {
+    api project(':setting-model')
+    api project(':order-model')
+}
+
+description = 'cart-model'
