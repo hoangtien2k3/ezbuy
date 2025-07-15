@@ -1,6 +1,8 @@
 plugins {
     id 'buildlogic.java-conventions'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'com.google.cloud.tools.jib' version '3.4.5'
+    id 'com.palantir.git-version' version '4.0.0'
 }
 
 dependencyManagement {
@@ -21,3 +23,27 @@ dependencies {
 }
 
 description = 'search-service'
+
+ext {
+    imageDocker = 'hoangtien2k3/ezbuy-search-service'
+}
+
+def details = versionDetails()
+jib {
+    from {
+        image = 'amazoncorretto:21.0.3'
+    }
+    to {
+        image = imageDocker
+        tags = details.isCleanTag ? [details.lastTag] : [details.lastTag + '-SNAPSHOT']
+        auth {
+            username project.repoUser
+            password project.repoPassword
+        }
+    }
+    container {
+        creationTime = 'USE_CURRENT_TIMESTAMP'
+//        jvmFlags = ['-Xms512mb', '-Xdebug',
+//                    '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5005']
+    }
+}

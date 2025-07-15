@@ -12,6 +12,9 @@ repositories {
     }
 }
 
+group = 'com.ezbuy.platform'
+version = '1.0-SNAPSHOT'
+
 dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
 
@@ -40,10 +43,18 @@ dependencies {
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.3'
 
     compileOnly 'org.projectlombok:lombok:1.18.32'
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
 }
 
-group = 'com.ezbuy.platform'
-version = '1.0-SNAPSHOT'
+configurations {
+    developmentOnly
+}
+
+test.classpath += configurations.developmentOnly
+test {
+    useJUnitPlatform()
+}
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -52,7 +63,7 @@ java {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-    options.compilerArgs += "-parameters"
+    options.compilerArgs += ["-parameters", "-Xlint:unchecked", "-Xlint:deprecation"]
 }
 
 tasks.withType(Javadoc).configureEach {
