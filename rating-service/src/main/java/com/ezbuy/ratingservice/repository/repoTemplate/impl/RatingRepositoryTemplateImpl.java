@@ -2,8 +2,8 @@ package com.ezbuy.ratingservice.repository.repoTemplate.impl;
 
 import com.ezbuy.ratingmodel.dto.RatingDTO;
 import com.ezbuy.ratingmodel.request.FindRatingRequest;
-import com.ezbuy.ratingservice.repository.repoTemplate.BaseRepositoryTemplate;
 import com.ezbuy.ratingservice.repository.repoTemplate.RatingRepositoryTemplate;
+import com.reactify.repository.BaseTemplateRepository;
 import com.reactify.util.DataUtil;
 import com.reactify.util.SQLUtils;
 import com.reactify.util.SortingUtils;
@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
 
 @Repository
 @RequiredArgsConstructor
-public class RatingRepositoryTemplateImpl extends BaseRepositoryTemplate implements RatingRepositoryTemplate {
+public class RatingRepositoryTemplateImpl extends BaseTemplateRepository implements RatingRepositoryTemplate {
 
     @Override
     public Flux<RatingDTO> findRating(FindRatingRequest request) {

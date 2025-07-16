@@ -3,9 +3,8 @@ package com.ezbuy.authmodel.model;
 import com.ezbuy.authmodel.model.base.EntityBase;
 import jakarta.validation.constraints.Max;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.Id;
@@ -14,9 +13,10 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @SuperBuilder
 @Table(name = "individual")
 public class Individual extends EntityBase implements Persistable<String> {

@@ -9,6 +9,7 @@ import java.util.List;
 import reactor.core.publisher.Mono;
 
 public interface VoucherUseService {
+
     Mono<DataResponse<VoucherUse>> createVoucherUse(CreateVoucherUseRequest request);
 
     Mono<DataResponse<List<VoucherUse>>> updateVoucherUse(CreateVoucherUseRequest request);

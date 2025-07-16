@@ -18,7 +18,6 @@ import com.ezbuy.productmodel.model.VoucherUse;
 import com.ezbuy.productservice.client.AuthClient;
 import com.ezbuy.productservice.repository.VoucherRepository;
 import com.ezbuy.productservice.repository.VoucherTransactionRepository;
-import com.ezbuy.productservice.repository.VoucherTypeRepository;
 import com.ezbuy.productservice.repository.VoucherUseRepository;
 import com.ezbuy.productservice.service.VoucherTransactionService;
 import com.ezbuy.productservice.service.VoucherUseService;
@@ -46,7 +45,6 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class VoucherUseServiceImpl implements VoucherUseService {
     private final VoucherUseRepository voucherUseRepository;
-    private final VoucherTypeRepository voucherTypeRepository;
     private final VoucherTransactionService voucherTransactionService;
     private final VoucherRepository voucherRepository;
     private final VoucherTransactionRepository voucherTransactionRepository;
@@ -172,7 +170,7 @@ public class VoucherUseServiceImpl implements VoucherUseService {
                                 CommonErrorCode.INTERNAL_SERVER_ERROR, "voucher.error.voucher.not.exist"));
                     }
                     String voucherId =
-                            DataUtil.safeTrim(voucherIndividual.getT1().get(0).getId());
+                            DataUtil.safeTrim(voucherIndividual.getT1().getFirst().getId());
                     return voucherUseRepository
                             .findVoucherUsedByVoucherIdAndUserId(
                                     voucherId, voucherIndividual.getT2().getId())
@@ -210,12 +208,6 @@ public class VoucherUseServiceImpl implements VoucherUseService {
                         !DataUtil.isNullOrEmpty(throwable.getMessage()) ? throwable.getMessage() : "common.error"))));
     }
 
-    /**
-     * Ham thưc hiẹn update thong tin voucher va voucher use theo luong nhan voucher
-     *
-     * @param request
-     * @return
-     */
     @Override
     @Transactional
     public Mono<Boolean> updateVoucherGiftInfoByVoucherGiftCode(UpdateVoucherGiftRequest request) {
@@ -308,13 +300,6 @@ public class VoucherUseServiceImpl implements VoucherUseService {
                 });
     }
 
-    /**
-     * Ham xu ly update trang thai voucher use va voucher trans luong voucher su
-     * dung
-     *
-     * @param request
-     * @return
-     */
     @Override
     @Transactional
     public Mono<DataResponse<Boolean>> updateVoucherInfoPayment(UpdateVoucherPaymentRequest request) {
@@ -365,16 +350,6 @@ public class VoucherUseServiceImpl implements VoucherUseService {
                 });
     }
 
-    /**
-     * Ham xu ly update voucher use va voucher trans
-     *
-     * @param voucherTransaction
-     * @param isOrderHistory
-     * @param updateAt
-     * @param voucherUseState
-     * @param voucherTransState
-     * @return
-     */
     private Mono<DataResponse> handleUpdateVoucherTransAndVoucherUse(
             VoucherTransaction voucherTransaction,
             Boolean isOrderHistory,
@@ -382,12 +357,11 @@ public class VoucherUseServiceImpl implements VoucherUseService {
             String voucherUseState,
             String voucherTransState) {
         String voucherId = voucherTransaction.getVoucherId();
-        // lay voucher use tu DB
         Flux<VoucherUse> voucherUseFLux;
-        if (DataUtil.safeEqual(isOrderHistory, true)) { // neu cap nhat trang thai don hang Order
+        if (DataUtil.safeEqual(isOrderHistory, true)) {
             voucherUseFLux = voucherUseRepository.findVoucherUseByVoucherIdAndState(
                     voucherId, Constants.VOUCHER_USE_STATE.USING);
-        } else { // neu cap nhat trang thai thanh toan
+        } else {
             voucherUseFLux = voucherUseRepository.findVoucherUseByVoucherIdAndState(voucherId, ACTIVE);
         }
         return voucherUseFLux.collectList().flatMap(voucherUseList -> {
@@ -398,14 +372,12 @@ public class VoucherUseServiceImpl implements VoucherUseService {
             String username = DataUtil.safeEqual(isOrderHistory, true) ? ORDER_SYSTEM : SYSTEM;
 
             Mono<VoucherUse> updateVoucherUse;
-            // check neu vao luong cap nhat trang thai don hang va don hang that bai =>
-            // khong cap nhat state voucher use
             if (DataUtil.safeEqual(isOrderHistory, true)
                     && !DataUtil.safeEqual(voucherUseState, Constants.VOUCHER_USE_STATE.USED)
                     && !DataUtil.safeEqual(voucherUseState, ACTIVE)) {
                 updateVoucherUse = Mono.just(new VoucherUse());
             } else {
-                VoucherUse voucherUse = voucherUseList.get(0);
+                VoucherUse voucherUse = voucherUseList.getFirst();
                 voucherUse.setState(voucherUseState);
                 voucherUse.setUpdateAt(updateAt);
                 voucherUse.setUpdateBy(username);

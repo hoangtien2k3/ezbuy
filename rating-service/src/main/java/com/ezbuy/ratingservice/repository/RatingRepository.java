@@ -1,7 +1,9 @@
 package com.ezbuy.ratingservice.repository;
 
 import com.ezbuy.ratingmodel.model.Rating;
+
 import java.time.LocalDateTime;
+
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Flux;
@@ -9,25 +11,21 @@ import reactor.core.publisher.Mono;
 
 public interface RatingRepository extends R2dbcRepository<Rating, String> {
 
-    // Lấy danh sách các đánh giá dịch vụ
     @Query("SELECT * FROM rating WHERE rating_type_code = 'service' AND target_id = :serviceAlias AND status = 1")
     Flux<Rating> getListRatingService(String serviceAlias);
 
-    // Lấy thông tin đánh giá theo ID
     @Query("SELECT * FROM rating WHERE id = :id")
     Mono<Rating> getById(String ratingId);
 
-    // Cập nhật thông tin đánh giá
-    @Query(
-            """
-      UPDATE rating
-      SET target_id = :ratingId, telecom_service_id = :telecomServiceId, product_id = :productId, order_id = :orderId,
-          username = :username, cust_name = :custName, rating = :rating, fix_rating = :fixRating, content = :content,
-          fix_content = :fixContent, rating_date = :ratingDate, tag = :tag, fix_tag = :fixTag, has_image = :hasImage,
-          has_video = :hasVideo, rating_status = :ratingStatus, state = :state, display_status = :displayStatus,
-          sum_rate_status = :sumRateStatus, target = :target, update_by = :user, update_at = current_timestamp()
-      WHERE id = :id
-      """)
+    @Query("""
+            UPDATE rating
+            SET target_id = :ratingId, telecom_service_id = :telecomServiceId, product_id = :productId, order_id = :orderId,
+                username = :username, cust_name = :custName, rating = :rating, fix_rating = :fixRating, content = :content,
+                fix_content = :fixContent, rating_date = :ratingDate, tag = :tag, fix_tag = :fixTag, has_image = :hasImage,
+                has_video = :hasVideo, rating_status = :ratingStatus, state = :state, display_status = :displayStatus,
+                sum_rate_status = :sumRateStatus, target = :target, update_by = :user, update_at = current_timestamp()
+            WHERE id = :id
+            """)
     Mono<Rating> updateRating(
             String id,
             String ratingId,
@@ -52,46 +50,38 @@ public interface RatingRepository extends R2dbcRepository<Rating, String> {
             String target,
             String user);
 
-    // Lấy đánh giá theo Telecom Service ID
     @Query("SELECT * FROM rating WHERE telecom_service_id = :telecomServiceId")
     Mono<Rating> getByTelecomServiceId(String telecomServiceId);
 
-    // Lấy đánh giá theo Product ID
     @Query("SELECT * FROM rating WHERE product_id = :productId")
     Mono<Rating> getByProductId(String productId);
 
-    // Lấy đánh giá theo Order ID
     @Query("SELECT * FROM rating WHERE order_id = :orderId")
     Mono<Rating> getByOrderId(String orderId);
 
-    // Lấy danh sách đánh giá dịch vụ đang hoạt động
     @Query("SELECT * FROM rating WHERE status = 1 ORDER BY create_at DESC")
     Flux<Rating> getAllTelecomServiceActive();
 
-    // Lấy thời gian hệ thống
     @Query("SELECT current_timestamp")
     Mono<LocalDateTime> getSysDate();
 
-    // Lấy danh sách đánh giá dịch vụ có phân trang
-    @Query(
-            """
-      SELECT * FROM rating
-      WHERE rating_type_code = 'SERVICE' AND target_id = :serviceAlias AND status = 1
-      AND display_status = 1
-      AND ((:rating = 0.0) OR (rating = :rating))
-      ORDER BY rating_date DESC
-      LIMIT :pageSize OFFSET :index
-      """)
+    @Query("""
+            SELECT * FROM rating
+            WHERE rating_type_code = 'SERVICE' AND target_id = :serviceAlias AND status = 1
+            AND display_status = 1
+            AND ((:rating = 0.0) OR (rating = :rating))
+            ORDER BY rating_date DESC
+            LIMIT :pageSize OFFSET :index
+            """)
     Flux<Rating> getListRatingServicePage(String serviceAlias, Integer pageSize, Integer index, Float rating);
 
-    // Đếm số lượng đánh giá dịch vụ
     @Query(
             """
-      SELECT COUNT(1)
-      FROM rating
-      WHERE rating_type_code = 'SERVICE' AND target_id = :serviceAlias AND status = 1
-      AND display_status = 1
-      AND ((:rating = 0.0) OR (rating = :rating))
-      """)
+            SELECT COUNT(1)
+            FROM rating
+            WHERE rating_type_code = 'SERVICE' AND target_id = :serviceAlias AND status = 1
+            AND display_status = 1
+            AND ((:rating = 0.0) OR (rating = :rating))
+            """)
     Mono<Long> getCountRatingService(String serviceAlias, Float rating);
 }

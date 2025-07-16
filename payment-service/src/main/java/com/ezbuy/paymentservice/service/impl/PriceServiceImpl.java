@@ -22,7 +22,7 @@ public class PriceServiceImpl implements PriceService {
 
     @Override
     public Mono<ProductPrice> calculatePrices(ProductPriceRequest productPriceRequest) {
-        Long totalPrice = 0L;
+        long totalPrice = 0L;
         List<ProductItem> productItems = productPriceRequest.getProductItems();
         if (productItems == null || productItems.isEmpty()) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.item.null"));
@@ -40,19 +40,14 @@ public class PriceServiceImpl implements PriceService {
                         new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.item.quantity.invalid"));
             }
             if (price == null) {
-                Integer existQuantity = missingPriceProductIdsMap.get(templateId);
-                if (existQuantity != null) {
-                    missingPriceProductIdsMap.put(templateId, existQuantity + quantity);
-                } else {
-                    missingPriceProductIdsMap.put(templateId, quantity);
-                }
+                missingPriceProductIdsMap.merge(templateId, quantity, Integer::sum);
             } else if (price < 0) {
                 return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.item.price.invalid"));
             } else {
                 totalPrice += price * quantity;
             }
         }
-        if (missingPriceProductIdsMap.size() > 0) {
+        if (!missingPriceProductIdsMap.isEmpty()) {
             return calculateWithMissingPriceProducts(missingPriceProductIdsMap, totalPrice);
         } else {
             return Mono.just(new ProductPrice(totalPrice));
@@ -63,14 +58,14 @@ public class PriceServiceImpl implements PriceService {
             Map<String, Integer> missingPriceProductIdsMap, Long currentTotalPrice) {
         return productClient
                 .getExProductPrices(missingPriceProductIdsMap.keySet())
-                .map(rs -> {
+                .flatMap(rs -> {
                     Long productPrice = rs.getPrice();
                     Integer quantity = missingPriceProductIdsMap.get(rs.getTemplateId());
                     if (productPrice == null) {
-                        Mono.error(new BusinessException(
+                        return Mono.error(new BusinessException(
                                 CommonErrorCode.INTERNAL_SERVER_ERROR, "call.product.service.error"));
                     }
-                    return productPrice * quantity;
+                    return Mono.just(productPrice * quantity);
                 })
                 .reduce(currentTotalPrice, Long::sum)
                 .flatMap(rs -> Mono.just(new ProductPrice(rs)));

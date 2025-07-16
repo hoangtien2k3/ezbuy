@@ -1,22 +1,20 @@
 package com.ezbuy.notimodel.model;
 
 import com.ezbuy.notimodel.model.base.EntityBase;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
 
+@Getter
+@Setter
 @ToString
 @Table(name = "transmission")
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 public class Transmission extends EntityBase implements Persistable<String> {
 
     @Id

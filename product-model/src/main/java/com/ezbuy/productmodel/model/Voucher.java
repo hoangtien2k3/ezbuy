@@ -20,18 +20,18 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class Voucher implements Persistable<String> {
 
     @Id
-    private String id; // uuid
+    private String id;
 
-    private String voucherTypeId; // ID voucher type
-    private String batchId; // ID voucher batch
-    private String code; // ma voucher
+    private String voucherTypeId;
+    private String batchId;
+    private String code;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-    private LocalDateTime expiredDate; // ngay het han
+    private LocalDateTime expiredDate;
 
-    private Integer expiredPeriod; // thoi gian het han
-    private String state; // trang thai voucher
+    private Integer expiredPeriod;
+    private String state;
     private LocalDateTime createAt;
     private String createBy;
     private LocalDateTime updateAt;

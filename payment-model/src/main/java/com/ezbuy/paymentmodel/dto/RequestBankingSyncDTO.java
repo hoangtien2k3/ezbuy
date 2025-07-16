@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class RequestBankingSyncDTO {
-
     private String vtTransactionId;
     private Integer paymentStatus;
     private String id;

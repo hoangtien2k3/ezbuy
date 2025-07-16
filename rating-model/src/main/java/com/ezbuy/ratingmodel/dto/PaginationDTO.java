@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class PaginationDTO {
-
     private Integer pageIndex;
     private Integer pageSize;
     private Long totalRecords;

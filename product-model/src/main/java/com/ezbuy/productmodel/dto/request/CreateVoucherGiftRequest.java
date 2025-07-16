@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CreateVoucherGiftRequest {
-    private List<String> voucherGiftList; // ma voucher tang
-    private String username; // user dang nhap
-    private String userId; // user id
-    private String sourceOrderId; // ma don hang
+    private List<String> voucherGiftList;
+    private String username;
+    private String userId;
+    private String sourceOrderId;
 }

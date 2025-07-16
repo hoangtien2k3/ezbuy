@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class SearchProductRequest {
-    private String name; // ten hang hoa
-    private String code; // ma hang hoa
-    private String unit; // don vi tinh
-    private Integer lockStatus; // trang thai khoa: 1 = da khoa, 0 = khong khoa
-    private Integer pageIndex; // so trang
-    private Integer pageSize; // kich thuoc trang
-    private List<String> sort; // sap xep theo truong
+    private String name;
+    private String code;
+    private String unit;
+    private Integer lockStatus;
+    private Integer pageIndex;
+    private Integer pageSize;
+    private List<String> sort;
 }

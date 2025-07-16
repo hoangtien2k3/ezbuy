@@ -1,22 +1,36 @@
 package com.ezbuy.authservice.repository;
 
 import com.ezbuy.authmodel.model.Organization;
+
 import java.time.LocalDateTime;
+
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Mono;
 
 public interface OrganizationRepo extends R2dbcRepository<Organization, String> {
 
-    @Query(value = "select * from organization where id = :id and status = :status")
+    @Query("SELECT * FROM organization WHERE id = :id AND status = :status")
     Mono<Organization> findOrganizationByIdAndStatus(String id, int status);
 
-    @Query(
-            value = "update organization\n"
-                    + "set name=:name, province_code=:provinceCode, district_code=:districtCode, precinct_code=:precinctCode,\n"
-                    + "    phone=:phone, founding_date=:foundingDate, business_type=:businessType, image=:image,\n"
-                    + "    street_block=:streetBlock, email=:email, state= IF(:state is null, state, :state),\n"
-                    + "    create_at=NOW(), create_by=:emailToken, org_type=:orgType \n" + "where id=:id")
+    @Query("""
+            UPDATE organization
+            SET name = :name,
+                province_code = :provinceCode,
+                district_code = :districtCode,
+                precinct_code = :precinctCode,
+                phone = :phone,
+                founding_date = :foundingDate,
+                business_type = :businessType,
+                image = :image,
+                street_block = :streetBlock,
+                email = :email,
+                state = IF(:state IS NULL, state, :state),
+                create_at = NOW(),
+                create_by = :emailToken,
+                org_type = :orgType
+            WHERE id = :id
+            """)
     Mono<Boolean> updateOrganizationById(
             String id,
             String name,
@@ -33,29 +47,44 @@ public interface OrganizationRepo extends R2dbcRepository<Organization, String> 
             String emailToken,
             String orgType);
 
-    @Query(
-            value = "select o.* " + " from sme_user.individual i "
-                    + "    inner join sme_user.individual_unit_position iup on i.id = iup.individual_id "
-                    + "    inner join  sme_user.positions p on iup.position_id = p.id "
-                    + "    inner join  sme_user.organization o on iup.organization_id = o.id "
-                    + " where i.id = :individualId ")
+    @Query("""
+            SELECT o.*
+            FROM individual i
+                INNER JOIN individual_unit_position iup ON i.id = iup.individual_id
+                INNER JOIN positions p ON iup.position_id = p.id
+                INNER JOIN organization o ON iup.organization_id = o.id
+            WHERE i.id = :individualId
+            """)
     Mono<Organization> getOrganizationByIndividualId(String individualId);
 
-    @Query(
-            value = "select id from organization\n" + "where id in ( \n"
-                    + "    select tenant_id from tenant_identify where type =:type\n"
-                    + "    and status = 1 and trust_status = 1 and id_no =:idNo\n" + ");")
+    @Query("""
+            SELECT id FROM organization
+            WHERE id IN (
+                SELECT tenant_id FROM tenant_identify
+                WHERE type = :type
+                  AND status = 1
+                  AND trust_status = 1
+                  AND id_no = :idNo
+            )
+            """)
     Mono<String> findOrganizationByIdentify(String type, String idNo);
 
-    @Query(
-            value = "select distinct(individual_unit_position.organization_id)\n" + "from individual\n"
-                    + "inner join individual_unit_position on individual.id = individual_unit_position.individual_id\n"
-                    + "inner join positions on individual_unit_position.position_id = positions.id\n"
-                    + "where individual.username =:username  and positions.code =:code")
+    @Query("""
+            SELECT DISTINCT(individual_unit_position.organization_id)
+            FROM individual
+                INNER JOIN individual_unit_position ON individual.id = individual_unit_position.individual_id
+                INNER JOIN positions ON individual_unit_position.position_id = positions.id
+            WHERE individual.username = :username
+              AND positions.code = :code
+            """)
     Mono<String> getOrganizationIdByUsername(String username, String code);
 
-    @Query(
-            value = "update organization\n" + "set  founding_date=:foundingDate, \n"
-                    + "    create_at=NOW(), create_by=:emailToken \n" + "where id=:id")
+    @Query("""
+            UPDATE organization
+            SET founding_date = :foundingDate,
+                create_at = NOW(),
+                create_by = :emailToken
+            WHERE id = :id
+            """)
     Mono<Boolean> updateFoundingDateById(String id, LocalDateTime foundingDate, String emailToken);
 }

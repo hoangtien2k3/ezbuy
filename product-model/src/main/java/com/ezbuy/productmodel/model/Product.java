@@ -19,22 +19,22 @@ public class Product implements Persistable<String> {
     @Id
     private String id;
 
-    private String code; // ma hang hoa
-    private String name; // ten hang hoa
-    private Double priceImport; // don gia nhap
-    private Double priceExport; // don gia ban
-    private String unit; // don vi tinh
-    private String taxRatio; // thue GTGT
-    private Double discount; // chiet khau
-    private Long revenueRatio; // ti le % theo doanh thu
-    private Integer status; // trang thai: 1 = hieu luc, 0 = khong hieu luc
-    private Integer lockStatus; // trang thai khoa: 1 = da khoa, 0 = khong khoa
-    private String createUnit; // ten don vi tao
+    private String code;
+    private String name;
+    private Double priceImport;
+    private Double priceExport;
+    private String unit;
+    private String taxRatio;
+    private Double discount;
+    private Long revenueRatio;
+    private Integer status;
+    private Integer lockStatus;
+    private String createUnit;
     private LocalDateTime createAt;
     private String createBy;
     private LocalDateTime updateAt;
     private String updateBy;
-    private String organizationId; // ma to chuc tao
+    private String organizationId;
 
     @Transient
     private boolean isNew = false;

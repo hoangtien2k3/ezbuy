@@ -49,7 +49,7 @@ public class RatingController {
     }
 
     @GetMapping(UrlPaths.Rating.ALL)
-    public Mono<DataResponse<List<Rating>>> getAllServiceGroupActive() {
-        return ratingService.getAllRatingActive().map(rs -> new DataResponse("success", rs));
+    public Mono<DataResponse<List<RatingCount>>> getAllServiceGroupActive() {
+        return ratingService.getAllRatingActive().map(DataResponse::success);
     }
 }

@@ -1,15 +1,14 @@
 package com.ezbuy.paymentservice.client.properties;
 
 import com.reactify.client.properties.WebClientProperties;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+@Getter
+@Setter
 @Component("paymentClientProperties")
 @ConfigurationProperties(prefix = "client.payment", ignoreInvalidFields = true)
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class PaymentClientProperties extends WebClientProperties {

@@ -16,9 +16,9 @@ import lombok.experimental.SuperBuilder;
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties
 public class ProductOfferingDTO {
-    String code; // ma goi combo
-    String name; // ten goi combo
-    String productOfferingId; // id goi combo
-    List<TelecomServiceDTO> lstTelecomServiceDTO; // danh sach goi cuoc thuoc combo
-    List<ProductOfferExt> productOfferExts; // danh sach khuyen mai + gia
+    String code;
+    String name;
+    String productOfferingId;
+    List<TelecomServiceDTO> lstTelecomServiceDTO;
+    List<ProductOfferExt> productOfferExts;
 }

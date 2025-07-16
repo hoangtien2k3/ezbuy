@@ -90,16 +90,6 @@ public class VoucherTypeServiceImpl extends BaseServiceHandler implements Vouche
                 });
     }
 
-    /**
-     * Ham nay de kiem tra hop le de them moi hoac cap nhat ban ghi neu ban ghi voi
-     * code da cho ton tai thi khong cho phep them moi nua
-     *
-     * @param code
-     * @param isInsert
-     *            true neu them moi, false neu cap nhat
-     * @param id
-     * @return tra ve loi hoac tra ve ban ghi loai khuyen mai neu thoa man
-     */
     public Mono<Object> validateExistedCode(String code, Boolean isInsert, String id) {
         return voucherTypeRepository
                 .findByCode(code)
@@ -116,11 +106,6 @@ public class VoucherTypeServiceImpl extends BaseServiceHandler implements Vouche
                 });
     }
 
-    /**
-     * Ham nay de validate yeu cau gui toi
-     *
-     * @param request
-     */
     private void validateInput(VoucherTypeRequest request) {
         Pattern p = Pattern.compile(Constants.VOUCHER_TYPE.CODE_REGEX);
 
@@ -135,7 +120,6 @@ public class VoucherTypeServiceImpl extends BaseServiceHandler implements Vouche
         if (containSpecialCharacterMatcher.find()) {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher-type.validate.code.special-character");
         }
-
         String description = DataUtil.safeTrim(request.getDescription());
         if (!DataUtil.isNullOrEmpty(description)) {
             if (description.length() > Constants.VOUCHER_TYPE.DESCRIPTION_MAX_LENGTH) {
@@ -143,7 +127,6 @@ public class VoucherTypeServiceImpl extends BaseServiceHandler implements Vouche
                         CommonErrorCode.INVALID_PARAMS, "voucher-type.validate.description.max.length");
             }
         }
-
         Integer priorityLevel = request.getPriorityLevel();
         if (priorityLevel == null) {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher-type.validate.priority.null");
@@ -151,12 +134,10 @@ public class VoucherTypeServiceImpl extends BaseServiceHandler implements Vouche
         if (priorityLevel < 0) {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher-type.validate.code.priority.integer");
         }
-
         String actionValue = DataUtil.safeTrim(request.getActionValue());
         if (DataUtil.isNullOrEmpty(actionValue)) {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher-type.validate.action.value.null");
         }
-
         if (DataUtil.isNullOrEmpty(actionValue)) {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher-type.validate.name.null");
         }
@@ -164,7 +145,6 @@ public class VoucherTypeServiceImpl extends BaseServiceHandler implements Vouche
         if (status == null) {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher-type.validate.status.null");
         }
-
         String actionType = DataUtil.safeTrim(request.getActionType());
         if (!actionType.equals(Constants.VOUCHER_TYPE.ACTION_TYPE_DISCOUNT)
                 && !actionType.equals(Constants.VOUCHER_TYPE.ACTION_TYPE_FIXED)

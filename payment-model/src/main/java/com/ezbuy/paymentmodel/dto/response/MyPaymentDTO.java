@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MyViettelDTO {
-
+public class MyPaymentDTO {
     private Integer errorCode;
     private String message;
     private SearchPaymentState data;

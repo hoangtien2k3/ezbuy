@@ -21,14 +21,13 @@ public class VoucherTransaction implements Persistable<String> {
     @Id
     private String id;
 
-    private String voucherId; // id bang voucher
-    private String userId; // id user dang nhap
-    private String transactionCode; // ma don hang su dung voucher
-    private LocalDateTime transactionDate; // ngay dat don
-    private String transactionType; // loại giao dich (CONNECT- dau noi, AFTER - sau ban)
-    private Integer amount; // tong gia giam
-    private String state; // trang thai giao dich (preActive - chua thanh toan, used - da thanh toan,
-    // inactive - chua thanh toan)
+    private String voucherId;
+    private String userId;
+    private String transactionCode;
+    private LocalDateTime transactionDate;
+    private String transactionType;
+    private Integer amount;
+    private String state;
     private String createBy;
     private String updateBy;
     private LocalDateTime createAt;

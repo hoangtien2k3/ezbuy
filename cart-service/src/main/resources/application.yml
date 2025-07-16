@@ -1,6 +1,6 @@
 server:
   port: 8918
-#login
+---
 logging:
   pattern:
     console: "%d{dd/MM/yy HH:mm:ss}|%X{traceId}|%m%n"
@@ -8,7 +8,21 @@ logging:
     root: INFO
     io.r2dbc.postgresql.QUERY: DEBUG
     io.r2dbc.postgresql.PARAM: DEBUG
-
+---
+#spring cloud consul config
+spring:
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        prefer-ip-address: true
+        instance-id: ${spring.application.name}-${random.uuid}
+        health-check-path: /actuator/health
+        health-check-interval: 10s
+        service-name: ${spring.application.name}
+        register-health-check: true
+---
 #spring config
 spring:
   application:
@@ -53,7 +67,7 @@ spring:
       readResponseData: true
       logRequest: true
       logResponse: true
-
+---
 #keycloak client config
 keycloak:
   clientId: ezbuy-client
@@ -62,7 +76,8 @@ keycloak:
   serverUrl: http://localhost:8080
   grantType: password
   host: localhost
-
+---
+# server config
 application:
   whiteList:
     - uri: /actuator/health
@@ -74,7 +89,7 @@ application:
         - POST
         - PUT
         - DELETE
-
+---
 # client config
 client:
   product:
@@ -96,17 +111,8 @@ client:
     pool:
       max-size: 100
       max-pending-acquire: 100
-
-#eureka-service config
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      default-zone: http://localhost:8761/eureka
-
+---
+# Health check configuration
 management:
   endpoints:
     web:

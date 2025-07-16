@@ -1,7 +1,6 @@
 package com.ezbuy.cartservice.client.impl;
 
 import com.ezbuy.cartservice.client.ProductClient;
-import com.ezbuy.cartservice.client.properties.ProductProperties;
 import com.ezbuy.productmodel.dto.FilterProductTemplateDTO;
 import com.ezbuy.productmodel.dto.response.ListProductOfferResponse;
 import com.reactify.client.BaseRestClient;
@@ -30,7 +29,6 @@ public class ProductClientImpl implements ProductClient {
     private final WebClient product;
 
     private final BaseRestClient baseRestClient;
-    private final ProductProperties productProperties;
 
     @Override
     public Mono<ListProductOfferResponse> getProductInfo(List<String> templateIds) {

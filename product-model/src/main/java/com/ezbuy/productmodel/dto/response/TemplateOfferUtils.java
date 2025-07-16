@@ -8,7 +8,6 @@ import lombok.Data;
 public class TemplateOfferUtils {
     @JsonIgnore
     private List<Object> listFilter;
-
     private Integer pageCount;
     private Integer pageIndex;
     private Integer pageSize;

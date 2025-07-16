@@ -17,9 +17,9 @@ import org.springframework.data.relational.core.mapping.Table;
 @SuperBuilder
 @Table(name = "rating_type")
 public class RatingHistory extends EntityBase implements Persistable<String> {
+
     @Id
     private String id;
-
     private String ratingId;
     private Long ratingBf;
     private Long ratingAf;

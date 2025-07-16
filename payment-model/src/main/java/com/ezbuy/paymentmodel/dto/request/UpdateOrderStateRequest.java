@@ -12,6 +12,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class UpdateOrderStateRequest {
-
     private List<UpdateOrderStateDTO> updateOrderStateDTOList;
 }

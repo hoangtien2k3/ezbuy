@@ -7,6 +7,6 @@ import lombok.Data;
 
 @Data
 public class SearchRatingResponse {
-    private List<RatingDTO> lstRating; // danh sach danh gia
-    private PaginationDTO pagination; // thong tin phan trang
+    private List<RatingDTO> lstRating;
+    private PaginationDTO pagination;
 }

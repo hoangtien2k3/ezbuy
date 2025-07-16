@@ -30,11 +30,8 @@ public class RatingHistoryServiceImpl extends BaseServiceHandler implements Rati
             LocalDateTime approveAt,
             String state) {
         var getSysDate = ratingHistoryRepository.getSysDate();
-        return Mono.zip(
-                        SecurityUtils.getCurrentUser()
-                                .switchIfEmpty(
-                                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
-                        getSysDate)
+        return Mono.zip(SecurityUtils.getCurrentUser().switchIfEmpty(
+                    Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))), getSysDate)
                 .flatMap(tuple -> {
                     LocalDateTime now = tuple.getT2();
                     RatingHistory ratingHistory = RatingHistory.builder()

@@ -1,12 +1,28 @@
 # server config
 server:
   port: 7777
+---
 #logging
 logging:
   pattern:
     console: "%d{dd/MM/yy HH:mm:ss}|%X{traceId}|%m%n"
   level:
     root: INFO
+---
+#spring cloud consul config
+spring:
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        prefer-ip-address: true
+        instance-id: ${spring.application.name}-${random.uuid}
+        health-check-path: /actuator/health
+        health-check-interval: 10s
+        service-name: ${spring.application.name}
+        register-health-check: true
+---
 # spring config
 spring:
   application:
@@ -43,6 +59,7 @@ spring:
           jwk-set-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/certs
       keycloak:
         client-id: ${keycloak.clientId}
+---
 #keycloak client config
 keycloak:
   clientId: ezbuy-client
@@ -50,7 +67,7 @@ keycloak:
   realm: ezbuy-server
   serverUrl: http://localhost:8080
   host: localhost
-
+---
 #client
 client:
   auth:
@@ -63,27 +80,20 @@ client:
     timeout:
       read: 60000
       write: 1000
+---
 # unauthenticated endpoints config
 application:
   whiteList:
     - uri: /actuator/health
       methods:
         - GET
+---
 # config query
 config:
   resendCount: 2
   limit: 800
-
-#eureka-service config
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      default-zone: http://localhost:8761/eureka
-
+---
+#health check config
 management:
   endpoints:
     web:

@@ -88,7 +88,7 @@ public class UtilServiceImpl implements UtilService {
                             })
                             .collectList();
                 })
-                .flatMap(rs -> Mono.just(DataResponse.success("Số bản ghi thành công " + rs.size())));
+                .flatMap(rs -> Mono.just(DataResponse.success("success: " + rs.size())));
     }
 
     private static List<EmployeePermissionRequest> getEmployeePermissionRequests(
@@ -108,7 +108,6 @@ public class UtilServiceImpl implements UtilService {
                 () -> keycloakProvider.getInstance().tokenManager().getAccessTokenString());
     }
 
-    // save role in 2 table individualOrgPermissionRepo va
     public Mono<List<PermissionPolicy>> createEmployeePermission(
             List<EmployeePermissionRequest> employeeUpdateRequest, Individual individual, String organizationId) {
         return Flux.fromIterable(employeeUpdateRequest)

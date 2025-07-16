@@ -1,13 +1,28 @@
 # server config
 server:
   port: 8999
+---
 #logging
 logging:
   pattern:
     console: "%d{dd/MM/yy HH:mm:ss}|%X{traceId}|%m%n"
   level:
     root: INFO
-
+---
+#spring cloud consul config
+spring:
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        prefer-ip-address: true
+        instance-id: ${spring.application.name}-${random.uuid}
+        health-check-path: /actuator/health
+        health-check-interval: 10s
+        service-name: ${spring.application.name}
+        register-health-check: true
+---
 # spring config
 spring:
   application:
@@ -16,13 +31,11 @@ spring:
     allow-bean-definition-overriding: true
   messages:
     basename: lang
-
   #r2dbc postgresql
   r2dbc:
     url: r2dbc:postgresql://localhost:5434/setting
     username: admin
     password: admin
-
   security:
     oauth2:
       client:
@@ -40,14 +53,13 @@ spring:
       keycloak:
         client-id: ${keycloak.clientId}
         client-secret: ${keycloak.clientSecret}
-
   data:
     elasticsearch:
       repositories:
         enabled: false
   elasticsearch:
     uris: http://localhost:9200
-
+---
 #keycloak client config
 keycloak:
   clientId: ezbuy-client
@@ -56,13 +68,13 @@ keycloak:
   serverUrl: http://localhost:8080
   grantType: password
   host: localhost
-
+---
 #client-elasticsearch
 client:
   elasticsearch:
     address: http://localhost:9200
     name: elasticSearchClient
-
+---
 # unauthenticated endpoints config
 application:
   index:
@@ -81,17 +93,8 @@ application:
     - uri: /v1/search-services
       methods:
         - GET
-
-#eureka-service config
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      default-zone: http://localhost:8761/eureka
-
+---
+#health check config
 management:
   endpoints:
     web:

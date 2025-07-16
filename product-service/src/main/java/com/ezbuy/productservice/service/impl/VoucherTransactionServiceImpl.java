@@ -102,10 +102,7 @@ public class VoucherTransactionServiceImpl implements VoucherTransactionService 
     @Transactional
     public Mono<DataResponse<String>> unlockVoucherTransaction(UnlockVoucherRequest unlockVoucherRequest) {
         // lay danh sach voucher transaction het han
-        return Mono.zip(
-                        voucherTransactionRepository
-                                .getAllExpiredVoucherTransaction(unlockVoucherRequest.getExpiredMinutes())
-                                .collectList(),
+        return Mono.zip(voucherTransactionRepository.getAllExpiredVoucherTransaction(unlockVoucherRequest.getExpiredMinutes()).collectList(),
                         voucherTransactionRepository.getSysDate())
                 .flatMap(voucherTransactionListSysDate -> {
                     List<VoucherTransaction> voucherTransactionList = voucherTransactionListSysDate.getT1();

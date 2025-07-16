@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class SearchPaymentState {
-
     private Integer payment_status;
     private String vt_transaction_id;
     private Long trans_amount;

@@ -1,6 +1,7 @@
 # server config
 server:
   port: 8950
+---
 #logging
 logging:
   pattern:
@@ -11,6 +12,21 @@ logging:
     io.r2dbc.postgresql.QUERY: DEBUG
     io.r2dbc.postgresql.PARAM: DEBUG
     io.r2dbc.postgresql.CONNECTION: DEBUG
+---
+#spring cloud consul config
+spring:
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        prefer-ip-address: true
+        instance-id: ${spring.application.name}-${random.uuid}
+        health-check-path: /actuator/health
+        health-check-interval: 10s
+        service-name: ${spring.application.name}
+        register-health-check: true
+---
 # spring config
 spring:
   application:
@@ -24,7 +40,6 @@ spring:
     url: r2dbc:postgresql://localhost:5434/rating
     username: admin
     password: admin
-
   #security oauth2
   security:
     oauth2:
@@ -42,7 +57,7 @@ spring:
           jwk-set-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/certs
       keycloak:
         client-id: ${keycloak.clientId}
-
+---
 #keycloak client config
 keycloak:
   clientId: ezbuy-client
@@ -51,17 +66,8 @@ keycloak:
   serverUrl: http://localhost:8080
   grantType: password  #client_credentials
   host: localhost
-
-#eureka-service config
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      default-zone: http://localhost:8761/eureka
-
+---
+#health check config
 management:
   endpoints:
     web:

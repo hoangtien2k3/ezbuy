@@ -102,7 +102,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .getClientWithSecret(clientLogin.getClientId())
                 .flatMap(clientRepresentation -> {
                     if (DataUtil.isNullOrEmpty(clientLogin.getRedirectUri())) {
-                        clientLogin.setRedirectUri("http://sso-scontract.vn:8213/callback");
+                        clientLogin.setRedirectUri("http://localhost:8213/callback");
                     }
                     MultiValueMap<String, String> formParameters = new LinkedMultiValueMap<>();
                     formParameters.add(OAuth2ParameterNames.GRANT_TYPE, AuthConstants.OAuth.AUTHOR_CODE);
@@ -290,12 +290,10 @@ public class KeyCloakClientImpl implements KeyCloakClient {
             });
         }
 
-        // neu groupIds null then call createUser
         if (DataUtil.isNullOrEmpty(groupIds)) {
             return createUserInKeycloak(request, token);
         }
 
-        // neu groupIds is not null => get groupNames
         return Flux.fromIterable(groupIds)
                 .flatMap(groupId -> getGroupNameById(groupId, token))
                 .collectList()

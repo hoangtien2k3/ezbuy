@@ -1,17 +1,16 @@
 package com.ezbuy.authmodel.model;
 
 import com.ezbuy.authmodel.model.base.EntityBase;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table(name = "individual_organization_permissions")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @SuperBuilder
+@Table(name = "individual_organization_permissions")
 public class IndividualOrganizationPermissions extends EntityBase {
     private String id;
     private String individualId;

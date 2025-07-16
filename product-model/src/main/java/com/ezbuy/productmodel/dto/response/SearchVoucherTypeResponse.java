@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SearchVoucherTypeResponse {
-    private List<VoucherTypeDTO> listVoucherType; // danh sach loai khuyen mai
-    private PaginationDTO pagination; // thong tin phan trang
+    private List<VoucherTypeDTO> listVoucherType;
+    private PaginationDTO pagination;
 }

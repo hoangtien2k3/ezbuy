@@ -10,7 +10,6 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.data.relational.core.mapping.Column;
 
 @Data
-// @MappedSuperclass
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor

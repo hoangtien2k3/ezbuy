@@ -10,14 +10,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateVoucherRequest {
-    private String code; // ma voucher
-    private String voucherTypeId; // id bang voucher_type
-    private String batchId; // id bang voucher_batch
-    private LocalDateTime expiredDate; // ngay het han
-    private Integer expiredPeriod; // ngay het han
-    private String state; // trang thai
-    private String voucherId; // id voucher
-    private String organizationId; // id to chuc
-    private String userId; // id user
-    private List<String> voucherTypeCodeList; // danh sach voucher type code trong nhom voucher
+    private String code;
+    private String voucherTypeId;
+    private String batchId;
+    private LocalDateTime expiredDate;
+    private Integer expiredPeriod;
+    private String state;
+    private String voucherId;
+    private String organizationId;
+    private String userId;
+    private List<String> voucherTypeCodeList;
 }

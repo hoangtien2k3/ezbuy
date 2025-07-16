@@ -1,11 +1,10 @@
 package com.ezbuy.productmodel.dto.response;
 
-import com.ezbuy.productmodel.constants.Constants;
 import com.ezbuy.productmodel.dto.BaseProductSpecDTO;
 import com.ezbuy.productmodel.dto.PriceTemplateDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
-import java.util.Optional;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import lombok.AllArgsConstructor;
@@ -20,7 +19,6 @@ import lombok.experimental.SuperBuilder;
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties
 public class ProductOfferTemplateDTO extends BaseProductSpecDTO {
-
     private Long cost;
     private String imageLink;
     private List<PriceTemplateDTO> lstPriceTemplate;
@@ -32,28 +30,10 @@ public class ProductOfferTemplateDTO extends BaseProductSpecDTO {
     private String productOfferTemplateId;
     private String productOfferingId;
     private String telecomServiceId;
-    private String telecomServiceAlias; // bo sung them alias PYCXXX/LuongToanTrinhScontract
+    private String telecomServiceAlias;
     private String templateCode;
     private String templateName;
     private Long totalPrice;
-    private String serviceAlias; // alias do product tra them 04/04
-
+    private String serviceAlias;
     private String durationValue;
-
-    public void handleDataGetByIds() {
-        if (lstSpecTemplate == null || lstSpecTemplate.isEmpty()) {
-            return;
-        }
-        if (Constants.ServiceId.VBHXH.equals(telecomServiceId)
-                || Constants.TelecomServiceAlias.VBHXH.equals(telecomServiceAlias)) {
-            Optional<ProductSpecCharDTO> productSpecCharOptional = lstSpecTemplate.stream()
-                    .filter(prod -> "MONTH_USE".equals(prod.getCode()))
-                    .findFirst();
-            productSpecCharOptional.ifPresent(productSpecCharDTO -> this.durationValue = productSpecCharDTO.getValue());
-        }
-        Optional<ProductSpecCharDTO> productSpecCharOptional = lstSpecTemplate.stream()
-                .filter(prod -> "PREPAID_DURATION".equals(prod.getCode()))
-                .findFirst();
-        productSpecCharOptional.ifPresent(productSpecCharDTO -> this.durationValue = productSpecCharDTO.getValue());
-    }
 }

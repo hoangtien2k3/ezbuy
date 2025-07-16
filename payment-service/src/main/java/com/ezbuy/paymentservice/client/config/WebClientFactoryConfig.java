@@ -23,6 +23,7 @@ public class WebClientFactoryConfig {
                 orderClientProperties,
                 paymentClientProperties,
                 productClientProperties,
-                settingClientProperties));
+                settingClientProperties
+        ));
     }
 }

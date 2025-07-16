@@ -158,7 +158,7 @@ public class MailServiceImpl implements MailService {
     private Mono<Boolean> sendEmail(String sender, String receiver, String subject, String content, boolean isHtml) {
         return Mono.fromCallable(() -> {
                     if (DataUtil.isNullOrEmpty(content)) {
-                        logger.error("Content null can not be send to {0}", receiver);
+                        logger.error("Content null can not be send to {}", receiver);
                         return false;
                     }
                     MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -197,7 +197,6 @@ public class MailServiceImpl implements MailService {
             context.setVariable("SUBTITLE", transmissionNoti.getSubTitle());
 
             String templateMail = DataUtil.safeToString(CommonConstants.TEMPLATE_MAIL_MAP.get(DataUtil.safeToString(transmissionNoti.getTemplateMail())), TEMP_NOTI_VERIFY_ACCOUNT);
-
             return templateEngine.process(templateMail, context);
         } catch (Exception ex) {
             logger.error("renderOtpMailContent error: ", ex);
@@ -211,7 +210,6 @@ public class MailServiceImpl implements MailService {
             context.setVariable("USERNAME", transmissionNoti.getExternalData());
 
             String templateMail = DataUtil.safeToString(CommonConstants.TEMPLATE_MAIL_MAP.get(DataUtil.safeToString(transmissionNoti.getTemplateMail())), TEMP_CREATE_ACCOUNT_SUCCESS);
-
             return templateEngine.process(templateMail, context);
         } catch (Exception ex) {
             logger.error("renderOtpMailContent error: ", ex);
@@ -238,7 +236,6 @@ public class MailServiceImpl implements MailService {
             context.setVariable(VariableContextMail.CANCEL_REASON, transmissionNoti.getExternalData());
 
             String templateMail = DataUtil.safeToString(CommonConstants.TEMPLATE_MAIL_MAP.get(DataUtil.safeToString(transmissionNoti.getTemplateMail())), TEMP_APPROVE_ORDER_FAIL);
-
             return templateEngine.process(templateMail, context);
         } catch (Exception ex) {
             logger.error("mailNotificationReceiveApproveResultFailContent error: ", ex);

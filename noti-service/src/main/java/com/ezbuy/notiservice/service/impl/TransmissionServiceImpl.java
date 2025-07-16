@@ -16,6 +16,8 @@ import com.ezbuy.notiservice.client.AuthClient;
 import com.ezbuy.notiservice.repoTemplate.TransmissionRepoTemplate;
 import com.ezbuy.notiservice.repository.*;
 import com.ezbuy.notiservice.service.TransmissionService;
+import com.reactify.constants.CommonConstant;
+import com.reactify.constants.Constants;
 import com.reactify.constants.Regex;
 import com.reactify.exception.BusinessException;
 import com.reactify.model.response.DataResponse;
@@ -33,9 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static com.reactify.constants.CommonConstant.FORMAT_DATE_DMY_HYPHEN;
-import static com.reactify.constants.Constants.DateTimePattern.LOCAL_DATE_TIME_PATTERN;
 
 @Service
 @RequiredArgsConstructor
@@ -213,11 +212,11 @@ public class TransmissionServiceImpl implements TransmissionService {
         if (DataUtil.isNullOrEmpty(newestNotiTime)) {
             return Mono.error(new BusinessException("GNNWO00001", Translator.toLocaleVi("params.newestNotiTime.notnull")));
         }
-        if (DataUtil.isNullOrEmpty(DataUtil.convertStringToLocalDateTime(newestNotiTime, LOCAL_DATE_TIME_PATTERN))) {
+        if (DataUtil.isNullOrEmpty(DataUtil.convertStringToLocalDateTime(newestNotiTime, Constants.DateTimePattern.LOCAL_DATE_TIME_PATTERN))) {
             return Mono.error(new BusinessException("GNNWO00002", Translator.toLocaleVi("params.invalid.format")));
         }
         return SecurityUtils.getCurrentUser().flatMap(
-                tokenUser -> transmissionRepository.getAllNotificationContentByCreateAtAfter(tokenUser.getId(), DataUtil.convertStringToLocalDateTime(newestNotiTime, LOCAL_DATE_TIME_PATTERN))
+                tokenUser -> transmissionRepository.getAllNotificationContentByCreateAtAfter(tokenUser.getId(), DataUtil.convertStringToLocalDateTime(newestNotiTime, Constants.DateTimePattern.LOCAL_DATE_TIME_PATTERN))
                         .collectList()
                         .flatMap(
                                 listNotiContent -> Mono.just(new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), listNotiContent))
@@ -230,10 +229,10 @@ public class TransmissionServiceImpl implements TransmissionService {
         LocalDateTime to = null;
         LocalDateTime from = null;
         if (!DataUtil.isNullOrEmpty(request.getFrom())) {
-            from = DataUtil.convertDateStrToLocalDateTime(request.getFrom(), FORMAT_DATE_DMY_HYPHEN);
+            from = DataUtil.convertDateStrToLocalDateTime(request.getFrom(), CommonConstant.FORMAT_DATE_DMY_HYPHEN);
         }
         if (!DataUtil.isNullOrEmpty(request.getTo())) {
-            to = DataUtil.convertDateStrToLocalDateTime(request.getTo(), FORMAT_DATE_DMY_HYPHEN);
+            to = DataUtil.convertDateStrToLocalDateTime(request.getTo(), CommonConstant.FORMAT_DATE_DMY_HYPHEN);
         }
         if (DataUtil.isNullOrEmpty(request.getUsername()) && DataUtil.isNullOrEmpty(request.getEmail())) {
             //neu khong truyen username + email
@@ -246,7 +245,7 @@ public class TransmissionServiceImpl implements TransmissionService {
             }
         }
 
-        Integer offset = (request.getPageIndex() - 1) * request.getPageSize();
+        int offset = (request.getPageIndex() - 1) * request.getPageSize();
         String sort = request.getSort();
         String sortQuery = (sort.contains("-")) ? " order by " + sort.substring(1) + " desc " : " order by " + sort.substring(1);
 
@@ -292,37 +291,26 @@ public class TransmissionServiceImpl implements TransmissionService {
                     if (pageSize < 1) {
                         return Mono.error(new BusinessException("GNCLBCT00002", Translator.toLocaleVi("params.pageSize.invalid")));
                     }
-                    StringBuilder sortingString = new StringBuilder();
-                    sortingString.append(SortingUtils.parseSorting(sort, NotificationHeader.class));
-                    if (DataUtil.isNullOrEmpty(sortingString)) {
-                        sortingString.append("");
-                    }
-                    StringBuilder query = new StringBuilder();
-                    query.append(" SELECT nc.*,tr.state  \n" +
-                            "FROM notification_content nc \n" +
-                            "INNER JOIN notification n \n" +
-                            "ON n.notification_content_id = nc.id \n" +
-                            "INNER JOIN notification_category nca \n" +
-                            "ON n.category_id = nca.id \n" +
-                            "INNER JOIN transmission tr \n" +
-                            "ON tr.notification_id = n.id \n" +
-                            "INNER JOIN channel c \n" +
-                            "ON tr.channel_id = c.id \n" +
-                            "where tr.receiver = (:receiver)   \n" +
-                            "AND tr.status =1 \n" +
-                            "AND tr.state IN ('NEW','UNREAD','READ') \n" +
-                            "AND nc.status =1 \n" +
-                            "AND n.status =1 \n" +
-                            "AND nca.status =1 \n" +
-                            "AND c.status =1 \n" +
-                            "AND c.type = 'REST' \n" +
-                            "AND nca.type = (:categoryType)  \n" +
-                            "ORDER BY ");
-                    query.append(sortingString);
-                    query.append(" LIMIT :pageSize  \n" +
-                            "             OFFSET :index;");
-                    BigDecimal index = (new BigDecimal(pageIndex - 1)).multiply(new BigDecimal(pageSize));
-                    return template.getDatabaseClient().sql(String.valueOf(query))
+                    String query = """
+                                SELECT nc.*, tr.state
+                                FROM notification_content nc
+                                INNER JOIN notification n ON n.notification_content_id = nc.id
+                                INNER JOIN notification_category nca ON n.category_id = nca.id
+                                INNER JOIN transmission tr ON tr.notification_id = n.id
+                                INNER JOIN channel c ON tr.channel_id = c.id
+                                WHERE tr.receiver = :receiver
+                                  AND tr.status = 1
+                                  AND tr.state IN ('NEW','UNREAD','READ')
+                                  AND nc.status = 1
+                                  AND n.status = 1
+                                  AND nca.status = 1
+                                  AND c.status = 1
+                                  AND c.type = 'REST'
+                                  AND nca.type = :categoryType
+                                ORDER BY
+                            """ + SortingUtils.parseSorting(sort, NotificationHeader.class) + "LIMIT :pageSize OFFSET :index";
+                    BigDecimal index = BigDecimal.valueOf(pageIndex - 1).multiply(BigDecimal.valueOf(pageSize));
+                    return template.getDatabaseClient().sql(query)
                             .bind("receiver", user.getId())
                             .bind("categoryType", DataUtil.safeTrim(categoryType))
                             .bind("pageSize", pageSize)
@@ -332,20 +320,16 @@ public class TransmissionServiceImpl implements TransmissionService {
                             .collectList()
                             .flatMap(notificationContent -> Mono.just(new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), notificationContent)))
                             .switchIfEmpty(Mono.just(new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), new ArrayList<>())));
-
                 });
-
     }
 
     public Mono<DataResponse<Object>> validateCreateNotificationDTO(CreateNotificationDTO createNotificationDTO) {
-
         if (DataUtil.isNullOrEmpty(createNotificationDTO.getSeverity())) {
             createNotificationDTO.setSeverity(ConstValue.NotiServerity.NORMAL);
         }
         if (!DataUtil.safeTrim(createNotificationDTO.getSeverity()).equals(ConstValue.NotiServerity.NORMAL) && !DataUtil.safeTrim(createNotificationDTO.getSeverity()).equals(ConstValue.NotiServerity.CRITICAL)) {
             return Mono.error(new BusinessException("VCND00001", Translator.toLocaleVi(ConstValue.CommonMessageNoti.INVALID_FORMAT_SPEC, "severity")));
         }
-
         if (!DataUtil.safeTrim(createNotificationDTO.getCategoryType()).equals(ConstValue.NotificationConstant.ANNOUNCEMENT) && !DataUtil.safeTrim(createNotificationDTO.getCategoryType()).equals(ConstValue.NotificationConstant.NEWS)) {
             return Mono.error(new BusinessException("VCND00002", Translator.toLocaleVi(ConstValue.CommonMessageNoti.INVALID_FORMAT_SPEC, "CategoryType")));
         }
@@ -387,7 +371,6 @@ public class TransmissionServiceImpl implements TransmissionService {
     }
 
     private void notiContentDTOIsValid(NotiContentDTO notiContentDTO) {
-
         if (DataUtil.isNullOrEmpty(notiContentDTO)) {
             throw new BusinessException("NCDIV00001", Translator.toLocaleVi("params.object.null", NotiContentDTO.builder().build().getClass().getSimpleName()));
         }
@@ -407,7 +390,6 @@ public class TransmissionServiceImpl implements TransmissionService {
         if (DataUtil.safeTrim(notiContentDTO.getUrl()).length() > 300 && !DataUtil.isNullOrEmpty(notiContentDTO.getUrl())) {
             throw new BusinessException("NCDIV00007", Translator.toLocaleVi("params.url.outOfLength"));
         }
-
     }
 
     private void isReceiverDataDTOValid(ReceiverDataDTO receiverDataDTO) {

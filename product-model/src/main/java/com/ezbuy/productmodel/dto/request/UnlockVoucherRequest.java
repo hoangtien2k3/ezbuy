@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class UnlockVoucherRequest {
-    private Integer expiredMinutes; // thoi gian het han tinh theo phut
+    private Integer expiredMinutes;
 }

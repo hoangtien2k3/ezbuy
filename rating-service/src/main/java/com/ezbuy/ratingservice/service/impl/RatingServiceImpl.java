@@ -55,7 +55,6 @@ public class RatingServiceImpl extends BaseServiceHandler implements RatingServi
                     RatingServiceResponse ratingServiceResponse = new RatingServiceResponse();
                     List<Rating> lstRatingComment = listRating.getT1();
                     if (!DataUtil.isNullOrEmpty(lstRatingComment)) {
-                        // Set thong tin danh sach comment
                         List<RatingCommentDTO> listRatingComment = new ArrayList<>();
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                         for (Rating ratingComment : lstRatingComment) {
@@ -148,30 +147,23 @@ public class RatingServiceImpl extends BaseServiceHandler implements RatingServi
         }
         var getSysDate = ratingRepository.getSysDate();
         return Mono.zip(
-                        SecurityUtils.getCurrentUser() // lay thong tin user
-                                .switchIfEmpty(
+                        SecurityUtils.getCurrentUser().switchIfEmpty(
                                         Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
-                        ratingRepository
-                                .getById(finalId) // lay thong tin rating theo id
-                                .switchIfEmpty(Mono.error(
-                                        new BusinessException(CommonErrorCode.NOT_FOUND, "service.rating.not.found"))),
-                        getSysDate)
+                        ratingRepository.getById(finalId)
+                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "service.rating.not.found"))), getSysDate)
                 .flatMap(tuple -> {
                     String userUpdate = tuple.getT1().getUsername();
                     LocalDateTime now = tuple.getT3();
                     Rating rating = tuple.getT2();
                     Mono<RatingCount> ratingCountMono = Mono.just(new RatingCount());
-                    // neu thay doi trang thai tinh tong danh gia
                     if (!rating.getSumRateStatus().equals(request.getSumRateStatus())) {
-                        // neu chuyen tu inactive -> active
                         if (Constants.Activation.ACTIVE.equals(request.getSumRateStatus())) {
-                            // tinh them danh gia nay vao tong danh gia
                             ratingCountMono = ratingCountService.changeStatusRatingCount(
                                     request.getRatingTypeCode(),
                                     request.getTargetId(),
                                     request.getRating(),
                                     Constants.Activation.ACTIVE);
-                        } else { // neu chuyen tu active -> inactive
+                        } else {
                             ratingCountMono = ratingCountService.changeStatusRatingCount(
                                     rating.getRatingTypeCode(),
                                     rating.getTargetId(),
@@ -188,7 +180,6 @@ public class RatingServiceImpl extends BaseServiceHandler implements RatingServi
                         }
                     }
                     Mono<RatingHistory> ratingHistoryMono = Mono.just(new RatingHistory());
-                    // luu thong tin lich su danh gia
                     if (!rating.getRating().equals(request.getRating())
                             || !rating.getContent().equals(request.getContent())
                             || !rating.getState().equals(request.getState())) {
@@ -218,15 +209,12 @@ public class RatingServiceImpl extends BaseServiceHandler implements RatingServi
         request.setPageIndex(pageIndex);
         int pageSize = validatePageSize(request.getPageSize(), 10);
         request.setPageSize(pageSize);
-        // validate tu ngay khong duoc lon hon den ngay
         if (!Objects.isNull(request.getFromDate()) && !Objects.isNull(request.getToDate())) {
             if (request.getFromDate().compareTo(request.getToDate()) > 0) {
                 throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.from-date.larger.to-date");
             }
         }
-        // tim kiem thong tin theo input
         Flux<RatingDTO> serviceRatings = ratingRepositoryTemplate.findRating(request);
-        // lay tong so luong ban ghi
         Mono<Long> countMono = ratingRepositoryTemplate.countServiceRating(request);
         return Mono.zip(serviceRatings.collectList(), countMono).map(zip -> {
             PaginationDTO pagination = new PaginationDTO();
@@ -283,23 +271,17 @@ public class RatingServiceImpl extends BaseServiceHandler implements RatingServi
         if (DataUtil.isNullOrEmpty(request.getRatingFind())) {
             request.setRatingFind(0F);
         }
-        return Mono.zip(
-                        ratingRepository
-                                .getListRatingServicePage(
+        return Mono.zip(ratingRepository.getListRatingServicePage(
                                         request.getServiceAlias(),
                                         request.getPageSize(),
                                         request.getPageIndex(),
-                                        request.getRatingFind())
-                                .collectList(),
-                        ratingCountRepository
-                                .getRatingCountService(Collections.singletonList(request.getServiceAlias()))
-                                .collectList(),
+                                        request.getRatingFind()).collectList(),
+                        ratingCountRepository.getRatingCountService(Collections.singletonList(request.getServiceAlias())).collectList(),
                         ratingRepository.getCountRatingService(request.getServiceAlias(), request.getRatingFind()))
                 .flatMap(listRating -> {
                     RatingServiceResponse ratingServiceResponse = new RatingServiceResponse();
                     List<Rating> lstRatingComment = listRating.getT1();
                     if (!DataUtil.isNullOrEmpty(lstRatingComment)) {
-                        // Set thong tin danh sach comment
                         List<RatingCommentDTO> listRatingComment = new ArrayList<>();
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                         for (Rating ratingComment : lstRatingComment) {
@@ -331,15 +313,12 @@ public class RatingServiceImpl extends BaseServiceHandler implements RatingServi
                             }
                         }
                     }
-
                     PaginationDTO pagination = new PaginationDTO();
                     pagination.setPageIndex(request.getPageIndex());
                     pagination.setPageSize(request.getPageSize());
                     pagination.setTotalRecords(listRating.getT3());
                     ratingServiceResponse.setPagination(pagination);
-
-                    return Mono.just(
-                            new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), ratingServiceResponse));
+                    return Mono.just(new DataResponse<>(Translator.toLocaleVi(MessageConstant.SUCCESS), ratingServiceResponse));
                 });
     }
 }

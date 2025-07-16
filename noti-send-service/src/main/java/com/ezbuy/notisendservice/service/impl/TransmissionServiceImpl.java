@@ -32,6 +32,7 @@ public class TransmissionServiceImpl implements TransmissionService {
 
     @Value("${config.resendCount}")
     private Integer resendCount;
+
     @Value("${config.limit}")
     private Integer limit;
 

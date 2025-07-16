@@ -14,11 +14,20 @@ public interface VoucherTypeRepository extends R2dbcRepository<VoucherType, UUID
     @Query("SELECT * FROM voucher_type")
     Flux<VoucherType> getAllVoucherType();
 
-    @Query("select vt.*" + "from  voucher_type vt " + "         inner join voucher v on v.voucher_type_id = vt.id "
-            + "         inner join voucher_use vu on v.id = vu.voucher_id "
-            + "         inner join voucher_transaction vs on v.id = vs.voucher_id " + "where v.state = 'used' "
-            + "  and vu.state = 'active' " + "  and vu.expired_date < NOW() " + "  and vs.state = 'preActive' "
-            + "  and vs.user_id = :userId " + "  and vu.source_order_id = :orderId " + "  and vt.code in (:codeList)")
+    @Query("""
+        SELECT vt.*
+        FROM voucher_type vt
+        INNER JOIN voucher v ON v.voucher_type_id = vt.id
+        INNER JOIN voucher_use vu ON v.id = vu.voucher_id
+        INNER JOIN voucher_transaction vs ON v.id = vs.voucher_id
+        WHERE v.state = 'used'
+          AND vu.state = 'active'
+          AND vu.expired_date < NOW()
+          AND vs.state = 'preActive'
+          AND vs.user_id = :userId
+          AND vu.source_order_id = :orderId
+          AND vt.code IN (:codeList)
+    """)
     Flux<VoucherType> validateVoucher(String userId, String orderId, List<String> codeList);
 
     @Query("select * from voucher_type where code = :code limit 1")
@@ -37,8 +46,12 @@ public interface VoucherTypeRepository extends R2dbcRepository<VoucherType, UUID
     Mono<VoucherType> getById(String id);
 
     @Modifying
-    @Query(
-            value =
-                    "update voucher_type set status = :status, update_by = :user, update_at = CURRENT_TIMESTAMP() where id = :id")
+    @Query("""
+        UPDATE voucher_type
+        SET status = :status,
+            update_by = :user,
+            update_at = CURRENT_TIMESTAMP()
+        WHERE id = :id
+    """)
     Mono<VoucherType> updateStatus(String id, Integer status, String user);
 }

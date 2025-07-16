@@ -7,6 +7,5 @@ public class ClientUris {
 
     public interface Order {
         String UPDATE_PAYMENT_RESULT = "/v1/order/payment-result";
-        String PLACE_BCCS_ORDER = "/v1/order/place-bccs-order";
     }
 }

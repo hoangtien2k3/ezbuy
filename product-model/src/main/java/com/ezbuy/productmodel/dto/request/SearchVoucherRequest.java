@@ -14,21 +14,17 @@ import org.springframework.format.annotation.DateTimeFormat;
 @AllArgsConstructor
 public class SearchVoucherRequest extends ServiceGroupRequest {
     @DateTimeFormat(pattern = "dd-MM-yyyy")
-    private LocalDate fromDate; // tu ngay
-
+    private LocalDate fromDate;
     @DateTimeFormat(pattern = "dd-MM-yyyy")
-    private LocalDate toDate; // den ngay
-
+    private LocalDate toDate;
     @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
-    private LocalDateTime fromExpiredDate; // tu ngay het han
-
+    private LocalDateTime fromExpiredDate;
     @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
-    private LocalDateTime toExpiredDate; // den ngay het han
-
-    private Integer expiredPeriod; // so gio het han
-    private String id; // id voucher
-    private String code; // ma voucher
-    private String voucherTypeId; // id loai voucher
-    private String batchId; // id lo voucher
-    private String state; // trang thai
+    private LocalDateTime toExpiredDate;
+    private Integer expiredPeriod;
+    private String id;
+    private String code;
+    private String voucherTypeId;
+    private String batchId;
+    private String state;
 }

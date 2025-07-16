@@ -1,47 +1,48 @@
 package com.ezbuy.authservice.repository;
 
 import com.ezbuy.authmodel.model.UserOtp;
+
 import java.time.LocalDateTime;
+
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Mono;
 
 public interface OtpRepository extends R2dbcRepository<UserOtp, String> {
-    @Query(value = "select \n" +
-            "  * \n" +
-            "from \n" +
-            "  user_otp uo \n" +
-            "where \n" +
-            "  uo.email = : email \n" +
-            "  and uo.type = : type \n" +
-            "  and uo.status = : status\n")
+    @Query("""
+            SELECT *
+            FROM user_otp uo
+            WHERE uo.email = :email
+              AND uo.type = :type
+              AND uo.status = :status
+            """)
     Mono<UserOtp> findForgotPasswordOtp(String email, String type, Integer status);
 
-    @Query(value = "update \n" +
-            "  user_otp \n" +
-            "set \n" +
-            "  status = 0, \n" +
-            "  update_at = now(), \n" +
-            "  update_by = : updateBy \n" +
-            "where \n" +
-            "  email = : email \n" +
-            "  and type = : type\n")
+    @Query("""
+            UPDATE user_otp
+            SET status = 0,
+                update_at = NOW(),
+                update_by = :updateBy
+            WHERE email = :email
+              AND type = :type
+            """)
     Mono<UserOtp> disableOtp(String email, String type, String updateBy);
 
-    @Query(value = "select now()")
+    @Query("""
+            SELECT NOW()
+            """)
     Mono<LocalDateTime> currentTimeDB();
 
-    @Query(value = "select " +
-            "  exists( " +
-            "    select 1 " +
-            "    from " +
-            "      user_otp o " +
-            "    where " +
-            "      o.email = : email " +
-            "      and o.type = : type " +
-            "      and o.otp = : otp " +
-            "      and o.exp_time >= now() " +
-            "      and o.status = : status " +
-            "  ) ")
+    @Query("""
+            SELECT EXISTS (
+                SELECT 1
+                FROM user_otp o
+                WHERE o.email = :email
+                  AND o.type = :type
+                  AND o.otp = :otp
+                  AND o.exp_time >= NOW()
+                  AND o.status = :status
+            )
+            """)
     Mono<Boolean> confirmOtp(String email, String type, String otp, Integer status);
 }

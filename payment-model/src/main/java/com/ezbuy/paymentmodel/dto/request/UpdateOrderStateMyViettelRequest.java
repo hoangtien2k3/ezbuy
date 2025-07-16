@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class UpdateOrderStateMyViettelRequest {
-
     private String transaction_id;
     private String merchant_code;
     private String check_sum;

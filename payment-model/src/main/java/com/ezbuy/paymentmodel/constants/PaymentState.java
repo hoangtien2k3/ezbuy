@@ -1,16 +1,15 @@
 package com.ezbuy.paymentmodel.constants;
 
+import lombok.Getter;
+
+@Getter
 public enum PaymentState {
     NEW(0),
     DONE(1);
 
-    int value;
+    final int value;
 
     PaymentState(int value) {
         this.value = value;
-    }
-
-    public int getValue() {
-        return value;
     }
 }

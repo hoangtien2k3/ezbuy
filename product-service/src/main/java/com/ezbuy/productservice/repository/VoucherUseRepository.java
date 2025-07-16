@@ -12,8 +12,16 @@ public interface VoucherUseRepository extends R2dbcRepository<VoucherUse, UUID> 
     @Query("select CURRENT_TIMESTAMP")
     Mono<LocalDateTime> getSysDate();
 
-    @Query(
-            "select * from voucher_use vu inner join voucher v on v.id = vu.voucher_id  where v.id = :voucherId and v.state = 'used' and vu.state = 'active' and (vu.expired_date >= NOW() || vu.expired_date IS NULL) and vu.user_id = :userId")
+    @Query("""
+        SELECT * 
+        FROM voucher_use vu 
+        INNER JOIN voucher v ON v.id = vu.voucher_id  
+        WHERE v.id = :voucherId 
+          AND v.state = 'used' 
+          AND vu.state = 'active' 
+          AND (vu.expired_date >= NOW() OR vu.expired_date IS NULL) 
+          AND vu.user_id = :userId
+    """)
     Mono<VoucherUse> findVoucherUsedByVoucherIdAndUserId(String voucherId, String userId);
 
     @Query("select * from voucher_use where voucher_id = :voucherId")
@@ -28,10 +36,14 @@ public interface VoucherUseRepository extends R2dbcRepository<VoucherUse, UUID> 
     @Query("select * from voucher_use where source_order_id = :orderId and state = :state")
     Flux<VoucherUse> findVoucherUseByOrderIdAndState(String orderId, String state);
 
-    @Query("select vu.*  " + "from voucher_use vu " + "inner join voucher v on vu.voucher_id = v.id "
-            + "where NOW() > DATE_ADD(vu.create_at, INTERVAL :minute MINUTE) " + "and v.state = 'locked'")
+    @Query("""
+        SELECT vu.*
+        FROM voucher_use vu 
+        INNER JOIN voucher v ON vu.voucher_id = v.id 
+        WHERE NOW() > DATE_ADD(vu.create_at, INTERVAL :minute MINUTE) 
+          AND v.state = 'locked'
+    """)
     Flux<VoucherUse> getAllExpiredVoucherUse(Integer minute);
-
     @Query("select * from voucher_use where voucher_id = :orderId and state = :state")
     Flux<VoucherUse> findVoucherUseByVoucherIdAndState(String orderId, String state);
 }

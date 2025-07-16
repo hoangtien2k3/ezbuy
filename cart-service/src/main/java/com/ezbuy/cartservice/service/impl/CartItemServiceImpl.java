@@ -254,37 +254,40 @@ public class CartItemServiceImpl implements CartItemService {
             return Mono.error(new BusinessException(
                     CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("params.pageSize.invalid")));
         }
-        StringBuilder query = new StringBuilder();
-        query.append("SELECT b.*\n" + "FROM\n" + "    (\n"
-                + "        SELECT telecom_service_id, max(create_at) create_at\n" + "        FROM cart_item\n"
-                + "        GROUP BY telecom_service_id\n" + "        ORDER BY create_at\n" + "    ) a\n"
-                + "LEFT JOIN cart_item b ON a.telecom_service_id = b.telecom_service_id\n"
-                + "LEFT JOIN cart ON b.cart_id = cart.id\n" + "WHERE b.status = 1\n" + "AND cart.user_id = :userId\n"
-                + "ORDER BY a.create_at desc,b.create_at desc\n");
-        query.append(" LIMIT :pageSize  \n" + "OFFSET :index ");
+        String query = """
+            SELECT b.*
+            FROM (
+                SELECT telecom_service_id, MAX(create_at) create_at
+                FROM cart_item
+                GROUP BY telecom_service_id
+                ORDER BY create_at
+            ) a
+            LEFT JOIN cart_item b ON a.telecom_service_id = b.telecom_service_id
+            LEFT JOIN cart ON b.cart_id = cart.id
+            WHERE b.status = 1
+              AND cart.user_id = :userId
+            ORDER BY a.create_at DESC, b.create_at DESC
+            LIMIT :pageSize
+            OFFSET :index
+        """;
         BigDecimal index = (new BigDecimal(pageIndex - 1)).multiply(new BigDecimal(pageSize));
         return SecurityUtils.getCurrentUser().flatMap(tokenUser -> cartRepository
                 .findByUserId(tokenUser.getId())
                 .flatMap(Mono::just)
                 .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "query.cart.not.found")))
                 .flatMap(cart -> {
-                    // get list cart_item
                     String cartId = cart.getId();
                     var cartItemList = template.getDatabaseClient()
-                            .sql(String.valueOf(query))
+                            .sql(query)
                             .bind("userId", tokenUser.getId())
                             .bind("pageSize", pageSize)
                             .bind("index", index)
                             .map((row, rowMetadata) -> this.build(row))
                             .all()
                             .collectList();
-                    // count total item in cart
                     var countItem = cartItemRepository.countQuantityItem(cartId);
-                    // get all telecom service
                     var telecomServiceList = settingClient.getTelecomService();
                     return Mono.zip(cartItemList, countItem, telecomServiceList).flatMap(tuple -> {
-                        // get list telecom
-                        //
                         if (DataUtil.isNullOrEmpty(tuple.getT1()) || DataUtil.isNullOrEmpty(tuple.getT3())) {
                             PageCart pageCart = new PageCart();
                             pageCart.setTotalCount(tuple.getT2());
@@ -297,9 +300,9 @@ public class CartItemServiceImpl implements CartItemService {
                         }
                         return cartItemRepository
                                 .getTotalRecordsByUserId(tokenUser.getId())
-                                .flatMap(totelRecords -> {
+                                .flatMap(totalRecords -> {
                                     PaginationDTO pagination = PaginationDTO.builder()
-                                            .totalRecords(totelRecords)
+                                            .totalRecords(totalRecords)
                                             .pageIndex(pageIndex)
                                             .pageSize(pageSize)
                                             .build();
@@ -321,24 +324,28 @@ public class CartItemServiceImpl implements CartItemService {
         if (DataUtil.isNullOrEmpty(deleteUserProductCartDTO.getListProductId())) {
             return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "list.productId.notnull"));
         }
-        deleteUserProductCartDTO.setListProductId(deleteUserProductCartDTO.getListProductId().stream()
-                .map(x -> DataUtil.safeTrim(x))
-                .collect(Collectors.toList()));
-        StringBuilder getList = new StringBuilder();
-        getList.append("\'");
-        getList.append(String.join("\',\'", deleteUserProductCartDTO.getListProductId()));
-        StringBuilder query = new StringBuilder();
-        query.append("UPDATE cart_item ci\n" + "INNER JOIN cart c on ci.cart_id = c.id\n"
-                + "SET ci.status = 0,ci.update_by = 'system',ci.update_at = NOW()\n" + "WHERE c.user_id = :userId\n"
-                + "AND ci.status = 1\n" + "AND c.status = 1\n" + "AND  ci.product_id IN ( ");
-        query.append(getList);
-        query.append(" \')");
+        List<String> trimmedProductIds = deleteUserProductCartDTO.getListProductId().stream()
+                .map(DataUtil::safeTrim)
+                .toList();
+        deleteUserProductCartDTO.setListProductId(trimmedProductIds);
+
+        String joinedProductIds = trimmedProductIds.stream()
+                .map(id -> "'" + id + "'")
+                .collect(Collectors.joining(", "));
+        String query = """
+            UPDATE cart_item ci
+            INNER JOIN cart c on ci.cart_id = c.id
+            SET ci.status = 0, ci.update_by = 'system', ci.update_at = NOW()
+            WHERE c.user_id = :userId
+            AND ci.status = 1
+            AND c.status = 1
+            AND ci.product_id IN (%s)
+        """.formatted(joinedProductIds);
         return template.getDatabaseClient()
-                .sql(String.valueOf(query))
+                .sql(query)
                 .bind("userId", DataUtil.safeTrim(deleteUserProductCartDTO.getUserId()))
                 .then()
-                .then(Mono.defer(() -> Mono.just(new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), null))))
-                .switchIfEmpty(Mono.just(new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), null)));
+                .thenReturn(new DataResponse<>(null, Translator.toLocaleVi(SUCCESS), null));
     }
 
     private Mono<DataResponse<PageCart>> getListProductCartItemDTO(

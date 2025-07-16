@@ -1,12 +1,27 @@
 # application config
 server:
   port: 8081
+---
 timezone:
   default: GMT+7
 logging:
   level:
     org.quartz: DEBUG
-
+---
+#spring cloud consul config
+spring:
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        prefer-ip-address: true
+        instance-id: ${spring.application.name}-${random.uuid}
+        health-check-path: /actuator/health
+        health-check-interval: 10s
+        service-name: ${spring.application.name}
+        register-health-check: true
+---
 #spring configuration
 spring:
   application:
@@ -88,7 +103,7 @@ spring:
   #jackson config
   jackson:
     time-zone: GMT+7
-
+---
 # quartz
 distributed:
   jackson:
@@ -97,7 +112,7 @@ distributed:
 jhipster:
   clientApp:
     name: trigger-service
-
+---
 #keycloak client config
 keycloak:
   clientId: ezbuy-client
@@ -106,7 +121,7 @@ keycloak:
   serverUrl: http://localhost:8080
   grantType: password
   host: localhost
-
+---
 # config cron-job here. Name is unix
 cron-job:
   profiles:
@@ -142,7 +157,7 @@ cron-job:
       cron-job: 0 */1 * * * ?
     - name: INSERT_VOUCHER
       cron-job: 0 */1 * * * ?
-
+---
 #config client here
 client:
   product:
@@ -159,17 +174,8 @@ client:
     name: settingClient
 expired:
   minutes: 30
-
-#eureka-service config
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      default-zone: http://localhost:8761/eureka
-
+---
+#health check configuration
 management:
   endpoints:
     web:

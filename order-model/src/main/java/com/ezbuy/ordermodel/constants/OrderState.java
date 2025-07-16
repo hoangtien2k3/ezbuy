@@ -1,18 +1,17 @@
 package com.ezbuy.ordermodel.constants;
 
+import lombok.Getter;
+
+@Getter
 public enum OrderState {
     NEW(0),
     IN_PROGRESS(1),
     COMPLETED(3),
     REJECTED(4);
 
-    int value;
+    final int value;
 
     OrderState(int value) {
         this.value = value;
-    }
-
-    public int getValue() {
-        return value;
     }
 }

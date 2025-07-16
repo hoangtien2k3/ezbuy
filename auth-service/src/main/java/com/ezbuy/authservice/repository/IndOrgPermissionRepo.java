@@ -8,61 +8,64 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface IndOrgPermissionRepo extends R2dbcRepository<PermissionPolicy, String> {
-    @Query(
-            value = "select pp.id as id, pp.type as type, pp.policy_id as policy_id\n"
-                    + "from individual_organization_permissions iop\n" + "         left join permission_policy pp\n"
-                    + "                   on iop.id = pp.individual_organization_permissions_id\n"
-                    + "         join individual i on i.id = iop.individual_id\n"
-                    + "where iop.organization_id = :orgId\n"
-                    + "  and i.user_id = :userId\n" + "  and iop.status = 1\n" + "  and pp.status = 1\n"
-                    + "  and i.status = 1")
+    @Query("""
+            SELECT pp.id AS id,
+                   pp.type AS type,
+                   pp.policy_id AS policy_id
+            FROM individual_organization_permissions iop
+                     LEFT JOIN permission_policy pp
+                               ON iop.id = pp.individual_organization_permissions_id
+                     JOIN individual i ON i.id = iop.individual_id
+            WHERE iop.organization_id = :orgId
+              AND i.user_id = :userId
+              AND iop.status = 1
+              AND pp.status = 1
+              AND i.status = 1
+            """)
     Flux<PermissionPolicy> getAllByUserId(String orgId, String userId);
 
-    @Query(
-            value = "select count(distinct (iop.organization_id))\n" + "from individual_organization_permissions iop\n"
-                    + "         inner join individual i on i.id = iop.individual_id\n" + "where i.status = 1\n"
-                    + "  and iop.status = 1\n" + "  and i.user_id = :userId")
+    @Query("""
+            SELECT COUNT(DISTINCT iop.organization_id)
+            FROM individual_organization_permissions iop
+                     INNER JOIN individual i ON i.id = iop.individual_id
+            WHERE i.status = 1
+              AND iop.status = 1
+              AND i.user_id = :userId
+            """)
     Mono<Integer> getOrgIds(String userId);
 
-    /**
-     * get orgId, indId, userId
-     *
-     * @param offset
-     *            number of offset
-     * @param limit
-     *            limit of moi offset
-     * @return
-     */
-    @Query(
-            value = "select organization_id org_id, individual_id individual_id, user_id\n"
-                    + "from individual_unit_position iup\n" + "         join individual i on iup.individual_id = i.id\n"
-                    + "where user_id in (select id from sme_keycloak.USER_ENTITY)\n"
-                    + "and i.status = 1 and iup.status = 1\n"
-                    + "group by individual_id, i.create_at\n" + "order by i.create_at\n"
-                    + "limit :limit offset :offset")
+    @Query("""
+            SELECT organization_id AS org_id,
+                   individual_id AS individual_id,
+                   user_id
+            FROM individual_unit_position iup
+                     JOIN individual i ON iup.individual_id = i.id
+            WHERE user_id IN (SELECT id FROM USER_ENTITY)
+              AND i.status = 1
+              AND iup.status = 1
+            GROUP BY individual_id, i.create_at
+            ORDER BY i.create_at
+            LIMIT :limit OFFSET :offset
+            """)
     Flux<OrgIndIdDTO> getOrgIndId(Integer offset, Integer limit);
 
-    /**
-     * Check exist in HUB
-     *
-     * @param individualId
-     *            id of individual
-     * @param keycloakName
-     *            name of role or group in keycloak
-     * @param clientId
-     *            id of dich vu
-     * @param policyId
-     *            policyId in keycloak
-     * @param type
-     *            type of policy (role, group)
-     * @return
-     */
-    @Query(
-            value =
-                    "select exists(select * from individual_organization_permissions iop\n"
-                            + "join permission_policy pp on iop.id = pp.individual_organization_permissions_id\n"
-                            + "where individual_id = :individualId and keycloak_name = :keycloakName and client_id = :clientId and policy_id = :policyId\n"
-                            + "and organization_id = :orgId and keycloak_id = :keycloakId and type = :type and iop.status = 1 and pp.status = 1)")
+    @Query("""
+            SELECT EXISTS(
+                SELECT *
+                FROM individual_organization_permissions iop
+                         JOIN permission_policy pp
+                           ON iop.id = pp.individual_organization_permissions_id
+                WHERE individual_id = :individualId
+                  AND keycloak_name = :keycloakName
+                  AND client_id = :clientId
+                  AND policy_id = :policyId
+                  AND organization_id = :orgId
+                  AND keycloak_id = :keycloakId
+                  AND type = :type
+                  AND iop.status = 1
+                  AND pp.status = 1
+            )
+            """)
     Mono<Boolean> checkExistRoleInHub(
             String individualId,
             String keycloakName,
@@ -72,31 +75,27 @@ public interface IndOrgPermissionRepo extends R2dbcRepository<PermissionPolicy, 
             String orgId,
             String keycloakId);
 
-    /**
-     * get orgId, indId, userId by username
-     *
-     * @param username
-     *            username
-     * @return
-     */
-    @Query(
-            value = "select organization_id org_id, individual_id individual_id, user_id\n"
-                    + "from individual_unit_position iup\n" + "         join individual i on iup.individual_id = i.id\n"
-                    + "where i.username = :username\n" + "and i.status = 1 and iup.status = 1\n"
-                    + "group by individual_id, i.create_at\n" + "order by i.create_at")
+    @Query("""
+            SELECT organization_id AS org_id,
+                   individual_id AS individual_id,
+                   user_id
+            FROM individual_unit_position iup
+                     JOIN individual i ON iup.individual_id = i.id
+            WHERE i.username = :username
+              AND i.status = 1
+              AND iup.status = 1
+            GROUP BY individual_id, i.create_at
+            ORDER BY i.create_at
+            """)
     Flux<OrgIndIdDTO> getOrgIndIdByUsername(String username);
 
-    /**
-     * Get id of individual_organization_permissions if exist
-     *
-     * @param clientId
-     *            id of dich vu
-     * @param individualId
-     *            id of user
-     * @return
-     */
-    @Query(
-            value = "select id from individual_organization_permissions\n" + "where client_id = :clientId\n"
-                    + "and status = 1\n" + "and individual_id = :individualId\n" + "limit 1")
+    @Query("""
+            SELECT id
+            FROM individual_organization_permissions
+            WHERE client_id = :clientId
+              AND status = 1
+              AND individual_id = :individualId
+            LIMIT 1
+            """)
     Flux<String> getIndOrgPerIdByClientIdAndIndId(String clientId, String individualId);
 }

@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetProductInfoRequest {
-    private String type; // loai khach hang
-    private List<String> ids; // danh sach id
-    private UUID organizationId; // id to chuc
-    private Integer offset; // vi tri phan trang
-    private Integer limit; // tong so ban ghi lay ra
-    private String transactionId; // transId cua ban tin request
+    private String type;
+    private List<String> ids;
+    private UUID organizationId;
+    private Integer offset;
+    private Integer limit;
+    private String transactionId;
 }

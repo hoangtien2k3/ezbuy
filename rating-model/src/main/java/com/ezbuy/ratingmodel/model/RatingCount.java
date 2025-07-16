@@ -15,9 +15,9 @@ import org.springframework.data.relational.core.mapping.Table;
 @Builder
 @Table(name = "rating_count")
 public class RatingCount implements Persistable<String> {
+
     @Id
     private String id;
-
     private String ratingTypeCode;
     private String targetId;
     private Long numberRate;

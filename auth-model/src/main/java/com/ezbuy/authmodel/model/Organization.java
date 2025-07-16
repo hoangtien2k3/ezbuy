@@ -2,18 +2,18 @@ package com.ezbuy.authmodel.model;
 
 import com.ezbuy.authmodel.model.base.EntityBase;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table(name = "organization")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @SuperBuilder
+@Table(name = "organization")
 public class Organization extends EntityBase {
 
     @Id

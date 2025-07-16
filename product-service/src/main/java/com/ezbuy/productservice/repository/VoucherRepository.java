@@ -3,8 +3,10 @@ package com.ezbuy.productservice.repository;
 import com.ezbuy.productmodel.dto.GetVoucherDTO;
 import com.ezbuy.productmodel.model.Voucher;
 import com.ezbuy.productmodel.model.VoucherType;
+
 import java.time.LocalDateTime;
 import java.util.List;
+
 import org.springframework.data.r2dbc.repository.Modifying;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
@@ -12,73 +14,131 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface VoucherRepository extends R2dbcRepository<Voucher, String> {
-
     Mono<Voucher> findFirstById(String id);
 
-    @Query("select * from voucher " + "JOIN voucher_type vt on voucher.voucher_type_id = vt.id "
-            + "JOIN voucher_batch vb on voucher.batch_id = vb.id " + "where voucher.code=:code "
-            + "and vt.id=:voucherTypeId " + "and vb.id=:batchId")
+    @Query("""
+            SELECT * FROM voucher
+            JOIN voucher_type vt ON voucher.voucher_type_id = vt.id
+            JOIN voucher_batch vb ON voucher.batch_id = vb.id
+            WHERE voucher.code = :code
+              AND vt.id = :voucherTypeId
+              AND vb.id = :batchId
+            """)
     Mono<Voucher> getVoucher(String code, String batchId, String voucherTypeId);
 
-    @Query(
-            "select v.code, vt.condition_use, vt.description, vu.create_date, vu.expired_date, vt.code as voucherTypeCode "
-                    + "from voucher v " + "         JOIN voucher_use vu on v.id = vu.voucher_id "
-                    + "         Join voucher_type vt on vt.id = v.voucher_type_id " + "where vu.state = 'active' "
-                    + "  and vu.user_id = :userId "
-                    + "  and (('') in (:voucherTypeCodeList) or UPPER(vt.code) in (:voucherTypeCodeListDuplicate)) "
-                    + "  and vt.status = 1")
+    @Query("""
+            SELECT v.code, vt.condition_use, vt.description, vu.create_date, vu.expired_date, vt.code AS voucherTypeCode
+            FROM voucher v
+            JOIN voucher_use vu ON v.id = vu.voucher_id
+            JOIN voucher_type vt ON vt.id = v.voucher_type_id
+            WHERE vu.state = 'active'
+              AND vu.user_id = :userId
+              AND ('' IN (:voucherTypeCodeList) OR UPPER(vt.code) IN (:voucherTypeCodeListDuplicate))
+              AND vt.status = 1
+            """)
     Flux<GetVoucherDTO> getLstVoucherManager(
-            String userId, List<String> voucherTypeCodeList, List<String> voucherTypeCodeListDuplicate);
+            String userId,
+            List<String> voucherTypeCodeList,
+            List<String> voucherTypeCodeListDuplicate
+    );
 
-    @Query("select CURRENT_TIMESTAMP")
+    @Query("SELECT CURRENT_TIMESTAMP")
     Mono<LocalDateTime> getSysDate();
 
-    @Query("select * from voucher where voucher_type_id = :voucherTypeId")
+    @Query("SELECT * FROM voucher WHERE voucher_type_id = :voucherTypeId")
     Mono<Voucher> findVoucherByVoucherTypeId(String voucherTypeId);
 
-    @Query("select * from voucher where id = :voucherId")
+    @Query("SELECT * FROM voucher WHERE id = :voucherId")
     Mono<Voucher> findVoucherByVoucherId(String voucherId);
 
-    @Query("select * from voucher_type where status = 1")
+    @Query("SELECT * FROM voucher_type WHERE status = 1")
     Flux<VoucherType> findAllVoucherTypeActive();
 
-    @Query(
-            "select v.* from voucher_type vt inner join voucher v on v.voucher_type_id = vt.id  where vt.code = :code and v.state = 'new' and vt.status = 1 and (v.expired_date > NOW() || v.expired_date IS NULL) limit 1 for update")
+    @Query("""
+            SELECT v.* FROM voucher_type vt
+            INNER JOIN voucher v ON v.voucher_type_id = vt.id
+            WHERE vt.code = :code
+              AND v.state = 'new'
+              AND vt.status = 1
+              AND (v.expired_date > NOW() OR v.expired_date IS NULL)
+            LIMIT 1 FOR UPDATE
+            """)
     Mono<Voucher> findVoucherNewByVoucherTypeCode(String code);
 
-    @Query("select * from voucher where id in (:voucherIdList) and state = :state")
+    @Query("SELECT * FROM voucher WHERE id IN (:voucherIdList) AND state = :state")
     Flux<Voucher> findVoucherByVoucherIdListAndState(List<String> voucherIdList, String state);
 
-    @Query(
-            "select * from voucher where code = :code and state = :state and (expired_date >= NOW() || expired_date IS NULL) ")
+    @Query("""
+            SELECT * FROM voucher
+            WHERE code = :code
+              AND state = :state
+              AND (expired_date >= NOW() OR expired_date IS NULL)
+            """)
     Flux<Voucher> findVoucherByVoucherCodeAndState(String code, String state);
 
-    @Query("select * from voucher where code = :code")
+    @Query("SELECT * FROM voucher WHERE code = :code")
     Mono<Voucher> findVoucherByVoucherCode(String code);
 
     @Modifying
-    @Query(
-            value = "update voucher " + "set " + "state = :state, " + "update_at = :updateAt, "
-                    + "update_by = :updateBy " + "where id = :id " + "and state = :prevState")
+    @Query("""
+            UPDATE voucher
+            SET state = :state,
+                update_at = :updateAt,
+                update_by = :updateBy
+            WHERE id = :id
+              AND state = :prevState
+            """)
     Mono<Long> updateVoucherStateByPreviousState(
-            String state, LocalDateTime updateAt, String updateBy, String prevState, String id);
+            String state,
+            LocalDateTime updateAt,
+            String updateBy,
+            String prevState,
+            String id
+    );
 
-    @Query("select v.*  " + "from voucher_use vu " + "inner join voucher v on vu.voucher_id = v.id "
-            + "where NOW() > DATE_ADD(vu.create_at, INTERVAL :minute MINUTE) "
-            + "and v.state = 'locked' and vu.state = 'preActive'")
+    @Query("""
+            SELECT v.*
+            FROM voucher_use vu
+            INNER JOIN voucher v ON vu.voucher_id = v.id
+            WHERE NOW() > DATE_ADD(vu.create_at, INTERVAL :minute MINUTE)
+              AND v.state = 'locked'
+              AND vu.state = 'preActive'
+            """)
     Flux<Voucher> getAllExpiredVoucher(Integer minute);
 
-    @Query("select * from voucher where voucher_type_id = :voucherTypeId and state = 'new' limit 1")
+    @Query("""
+            SELECT * FROM voucher
+            WHERE voucher_type_id = :voucherTypeId
+              AND state = 'new'
+            LIMIT 1
+            """)
     Flux<Voucher> findVoucherUnused(String voucherTypeId);
 
-    @Query(
-            "select v.* from voucher_type vt inner join voucher v on v.voucher_type_id = vt.id  where vt.code = :code and v.state = 'new' and vt.status = 1 and (v.expired_date > NOW() || v.expired_date IS NULL) limit 1 for update")
+    @Query("""
+            SELECT v.* FROM voucher_type vt
+            INNER JOIN voucher v ON v.voucher_type_id = vt.id
+            WHERE vt.code = :code
+              AND v.state = 'new'
+              AND vt.status = 1
+              AND (v.expired_date > NOW() OR v.expired_date IS NULL)
+            LIMIT 1 FOR UPDATE
+            """)
     Flux<Voucher> findAllVoucherNewByVoucherTypeCode(String code);
 
     @Modifying
-    @Query(
-            value = "update voucher " + "set " + "state = :state, " + "update_at = :updateAt, "
-                    + "update_by = :updateBy " + "where id in (:id) " + "and state = :prevState")
+    @Query("""
+            UPDATE voucher
+            SET state = :state,
+                update_at = :updateAt,
+                update_by = :updateBy
+            WHERE id IN (:id)
+              AND state = :prevState
+            """)
     Mono<Long> updateAllVoucherStateByPreviousState(
-            String state, LocalDateTime updateAt, String updateBy, String prevState, List<String> id);
+            String state,
+            LocalDateTime updateAt,
+            String updateBy,
+            String prevState,
+            List<String> id
+    );
 }

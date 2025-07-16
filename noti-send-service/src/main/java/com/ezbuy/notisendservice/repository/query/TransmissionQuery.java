@@ -2,52 +2,52 @@ package com.ezbuy.notisendservice.repository.query;
 
 public interface TransmissionQuery {
     String GET_TRANSMISSIONS_TO_SEND_MAIL = """
-              SELECT 
-                tr.id, 
-                tr.receiver, 
-                tr.email, 
-                no.sender, 
-                ch.type, 
-                noc.title, 
-                noc.sub_title, 
-                noc.template_mail, 
-                noc.external_data 
-              FROM 
-                transmission tr 
-                INNER JOIN channel ch ON tr.channel_id = ch.id 
-                INNER JOIN notification no ON tr.notification_id = no.id 
-                INNER JOIN notification_content noc ON no.notification_content_id = noc.id 
-              WHERE 
-                tr.state IN ('PENDING', 'FAILED') 
-                AND (no.expect_send_time IS NULL OR now() > no.expect_send_time) 
-                AND tr.resend_count <= :resendCount 
-                AND ch.type IN ('EMAIL', 'REST') 
-                AND tr.status = 1 
-                AND no.status = 1 
-                AND ch.status = 1 
-              LIMIT :limit 
+              SELECT
+                tr.id,
+                tr.receiver,
+                tr.email,
+                no.sender,
+                ch.type,
+                noc.title,
+                noc.sub_title,
+                noc.template_mail,
+                noc.external_data
+              FROM
+                transmission tr
+                INNER JOIN channel ch ON tr.channel_id = ch.id
+                INNER JOIN notification no ON tr.notification_id = no.id
+                INNER JOIN notification_content noc ON no.notification_content_id = noc.id
+              WHERE
+                tr.state IN ('PENDING', 'FAILED')
+                AND (no.expect_send_time IS NULL OR now() > no.expect_send_time)
+                AND tr.resend_count <= :resendCount
+                AND ch.type IN ('EMAIL', 'REST')
+                AND tr.status = 1
+                AND no.status = 1
+                AND ch.status = 1
+              LIMIT :limit
               FOR UPDATE SKIP LOCKED;
             """;
 
     String UPDATE_TRANSMISSION_REST_STATE = """
-              UPDATE 
-                transmission 
-              SET 
-                state = 'NEW', 
-                update_at = now(), 
-                update_by = 'system' 
-              WHERE 
+              UPDATE
+                transmission
+              SET
+                state = 'NEW',
+                update_at = now(),
+                update_by = 'system'
+              WHERE
                 id IN (:transmissionIds);
             """;
 
     String UPDATE_TRANSMISSION_EMAIL_STATE = """
-              UPDATE 
-                transmission 
-              SET 
-                state = 'SENT', 
-                update_at = now(), 
-                update_by = 'system' 
-              WHERE 
+              UPDATE
+                transmission
+              SET
+                state = 'SENT',
+                update_at = now(),
+                update_by = 'system'
+              WHERE
                 id IN (:transmissionIds);
             """;
 

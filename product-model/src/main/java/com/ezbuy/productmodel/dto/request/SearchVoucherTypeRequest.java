@@ -10,22 +10,22 @@ import org.springframework.format.annotation.DateTimeFormat;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SearchVoucherTypeRequest {
-    private String sort; // sort theo truong nao
-    private Integer pageIndex; // phan trang pageIndex
-    private Integer pageSize; // phan trang pageSize
-    private String code; // ma voucher type
-    private String name; // ten voucher type
-    private Integer priorityLevel; // do uu tien
-    private String description; // mo ta chi tiet
-    private String actionType; // loai khuyen mai
-    private String actionValue; // gia tri
+    private String sort;
+    private Integer pageIndex;
+    private Integer pageSize;
+    private String code;
+    private String name;
+    private Integer priorityLevel;
+    private String description;
+    private String actionType;
+    private String actionValue;
 
     @DateTimeFormat(pattern = "dd-MM-yyyy")
-    private LocalDate createFromDate; // tu ngay tao
+    private LocalDate createFromDate;
 
     @DateTimeFormat(pattern = "dd-MM-yyyy")
-    private LocalDate createToDate; // den ngay tao
+    private LocalDate createToDate;
 
-    private String state; // trang thai vat ly
-    private Integer status; // trang thai
+    private String state;
+    private Integer status;
 }

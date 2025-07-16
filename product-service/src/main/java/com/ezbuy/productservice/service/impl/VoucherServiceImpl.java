@@ -165,12 +165,9 @@ public class VoucherServiceImpl extends BaseServiceHandler implements VoucherSer
         if (request.getState().length() > 20) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher.error.state.length"));
         }
-        // check exist code in db
         return voucherRepository
                 .getVoucher(request.getCode(), request.getBatchId(), request.getVoucherTypeId())
                 .flatMap(voucher -> {
-                    // neu isCreate = true thi bao trung ma voucher con = false (tuc la cap nhat)
-                    // thi cho di tiep
                     if (isCreate) {
                         return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "voucher.code.exist"));
                     } else {
@@ -264,14 +261,8 @@ public class VoucherServiceImpl extends BaseServiceHandler implements VoucherSer
     @Override
     @Transactional
     public Mono<DataResponse<String>> unlockVoucher(UnlockVoucherRequest unlockVoucherRequest) {
-        // lay danh sach voucher va voucher use het han
-        return Mono.zip(
-                        voucherUseRepository
-                                .getAllExpiredVoucherUse(unlockVoucherRequest.getExpiredMinutes())
-                                .collectList(),
-                        voucherRepository
-                                .getAllExpiredVoucher(unlockVoucherRequest.getExpiredMinutes())
-                                .collectList(),
+        return Mono.zip(voucherUseRepository.getAllExpiredVoucherUse(unlockVoucherRequest.getExpiredMinutes()).collectList(),
+                        voucherRepository.getAllExpiredVoucher(unlockVoucherRequest.getExpiredMinutes()).collectList(),
                         voucherRepository.getSysDate())
                 .flatMap(voucherUseListSysDate -> {
                     List<VoucherUse> voucherUseList = voucherUseListSysDate.getT1();
@@ -326,10 +317,8 @@ public class VoucherServiceImpl extends BaseServiceHandler implements VoucherSer
                     CommonErrorCode.INVALID_PARAMS, Translator.toLocale("voucher.error.voucher.type.id.empty")));
         }
         // lay thong tin voucher batch va check voucher chua su dung
-        return Mono.zip(
-                        voucherRepository.findVoucherUnused(voucherTypeId).collectList(),
-                        voucherBatchRepository
-                                .findFirstById(voucherBatchId)
+        return Mono.zip(voucherRepository.findVoucherUnused(voucherTypeId).collectList(),
+                        voucherBatchRepository.findFirstById(voucherBatchId)
                                 .switchIfEmpty(Mono.error(new BusinessException(
                                         CommonErrorCode.INVALID_PARAMS, Translator.toLocale("voucher.batch.found")))),
                         voucherTypeRepository
@@ -394,12 +383,10 @@ public class VoucherServiceImpl extends BaseServiceHandler implements VoucherSer
     private Set<String> generateUniqueCodes(
             String voucherTypeCode, String voucherBatchCode, int numberOfCodes, int codeLength) {
         Set<String> uniqueCodes = new HashSet<>();
-
         while (uniqueCodes.size() < numberOfCodes) {
             String code = generateRandomCode(voucherTypeCode, voucherBatchCode, codeLength);
             uniqueCodes.add(code);
         }
-
         return uniqueCodes;
     }
 

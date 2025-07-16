@@ -6,17 +6,7 @@ logging:
     reactor.netty.http.client: DEBUG
     org.springframework.web: INFO
 ---
-#eureka-service config
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      default-zone: ${DISCOVERY_URL:http://localhost:8761}/eureka
----
-# Enable Actuator endpoints
+#health check
 management:
   endpoints:
     web:
@@ -38,6 +28,9 @@ spring:
 
     gateway:
       globalcors:
+        httpclient:
+          connect-timeout: 50000
+          response-timeout: 10s
         cors-configurations:
           '[/**]': # Apply CORS rules globally for all paths
             allowed-origin-patterns:
@@ -48,11 +41,10 @@ spring:
               - PUT
               - DELETE
               - OPTIONS
+              - PATCH
+              - HEAD
             allowed-headers: "*"
             allow-credentials: true
-            httpclient:
-              connect-timeout: 50000
-              response-timeout: 10s
       discovery:
         locator:
           enabled: true

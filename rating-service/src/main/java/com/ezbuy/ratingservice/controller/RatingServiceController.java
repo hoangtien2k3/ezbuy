@@ -18,12 +18,6 @@ public class RatingServiceController {
 
     private final RatingService ratingService;
 
-    /**
-     * Ham lay danh sach danh gia theo dich vu
-     *
-     * @param serviceAlias
-     * @return
-     */
     @GetMapping()
     public Mono<DataResponse<RatingServiceResponse>> getRatingService(
             @RequestParam("service_alias") String serviceAlias) {
@@ -33,6 +27,6 @@ public class RatingServiceController {
     @GetMapping(value = UrlPaths.Rating.GET_RATTING_SERVICE_PAGING)
     public Mono<DataResponse<RatingServiceResponse>> getRatingByServicePaging(
             @ModelAttribute SearchRatingRequest request) {
-        return ratingService.getRatingServicePaging(request).map(rs -> new DataResponse("success", rs));
+        return ratingService.getRatingServicePaging(request);
     }
 }

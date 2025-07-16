@@ -124,12 +124,12 @@ public class RatingCountServiceImpl extends BaseServiceHandler implements Rating
                                 CommonErrorCode.NOT_FOUND, Translator.toLocaleVi("read.value.detail.error")));
                     }
                 })
-                .switchIfEmpty(createRatingCount(MAX_RATING, ratingPoint, ratingTypeCode, targetId));
+                .switchIfEmpty(createRatingCount(ratingPoint, ratingTypeCode, targetId));
     }
 
-    private Mono<RatingCount> createRatingCount(Long maxRating, Long rating, String ratingTypeCode, String targetId) {
+    private Mono<RatingCount> createRatingCount(Long rating, String ratingTypeCode, String targetId) {
         List<RatingDetailDTO> listRatingDetail = new ArrayList<>();
-        for (int i = 1; i <= maxRating; i++) {
+        for (int i = 1; i <= RatingCountServiceImpl.MAX_RATING; i++) {
             RatingDetailDTO ratingDetailDTO = new RatingDetailDTO();
             ratingDetailDTO.setRating((long) i);
             if (i == rating) {
@@ -143,7 +143,7 @@ public class RatingCountServiceImpl extends BaseServiceHandler implements Rating
         RatingCount ratingCount = RatingCount.builder()
                 .rating(DataUtil.safeToFloat(rating))
                 .detail(detail)
-                .maxRating(maxRating)
+                .maxRating(RatingCountServiceImpl.MAX_RATING)
                 .ratingTypeCode(ratingTypeCode)
                 .targetId(targetId)
                 .numberRate(1L)

@@ -2,7 +2,7 @@ package com.ezbuy.paymentservice.client.impl;
 
 import com.ezbuy.paymentmodel.dto.request.ProductPriceRequest;
 import com.ezbuy.paymentmodel.dto.request.UpdateOrderStateMyViettelRequest;
-import com.ezbuy.paymentmodel.dto.response.MyViettelDTO;
+import com.ezbuy.paymentmodel.dto.response.MyPaymentDTO;
 import com.ezbuy.paymentservice.client.PaymentClient;
 import com.reactify.client.BaseRestClient;
 import com.reactify.model.response.DataResponse;
@@ -32,7 +32,7 @@ public class PaymentClientImpl implements PaymentClient {
     private final BaseRestClient baseRestClient;
 
     @Override
-    public Mono<Optional<MyViettelDTO>> searchPaymentState(String checkSum, String orderCode, String merchantCode) {
+    public Mono<Optional<MyPaymentDTO>> searchPaymentState(String checkSum, String orderCode, String merchantCode) {
 
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         if (!DataUtil.isNullOrEmpty(checkSum)) {
@@ -45,15 +45,15 @@ public class PaymentClientImpl implements PaymentClient {
             formData.put("merchant_code", Collections.singletonList(merchantCode));
         }
         return baseRestClient
-                .postFormData(paymentClient, "/check-transaction", null, formData, MyViettelDTO.class)
+                .postFormData(paymentClient, "/check-transaction", null, formData, MyPaymentDTO.class)
                 .map(response -> {
-                    Optional<MyViettelDTO> myViettelDTO = (Optional<MyViettelDTO>) response;
+                    Optional<MyPaymentDTO> myViettelDTO = (Optional<MyPaymentDTO>) response;
                     return myViettelDTO;
                 });
     }
 
     @Override
-    public Mono<Optional<MyViettelDTO>> updateOrderStateForMyViettel(UpdateOrderStateMyViettelRequest request) {
+    public Mono<Optional<MyPaymentDTO>> updateOrderStateForMyViettel(UpdateOrderStateMyViettelRequest request) {
 
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         if (!DataUtil.isNullOrEmpty(request.getTransaction_id())) {
@@ -76,9 +76,9 @@ public class PaymentClientImpl implements PaymentClient {
         }
 
         return baseRestClient
-                .postFormData(paymentClient, "/updateOrderStatus", null, formData, MyViettelDTO.class)
+                .postFormData(paymentClient, "/updateOrderStatus", null, formData, MyPaymentDTO.class)
                 .map(response -> {
-                    Optional<MyViettelDTO> myViettelDTO = (Optional<MyViettelDTO>) response;
+                    Optional<MyPaymentDTO> myViettelDTO = (Optional<MyPaymentDTO>) response;
                     return myViettelDTO;
                 });
     }

@@ -1,8 +1,6 @@
 package com.ezbuy.authservice.client.impl;
 
-import static com.ezbuy.authmodel.constants.AuthConstants.OPTION_SET.OPTION_SET_CODE;
-import static com.ezbuy.authmodel.constants.AuthConstants.OPTION_SET.OPTION_SET_VALUE_CODE;
-
+import com.ezbuy.authmodel.constants.AuthConstants;
 import com.ezbuy.authservice.client.SettingClient;
 import com.ezbuy.settingmodel.dto.AreaDTO;
 import com.ezbuy.settingmodel.model.OptionSetValue;
@@ -17,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.ParameterizedTypeReference;
@@ -31,6 +30,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @DependsOn("webClientFactory")
 public class SettingClientImpl implements SettingClient {
+
     @Qualifier("settingClient")
     private final WebClient settingClient;
 
@@ -60,6 +60,7 @@ public class SettingClientImpl implements SettingClient {
                         .build())
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<DataResponse<List<AreaDTO>>>() {
+                    @NotNull
                     @Override
                     public Type getType() {
                         return super.getType();
@@ -89,8 +90,8 @@ public class SettingClientImpl implements SettingClient {
     @Override
     public Mono<Optional<DataResponse>> findOptionSetValueByCode(String optionSetCode, String optionSetValueCode) {
         MultiValueMap<String, String> req = new LinkedMultiValueMap<>();
-        req.add(OPTION_SET_CODE, optionSetCode);
-        req.add(OPTION_SET_VALUE_CODE, optionSetValueCode);
+        req.add(AuthConstants.OPTION_SET.OPTION_SET_CODE, optionSetCode);
+        req.add(AuthConstants.OPTION_SET.OPTION_SET_VALUE_CODE, optionSetValueCode);
         return baseRestClient.get(settingClient, "/v1/option-set", null, req, DataResponse.class);
     }
 
@@ -120,19 +121,16 @@ public class SettingClientImpl implements SettingClient {
                     if (DataUtil.isNullOrEmpty(dataResponse)) {
                         return Mono.just(result);
                     }
-                    Optional<DataResponse> dataResponseOptional = dataResponse;
-                    if (dataResponseOptional.isEmpty()) {
+                    if (dataResponse.isEmpty()) {
                         return Mono.just(new ArrayList<OptionSetValue>());
                     }
-                    String dataJson = DataUtil.parseObjectToString(
-                            dataResponseOptional.get().getData());
-
+                    String dataJson = DataUtil.parseObjectToString(dataResponse.get().getData());
                     List<OptionSetValue> optionSetValues =
                             DataUtil.parseStringToObject(dataJson, new TypeReference<>() {}, result);
                     return Mono.just(optionSetValues);
                 })
                 .onErrorResume(throwable -> {
-                    log.error("call ws setting optionSetValues error: {}", throwable);
+                    log.error("call ws setting optionSetValues error: ", throwable);
                     List<OptionSetValue> result = new ArrayList<>();
                     return Mono.just(result);
                 });

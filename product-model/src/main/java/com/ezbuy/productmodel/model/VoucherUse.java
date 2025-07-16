@@ -21,14 +21,14 @@ public class VoucherUse implements Persistable<String> {
     @Id
     private String id;
 
-    private String voucherId; // id bang voucher
-    private String userId; // id user dang nhap
+    private String voucherId;
+    private String userId;
     private String username;
-    private String systemType; // he thong ap dung voucher
-    private LocalDateTime createDate; // ngay bat dau gan voucher cho user
-    private LocalDateTime expiredDate; // ngay het han sau khi da tinh toan
-    private String state; // preActive, active, inactive, used
-    private String sourceOrderId; // id bang sme_order.order
+    private String systemType;
+    private LocalDateTime createDate;
+    private LocalDateTime expiredDate;
+    private String state;
+    private String sourceOrderId;
     private String createBy;
     private String updateBy;
     private LocalDateTime createAt;

@@ -51,35 +51,41 @@ public class RequestBankingRepositoryTemplateImpl implements RequestBankingRepos
 
     @Override
     public Flux<Object> updateRequestBankingBatch(Map<String, Integer> request) {
-        String updateQuery =
-                "update request_banking set order_state = ?, update_state = ?, update_at = NOW(), update_by = ?"
-                        + " where id = ? and status = 1";
+        String updateQuery = """
+            UPDATE request_banking
+            SET order_state = ?,
+                update_state = ?,
+                update_at = NOW(),
+                update_by = ?
+            WHERE id = ? AND status = 1
+        """;
         return template.getDatabaseClient().inConnectionMany(connection -> {
             Statement statement = connection.createStatement(updateQuery);
             for (String key : request.keySet()) {
-
-                statement
-                        .bind(0, OrderState.COMPLETED.getValue())
+                statement.bind(0, OrderState.COMPLETED.getValue())
                         .bind(1, request.get(key))
                         .bind(2, Constants.Actor.SYSTEM)
                         .bind(3, key)
                         .add();
             }
-
             return Flux.from(statement.execute()).flatMap(rs -> rs.map((row, map) -> row.get("id", String.class)));
         });
     }
 
     @Override
     public Flux<Object> updateRequestBankingBatchForSync(List<RequestBankingSyncDTO> requestBankingSyncDTOList) {
-        String updateQuery =
-                "update request_banking set vt_transaction_id = ?, update_at = NOW(), update_by = ?, state= ?, update_state = ?"
-                        + " where id = ? and status = 1";
+        String updateQuery = """
+            UPDATE request_banking
+            SET order_state = ?,
+                update_state = ?,
+                update_at = NOW(),
+                update_by = ?
+            WHERE id = ? AND status = 1
+        """;
         return template.getDatabaseClient().inConnectionMany(connection -> {
             Statement statement = connection.createStatement(updateQuery);
             requestBankingSyncDTOList.forEach(requestBankingSyncDTO -> {
-                statement
-                        .bind(0, requestBankingSyncDTO.getVtTransactionId())
+                statement.bind(0, requestBankingSyncDTO.getVtTransactionId())
                         .bind(1, Constants.Actor.SYSTEM)
                         .bind(2, requestBankingSyncDTO.getPaymentStatus())
                         .bind(3, requestBankingSyncDTO.getUpdateState())

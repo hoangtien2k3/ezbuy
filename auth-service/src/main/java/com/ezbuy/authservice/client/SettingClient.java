@@ -20,16 +20,8 @@ public interface SettingClient {
 
     Mono<DataResponse<String>> findByCode(String code);
 
-    /**
-     * Ham lay thong tin cau hinh option set value theo option set code
-     *
-     * @param optionSetCode
-     * @param optionSetValueCode
-     * @return
-     */
     Mono<Optional<DataResponse>> findOptionSetValueByCode(String optionSetCode, String optionSetValueCode);
 
-    // lay ra danh sach tien to theo list Alias
     Mono<Optional<DataResponse>> getLstAcronymByAliases(@RequestParam String code, @RequestParam List<String> aliases);
 
     Mono<List<OptionSetValue>> findByOptionSetCode(String optionSetCode);

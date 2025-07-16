@@ -7,13 +7,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table(name = "request_banking")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
+@Table(name = "request_banking")
 public class RequestBanking {
-
     private String id;
     private Integer state;
     private Long totalFee;

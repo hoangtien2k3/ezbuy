@@ -40,7 +40,6 @@ public class OrderFieldConfigServiceImpl implements OrderFieldConfigService {
                     if (DataUtil.isNullOrEmpty(configs)) {
                         return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "config.not.found"));
                     }
-
                     Map<String, String> rsConfigMap = new HashMap<>();
                     for (OrderFieldConfig config : configs) {
                         Map<String, String> configMap =
@@ -52,13 +51,11 @@ public class OrderFieldConfigServiceImpl implements OrderFieldConfigService {
                             if (uncheckPropertySet.contains(key)) {
                                 continue;
                             }
-
                             String value = DataUtil.safeToString(entry.getValue());
                             if (!rsConfigMap.containsKey(key)) {
                                 rsConfigMap.put(key, value);
                                 continue;
                             }
-
                             int currentValue = DataUtil.safeToInt(rsConfigMap.get(key));
                             int newValue = DataUtil.safeToInt(value);
                             if (newValue > currentValue) {
@@ -66,7 +63,6 @@ public class OrderFieldConfigServiceImpl implements OrderFieldConfigService {
                             }
                         }
                     }
-
                     OrderFieldConfigDTO rsConfig =
                             ObjectMapperFactory.getInstance().convertValue(rsConfigMap, OrderFieldConfigDTO.class);
                     return Mono.just(new DataResponse<>("", Translator.toLocale("success"), rsConfig));

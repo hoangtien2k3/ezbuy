@@ -11,5 +11,5 @@ public class RatingServiceResponse {
     private String serviceAlias;
     private List<RatingDetailDTO> listRatingDetail;
     private List<RatingCommentDTO> listRatingComment;
-    private PaginationDTO pagination; // thong tin phan trang
+    private PaginationDTO pagination;
 }

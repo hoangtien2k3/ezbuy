@@ -13,22 +13,22 @@ import org.springframework.format.annotation.DateTimeFormat;
 @AllArgsConstructor
 public class VoucherBatchRequest extends ServiceGroupRequest {
     @DateTimeFormat(pattern = "dd-MM-yyyy")
-    private LocalDate fromDate; // den ngay
+    private LocalDate fromDate;
 
     @DateTimeFormat(pattern = "dd-MM-yyyy")
-    private LocalDate toDate; // tu ngay
+    private LocalDate toDate;
 
     @DateTimeFormat(pattern = "dd-MM-yyyy")
-    private LocalDate fromExpiredDate; // ngay het han
+    private LocalDate fromExpiredDate;
 
     @DateTimeFormat(pattern = "dd-MM-yyyy")
-    private LocalDate toExpiredDate; // den ngay het han
+    private LocalDate toExpiredDate;
 
-    private Integer expiredPeriod; // thoi gian het han
+    private Integer expiredPeriod;
     private String id;
-    private String code; // ma lo voucher
-    private String voucherType; // voucher type
-    private String state; // trang thai
-    private String description; // mo ta
-    private Integer quantity; // so luong voucher trong 1 lo
+    private String code;
+    private String voucherType;
+    private String state;
+    private String description;
+    private Integer quantity;
 }

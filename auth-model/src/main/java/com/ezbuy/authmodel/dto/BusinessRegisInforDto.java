@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BusinessRegisInforDto {
-    private String number; // So dang ki kinh doanh
-    private String taxNo; // ma so thue
-    private String taxDate; // ngay cap
-    private String taxAddress; // noi cap
+    private String number;
+    private String taxNo;
+    private String taxDate;
+    private String taxAddress;
 }

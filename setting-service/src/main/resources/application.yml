@@ -1,6 +1,7 @@
 # server config
 server:
   port: 8082
+---
 #logging-config
 logging:
   pattern:
@@ -11,7 +12,21 @@ logging:
     org.springframework.r2dbc: DEBUG
     io.r2dbc.postgresql.QUERY: DEBUG
     io.r2dbc.postgresql.PARAM: DEBUG
-
+---
+#spring cloud consul config
+spring:
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        prefer-ip-address: true
+        instance-id: ${spring.application.name}-${random.uuid}
+        health-check-path: /actuator/health
+        health-check-interval: 10s
+        service-name: ${spring.application.name}
+        register-health-check: true
+---
 # spring config
 spring:
   application:
@@ -23,20 +38,17 @@ spring:
     basename: messages
   codec:
     max-in-memory-size: 20MB
-
   #r2dbc postgresql
   r2dbc:
     url: r2dbc:postgresql://localhost:5434/setting
     username: admin
     password: admin
-
   data:
     elasticsearch:
       repositories:
         enabled: false
   elasticsearch:
     uris: http://localhost:9200
-
   #security config
   security:
     oauth2:
@@ -54,7 +66,6 @@ spring:
           jwk-set-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/certs
       keycloak:
         client-id: ${keycloak.clientId}
-
   #plugin-config
   plugin:
     config:
@@ -62,7 +73,7 @@ spring:
       readResponseData: true
       logRequest: true
       logResponse: true
-
+---
 # web client config
 client:
   keycloak:
@@ -74,7 +85,7 @@ client:
     pool:
       max-size: 100
       max-pending-acquire: 100
-
+---
 # unauthenticated endpoints config
 application:
   http-logging:
@@ -102,7 +113,7 @@ application:
     - uri: /v1/option-set/**
       methods:
         - GET
-
+---
 #keycloak client config
 keycloak:
   clientId: ezbuy-client
@@ -111,7 +122,7 @@ keycloak:
   serverUrl: http://localhost:8080
   grantType: password
   host: localhost
-
+---
 # minio server config
 minio:
   bucket: ezbuy-bucket
@@ -122,7 +133,7 @@ minio:
   secretKey: Q43tehRDv55Sw67ktA0pQdztEbtQjvinLOk6zwB3
   private:
     bucket: ezbuy-private
-
+---
 #eureka-service config
 eureka:
   instance:
@@ -132,7 +143,8 @@ eureka:
     fetch-registry: true
     service-url:
       default-zone: http://localhost:8761/eureka
-
+---
+#health check config
 management:
   endpoints:
     web:

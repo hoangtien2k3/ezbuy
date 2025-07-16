@@ -1,10 +1,6 @@
 package com.ezbuy.paymentservice.service.impl;
 
-import static com.ezbuy.ordermodel.constants.Constants.RequestBanking.STATE_DONE;
-import static com.ezbuy.ordermodel.constants.Constants.RequestBanking.STATE_FAIL;
-import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
-import static com.reactify.constants.CommonErrorCode.INTERNAL_SERVER_ERROR;
-
+import com.ezbuy.ordermodel.constants.Constants;
 import com.ezbuy.ordermodel.dto.request.SyncOrderStateRequest;
 import com.ezbuy.paymentmodel.constants.OrderState;
 import com.ezbuy.paymentmodel.constants.PaymentConstants;
@@ -29,7 +25,6 @@ import com.ezbuy.paymentservice.service.PaymentService;
 import com.ezbuy.settingmodel.model.OptionSetValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reactify.constants.CommonErrorCode;
-import com.reactify.constants.Constants;
 import com.reactify.exception.BusinessException;
 import com.reactify.factory.ObjectMapperFactory;
 import com.reactify.model.response.DataResponse;
@@ -163,7 +158,7 @@ public class PaymentServiceImpl implements PaymentService {
                         ProductPaymentResponse productPaymentResponse = new ProductPaymentResponse();
                         productPaymentResponse.setCheckoutLink(checkoutLink);
                         productPaymentResponse.setRequestBankingId(id.toString());
-                        return Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), productPaymentResponse));
+                        return Mono.just(new DataResponse<>(Translator.toLocaleVi("success"), productPaymentResponse));
                     });
         });
     }
@@ -218,29 +213,29 @@ public class PaymentServiceImpl implements PaymentService {
                         if (!PaymentConstants.PaymentStatus.STATUS_ACTIVE.equals(request.getPayment_status())) {
                             log.info("payment_status != 1");
                             return AppUtils.insertData(requestBankingRepository.updateRequestBankingById(
-                                            request.getOrder_code(), request.getVt_transaction_id(), STATE_FAIL))
+                                            request.getOrder_code(), request.getVt_transaction_id(), Constants.RequestBanking.STATE_FAIL))
                                     .flatMap(rs -> {
                                         if (Boolean.FALSE.equals(rs)) {
                                             return Mono.error(new BusinessException(
-                                                    INTERNAL_SERVER_ERROR, "request_banking.update.failed"));
+                                                    CommonErrorCode.INTERNAL_SERVER_ERROR, "request_banking.update.failed"));
                                         }
                                         return Mono.just(new DataResponse<>(
-                                                Translator.toLocaleVi(SUCCESS), request.getVt_transaction_id()));
+                                                Translator.toLocaleVi("success"), request.getVt_transaction_id()));
                                     });
                         }
                         return AppUtils.insertData(requestBankingRepository.updateRequestBankingById(
-                                        request.getOrder_code(), request.getVt_transaction_id(), STATE_DONE))
+                                        request.getOrder_code(), request.getVt_transaction_id(), Constants.RequestBanking.STATE_DONE))
                                 .flatMap(rs -> {
                                     if (Boolean.FALSE.equals(rs)) {
                                         return Mono.error(new BusinessException(
-                                                INTERNAL_SERVER_ERROR, "request_banking.update.failed"));
+                                                CommonErrorCode.INTERNAL_SERVER_ERROR, "request_banking.update.failed"));
                                     }
                                     log.info("Before call order-service for updateStateOrder");
                                     // update: updateStatusOrder truyen orderState = request.payment_status
                                     AppUtils.runHiddenStream(orderClient.updateStatusOrder(
                                             requestBanking.getOrderId(), request.getPayment_status()));
                                     return Mono.just(new DataResponse<>(
-                                            Translator.toLocaleVi(SUCCESS), request.getVt_transaction_id()));
+                                            Translator.toLocaleVi("success"), request.getVt_transaction_id()));
                                 });
                     });
         });
@@ -269,7 +264,7 @@ public class PaymentServiceImpl implements PaymentService {
                                         .flatMap(orderIdUpdateStateMap -> {
                                             if (DataUtil.isNullOrEmpty(orderIdUpdateStateMap)) {
                                                 return Mono.error(new BusinessException(
-                                                        INTERNAL_SERVER_ERROR, "order.state.internal"));
+                                                        CommonErrorCode.INTERNAL_SERVER_ERROR, "order.state.internal"));
                                             }
                                             return AppUtils.insertData(requestBankingRepositoryTemplate
                                                     .updateRequestBankingBatch(orderIdUpdateStateMap)
@@ -279,10 +274,10 @@ public class PaymentServiceImpl implements PaymentService {
                                             if (DataUtil.isNullOrEmpty(updateRequestBanking)
                                                     || Boolean.FALSE.equals(updateRequestBanking)) {
                                                 return Mono.error(new BusinessException(
-                                                        INTERNAL_SERVER_ERROR, "order.state.internal"));
+                                                        CommonErrorCode.INTERNAL_SERVER_ERROR, "order.state.internal"));
                                             }
                                             return Mono.just(new DataResponse<>(
-                                                    Translator.toLocaleVi(SUCCESS),
+                                                    Translator.toLocaleVi("success"),
                                                     request.getUpdateOrderStateDTOList()
                                                             .size()));
                                         });
@@ -315,7 +310,7 @@ public class PaymentServiceImpl implements PaymentService {
             var updateOrderState = Flux.fromIterable(requestBankingSyncDTOList)
                     .flatMap(r -> {
                         // update check payment_status = 1 => update status order
-                        if (!DataUtil.safeEqual(r.getPaymentStatus(), SUCCESS)) {
+                        if (!DataUtil.safeEqual(r.getPaymentStatus(), "success")) {
                             return Mono.empty();
                         }
                         return orderClient.updateStatusOrder(r.getOrderCode(), r.getPaymentStatus());
@@ -323,7 +318,7 @@ public class PaymentServiceImpl implements PaymentService {
                     .collectList();
             return Mono.zip(updateRequestBanking, updateOrderState)
                     .flatMap(update -> Mono.just(new DataResponse<>(
-                            Translator.toLocaleVi(SUCCESS), update.getT1().toString())));
+                            Translator.toLocaleVi("success"), update.getT1().toString())));
         });
     }
 
@@ -389,49 +384,39 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private Mono<Boolean> validatePaymentResultRequest(PaymentResultRequest request) {
-
         log.info("Request recv from Bank {}", request);
         if (DataUtil.isNullOrEmpty(request.getCheck_sum())) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "check_sum.null"));
         }
-
         if (DataUtil.isNullOrEmpty(request.getError_code())) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "error_code.null"));
         }
-
         if (DataUtil.isNullOrEmpty(request.getMerchant_code())) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "merchant_code.null"));
         }
-
         if (DataUtil.isNullOrEmpty(request.getOrder_code())) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order_code.null"));
         }
-
         if (DataUtil.isNullOrEmpty(request.getPayment_status())) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "payment_status.null"));
         }
-
         if (DataUtil.isNullOrEmpty(request.getTrans_amount())) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "trans_amount.null"));
         }
-
         if (DataUtil.isNullOrEmpty(request.getVt_transaction_id())) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "vt_transaction_id.null"));
         }
-
         if (!ERROR_CODE.equals(request.getError_code())) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "error_code.invalid"));
         }
-
         if (request.getTrans_amount() <= 0) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "trans_amount.invalid"));
         }
-
         return Mono.just(true);
     }
 
     private Mono<Boolean> validateUpdateOrderStateRequest(UpdateOrderStateRequest request) {
-        if (request.getUpdateOrderStateDTOList().size() < 1) {
+        if (request.getUpdateOrderStateDTOList().isEmpty()) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.state.request.null"));
         }
         for (UpdateOrderStateDTO updateOrderStateDTO : request.getUpdateOrderStateDTOList()) {
@@ -596,7 +581,7 @@ public class PaymentServiceImpl implements PaymentService {
         try {
             return SecurityUtils.hmac(data, hashCode, paymentProperties.getAlgorithm());
         } catch (SignatureException e) {
-            log.error("Error when create checksum {}", e);
+            log.error("Error when create checksum: ", e);
             throw new RuntimeException(e);
         }
     }

@@ -18,15 +18,8 @@ import org.springframework.data.relational.core.mapping.Table;
 @Table(name = "rating")
 public class Rating extends EntityBase implements Persistable<String> {
 
-    public enum RatingState {
-        wait_approve,
-        approved,
-        wait_approve_fix
-    }
-
     @Id
     private String id;
-
     private String ratingTypeCode;
     private String targetId;
     private String username;

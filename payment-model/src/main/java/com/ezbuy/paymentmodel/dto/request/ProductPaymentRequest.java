@@ -9,12 +9,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductPaymentRequest {
-
     private String orderCode;
     private String cancelUrl;
     private String returnUrl;
     private Long totalFee;
     private String orderType;
-    private String telecomServiceAlias; // alias theo dich vu
+    private String telecomServiceAlias;
     private List<PaymentOrderDetailDTO> lstPaymentOrderDetail;
 }

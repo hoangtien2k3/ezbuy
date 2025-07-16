@@ -15,5 +15,5 @@ public class FilterProductTemplateDTO {
     private String telecomServiceAlias;
     private ApiUtils utils;
     private List<String> listId;
-    private List<String> priceTypes; // danh sach loai gia
+    private List<String> priceTypes;
 }

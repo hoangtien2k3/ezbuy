@@ -1,9 +1,7 @@
 package com.ezbuy.ordermodel.constants;
 
 public class MessageConstant {
-
     public static final String PARAMS_REQUIRED = "param.required";
-    public static final String ORDER_ITEM_INFO_INVALID = "order.item.info.invalid";
     public static final String AUTH_SERVICE_ERROR = "auth.service.error";
     public static final String PARAMS_INVALID = "params.invalid";
     public static final String DURATION_MONTH = "month.string";

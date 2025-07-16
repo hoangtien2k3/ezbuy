@@ -126,17 +126,14 @@ public class ActionLogServiceImpl implements ActionLogService {
             style.setAlignment(HorizontalAlignment.LEFT);
             for (ActionLog actionLog : actionLogList) {
                 Row row = sheet.createRow(rowCount++);
-                writeRow(
-                        row,
-                        centerStyle,
-                        style,
-                        0,
+                writeRow(row, centerStyle, style, 0,
                         Arrays.asList(
                                 String.valueOf(index++),
                                 actionLog.getUsername(),
                                 actionLog.getIp(),
                                 DataUtil.safeToString(ActionLogType.MAP.get(actionLog.getType())),
-                                DataUtil.formatDate(actionLog.getCreateAt(), Constants.DateTimePattern.DMY_HMS, "")));
+                                DataUtil.formatDate(actionLog.getCreateAt(), Constants.DateTimePattern.DMY_HMS, "")
+                        ));
             }
             return workbook;
         } catch (Exception e) {

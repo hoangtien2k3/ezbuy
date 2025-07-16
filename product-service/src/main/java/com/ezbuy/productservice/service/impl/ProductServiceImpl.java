@@ -32,9 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -65,72 +63,56 @@ public class ProductServiceImpl implements ProductService {
     private final AuthClient authClient;
 
     private static final String SYNC_TYPE = "PRODUCT";
-    private static final String ORGANIZATION = "ORGANIZATION";
     private static final String NOT_FOUND = "product.input.notFound";
-    private static final String PRODUCT_ID = "product.organization.id";
-    private static final String PRODUCT = "PRODUCT";
     private static final String COMMON_ERROR = "common.error";
 
     private Mono<Boolean> validateRequestCreateProduct(Product product, boolean isCreate) {
         product.trim();
-        // check code trong
         if (DataUtil.isNullOrEmpty(product.getCode())) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.code.empty"));
         }
-        // check ten trong
         if (DataUtil.isNullOrEmpty(product.getName())) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.name.empty"));
         }
-        // check Thue GTGT trong
         if (DataUtil.isNullOrEmpty(product.getTaxRatio())) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.tax.ratio.empty"));
         }
-        // check max length code 15 ky tu
         if (product.getCode().length() > 15) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.code.length"));
         }
-        // check max length ten 500 ky tu
         if (product.getName().length() > 500) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.name.length"));
         }
-        // check max length don vi tinh 150 ky tu
         if (!DataUtil.isNullOrEmpty(product.getUnit()) && product.getUnit().length() > 150) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.unit.length"));
         }
-        // check gia tri don gia nhap
         if (product.getPriceImport() != null
                 && (product.getPriceImport() < 0D || product.getPriceImport() >= 10000000000D)) {
             return Mono.error(
                     new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.price.import.invalid"));
         }
-        // check gia tri don gia ban
         if (product.getPriceExport() != null
                 && (product.getPriceExport() < 0D || product.getPriceExport() >= 10000000000D)) {
             return Mono.error(
                     new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.price.export.invalid"));
         }
-        // check gia tri chiet khau
         if (product.getDiscount() != null && (product.getDiscount() < 0D || product.getDiscount() >= 10000000000D)) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.discount.invalid"));
         }
-        // check gia tri Thue GTGT hop le
         if (!TAX_RATIO_LIST.contains(product.getTaxRatio())) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.tax.ratio.invalid"));
         }
-        // check gia tri Ti le & theo doanh thu hop le
         if (!DataUtil.isNullOrEmpty(product.getRevenueRatio())
                 && !REVENUE_RATIO_LIST.contains(DataUtil.safeToString(product.getRevenueRatio()))) {
             return Mono.error(
                     new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.revenue.ratio.invalid"));
         }
-        // check chiet khau khong duoc < don gia ban
         if (!DataUtil.isNullOrEmpty(product.getPriceExport())
                 && !DataUtil.isNullOrEmpty(product.getDiscount())
                 && product.getPriceExport() < product.getDiscount()) {
             return Mono.error(new BusinessException(
                     CommonErrorCode.INVALID_PARAMS, "product.error.price.export.smaller.than.discount"));
         }
-        // check ma hang hoa da ton tai
         return productRepository
                 .findFirstByCode(product.getCode())
                 .switchIfEmpty(Mono.just(new Product()))
@@ -170,28 +152,13 @@ public class ProductServiceImpl implements ProductService {
                         .build()));
     }
 
-    private CreateSyncHistoryRequest createSyncHistory(String action, String organizationId, Optional<String> opIdNo) {
-        CreateSyncHistoryRequest request = new CreateSyncHistoryRequest();
-        request.setOrgId(organizationId);
-        request.setIdNo(opIdNo.isEmpty() ? null : opIdNo.get());
-        request.setAction(action);
-        request.setServiceType("ALL_BY_ORG");
-        request.setSyncType("ALL");
-        request.setObjectType(PRODUCT);
-        return request;
-    }
-
     @Override
-    @Transactional
     public Mono<DataResponse<Product>> handleCreateProduct(
             Product product, List<OrganizationUnit> unitList, String organizationId) {
         return Mono.zip(SecurityUtils.getCurrentUser(), validateRequestCreateProduct(product, true))
                 .flatMap(userValidate -> {
                     String username = userValidate.getT1().getUsername();
-                    // lay don vi dau tien
-                    String unitName =
-                            !DataUtil.isNullOrEmpty(unitList) ? unitList.get(0).getName() : StringUtils.EMPTY;
-                    // set data insert
+                    String unitName = !DataUtil.isNullOrEmpty(unitList) ? unitList.getFirst().getName() : StringUtils.EMPTY;
                     product.setId(UUID.randomUUID().toString());
                     product.setNew(true);
                     product.setLockStatus(LOCK_STATUS_UNLOCK);
@@ -245,14 +212,12 @@ public class ProductServiceImpl implements ProductService {
     public Mono<ResponseEntity<byte[]>> downloadImportResult(List<ProductImportDTO> items) {
         try {
             Resource resource = new ClassPathResource(IMPORT_PRODUCT_RESULT_TEMPLATE_PATH);
-            String fileName = IMPORT_PRODUCT_RESULT_TEMPLATE_NAME;
             // Process the Excel data and modify it if needed
             try (Workbook workbook = WorkbookFactory.create(resource.getInputStream())) {
                 Sheet sheet = workbook.getSheetAt(0);
                 Row row = sheet.getRow(2);
                 row.getCell(9).setCellValue("Kết quả");
                 row.getCell(10).setCellValue("Chi tiết lỗi");
-                // ... Process the data and modify the sheet if needed
                 for (var i = 0; i < items.size(); i++) {
                     var item = items.get(i);
                     buildRowWithProduct(sheet, i, item);
@@ -265,7 +230,7 @@ public class ProductServiceImpl implements ProductService {
                 byte[] byteArray = outputStream.toByteArray();
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-                headers.setContentDispositionFormData("attachment", fileName);
+                headers.setContentDispositionFormData("attachment", IMPORT_PRODUCT_RESULT_TEMPLATE_NAME);
                 return Mono.just(new ResponseEntity<>(byteArray, headers, HttpStatus.OK));
             }
         } catch (Exception e) {
@@ -298,20 +263,20 @@ public class ProductServiceImpl implements ProductService {
                         .orElse(StringUtils.EMPTY));
         // Ket qua
         row.createCell(9)
-                .setCellValue(Optional.ofNullable(item.isResult())
+                .setCellValue(Optional.of(item.isResult())
                         .map(x -> x.equals(true) ? Translator.toLocaleVi(SUCCESS) : Translator.toLocaleVi(FAIL))
                         .orElse(StringUtils.EMPTY));
         row.createCell(10)
-                .setCellValue(Optional.ofNullable(item.isResult())
-                        .map(x -> x.equals(true) ? StringUtils.EMPTY : item.getErrMsg())
-                        .orElse(StringUtils.EMPTY));
+                .setCellValue(Optional.of(item.isResult()).filter(x -> !x.equals(true)).map(x -> item.getErrMsg()).orElse(StringUtils.EMPTY));
     }
 
     @Override
     public Mono<ProductImportListDTO> validateImportProduct(FilePart filePart) {
         // validate file trong
-        if (filePart == null || filePart.filename() == null) {
+        if (filePart == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File must be provided.");
+        } else {
+            filePart.filename();
         }
         // validate dinh dang file
         String filename = filePart.filename();
@@ -328,13 +293,6 @@ public class ProductServiceImpl implements ProductService {
         });
     }
 
-    /**
-     * validate import item
-     *
-     * @param request
-     *            request
-     * @return
-     */
     private Mono<ProductImportDTO> validateImport(ProductImportDTO request) {
         return validateImportProduct(request)
                 .map(validateOrg -> {
@@ -601,8 +559,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Mono<ProductImportListDTO> importProduct(FilePart filePart, String organizationId) {
         // validate file trong
-        if (filePart == null || filePart.filename() == null) {
+        if (filePart == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File must be provided.");
+        } else {
+            filePart.filename();
         }
         // validate dinh dang file
         String filename = filePart.filename();
@@ -804,15 +764,5 @@ public class ProductServiceImpl implements ProductService {
     public Mono<Resource> exportReport(QueryReport request) {
         Workbook workbook = writeReport(request);
         return Mono.just(writeExcel(workbook));
-    }
-
-    private LocalDateTime getFromDate(LocalDate fromDate) {
-        return fromDate == null
-                ? LocalDateTime.from(LocalDate.now().atStartOfDay().minusDays(30))
-                : fromDate.atTime(0, 0, 0);
-    }
-
-    private LocalDateTime getToDate(LocalDate toDate) {
-        return toDate == null ? LocalDateTime.from(LocalDate.now().atTime(LocalTime.MAX)) : toDate.atTime(23, 59, 59);
     }
 }

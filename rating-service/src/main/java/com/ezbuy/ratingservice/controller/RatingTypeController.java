@@ -20,6 +20,6 @@ public class RatingTypeController {
 
     @GetMapping(value = UrlPaths.RatingType.GET_ALL_ACTIVE)
     public Mono<DataResponse<List<RatingType>>> getAllRatingActive() {
-        return ratingTypeService.getAllActive().map(rs -> new DataResponse<>("success", rs));
+        return ratingTypeService.getAllActive().map(DataResponse::success);
     }
 }

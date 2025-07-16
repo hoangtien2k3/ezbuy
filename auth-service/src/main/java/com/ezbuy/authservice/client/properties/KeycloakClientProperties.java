@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+@Data
 @Component("keycloakProperties")
 @ConfigurationProperties(prefix = "client.keycloak", ignoreInvalidFields = true)
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class KeycloakClientProperties extends WebClientProperties {

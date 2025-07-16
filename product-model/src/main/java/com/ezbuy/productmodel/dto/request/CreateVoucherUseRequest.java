@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateVoucherUseRequest {
-    private String voucherId; // id bang voucher
-    private String userId; // id user dang nhap
-    private String usename; // user dang nhap
-    private String systemType; // he thong ap dung voucher
-    private LocalDateTime expiredDate; // ngay het han
-    private String state; // trang thai
-    private String sourceOrderId; // id bang sme_order.order
+    private String voucherId;
+    private String userId;
+    private String usename;
+    private String systemType;
+    private LocalDateTime expiredDate;
+    private String state;
+    private String sourceOrderId;
 }

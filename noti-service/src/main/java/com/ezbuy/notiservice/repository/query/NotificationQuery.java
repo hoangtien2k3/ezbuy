@@ -7,13 +7,11 @@ public interface NotificationQuery {
               content_type, create_at, create_by, 
               update_at, update_by, category_id, 
               status, expect_send_time
-            ) 
-            VALUES 
-              (
-                : id, : sender, : severity, : notificationContentId, 
-                : contentType, : createAt, : createBy, 
-                : updateAt, : updateBy, : categoryId, 
-                : status, : expectSendTime
-              );
+            ) VALUES (
+                :id, :sender, :severity, :notificationContentId, 
+                :contentType, :createAt, :createBy, 
+                :updateAt, :updateBy, :categoryId, 
+                :status, :expectSendTime
+            );
         """;
 }

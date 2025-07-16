@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class GenVoucherRequest {
-    private String voucherTypeId; // id ban ghi voucher type
-    private String voucherBatchId; // id ban ghi voucher batch
+    private String voucherTypeId;
+    private String voucherBatchId;
 }

@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PaymentResultRequest {
-
     private String error_code;
     private String check_sum;
     private Integer payment_status;

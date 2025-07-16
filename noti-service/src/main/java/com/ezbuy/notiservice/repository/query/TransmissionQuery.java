@@ -69,7 +69,6 @@ public interface TransmissionQuery {
                   );
             """;
 
-
     String INSERT_TRANSMISSION = """
                 INSERT INTO transmission (
                   id, receiver, state, status, resend_count, 

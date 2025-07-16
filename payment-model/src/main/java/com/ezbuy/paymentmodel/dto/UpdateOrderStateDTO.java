@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class UpdateOrderStateDTO {
-
     private String orderCode;
     private String orderType;
     private Integer orderState;

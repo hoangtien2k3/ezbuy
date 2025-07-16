@@ -58,16 +58,16 @@ public class Constants {
         public static final String SYSTEM_TYPE = "systemType";
         public static final String COMPANY_NAME = "companyName";
 
-        public static final String FROM_STAFF = "fromStaff"; // nhan vien moi gioi
-        public static final String STAFF_AM_SUPPORT = "amStaff"; // am ho tro
+        public static final String FROM_STAFF = "fromStaff";
+        public static final String STAFF_AM_SUPPORT = "amStaff";
     }
 
     public static class PreOrderInfo {
         public static final String DURATION = "DURATION";
         public static final String DESCRIPTION = "DESCRIPTION";
         public static final String TOTAL_PRICE = "TOTAL_PRICE";
-        public static final String FROM_STAFF = "FROM_STAFF"; // nhan vien moi gioi
-        public static final String STAFF_AM_SUPPORT = "STAFF_AM_SUPPORT"; // AM moi gioi
+        public static final String FROM_STAFF = "FROM_STAFF";
+        public static final String STAFF_AM_SUPPORT = "STAFF_AM_SUPPORT";
     }
 
     public static class Actor {
@@ -111,10 +111,10 @@ public class Constants {
 
     public static class BCCSOrderType {
         public static final String AS_CA_EXTEND_PACKAGE = "AS_CA_EXTEND_PACKAGE";
-        public static final String ADD_MEMBER_GROUP_CA = "ADD_MEMBER_GROUP_CA"; // Don hang them thue bao vao nhom CA
-        public static final String DELETE_MEMBER_GROUP_CA = "DELETE_MEMBER_GROUP_CA"; // Don hang loai bo thanh vien
+        public static final String ADD_MEMBER_GROUP_CA = "ADD_MEMBER_GROUP_CA";
+        public static final String DELETE_MEMBER_GROUP_CA = "DELETE_MEMBER_GROUP_CA";
         // trong nhom CA
-        public static final String CHANGE_MEMBER_GROUP_CA = "CHANGE_MEMBER_GROUP_CA"; // Don hang thay doi thong tin
+        public static final String CHANGE_MEMBER_GROUP_CA = "CHANGE_MEMBER_GROUP_CA";
         // thanh vien nhom CA
     }
 
@@ -123,39 +123,31 @@ public class Constants {
     }
 
     public static class CharacteristicKey {
-        public static final String NUMBER_OF_SIGNATURES = "NUMBER_OF_SIGNATURES"; // Tong so luong ky (luong CA)
-        public static final String MAX_SUB = "MAX_SUB"; // Han muc thanh vien (luong CA)
-        public static final String ADD_MONTHS = "ADD_MONTHS"; // Thoi han su dung (luong CA)
-        public static final String GROUP_NAME = "GROUP_NAME"; // Ten nhom (luong CA)
-        public static final String GROUP_ID = "GROUP_ID"; // ID nhom (luong CA)
-        public static final String MAIN_ISDN = "MAIN_ISDN"; // Thue bao chu nhom (luong CA)
-        public static final String SUB_ISDN = "SUB_ISDN"; // Thue bao thanh vien(luong CA)
-        public static final String LIST_SUB_ISDN = "LIST_SUB_ISDN"; // Thue bao chu nhom (luong CA)
-        public static final String CONTACT_NAME = "CONTACT_NAME"; // Ho ten nguoi lien he (luong CA)
-        public static final String CUS_INFO_POSITION = "CUS_INFO_POSITION"; // Chuc vu nguoi lien he (luong CA)
-        public static final String CA_DEVICE_TYPE = "CA_DEVICE_TYPE"; // Loai thiet bi
-        public static final String VERSION_USAGE = "VERSION_USAGE"; // Phien ban su dung
-        public static final String GROUP_ISDN_SME = "GROUP_ISDN_SME"; // MAIN ISDN ao de dau len OCS (luong CA)
-        public static final String GROUP_ID_CREATE_OCS = "GROUP_ID_CREATE_OCS"; // groupId dau len OCS (luong CA)
-        public static final String GROUP_TYPE_CA_OCS = "GROUP_TYPE_CA_OCS"; // groupType dau len OCS 4 block chung thu
-        // so, 5 block so luot ky (luong CA)
-        public static final String MAIN_BALANCE = "MAIN_BALANCE"; // So luot ky cua tung thue bao tren OCS (luong CA)
-        public static final String GROUP_PRODUCT_OFERRING_CODE = "GROUP_PRODUCT_OFERRING_CODE"; // Ma goi cuoc cua nhom
-        // (luong CA)
-        public static final String GROUP_MEMBER_ID = "GROUP_MEMBER_ID"; // id member cua nhom CA (luong CA)
-
-        public static final String FROM_STAFF = "FROM_STAFF"; // thong tin nguoi moi gioi
-        // dich vu easy book
-        public static final String EMAIL_ACCOUNT = "EMAIL_ACCOUNT"; // email nhan tai khoan
-        public static final String TYPE_CIRCULARS = "TYPE_CIRCULARS"; // loai thong tu
-        public static final String STAFF_AM_SUPPORT = "STAFF_AM_SUPPORT"; // nhan vien AM ho tro
+        public static final String NUMBER_OF_SIGNATURES = "NUMBER_OF_SIGNATURES";
+        public static final String MAX_SUB = "MAX_SUB";
+        public static final String ADD_MONTHS = "ADD_MONTHS";
+        public static final String GROUP_NAME = "GROUP_NAME";
+        public static final String GROUP_ID = "GROUP_ID";
+        public static final String MAIN_ISDN = "MAIN_ISDN";
+        public static final String SUB_ISDN = "SUB_ISDN";
+        public static final String CONTACT_NAME = "CONTACT_NAME";
+        public static final String CUS_INFO_POSITION = "CUS_INFO_POSITION";
+        public static final String VERSION_USAGE = "VERSION_USAGE";
+        public static final String GROUP_ISDN_SME = "GROUP_ISDN_SME";
+        public static final String GROUP_ID_CREATE_OCS = "GROUP_ID_CREATE_OCS";
+        public static final String GROUP_TYPE_CA_OCS = "GROUP_TYPE_CA_OCS";
+        public static final String GROUP_PRODUCT_OFERRING_CODE = "GROUP_PRODUCT_OFERRING_CODE";
+        public static final String GROUP_MEMBER_ID = "GROUP_MEMBER_ID";
+        public static final String FROM_STAFF = "FROM_STAFF";
+        public static final String EMAIL_ACCOUNT = "EMAIL_ACCOUNT";
+        public static final String TYPE_CIRCULARS = "TYPE_CIRCULARS";
+        public static final String STAFF_AM_SUPPORT = "STAFF_AM_SUPPORT";
         public static final String ACCOUNT_PWD = "ACCOUNT_PWD"; // mat khau
         public static final String ACCOUNT_HUB = "ACCOUNT_HUB"; // tai khoan
         public static final String CONTACT_EMAIL = "CONTACT_EMAIL"; // email nguoi lien he
         public static final String CONTACT_PHONE = "CONTACT_PHONE"; // so dien thoai nguoi lien he
         public static final String CLUE_ISDN = "CLUE_ISDN"; // so dien thoai dau moi tiep nhan
         public static final String EMAIL = "EMAIL"; // Email mac dinh
-        // dich vu vContract
         public static final String DVM_CUST_EMAIL = "DVM_CUST_EMAIL"; // Email khach hang customer
         public static final String DVM_CUST_TEL = "DVM_CUST_TEL"; // sdt khach hang customer
         public static final String LICENSE_KEY = "LICENSE_KEY"; // license key
@@ -170,24 +162,22 @@ public class Constants {
     }
 
     public static class OrderProductOrderItem {
-        public static final String ACTION_ADD = "add"; // action them trong productItem BCCS_ORDER
+        public static final String ACTION_ADD = "add";
     }
 
     public static class CustIndentityType {
-        public static final String BUS = "BUS"; // giay phep kinh doanh
-        public static final String TIN = "TIN"; // ma so thue
+        public static final String BUS = "BUS";
+        public static final String TIN = "TIN";
     }
 
     public static class ORDER_STATE {
-        public static final Integer NEW = 0; // cho hoan thien thong tin
-        public static final Integer IN_PROGRESS = 1; // dang thuc hien
-        public static final Integer COMPLETED = 3; // hoan thanh
-        public static final Integer REJECTED = 4; // huy
+        public static final Integer NEW = 0;
+        public static final Integer IN_PROGRESS = 1;
+        public static final Integer COMPLETED = 3;
+        public static final Integer REJECTED = 4;
     }
 
-    // constant cho entity order bccs data trong db
     public static class OrderBccsData {
-        // trang thai hieu luc
         public static final Integer STATUS_ACTIVE = 1;
     }
 
@@ -207,7 +197,7 @@ public class Constants {
     }
 
     public static final class OptionSetCode {
-        public static final String DATA_POLICY = "DATA_POLICY"; // cau hinh chinh sach xu ly va bao ve du lieu
+        public static final String DATA_POLICY = "DATA_POLICY";
     }
 
     public static class TelecomServiceAlias {
@@ -229,14 +219,13 @@ public class Constants {
     public static final String SUB_ISDN_REGEX = "^CA_[0-9]+$";
 
     public static class OrderExt {
-        public static final String ORDER_TRUST_IDENTITY = "ORDER_TRUST_IDENTITY"; // truong code bang order ext luong
-        // xac thuc
+        public static final String ORDER_TRUST_IDENTITY = "ORDER_TRUST_IDENTITY";
     }
 
     public static class TRUST_STATUS {
-        public static final Integer WAIT_APPROVE = 3; // trang thai doanh nghiep: cho phe duyet
-        public static final Integer WAIT_CREATE_CTS = 2; // trang thai doanh nghiep: chua tao don cts
-        public static final Integer NOT_SIGN = 5; // trang thai doanh nghiep: chua chuyen ky
+        public static final Integer WAIT_APPROVE = 3;
+        public static final Integer WAIT_CREATE_CTS = 2;
+        public static final Integer NOT_SIGN = 5;
     }
 
     public static final String GROUP_TYPE_ORGANIZATION = "1";

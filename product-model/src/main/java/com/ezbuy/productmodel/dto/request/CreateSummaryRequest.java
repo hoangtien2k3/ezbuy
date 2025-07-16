@@ -13,5 +13,5 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Builder
 public class CreateSummaryRequest {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate dateReport; // ngay lay bao cao
+    private LocalDate dateReport;
 }

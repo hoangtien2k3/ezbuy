@@ -9,14 +9,12 @@ import reactor.core.publisher.Mono;
 
 public interface RatingCountRepository extends R2dbcRepository<RatingCount, String> {
 
-    @Query(
-            value =
-                    "SELECT * FROM rating_count WHERE rating_type_code = 'service' AND target_id = ANY(:lstServiceAlias)")
+    @Query("SELECT * FROM rating_count WHERE rating_type_code = 'service' AND target_id = ANY(:lstServiceAlias)")
     Flux<RatingCount> getRatingCountService(List<String> lstServiceAlias);
 
     @Query("SELECT * FROM rating_count")
     Flux<RatingCount> getAll();
 
-    @Query(value = "SELECT * FROM rating_count WHERE rating_type_code = :ratingTypeCode AND target_id = :targetId")
+    @Query("SELECT * FROM rating_count WHERE rating_type_code = :ratingTypeCode AND target_id = :targetId")
     Mono<RatingCount> getRatingCountByTypeAndTargetId(String ratingTypeCode, String targetId);
 }

@@ -8,23 +8,11 @@ import java.util.List;
 import reactor.core.publisher.Mono;
 
 public interface VoucherTransactionService {
-    /**
-     * Ham tim kiem voucher tran theo voucher id va khong thuoc trang thai chi dinh
-     *
-     * @param voucherId
-     * @param state
-     * @return
-     */
+
     Mono<DataResponse<List<VoucherTransaction>>> findVoucherTransByVoucherIdAndStateNotIn(
             String voucherId, String state);
 
     Mono<DataResponse<VoucherTransaction>> createVoucherTransaction(CreateVoucherTransactionRequest request);
 
-    /**
-     * Ham thuc hien truy van va cap nhat inactive voucher transaction da het han
-     *
-     * @param unlockVoucherRequest
-     * @return
-     */
     Mono<DataResponse<String>> unlockVoucherTransaction(UnlockVoucherRequest unlockVoucherRequest);
 }

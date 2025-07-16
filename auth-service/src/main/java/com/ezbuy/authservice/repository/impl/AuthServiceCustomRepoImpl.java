@@ -49,7 +49,7 @@ public class AuthServiceCustomRepoImpl implements AuthServiceCustom {
         } else {
             sb.append("Select * ");
         }
-        sb.append(" from sme_user.permission_policy pp where 1 = 1 ");
+        sb.append(" from permission_policy pp where 1 = 1 ");
         if (state != null) {
             sb.append(" and pp.status = :state");
         }
