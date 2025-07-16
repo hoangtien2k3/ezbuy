@@ -23,8 +23,7 @@ org-springframework-boot-spring-boot-starter-mail = "3.3.5"
 org-springframework-boot-spring-boot-starter-quartz = "3.3.5"
 org-springframework-boot-spring-boot-starter-thymeleaf = "3.3.5"
 org-springframework-cloud-spring-cloud-gateway-server-webflux = "4.3.0"
-org-springframework-cloud-spring-cloud-starter-netflix-eureka-client = "4.1.1"
-org-springframework-cloud-spring-cloud-starter-netflix-eureka-server = "4.1.1"
+org-springframework-cloud-spring-cloud-starter-consul-discovery = "4.3.0"
 org-springframework-data-spring-data-elasticsearch = "5.4.1"
 org-springframework-data-spring-data-elasticsearch-x1 = "3.2.12.RELEASE"
 org-testcontainers-elasticsearch = "1.12.2"
@@ -54,8 +53,7 @@ org-springframework-boot-spring-boot-starter-mail = { module = "org.springframew
 org-springframework-boot-spring-boot-starter-quartz = { module = "org.springframework.boot:spring-boot-starter-quartz", version.ref = "org-springframework-boot-spring-boot-starter-quartz" }
 org-springframework-boot-spring-boot-starter-thymeleaf = { module = "org.springframework.boot:spring-boot-starter-thymeleaf", version.ref = "org-springframework-boot-spring-boot-starter-thymeleaf" }
 org-springframework-cloud-spring-cloud-gateway-server-webflux = { module = "org.springframework.cloud:spring-cloud-gateway-server-webflux", version.ref = "org-springframework-cloud-spring-cloud-gateway-server-webflux" }
-org-springframework-cloud-spring-cloud-starter-netflix-eureka-client = { module = "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client", version.ref = "org-springframework-cloud-spring-cloud-starter-netflix-eureka-client" }
-org-springframework-cloud-spring-cloud-starter-netflix-eureka-server = { module = "org.springframework.cloud:spring-cloud-starter-netflix-eureka-server", version.ref = "org-springframework-cloud-spring-cloud-starter-netflix-eureka-server" }
+org-springframework-cloud-spring-cloud-starter-consul-discovery = { module = "org.springframework.cloud:spring-cloud-starter-consul-discovery", version.ref = "org-springframework-cloud-spring-cloud-starter-consul-discovery" }
 org-springframework-data-spring-data-elasticsearch = { module = "org.springframework.data:spring-data-elasticsearch", version.ref = "org-springframework-data-spring-data-elasticsearch" }
 org-springframework-data-spring-data-elasticsearch-x1 = { module = "org.springframework.data:spring-data-elasticsearch", version.ref = "org-springframework-data-spring-data-elasticsearch-x1" }
 org-testcontainers-elasticsearch = { module = "org.testcontainers:elasticsearch", version.ref = "org-testcontainers-elasticsearch" }

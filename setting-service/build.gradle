@@ -17,7 +17,7 @@ dependencies {
     implementation libs.org.springframework.boot.spring.boot.starter.data.elasticsearch
     implementation libs.org.jsoup.jsoup
     implementation libs.com.sun.activation.jakarta.activation
-    implementation libs.org.springframework.cloud.spring.cloud.starter.netflix.eureka.client
+    implementation libs.org.springframework.cloud.spring.cloud.starter.consul.discovery
 }
 
 description = 'setting-service'

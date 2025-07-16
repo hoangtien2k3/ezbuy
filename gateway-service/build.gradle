@@ -12,8 +12,8 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation libs.org.springframework.cloud.spring.cloud.starter.netflix.eureka.client
     implementation libs.org.springframework.cloud.spring.cloud.gateway.server.webflux
+    implementation libs.org.springframework.cloud.spring.cloud.starter.consul.discovery
 }
 
 description = 'gateway-service'

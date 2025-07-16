@@ -24,7 +24,7 @@ dependencies {
     implementation libs.org.apache.poi.poi
     implementation libs.org.apache.poi.poi.ooxml
     implementation libs.org.apache.commons.commons.compress.x1
-    implementation libs.org.springframework.cloud.spring.cloud.starter.netflix.eureka.client
+    implementation libs.org.springframework.cloud.spring.cloud.starter.consul.discovery
 }
 
 description = 'order-service'

@@ -17,7 +17,7 @@ dependencies {
     implementation libs.org.awaitility.awaitility
     implementation libs.org.springframework.boot.spring.boot.starter.mail
     implementation libs.org.springframework.boot.spring.boot.starter.thymeleaf
-    implementation libs.org.springframework.cloud.spring.cloud.starter.netflix.eureka.client
+    implementation libs.org.springframework.cloud.spring.cloud.starter.consul.discovery
 }
 
 description = 'noti-send-service'

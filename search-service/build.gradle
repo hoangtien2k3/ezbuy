@@ -18,7 +18,7 @@ dependencies {
     implementation libs.org.springframework.boot.spring.boot.starter.data.elasticsearch
     implementation libs.org.json.json
     implementation libs.com.google.code.gson.gson
-    implementation libs.org.springframework.cloud.spring.cloud.starter.netflix.eureka.client
+    implementation libs.org.springframework.cloud.spring.cloud.starter.consul.discovery
     testImplementation libs.org.testcontainers.elasticsearch
 }
 

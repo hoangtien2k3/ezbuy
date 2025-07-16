@@ -25,7 +25,7 @@ dependencies {
     implementation libs.org.apache.commons.commons.compress
     implementation libs.commons.io.commons.io
     implementation libs.org.springdoc.springdoc.openapi.starter.webflux.api
-    implementation libs.org.springframework.cloud.spring.cloud.starter.netflix.eureka.client
+    implementation libs.org.springframework.cloud.spring.cloud.starter.consul.discovery
 }
 
 description = 'auth-service'

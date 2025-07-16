@@ -18,7 +18,7 @@ dependencies {
     implementation project(':product-model')
     implementation project(':payment-model')
     implementation project(':order-model')
-    implementation libs.org.springframework.cloud.spring.cloud.starter.netflix.eureka.client
+    implementation libs.org.springframework.cloud.spring.cloud.starter.consul.discovery
 }
 
 description = 'cart-service'
