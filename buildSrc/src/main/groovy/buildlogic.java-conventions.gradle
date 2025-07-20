@@ -25,7 +25,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc:${springBootVersion}")
     implementation("org.springframework:spring-jcl:6.2.8")
 
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.19.1")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.19.2")
     implementation("jakarta.annotation:jakarta.annotation-api:3.0.0")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.2")
     implementation("org.modelmapper:modelmapper:3.2.0")
