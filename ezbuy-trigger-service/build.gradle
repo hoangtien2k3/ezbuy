@@ -1,0 +1,48 @@
+plugins {
+    id 'buildlogic.java-conventions'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'com.google.cloud.tools.jib' version '3.4.5'
+    id 'com.palantir.git-version' version '4.0.0'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+dependencies {
+    implementation libs.io.github.hoangtien2k3.reactify.core
+    implementation project(':ezbuy-order-model')
+    implementation project(':ezbuy-auth-model')
+    implementation project(':ezbuy-product-model')
+    implementation libs.org.springframework.boot.spring.boot.starter.quartz
+    implementation libs.com.zaxxer.hikaricp
+    implementation libs.org.springframework.cloud.spring.cloud.starter.consul.discovery
+}
+
+description = 'ezbuy-trigger-service'
+
+ext {
+    imageDocker = 'hoangtien2k3/ezbuy-trigger-service'
+}
+
+def details = versionDetails()
+jib {
+    from {
+        image = 'amazoncorretto:21.0.3'
+    }
+    to {
+        image = imageDocker
+        tags = details.isCleanTag ? [details.lastTag] : [details.lastTag + '-SNAPSHOT']
+        auth {
+            username project.repoUser
+            password project.repoPassword
+        }
+    }
+    container {
+        creationTime = 'USE_CURRENT_TIMESTAMP'
+//        jvmFlags = ['-Xms512mb', '-Xdebug',
+//                    '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5005']
+    }
+}

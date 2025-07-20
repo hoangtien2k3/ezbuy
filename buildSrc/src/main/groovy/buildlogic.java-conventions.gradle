@@ -1,7 +1,7 @@
 plugins {
-    id 'java-library'
-    id 'maven-publish'
-    id 'application'
+    id "java-library"
+    id "maven-publish"
+    id "application"
 }
 
 repositories {
@@ -16,35 +16,30 @@ group = 'com.ezbuy.platform'
 version = '1.0-SNAPSHOT'
 
 dependencies {
-    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor("org.projectlombok:lombok:1.18.32")
 
-    implementation "org.springframework.boot:spring-boot-starter-webflux:${springBootVersion}"
-    implementation "org.springframework.boot:spring-boot-starter-validation:${springBootVersion}"
-    implementation "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
-    implementation "org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}"
-    implementation "org.springframework.boot:spring-boot-starter-data-r2dbc:${springBootVersion}"
-    implementation 'org.springframework:spring-jcl:6.2.8'
+    implementation("org.springframework.boot:spring-boot-starter-webflux:${springBootVersion}")
+    implementation("org.springframework.boot:spring-boot-starter-validation:${springBootVersion}")
+    implementation("org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}")
+    implementation("org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}")
+    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc:${springBootVersion}")
+    implementation("org.springframework:spring-jcl:6.2.8")
 
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.19.1'
-    implementation 'jakarta.annotation:jakarta.annotation-api:3.0.0'
-    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
-    implementation 'org.modelmapper:modelmapper:3.2.0'
-    implementation 'io.r2dbc:r2dbc-pool:1.0.2.RELEASE'
-    implementation 'org.apache.commons:commons-lang3:3.17.0'
-    implementation 'org.projectlombok:lombok:1.18.32'
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.19.1")
+    implementation("jakarta.annotation:jakarta.annotation-api:3.0.0")
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.2")
+    implementation("org.modelmapper:modelmapper:3.2.0")
+    implementation("io.r2dbc:r2dbc-pool:1.0.2.RELEASE")
+    implementation("org.apache.commons:commons-lang3:3.18.0")
+    implementation("org.projectlombok:lombok:1.18.32")
 
-    implementation 'org.apache.logging.log4j:log4j-api:2.24.1'
-    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.24.1'
-    implementation 'org.apache.logging.log4j:log4j-core:2.24.1'
-    implementation 'org.apache.logging.log4j:log4j-jul:2.24.1'
+    runtimeOnly("org.postgresql:r2dbc-postgresql:1.0.7.RELEASE")
+    runtimeOnly("org.postgresql:postgresql:42.7.3")
+    runtimeOnly("org.glassfish.jaxb:jaxb-runtime:4.0.3")
 
-    runtimeOnly 'org.postgresql:r2dbc-postgresql:1.0.7.RELEASE'
-    runtimeOnly 'org.postgresql:postgresql:42.7.3'
-    runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.3'
+    compileOnly("org.projectlombok:lombok:1.18.32")
 
-    compileOnly 'org.projectlombok:lombok:1.18.32'
-
-    testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+    testImplementation("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
 }
 
 configurations {

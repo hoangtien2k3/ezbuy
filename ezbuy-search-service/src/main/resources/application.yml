@@ -1,0 +1,107 @@
+# server config
+server:
+  port: 8999
+---
+#logging
+logging:
+  pattern:
+    console: "%d{dd/MM/yy HH:mm:ss}|%X{traceId}|%m%n"
+  level:
+    root: INFO
+---
+#spring cloud consul config
+spring:
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        heartbeat:
+          enabled: false
+        prefer-ip-address: true
+        instance-id: ${spring.application.name}-${random.uuid}
+        health-check-path: /actuator/health
+        health-check-interval: 60s
+        service-name: ${spring.application.name}
+        register-health-check: true
+---
+# spring config
+spring:
+  application:
+    name: setting_service
+  main:
+    allow-bean-definition-overriding: true
+  messages:
+    basename: lang
+  #r2dbc postgresql
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5434/setting
+    username: admin
+    password: admin
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            token-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/token
+        registration:
+          oidc:
+            client-id: ${keycloak.clientId}
+            client-secret: ${keycloak.clientSecret}
+            authorization-grant-type: password #client_credentials
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/certs
+      keycloak:
+        client-id: ${keycloak.clientId}
+        client-secret: ${keycloak.clientSecret}
+  data:
+    elasticsearch:
+      repositories:
+        enabled: false
+  elasticsearch:
+    uris: http://localhost:9200
+---
+#keycloak client config
+keycloak:
+  clientId: ezbuy-client
+  clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
+  realm: ezbuy-server
+  serverUrl: http://localhost:8080
+  grantType: password
+  host: localhost
+---
+#client-elasticsearch
+client:
+  elasticsearch:
+    address: http://localhost:9200
+    name: elasticSearchClient
+---
+# unauthenticated endpoints config
+application:
+  index:
+    indexScores:
+      - name: news
+        score: 1
+      - name: services
+        score: 4
+  whiteList:
+    - uri: /actuator/health
+      methods:
+        - GET
+    - uri: /v1/page
+      methods:
+        - GET
+    - uri: /v1/search-services
+      methods:
+        - GET
+---
+#health check config
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

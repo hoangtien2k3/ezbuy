@@ -80,19 +80,6 @@ services:
     networks:
       - ezbuy-network
 
-  #swagger-ui
-  swagger-ui:
-    image: swaggerapi/swagger-ui:${SWAGGER_VERSION}
-    container_name: swagger-ui
-    restart: unless-stopped
-    environment:
-      - BASE_URL=/swagger-ui
-      - URLS
-      - OAUTH_CLIENT_ID=swagger-ui
-      - OAUTH_USE_PKCE=true
-    networks:
-      - ezbuy-network
-
   ###########################
   #zookeeper
   #kafka
@@ -284,8 +271,10 @@ services:
   consul:
     image: consul:1.15.4
     container_name: consul
+    restart: always
     ports:
       - "8500:8500"
+      - "8600:8600/udp"
     command: "consul agent -dev -client=0.0.0.0"
 
 # networks:
