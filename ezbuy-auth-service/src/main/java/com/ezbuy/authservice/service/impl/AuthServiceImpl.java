@@ -275,9 +275,7 @@ public class AuthServiceImpl implements AuthService {
         createNotificationDTO.setContentType(AuthConstants.Notification.CONTENT_TYPE);
         createNotificationDTO.setCategoryType(AuthConstants.Notification.CATEGORY_TYPE);
         createNotificationDTO.setChannelType(AuthConstants.Notification.CHANNEL_TYPE);
-        List<ReceiverDataDTO> list = new ArrayList<>();
-        list.add(data);
-        createNotificationDTO.setReceiverList(list);
+        createNotificationDTO.setReceiverList(List.of(data));
         return createNotificationDTO;
     }
 

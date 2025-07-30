@@ -1,13 +1,13 @@
 package com.ezbuy.authservice.controller;
 
 import com.ezbuy.authmodel.constants.UrlPaths;
+import com.ezbuy.authmodel.dto.UserProfileDTO;
 import com.ezbuy.authmodel.dto.request.QueryUserRequest;
 import com.ezbuy.authmodel.dto.request.UpdateUserRequest;
+import com.ezbuy.authmodel.dto.response.QueryUserResponse;
+import com.ezbuy.authmodel.dto.response.UserContact;
 import com.ezbuy.authmodel.model.UserProfile;
 import com.ezbuy.authservice.service.UserService;
-// import com.commons.constants.MessageConstant;
-// import com.commons.model.response.DataResponse;
-// import com.commons.utils.Translator;
 import com.reactify.constants.MessageConstant;
 import com.reactify.model.response.DataResponse;
 import com.reactify.util.Translator;
@@ -34,10 +34,11 @@ public class UserController {
 
     @GetMapping(UrlPaths.User.GET_USER)
     @PreAuthorize("hasAnyAuthority('user')")
-    public Mono<ResponseEntity<DataResponse>> getUser() {
+    public Mono<ResponseEntity<DataResponse<UserProfile>>> getUser() {
         return userService
                 .getUserProfile()
-                .map(rs -> ResponseEntity.ok(new DataResponse<>(MessageConstant.SUCCESS, rs)));
+                .map(rs -> rs.map(userProfile -> ResponseEntity.ok(new DataResponse<>(MessageConstant.SUCCESS, userProfile)))
+                        .orElseGet(() -> ResponseEntity.notFound().build()));
     }
 
     @PostMapping(UrlPaths.User.UPDATE_USER)
@@ -48,27 +49,27 @@ public class UserController {
 
     @GetMapping(UrlPaths.User.CONTACTS)
     @PreAuthorize("hasAnyAuthority('system')")
-    public Mono<ResponseEntity<DataResponse>> getUserContacts(@RequestBody List<UUID> ids) {
+    public Mono<ResponseEntity<DataResponse<List<UserContact>>>> getUserContacts(@RequestBody List<UUID> ids) {
         return userService
                 .getUserContacts(ids)
                 .collectList()
-                .map(rs -> ResponseEntity.ok(new DataResponse<>(Translator.toLocaleVi("success"), rs)));
+                .map(rs -> ResponseEntity.ok(DataResponse.success(rs)));
     }
 
     @GetMapping(UrlPaths.User.GET_USER_BY_ID)
     @PreAuthorize("hasAnyAuthority('system')")
-    public Mono<ResponseEntity<DataResponse>> getUserById(@PathVariable String id) {
+    public Mono<ResponseEntity<DataResponse<UserProfile>>> getUserById(@PathVariable String id) {
         return userService
                 .getUserById(id)
-                .map(rs -> ResponseEntity.ok(new DataResponse<>(MessageConstant.SUCCESS, rs)));
+                .map(rs -> rs.map(userProfile -> ResponseEntity.ok(new DataResponse<>(MessageConstant.SUCCESS, userProfile)))
+                        .orElseGet(() -> ResponseEntity.notFound().build()));
     }
 
     @PreAuthorize("hasAnyAuthority('admin')")
     @GetMapping(UrlPaths.User.USER_PROFILES)
-    public Mono<ResponseEntity<DataResponse>> getUserProfiles(QueryUserRequest request) {
-        return userService
-                .queryUserProfile(request)
-                .map(rs -> ResponseEntity.ok(new DataResponse(MessageConstant.SUCCESS, rs)));
+    public Mono<ResponseEntity<DataResponse<QueryUserResponse>>> getUserProfiles(QueryUserRequest request) {
+        return userService.queryUserProfile(request)
+                .map(rs -> ResponseEntity.ok(DataResponse.success(rs)));
     }
 
     @GetMapping(UrlPaths.User.EXPORT_PROFILES)
@@ -80,10 +81,10 @@ public class UserController {
     }
 
     @GetMapping(UrlPaths.User.GET_PROFILES)
-    public Mono<ResponseEntity<DataResponse>> getUserProfile(@PathVariable("id") String userId) {
+    public Mono<ResponseEntity<DataResponse<UserProfileDTO>>> getUserProfile(@PathVariable("id") String userId) {
         return userService
                 .getUserProfile(userId)
-                .map(rs -> ResponseEntity.ok(new DataResponse(MessageConstant.SUCCESS, rs)));
+                .map(rs -> ResponseEntity.ok(DataResponse.success(rs)));
     }
 
     @GetMapping(UrlPaths.User.KEYCLOAK)

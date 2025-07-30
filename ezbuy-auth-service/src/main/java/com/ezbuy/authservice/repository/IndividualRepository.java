@@ -1,6 +1,7 @@
 package com.ezbuy.authservice.repository;
 
 import com.ezbuy.authmodel.model.Individual;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.r2dbc.repository.Modifying;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
@@ -15,12 +16,13 @@ public interface IndividualRepository extends R2dbcRepository<Individual, String
             """)
     Mono<Individual> findByCode(String code, Integer status);
 
+    @NotNull
     @Query("""
             SELECT * FROM individual
             WHERE status IN (0, 1)
               AND id = :id
             """)
-    Mono<Individual> findById(String id);
+    Mono<Individual> findById(@NotNull String id);
 
     @Query("""
             SELECT * FROM individual

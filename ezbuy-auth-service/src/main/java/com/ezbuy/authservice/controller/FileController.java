@@ -15,7 +15,6 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping(UrlPaths.FILE.PREFIX)
 @RequiredArgsConstructor
-@CrossOrigin("http://localhost:3000/")
 public class FileController {
     private final MinioUtils minioUtils;
 

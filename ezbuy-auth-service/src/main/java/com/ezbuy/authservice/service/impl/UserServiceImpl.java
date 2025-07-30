@@ -217,8 +217,7 @@ public class UserServiceImpl implements UserService {
         UsersResource usersResource = kcProvider.getInstance().realm(realm).users();
         return Flux.fromIterable(usersResource.list()).filter(userRepresentation -> {
             String fullName = getFullName(userRepresentation);
-            return DataUtil.isNullOrEmpty(name)
-                    || fullName.toLowerCase().contains(name.trim().toLowerCase());
+            return DataUtil.isNullOrEmpty(name) || fullName.toLowerCase().contains(name.trim().toLowerCase());
         });
     }
 
@@ -267,8 +266,7 @@ public class UserServiceImpl implements UserService {
                                 kcUsers.stream().map(UserRepresentation::getId).collect(Collectors.toList());
                         request.setUserIds(userIds);
                     }
-                    return userRepository
-                            .queryUserProfile(request)
+                    return userRepository.queryUserProfile(request)
                             .doOnNext(userProf -> {
                                 kcUsers.stream()
                                         .filter(element -> element.getId().equals(userProf.getUserId()))
@@ -276,8 +274,7 @@ public class UserServiceImpl implements UserService {
                                         .ifPresent(userRepresentation -> {
                                             userProf.setName(getFullName(userRepresentation));
                                         });
-                            })
-                            .collectList();
+                            }).collectList();
                 })
                 .flatMap(userProfiles -> writeUserProfiles((List<UserProfileDTO>) userProfiles))
                 .flatMap(workbook -> Mono.fromCallable(() -> writeExcel(workbook)));
@@ -318,9 +315,7 @@ public class UserServiceImpl implements UserService {
         }
         return getAreaName(parents).collectList().flatMap(areas -> {
             log.info("areas : {}", areas);
-            return Mono.fromCallable(() -> {
-                return writeListUser(userProfiles, areas);
-            });
+            return Mono.fromCallable(() -> writeListUser(userProfiles, areas));
         });
     }
 
@@ -369,11 +364,7 @@ public class UserServiceImpl implements UserService {
                         .map(AreaDTO::getName)
                         .findFirst()
                         .orElse(null);
-                writeRow(
-                        row,
-                        style,
-                        0,
-                        Arrays.asList(
+                writeRow(row, style, 0, Arrays.asList(
                                 String.valueOf(index++),
                                 userProfile.getName(),
                                 userProfile.getPhone(),
@@ -390,7 +381,8 @@ public class UserServiceImpl implements UserService {
                                 DataUtil.formatDate(userProfile.getFoundingDate(), Constants.DateTimePattern.DMY, ""),
                                 userProfile.getBusinessType(),
                                 DataUtil.formatDate(userProfile.getUpdateAt(), Constants.DateTimePattern.DMY_HMS, ""),
-                                userProfile.getUpdateBy()));
+                                userProfile.getUpdateBy())
+                );
             }
 
             return workbook;
