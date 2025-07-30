@@ -22,7 +22,7 @@ org-springframework-boot-spring-boot-starter-thymeleaf = "3.5.3"
 org-springframework-cloud-spring-cloud-gateway-server-webflux = "4.3.0"
 org-springframework-cloud-spring-cloud-starter-consul-discovery = "4.3.0"
 org-springframework-data-spring-data-elasticsearch = "5.4.1"
-org-springframework-data-spring-data-elasticsearch-x1 = "3.2.12.RELEASE"
+net-logstash-logback-logstash-logback-encoder = "8.1"
 org-testcontainers-elasticsearch = "1.12.2"
 
 [libraries]
@@ -49,5 +49,5 @@ org-springframework-boot-spring-boot-starter-thymeleaf = { module = "org.springf
 org-springframework-cloud-spring-cloud-gateway-server-webflux = { module = "org.springframework.cloud:spring-cloud-gateway-server-webflux", version.ref = "org-springframework-cloud-spring-cloud-gateway-server-webflux" }
 org-springframework-cloud-spring-cloud-starter-consul-discovery = { module = "org.springframework.cloud:spring-cloud-starter-consul-discovery", version.ref = "org-springframework-cloud-spring-cloud-starter-consul-discovery" }
 org-springframework-data-spring-data-elasticsearch = { module = "org.springframework.data:spring-data-elasticsearch", version.ref = "org-springframework-data-spring-data-elasticsearch" }
-org-springframework-data-spring-data-elasticsearch-x1 = { module = "org.springframework.data:spring-data-elasticsearch", version.ref = "org-springframework-data-spring-data-elasticsearch-x1" }
+net-logstash-logback = { module = "net.logstash.logback:logstash-logback-encoder", version.ref = "net-logstash-logback-logstash-logback-encoder" }
 org-testcontainers-elasticsearch = { module = "org.testcontainers:elasticsearch", version.ref = "org-testcontainers-elasticsearch" }

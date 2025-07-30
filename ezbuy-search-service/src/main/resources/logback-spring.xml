@@ -12,8 +12,13 @@
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
     </appender>
+    <appender name="ELASTIC" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>elasticsearch:5000</destination>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+    </appender>
 
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ELASTIC"/>
     </root>
 </configuration>

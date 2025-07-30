@@ -3,7 +3,6 @@ package com.ezbuy.settingmodel.model;
 import java.time.LocalDateTime;
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Data
@@ -12,7 +11,6 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Builder
 @Table("news")
-@Document(indexName = "news", type = "news")
 public class News {
     @Id
     private String id;

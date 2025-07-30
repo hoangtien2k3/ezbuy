@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation libs.org.springframework.data.spring.data.elasticsearch.x1
+//    implementation libs.org.springframework.data.spring.data.elasticsearch
 }
 
 description = 'ezbuy-setting-model'
