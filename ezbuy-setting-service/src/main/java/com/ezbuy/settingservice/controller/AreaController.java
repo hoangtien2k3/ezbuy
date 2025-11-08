@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
 public class AreaController {
     private final AreaService areaService;
 
-    @GetMapping()
+    @GetMapping
     public Mono<DataResponse<List<AreaDTO>>> getArea(@RequestParam("parent_code") String parentCode) {
         return this.areaService.getArea(parentCode);
     }

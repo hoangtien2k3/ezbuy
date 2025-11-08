@@ -22,7 +22,7 @@ import reactor.core.publisher.Mono;
 public class MarketPageController {
     private final MarketPageService marketPageService;
 
-    @GetMapping()
+    @GetMapping
     public Mono<ResponseEntity<DataResponse<SearchMarketPageResponse>>> search(SearchMarketPageRequest request) {
         return marketPageService
                 .searchMarketPage(request)

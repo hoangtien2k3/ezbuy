@@ -22,7 +22,7 @@ import reactor.core.publisher.Mono;
 public class MarketSectionController {
     private final MarketSectionService marketSectionService;
 
-    @GetMapping()
+    @GetMapping
     public Mono<ResponseEntity<DataResponse<List<MarketSection>>>> getPage(String pageCode, String serviceId) {
         pageCode = DataUtil.safeTrim(pageCode);
         serviceId = DataUtil.safeTrim(serviceId);

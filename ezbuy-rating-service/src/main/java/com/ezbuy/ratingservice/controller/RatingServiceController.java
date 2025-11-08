@@ -18,7 +18,7 @@ public class RatingServiceController {
 
     private final RatingService ratingService;
 
-    @GetMapping()
+    @GetMapping
     public Mono<DataResponse<RatingServiceResponse>> getRatingService(
             @RequestParam("service_alias") String serviceAlias) {
         return ratingService.getRatingService(serviceAlias);

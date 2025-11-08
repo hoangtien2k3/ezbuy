@@ -28,7 +28,7 @@ import reactor.core.publisher.Mono;
 public class TelecomController {
     private final TelecomService telecomService;
 
-    @GetMapping()
+    @GetMapping
     public Mono<DataResponse<List<TelecomDTO>>> getTelecomService(
             @RequestParam(required = false) List<String> ids,
             @RequestParam(required = false) List<String> aliases,

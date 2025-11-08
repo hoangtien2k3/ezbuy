@@ -22,7 +22,7 @@ public class DisplayContentController {
 
     private final ContentDisplayService contentDisplayService;
 
-    @GetMapping()
+    @GetMapping
     public Mono<ResponseEntity<DataResponse<SearchingComponentResponse>>> searchComponents(
             @ModelAttribute ComponentPageRequest request) {
         return this.contentDisplayService

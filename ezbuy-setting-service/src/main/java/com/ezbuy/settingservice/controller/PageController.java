@@ -24,7 +24,7 @@ import reactor.core.publisher.Mono;
 public class PageController {
     private final PageService pageService;
 
-    @GetMapping()
+    @GetMapping
     public Mono<DataResponse<PageDTO>> getPage(String code) {
         return this.pageService.getPage(code);
     }

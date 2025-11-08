@@ -25,7 +25,7 @@ public class UserCredentialController {
                 .map(result -> ResponseEntity.ok(new DataResponse<>("common.success", result)));
     }
 
-    @GetMapping()
+    @GetMapping
     public Mono<ResponseEntity<DataResponse<Object>>> getCurrentUserCredential() {
         return userCredentialService
                 .getCurrentUserCredential()

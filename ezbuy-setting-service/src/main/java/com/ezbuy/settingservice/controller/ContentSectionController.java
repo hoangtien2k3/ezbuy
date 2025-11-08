@@ -67,7 +67,7 @@ public class ContentSectionController {
         return contentSectionService.getCSBySectionId(request.getLstSectionId());
     }
 
-    @GetMapping()
+    @GetMapping
     public Mono<ResponseEntity<DataResponse<List<TreeDataDTO>>>> getAllByTypeAndRefIdAndRefType(
             @RequestBody GetContentSectionRequest request) {
         return contentSectionService
