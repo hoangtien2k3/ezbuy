@@ -3,7 +3,7 @@ package com.ezbuy.productservice.service;
 import com.ezbuy.productmodel.dto.request.CreateVoucherTransactionRequest;
 import com.ezbuy.productmodel.dto.request.UnlockVoucherRequest;
 import com.ezbuy.productmodel.model.VoucherTransaction;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import java.util.List;
 import reactor.core.publisher.Mono;
 

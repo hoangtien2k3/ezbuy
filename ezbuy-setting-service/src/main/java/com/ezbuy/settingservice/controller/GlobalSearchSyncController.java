@@ -3,7 +3,7 @@ package com.ezbuy.settingservice.controller;
 import com.ezbuy.settingmodel.constants.UrlPaths;
 import com.ezbuy.settingmodel.dto.request.GlobalSearchSyncRequest;
 import com.ezbuy.settingservice.service.GlobalSearchService;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;

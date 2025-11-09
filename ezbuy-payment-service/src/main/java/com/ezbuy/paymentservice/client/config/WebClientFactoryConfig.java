@@ -1,7 +1,7 @@
 package com.ezbuy.paymentservice.client.config;
 
 import com.ezbuy.paymentservice.client.properties.*;
-import com.reactify.client.WebClientFactory;
+import com.ezbuy.core.client.WebClientFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

@@ -4,7 +4,7 @@ import com.ezbuy.settingmodel.dto.request.SearchGroupNewsRequest;
 import com.ezbuy.settingmodel.model.GroupNews;
 import com.ezbuy.settingmodel.request.CreateGroupNewsRequest;
 import com.ezbuy.settingmodel.response.SearchGroupNewsResponse;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import java.util.List;
 import reactor.core.publisher.Mono;
 

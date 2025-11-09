@@ -3,7 +3,7 @@ package com.ezbuy.orderservice.client.utils;
 import com.ezbuy.ordermodel.dto.request.GetListProductOfferingRecordRequest;
 import com.ezbuy.ordermodel.dto.request.GetListServiceRecordRequest;
 import com.ezbuy.ordermodel.dto.ws.lstServiceDTO;
-import com.reactify.util.DataUtil;
+import com.ezbuy.core.util.DataUtil;
 import java.text.MessageFormat;
 
 public class ProfileClientUtils {

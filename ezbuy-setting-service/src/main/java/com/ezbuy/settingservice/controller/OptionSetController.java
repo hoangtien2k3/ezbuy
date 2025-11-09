@@ -7,7 +7,7 @@ import com.ezbuy.settingmodel.model.OptionSetValue;
 import com.ezbuy.settingmodel.request.CreateOptionSetRequest;
 import com.ezbuy.settingmodel.response.SearchOptionSetResponse;
 import com.ezbuy.settingservice.service.OptionSetService;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

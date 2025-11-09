@@ -1,6 +1,6 @@
 package com.ezbuy.paymentservice.client.properties;
 
-import com.reactify.client.properties.WebClientProperties;
+import com.ezbuy.core.client.properties.WebClientProperties;
 import lombok.*;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

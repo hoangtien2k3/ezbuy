@@ -6,7 +6,7 @@ import com.ezbuy.paymentmodel.dto.request.PaymentResultRequest;
 import com.ezbuy.paymentmodel.dto.request.ProductPaymentRequest;
 import com.ezbuy.paymentmodel.dto.request.UpdateOrderStateRequest;
 import com.ezbuy.paymentservice.service.PaymentService;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import java.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

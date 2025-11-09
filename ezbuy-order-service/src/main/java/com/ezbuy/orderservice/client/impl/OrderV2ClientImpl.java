@@ -1,7 +1,7 @@
 package com.ezbuy.orderservice.client.impl;
 
-import static com.reactify.constants.Constants.XmlConst.TAG_CLOSE_RETURN;
-import static com.reactify.constants.Constants.XmlConst.TAG_OPEN_RETURN;
+import static com.ezbuy.core.constants.Constants.XmlConst.TAG_CLOSE_RETURN;
+import static com.ezbuy.core.constants.Constants.XmlConst.TAG_OPEN_RETURN;
 
 import com.ezbuy.ordermodel.dto.ProfileForBusinessCustDTO;
 import com.ezbuy.ordermodel.dto.request.SearchOrderRequest;
@@ -12,12 +12,12 @@ import com.ezbuy.orderservice.client.OrderV2Client;
 import com.ezbuy.orderservice.client.properties.OrderV2Properties;
 import com.ezbuy.orderservice.client.utils.OrderClientUtils;
 import com.ezbuy.orderservice.client.utils.OrderV2ClientUtils;
-import com.reactify.client.BaseSoapClient;
-import com.reactify.constants.CommonErrorCode;
-import com.reactify.exception.BusinessException;
-import com.reactify.util.DataUtil;
-import com.reactify.util.DataWsUtil;
-import com.reactify.util.Translator;
+import com.ezbuy.core.client.BaseSoapClient;
+import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.exception.BusinessException;
+import com.ezbuy.core.util.DataUtil;
+import com.ezbuy.core.util.DataWsUtil;
+import com.ezbuy.core.util.Translator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

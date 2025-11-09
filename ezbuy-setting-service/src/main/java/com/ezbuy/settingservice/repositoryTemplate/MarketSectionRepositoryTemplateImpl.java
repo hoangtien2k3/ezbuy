@@ -2,8 +2,8 @@ package com.ezbuy.settingservice.repositoryTemplate;
 
 import com.ezbuy.settingmodel.model.MarketSection;
 import com.ezbuy.settingmodel.request.MarketSectionSearchRequest;
-import com.reactify.util.DataUtil;
-import com.reactify.util.SortingUtils;
+import com.ezbuy.core.util.DataUtil;
+import com.ezbuy.core.util.SortingUtils;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

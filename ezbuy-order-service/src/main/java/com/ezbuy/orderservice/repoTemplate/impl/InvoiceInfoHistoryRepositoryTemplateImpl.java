@@ -3,7 +3,7 @@ package com.ezbuy.orderservice.repoTemplate.impl;
 import com.ezbuy.ordermodel.dto.request.GetInvoiceInfoHistoryRequest;
 import com.ezbuy.ordermodel.model.InvoiceInfoHistory;
 import com.ezbuy.orderservice.repoTemplate.InvoiceInfoHistoryRepositoryTemplate;
-import com.reactify.util.DataUtil;
+import com.ezbuy.core.util.DataUtil;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;

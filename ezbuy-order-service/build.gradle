@@ -11,7 +11,8 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation libs.io.github.hoangtien2k3.reactify.core
+//    implementation libs.io.github.hoangtien2k3.reactify.core
+    implementation project(':ezbuy-core')
     implementation project(':ezbuy-order-model')
     implementation project(':ezbuy-product-model')
     implementation project(':ezbuy-setting-model')

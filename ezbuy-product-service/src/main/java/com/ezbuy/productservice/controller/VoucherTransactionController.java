@@ -5,7 +5,7 @@ import com.ezbuy.productmodel.dto.request.CreateVoucherTransactionRequest;
 import com.ezbuy.productmodel.dto.request.UnlockVoucherRequest;
 import com.ezbuy.productmodel.model.VoucherTransaction;
 import com.ezbuy.productservice.service.VoucherTransactionService;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -2,8 +2,8 @@ package com.ezbuy.notiservice.client.Impl;
 
 import com.ezbuy.notiservice.client.AuthClient;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.reactify.client.BaseRestClient;
-import com.reactify.util.DataUtil;
+import com.ezbuy.core.client.BaseRestClient;
+import com.ezbuy.core.util.DataUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;

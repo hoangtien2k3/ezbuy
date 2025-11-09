@@ -53,7 +53,7 @@ public class CacheAspect {
      */
     private static final Logger log = LoggerFactory.getLogger(CacheAspect.class);
 
-    @Pointcut("@annotation(com.reactify.annotations.LocalCache)")
+    @Pointcut("@annotation(com.ezbuy.core.annotations.LocalCache)")
     private void processAnnotation() {}
 
     /**

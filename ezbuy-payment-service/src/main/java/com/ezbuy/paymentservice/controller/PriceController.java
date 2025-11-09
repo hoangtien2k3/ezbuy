@@ -3,7 +3,7 @@ package com.ezbuy.paymentservice.controller;
 import com.ezbuy.paymentmodel.constants.UrlPaths;
 import com.ezbuy.paymentmodel.dto.request.ProductPriceRequest;
 import com.ezbuy.paymentservice.service.PriceService;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

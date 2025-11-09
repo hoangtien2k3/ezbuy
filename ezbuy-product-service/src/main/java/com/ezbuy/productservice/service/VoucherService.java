@@ -6,7 +6,7 @@ import com.ezbuy.productmodel.dto.request.UnlockVoucherRequest;
 import com.ezbuy.productmodel.dto.request.VoucherRequest;
 import com.ezbuy.productmodel.dto.response.VoucherSearchResponse;
 import com.ezbuy.productmodel.model.Voucher;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 
 public interface VoucherService {

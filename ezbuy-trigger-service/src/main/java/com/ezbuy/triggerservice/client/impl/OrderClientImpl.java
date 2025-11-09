@@ -2,8 +2,8 @@ package com.ezbuy.triggerservice.client.impl;
 
 import com.ezbuy.ordermodel.dto.request.SyncOrderStateRequest;
 import com.ezbuy.triggerservice.client.OrderClient;
-import com.reactify.client.BaseRestClient;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.client.BaseRestClient;
+import com.ezbuy.core.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;

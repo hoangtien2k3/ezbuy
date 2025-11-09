@@ -6,7 +6,7 @@ import com.ezbuy.settingmodel.model.MarketPageSection;
 import com.ezbuy.settingmodel.request.MarketPageSectionRequest;
 import com.ezbuy.settingmodel.response.SearchMarketPageSectionResponse;
 import com.ezbuy.settingservice.service.MarketPageSectionService;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

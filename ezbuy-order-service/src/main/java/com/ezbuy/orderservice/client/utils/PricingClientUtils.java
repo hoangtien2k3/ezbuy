@@ -1,8 +1,8 @@
 package com.ezbuy.orderservice.client.utils;
 
 import com.ezbuy.ordermodel.dto.request.PricingProductRequest;
-import com.reactify.factory.MarshallerFactory;
-import com.reactify.util.DataWsUtil;
+import com.ezbuy.core.factory.MarshallerFactory;
+import com.ezbuy.core.util.DataWsUtil;
 import java.text.MessageFormat;
 
 public class PricingClientUtils {

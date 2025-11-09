@@ -1,14 +1,14 @@
 package com.ezbuy.paymentservice.client.impl;
 
 import com.ezbuy.paymentservice.client.AuthClient;
-import com.reactify.client.BaseRestClient;
-import com.reactify.constants.CommonErrorCode;
-import com.reactify.exception.BusinessException;
-import com.reactify.factory.ObjectMapperFactory;
-import com.reactify.model.response.DataResponse;
-import com.reactify.util.DataUtil;
-import com.reactify.util.SecurityUtils;
-import com.reactify.util.Translator;
+import com.ezbuy.core.client.BaseRestClient;
+import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.exception.BusinessException;
+import com.ezbuy.core.factory.ObjectMapperFactory;
+import com.ezbuy.core.model.response.DataResponse;
+import com.ezbuy.core.util.DataUtil;
+import com.ezbuy.core.util.SecurityUtils;
+import com.ezbuy.core.util.Translator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

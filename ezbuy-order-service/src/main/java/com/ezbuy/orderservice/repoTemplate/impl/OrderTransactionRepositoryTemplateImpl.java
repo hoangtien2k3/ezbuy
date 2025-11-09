@@ -2,7 +2,7 @@ package com.ezbuy.orderservice.repoTemplate.impl;
 
 import com.ezbuy.ordermodel.dto.response.OrderTransmissionDTO;
 import com.ezbuy.orderservice.repoTemplate.OrderTransactionRepositoryTemplate;
-import com.reactify.util.DataUtil;
+import com.ezbuy.core.util.DataUtil;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;

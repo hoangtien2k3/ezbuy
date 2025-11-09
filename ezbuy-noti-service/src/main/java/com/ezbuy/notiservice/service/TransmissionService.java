@@ -6,7 +6,7 @@ import com.ezbuy.notimodel.dto.request.GetTransmissionByEmailAndFromToRequest;
 import com.ezbuy.notimodel.dto.response.CountNoticeResponseDTO;
 import com.ezbuy.notimodel.dto.response.NotificationHeader;
 import com.ezbuy.notimodel.model.NotificationContent;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 
 import java.util.List;

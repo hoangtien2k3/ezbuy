@@ -3,7 +3,7 @@ package com.ezbuy.searchservice.controller;
 import com.ezbuy.searchmodel.constants.UrlPaths;
 import com.ezbuy.searchmodel.dto.request.SearchDTORequest;
 import com.ezbuy.searchservice.service.SearchService;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;

@@ -1,6 +1,6 @@
 package com.ezbuy.cartservice.client.properties;
 
-import com.reactify.client.properties.WebClientProperties;
+import com.ezbuy.core.client.properties.WebClientProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

@@ -5,7 +5,7 @@ import com.ezbuy.productmodel.dto.request.VoucherBatchRequest;
 import com.ezbuy.productmodel.dto.response.VoucherBatchSearchResponse;
 import com.ezbuy.productmodel.model.VoucherBatch;
 import com.ezbuy.productmodel.model.VoucherType;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import java.util.List;
 import reactor.core.publisher.Mono;
 

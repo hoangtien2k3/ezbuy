@@ -4,7 +4,7 @@ import com.ezbuy.settingmodel.model.MarketInfo;
 import com.ezbuy.settingmodel.request.MarketInfoRequest;
 import com.ezbuy.settingmodel.request.SearchMarketInfoRequest;
 import com.ezbuy.settingmodel.response.SearchMarketInfoResponse;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import java.util.List;
 import reactor.core.publisher.Mono;
 

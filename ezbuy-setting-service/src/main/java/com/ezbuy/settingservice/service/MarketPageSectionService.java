@@ -4,7 +4,7 @@ import com.ezbuy.settingmodel.dto.request.SearchMarketPageSectionRequest;
 import com.ezbuy.settingmodel.model.MarketPageSection;
 import com.ezbuy.settingmodel.request.MarketPageSectionRequest;
 import com.ezbuy.settingmodel.response.SearchMarketPageSectionResponse;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 
 public interface MarketPageSectionService {

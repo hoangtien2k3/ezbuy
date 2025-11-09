@@ -3,7 +3,7 @@ package com.ezbuy.settingservice.service;
 import com.ezbuy.settingmodel.dto.NewsContentDTO;
 import com.ezbuy.settingmodel.model.NewsContent;
 import com.ezbuy.settingmodel.request.CreateNewsContentRequest;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import java.util.List;
 import reactor.core.publisher.Mono;
 

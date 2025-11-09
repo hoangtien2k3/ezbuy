@@ -2,9 +2,9 @@ package com.ezbuy.settingservice.repositoryTemplate;
 
 import com.ezbuy.settingmodel.dto.request.SearchMarketPageSectionRequest;
 import com.ezbuy.settingmodel.model.MarketPageSection;
-import com.reactify.util.DataUtil;
-import com.reactify.util.SQLUtils;
-import com.reactify.util.SortingUtils;
+import com.ezbuy.core.util.DataUtil;
+import com.ezbuy.core.util.SQLUtils;
+import com.ezbuy.core.util.SortingUtils;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;

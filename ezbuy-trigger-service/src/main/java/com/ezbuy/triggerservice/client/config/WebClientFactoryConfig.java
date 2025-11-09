@@ -3,7 +3,7 @@ package com.ezbuy.triggerservice.client.config;
 import com.ezbuy.triggerservice.client.properties.OrderProperties;
 import com.ezbuy.triggerservice.client.properties.ProductProperties;
 import com.ezbuy.triggerservice.client.properties.SettingProperties;
-import com.reactify.client.WebClientFactory;
+import com.ezbuy.core.client.WebClientFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

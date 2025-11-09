@@ -2,10 +2,10 @@ package com.ezbuy.settingservice.repositoryTemplate;
 
 import com.ezbuy.settingmodel.model.Page;
 import com.ezbuy.settingmodel.request.SearchingPageRequest;
-import com.reactify.repository.BaseTemplateRepository;
-import com.reactify.util.DataUtil;
-import com.reactify.util.SQLUtils;
-import com.reactify.util.SortingUtils;
+import com.ezbuy.core.repository.BaseTemplateRepository;
+import com.ezbuy.core.util.DataUtil;
+import com.ezbuy.core.util.SQLUtils;
+import com.ezbuy.core.util.SortingUtils;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

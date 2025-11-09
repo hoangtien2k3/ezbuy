@@ -3,7 +3,7 @@ package com.ezbuy.settingservice.controller;
 import com.ezbuy.settingmodel.constants.UrlPaths;
 import com.ezbuy.settingmodel.dto.AreaDTO;
 import com.ezbuy.settingservice.service.AreaService;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

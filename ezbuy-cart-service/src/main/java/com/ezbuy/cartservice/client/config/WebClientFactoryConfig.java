@@ -3,7 +3,7 @@ package com.ezbuy.cartservice.client.config;
 import com.ezbuy.cartservice.client.properties.PaymentProperties;
 import com.ezbuy.cartservice.client.properties.ProductProperties;
 import com.ezbuy.cartservice.client.properties.SettingProperties;
-import com.reactify.client.WebClientFactory;
+import com.ezbuy.core.client.WebClientFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

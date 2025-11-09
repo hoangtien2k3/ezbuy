@@ -5,7 +5,7 @@ import com.ezbuy.settingmodel.dto.NewsContentDTO;
 import com.ezbuy.settingmodel.model.NewsContent;
 import com.ezbuy.settingmodel.request.CreateNewsContentRequest;
 import com.ezbuy.settingservice.service.NewsContentService;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

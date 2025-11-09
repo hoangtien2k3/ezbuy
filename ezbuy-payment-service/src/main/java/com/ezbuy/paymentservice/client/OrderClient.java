@@ -1,6 +1,6 @@
 package com.ezbuy.paymentservice.client;
 
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 
 public interface OrderClient {

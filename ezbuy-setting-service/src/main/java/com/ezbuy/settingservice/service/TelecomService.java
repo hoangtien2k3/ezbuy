@@ -8,7 +8,7 @@ import com.ezbuy.settingmodel.request.PageTelecomRequest;
 import com.ezbuy.settingmodel.request.StatusLockingRequest;
 import com.ezbuy.settingmodel.request.TelecomSearchingRequest;
 import com.ezbuy.settingmodel.response.*;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import java.util.List;
 import reactor.core.publisher.Mono;
 

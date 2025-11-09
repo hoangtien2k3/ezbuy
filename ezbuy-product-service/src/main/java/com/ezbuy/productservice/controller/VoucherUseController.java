@@ -6,7 +6,7 @@ import com.ezbuy.productmodel.dto.UpdateVoucherPaymentRequest;
 import com.ezbuy.productmodel.dto.request.CreateVoucherUseRequest;
 import com.ezbuy.productmodel.model.VoucherUse;
 import com.ezbuy.productservice.service.VoucherUseService;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

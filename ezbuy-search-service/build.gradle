@@ -11,7 +11,8 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation libs.io.github.hoangtien2k3.reactify.core
+//    implementation libs.io.github.hoangtien2k3.reactify.core
+    implementation project(':ezbuy-core')
     implementation project(':ezbuy-search-model')
     implementation project(':ezbuy-setting-model')
     implementation libs.org.springframework.boot.spring.boot.starter.data.elasticsearch

@@ -1,6 +1,6 @@
 package com.ezbuy.settingservice.service.impl;
 
-import static com.reactify.constants.CommonErrorCode.SUCCESS;
+import static com.ezbuy.core.constants.CommonErrorCode.SUCCESS;
 
 import com.ezbuy.settingmodel.dto.PaginationDTO;
 import com.ezbuy.settingmodel.dto.request.SearchMarketPageSectionRequest;
@@ -12,13 +12,13 @@ import com.ezbuy.settingservice.repository.MarketPageSectionRepository;
 import com.ezbuy.settingservice.repository.MarketSectionRepository;
 import com.ezbuy.settingservice.repositoryTemplate.MarketPageSectionRepositoryTemplate;
 import com.ezbuy.settingservice.service.MarketPageSectionService;
-import com.reactify.constants.CommonErrorCode;
-import com.reactify.exception.BusinessException;
-import com.reactify.model.TokenUser;
-import com.reactify.model.response.DataResponse;
-import com.reactify.util.DataUtil;
-import com.reactify.util.SecurityUtils;
-import com.reactify.util.Translator;
+import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.exception.BusinessException;
+import com.ezbuy.core.model.TokenUser;
+import com.ezbuy.core.model.response.DataResponse;
+import com.ezbuy.core.util.DataUtil;
+import com.ezbuy.core.util.SecurityUtils;
+import com.ezbuy.core.util.Translator;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;

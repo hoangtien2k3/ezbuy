@@ -1,7 +1,7 @@
 package com.ezbuy.notisendservice.client.config;
 
 import com.ezbuy.notisendservice.client.properties.AuthProperties;
-import com.reactify.client.WebClientFactory;
+import com.ezbuy.core.client.WebClientFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,6 +1,6 @@
 package com.ezbuy.triggerservice.config;
 
-import com.reactify.util.DataUtil;
+import com.ezbuy.core.util.DataUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

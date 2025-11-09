@@ -7,7 +7,7 @@ import com.ezbuy.productmodel.dto.request.*;
 import com.ezbuy.productmodel.dto.response.GetProductInfoResponse;
 import com.ezbuy.productmodel.dto.response.ProductSearchResult;
 import com.ezbuy.productmodel.model.Product;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import java.util.List;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;

@@ -4,7 +4,7 @@ import com.ezbuy.cartmodel.dto.DeleteUserProductCartDTO;
 import com.ezbuy.cartmodel.dto.request.Product;
 import com.ezbuy.cartmodel.dto.response.PageCart;
 import com.ezbuy.cartmodel.model.CartItem;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 
 public interface CartItemService {

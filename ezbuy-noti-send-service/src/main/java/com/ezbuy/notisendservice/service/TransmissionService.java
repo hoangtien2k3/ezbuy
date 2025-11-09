@@ -1,6 +1,6 @@
 package com.ezbuy.notisendservice.service;
 
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 
 public interface TransmissionService {

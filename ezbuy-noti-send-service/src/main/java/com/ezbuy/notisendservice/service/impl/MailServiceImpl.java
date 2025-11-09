@@ -4,7 +4,7 @@ import com.ezbuy.notimodel.dto.EmailResultDTO;
 import com.ezbuy.notimodel.dto.TransmissionNotiDTO;
 import com.ezbuy.notisendservice.constants.CommonConstants;
 import com.ezbuy.notisendservice.service.MailService;
-import com.reactify.util.DataUtil;
+import com.ezbuy.core.util.DataUtil;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

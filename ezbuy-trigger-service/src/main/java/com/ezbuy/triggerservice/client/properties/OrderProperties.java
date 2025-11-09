@@ -1,6 +1,6 @@
 package com.ezbuy.triggerservice.client.properties;
 
-import com.reactify.client.properties.WebClientProperties;
+import com.ezbuy.core.client.properties.WebClientProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

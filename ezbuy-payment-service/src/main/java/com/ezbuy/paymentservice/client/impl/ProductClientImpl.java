@@ -3,7 +3,7 @@ package com.ezbuy.paymentservice.client.impl;
 import com.ezbuy.paymentmodel.constants.ClientUris;
 import com.ezbuy.paymentmodel.dto.response.IdentityProductPrice;
 import com.ezbuy.paymentservice.client.ProductClient;
-import com.reactify.client.BaseRestClient;
+import com.ezbuy.core.client.BaseRestClient;
 
 import java.util.*;
 import lombok.RequiredArgsConstructor;

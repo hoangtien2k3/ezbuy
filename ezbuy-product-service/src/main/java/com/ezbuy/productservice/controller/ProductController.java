@@ -11,7 +11,7 @@ import com.ezbuy.productmodel.dto.response.GetProductInfoResponse;
 import com.ezbuy.productmodel.dto.response.ProductSearchResult;
 import com.ezbuy.productmodel.model.Product;
 import com.ezbuy.productservice.service.ProductService;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

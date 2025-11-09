@@ -3,7 +3,7 @@ package com.ezbuy.searchservice.client.impl;
 import com.ezbuy.searchservice.client.ElasticsearchClient;
 import com.ezbuy.searchservice.client.properties.ElasticsearchClientProperties;
 import com.ezbuy.searchservice.client.properties.IndexProperties;
-import com.reactify.util.DataUtil;
+import com.ezbuy.core.util.DataUtil;
 import java.util.Base64;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

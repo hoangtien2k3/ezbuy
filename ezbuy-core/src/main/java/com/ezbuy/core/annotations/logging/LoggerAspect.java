@@ -67,8 +67,8 @@ public class LoggerAspect {
      * client packages that should be logged for performance metrics.
      * </p>
      */
-    @Pointcut("execution(* com.reactify.*.controller..*(..)) || " + "execution(* com.reactify.*.service..*(..)) || "
-            + "execution(* com.reactify.*.repository..*(..)) || " + "execution(* com.reactify.*.client..*(..)) && "
+    @Pointcut("execution(* com.ezbuy.core.*.controller..*(..)) || " + "execution(* com.ezbuy.core.*.service..*(..)) || "
+            + "execution(* com.ezbuy.core.*.repository..*(..)) || " + "execution(* com.ezbuy.core.*.client..*(..)) && "
             + "!execution(* org.springframework.boot.actuate..*(..))")
     public void performancePointCut() {}
 
@@ -78,7 +78,7 @@ public class LoggerAspect {
      * {@link LogPerformance}.
      * </p>
      */
-    @Pointcut("@annotation(com.reactify.annotations.LogPerformance)")
+    @Pointcut("@annotation(com.ezbuy.core.annotations.LogPerformance)")
     private void logPerfMethods() {}
 
     /**

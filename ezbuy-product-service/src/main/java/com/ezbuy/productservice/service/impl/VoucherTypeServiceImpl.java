@@ -1,7 +1,7 @@
 package com.ezbuy.productservice.service.impl;
 
 import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
-import static com.reactify.constants.Constants.STATUS.INACTIVE;
+import static com.ezbuy.core.constants.Constants.STATUS.INACTIVE;
 
 import com.ezbuy.productmodel.constants.Constants;
 import com.ezbuy.productmodel.dto.VoucherTypeV2DTO;
@@ -13,13 +13,13 @@ import com.ezbuy.productmodel.model.VoucherType;
 import com.ezbuy.productservice.repository.VoucherTypeRepository;
 import com.ezbuy.productservice.repository.repoTemplate.VoucherTypeRepositoryTemplate;
 import com.ezbuy.productservice.service.VoucherTypeService;
-import com.reactify.constants.CommonErrorCode;
-import com.reactify.exception.BusinessException;
-import com.reactify.model.response.DataResponse;
-import com.reactify.util.AppUtils;
-import com.reactify.util.DataUtil;
-import com.reactify.util.SecurityUtils;
-import com.reactify.util.Translator;
+import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.exception.BusinessException;
+import com.ezbuy.core.model.response.DataResponse;
+import com.ezbuy.core.util.AppUtils;
+import com.ezbuy.core.util.DataUtil;
+import com.ezbuy.core.util.SecurityUtils;
+import com.ezbuy.core.util.Translator;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;

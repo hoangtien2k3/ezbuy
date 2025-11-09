@@ -2,7 +2,7 @@ package com.ezbuy.notisendservice.client.Impl;
 
 import com.ezbuy.notimodel.dto.response.ContactResponse;
 import com.ezbuy.notisendservice.client.AuthClient;
-import com.reactify.client.BaseRestClient;
+import com.ezbuy.core.client.BaseRestClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;

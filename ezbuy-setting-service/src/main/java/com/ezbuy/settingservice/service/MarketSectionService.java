@@ -5,7 +5,7 @@ import com.ezbuy.settingmodel.model.MarketSection;
 import com.ezbuy.settingmodel.request.CreateMarketSectionRequest;
 import com.ezbuy.settingmodel.request.MarketSectionSearchRequest;
 import com.ezbuy.settingmodel.response.MarketSectionSearchResponse;
-import com.reactify.model.response.DataResponse;
+import com.ezbuy.core.model.response.DataResponse;
 import java.util.List;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

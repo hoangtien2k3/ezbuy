@@ -1,7 +1,7 @@
 package com.ezbuy.cartservice.service.impl;
 
 import static com.ezbuy.productmodel.constants.Constants.Message.SUCCESS;
-import static com.reactify.constants.Regex.PRODUCT_ID;
+import static com.ezbuy.core.constants.Regex.PRODUCT_ID;
 
 import com.ezbuy.cartmodel.dto.CartItemProductDTO;
 import com.ezbuy.cartmodel.dto.CartTelecomDTO;
@@ -20,10 +20,10 @@ import com.ezbuy.ordermodel.dto.PaginationDTO;
 import com.ezbuy.paymentmodel.dto.request.ProductItem;
 import com.ezbuy.paymentmodel.dto.request.ProductPriceRequest;
 import com.ezbuy.productmodel.dto.response.ProductOfferTemplateDTO;
-import com.reactify.constants.CommonErrorCode;
-import com.reactify.exception.BusinessException;
-import com.reactify.model.response.DataResponse;
-import com.reactify.util.*;
+import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.exception.BusinessException;
+import com.ezbuy.core.model.response.DataResponse;
+import com.ezbuy.core.util.*;
 import io.r2dbc.spi.Row;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
