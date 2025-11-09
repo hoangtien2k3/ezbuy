@@ -72,7 +72,6 @@ public class BaseSoapClientImpl<T> implements BaseSoapClient<T> {
     @Override
     public Mono<Optional<T>> call(
             WebClient webClient, Map<String, String> headerList, String payload, Class<?> resultClass) {
-        log.info("Soap service payload client call: {}", payload);
         MultiValueMap<String, String> header = getHeaderForCallSoap(headerList);
         return webClient
                 .post()
@@ -82,11 +81,9 @@ public class BaseSoapClientImpl<T> implements BaseSoapClient<T> {
                 .onStatus(HttpStatusCode::isError, BaseSoapClientImpl::handleErrorResponse)
                 .bodyToMono(String.class)
                 .map(response -> {
-                    log.info("Soap Response {}", response);
                     if (DataUtil.isNullOrEmpty(response)) {
                         return Optional.<T>empty();
                     }
-                    log.info("callRaw soap WS resp: {}", response);
                     String formattedSOAPResponse = DataWsUtil.formatXML(response);
                     String realData = DataWsUtil.getDataByTag(
                             formattedSOAPResponse
@@ -125,7 +122,6 @@ public class BaseSoapClientImpl<T> implements BaseSoapClient<T> {
      */
     @Override
     public Mono<String> callRaw(WebClient webClient, Map<String, String> headerList, String payload) {
-        log.info("Soap service payload client: {}", payload);
         MultiValueMap<String, String> header = getHeaderForCallSoap(headerList);
         return webClient
                 .post()
@@ -133,17 +129,10 @@ public class BaseSoapClientImpl<T> implements BaseSoapClient<T> {
                 .bodyValue(payload)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, BaseSoapClientImpl::handleErrorResponse)
-                .onStatus(Objects::nonNull, clientResponse -> {
-                    log.info("Status code {}", clientResponse.statusCode());
-                    log.info("Full {}", clientResponse);
-                    return Mono.empty();
-                })
+                .onStatus(Objects::nonNull, clientResponse -> Mono.empty())
                 .bodyToMono(String.class)
                 .switchIfEmpty(Mono.error(new BusinessException("Call raw", "null")))
-                .map(response -> {
-                    log.info("callRaw soap WS resp: {}", response);
-                    return DataUtil.safeToString(response);
-                })
+                .map(DataUtil::safeToString)
                 .log();
     }
 
@@ -161,11 +150,9 @@ public class BaseSoapClientImpl<T> implements BaseSoapClient<T> {
      *         from the response body. If the response body cannot be read, the
      *         error will be propagated.
      */
-    public static Mono<Throwable> handleErrorResponse(ClientResponse response) {
-        return response.bodyToMono(String.class).flatMap(errorBody -> {
-            log.info("log when call error {}", errorBody);
-            return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody));
-        });
+    private static Mono<Throwable> handleErrorResponse(ClientResponse response) {
+        return response.bodyToMono(String.class)
+                .flatMap(errorBody -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody)));
     }
 
     /**

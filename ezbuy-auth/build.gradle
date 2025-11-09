@@ -13,7 +13,6 @@ dependencyManagement {
 dependencies {
 //    implementation libs.io.github.hoangtien2k3.ezbuy.core.core
     implementation project(':ezbuy-core')
-    implementation project(':ezbuy-auth-model')
     implementation project(':ezbuy-noti-model')
     implementation project(':ezbuy-setting-model')
     implementation libs.com.google.code.gson.gson

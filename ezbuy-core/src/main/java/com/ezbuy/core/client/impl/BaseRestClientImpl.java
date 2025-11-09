@@ -15,8 +15,6 @@
  */
 package com.ezbuy.core.client.impl;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import com.ezbuy.core.client.BaseRestClient;
 import com.ezbuy.core.constants.CommonErrorCode;
 import com.ezbuy.core.constants.Constants;
@@ -62,64 +60,37 @@ import reactor.netty.transport.ProxyProvider;
  * environment. The class includes handling for error scenarios, logging, and
  * response parsing.
  *
- * @param <T>
- *            the type of the response body expected from the API call.
  * @author hoangtien2k3
  */
 @Service
-public class BaseRestClientImpl<T> implements BaseRestClient<T> {
+public class BaseRestClientImpl implements BaseRestClient {
 
     /**
      * A static logger instance for logging messages
      */
     private static final Logger log = LoggerFactory.getLogger(BaseRestClientImpl.class);
+
     /**
-     * {@inheritDoc}
-     *
-     * Executes a GET request with specified headers and query parameters.
+     * GET request with specified headers and query parameters
      */
     @Override
-    public Mono<Optional<T>> get(
+    public <T> Mono<Optional<T>> get(
             WebClient webClient,
             String url,
             MultiValueMap<String, String> headerMap,
             MultiValueMap<String, String> payload,
             Class<?> resultClass) {
-        log.info("Rest service payload client: {}", payload);
-        return webClient
-                .get()
+        return execute(webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(url)
                         .queryParams(getSafePayload(payload))
                         .build())
-                .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerMap)))
-                .retrieve()
-                .bodyToMono(String.class)
-                .map(response -> {
-                    log.info("Rest response {}", response);
-                    if (DataUtil.isNullOrEmpty(response)) {
-                        return Optional.<T>empty();
-                    }
-                    if (DataUtil.safeEqual(resultClass.getSimpleName(), "String")) {
-                        @SuppressWarnings("unchecked")
-                        T stringResponse = (T) response;
-                        return Optional.of(stringResponse);
-                    }
-                    T result = DataUtil.parseStringToObject(response, resultClass);
-                    return Optional.ofNullable(result);
-                })
-                .onErrorResume(WebClientResponseException.class, e -> {
-                    log.error("Exception call get rest api: ", e);
-                    String responseError = e.getResponseBodyAsString(UTF_8);
-                    T result = DataUtil.parseStringToObject(responseError, resultClass);
-                    return Mono.just(Optional.ofNullable(result));
-                });
+                .headers(h -> h.addAll(getSafeRestHeader(headerMap))), resultClass
+        );
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * Executes a GET request and returns the raw response as a string.
+     * GET request and returns the raw response as a string
      */
     @Override
     public Mono<String> getRaw(
@@ -127,215 +98,122 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
             String url,
             MultiValueMap<String, String> headerMap,
             MultiValueMap<String, String> payload) {
-        return webClient
+        return executeRaw(webClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path(url)
                         .queryParams(getSafePayload(payload))
                         .build())
                 .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerMap)))
-                .retrieve()
-                .bodyToMono(String.class)
-                .map(DataUtil::safeToString)
-                .onErrorResume(WebClientResponseException.class, e -> {
-                    log.error("call rest api ", e);
-                    return Mono.just("");
-                });
+        );
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * Executes a POST request with specified headers and payload.
+     * Sends a GET request to a specified URI, with headers and error handling
      */
     @Override
-    public Mono<Optional<T>> post(
+    public Mono<String> getRawWithFixedUri(WebClient webClient, String uri, MultiValueMap<String, String> headerMap) {
+        return executeRaw(webClient
+                .get()
+                .uri(uri)
+                .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerMap)))
+        );
+    }
+
+    /**
+     * POST request with specified headers and payload
+     */
+    @Override
+    public <T> Mono<Optional<T>> post(
             WebClient webClient,
             String url,
             MultiValueMap<String, String> headerList,
             Object payload,
             Class<?> resultClass) {
-        if (DataUtil.isNullOrEmpty(payload)) {
-            payload = new LinkedMultiValueMap<>();
-        }
-        log.info("Payload when calling post: {}", payload);
-        return webClient
-                .post()
+        if (DataUtil.isNullOrEmpty(payload)) payload = new LinkedMultiValueMap<>();
+        return execute(webClient.post()
                 .uri(url)
                 .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
-                .bodyValue(payload)
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, BaseRestClientImpl::handleErrorResponse)
-                .bodyToMono(String.class)
-                .map(response -> processReturn(response, resultClass))
-                .onErrorResume(WebClientResponseException.class, e -> {
-                    log.error("call post rest api error: ", e);
-                    String responseError = e.getResponseBodyAsString(StandardCharsets.UTF_8);
-                    T result = DataUtil.parseStringToObject(responseError, resultClass);
-                    return Mono.just(Optional.ofNullable(result));
-                });
+                .bodyValue(payload), resultClass
+        );
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * Executes a POST request with form data as payload.
+     * POST request with form data as payload
      */
     @Override
-    public Mono<Optional<T>> postFormData(
+    public <T> Mono<Optional<T>> postFormData(
             WebClient webClient,
             String url,
             MultiValueMap<String, String> headerList,
             MultiValueMap<String, String> formData,
             Class<?> resultClass) {
-        if (formData == null) {
-            formData = new LinkedMultiValueMap<>();
-        }
-        return webClient
+        if (formData == null) formData = new LinkedMultiValueMap<>();
+        return execute(webClient
                 .post()
                 .uri(url)
                 .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(BodyInserters.fromFormData(formData))
-                .retrieve()
-                .bodyToMono(String.class)
-                .map(response -> processReturn(response, resultClass))
-                .onErrorResume(WebClientResponseException.class, e -> {
-                    log.error("call post rest api: ", e);
-                    String responseError = e.getResponseBodyAsString(UTF_8);
-                    T result = DataUtil.parseStringToObject(responseError, resultClass);
-                    return Mono.just(Optional.ofNullable(result));
-                });
+                .body(BodyInserters.fromFormData(formData)), resultClass);
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * Processes the raw string response and maps it to the specified result class.
+     * POST request with JSON payload and maps the response to the specified class type
      */
     @Override
-    public Optional<T> processReturn(String response, Class<?> resultClass) {
-        if (DataUtil.isNullOrEmpty(response)) {
-            return Optional.empty();
-        }
-        T result = DataUtil.parseStringToObject(response, resultClass);
-        return Optional.ofNullable(result);
+    public <T> Mono<Optional<T>> postBodyJson(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerList,
+            Object payload,
+            Class<?> resultClass) {
+        if (DataUtil.isNullOrEmpty(payload)) payload = new LinkedMultiValueMap<>();
+        return execute(webClient
+                .post()
+                .uri(url)
+                .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
+                .bodyValue(Objects.requireNonNull(ObjectMapperUtil.convertObjectToJson(payload))), resultClass);
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * Executes a DELETE request with specified headers and query parameters.
+     * Sends a POST request with raw JSON payload, handling errors by logging
      */
     @Override
-    public Mono<Optional<T>> delete(
+    public Mono<String> postRawBodyJson(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerList,
+            Object payload) {
+        return executeRaw(webClient
+                .post()
+                .uri(url)
+                .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
+                .bodyValue(Objects.requireNonNull(ObjectMapperUtil.convertObjectToJson(payload)))
+        );
+    }
+
+    /**
+     * DELETE request with specified headers and query parameters
+     */
+    @Override
+    public <T> Mono<Optional<T>> delete(
             WebClient webClient,
             String url,
             MultiValueMap<String, String> headerList,
             MultiValueMap<String, String> payload,
             Class<?> resultClass) {
-        return webClient
+        return execute(webClient
                 .delete()
                 .uri(uriBuilder -> uriBuilder
                         .path(url)
                         .queryParams(getSafePayload(payload))
                         .build())
-                .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
-                .retrieve()
-                .bodyToMono(String.class)
-                .map(response -> processReturn(response, resultClass))
-                .onErrorResume(WebClientResponseException.class, e -> {
-                    log.error("call delete rest api: ", e);
-                    String responseError = e.getResponseBodyAsString(UTF_8);
-                    T result = DataUtil.parseStringToObject(responseError, resultClass);
-                    return Mono.just(Optional.ofNullable(result));
-                });
+                .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList))), resultClass
+        );
     }
 
     /**
-     * Ensures a safe MultiValueMap for payload, returning an empty map if the input
-     * is null or empty.
-     *
-     * @param payload
-     *            the payload map to check.
-     * @return the original payload if not empty, otherwise an empty
-     *         LinkedMultiValueMap.
-     */
-    private MultiValueMap<String, String> getSafePayload(MultiValueMap<String, String> payload) {
-        return !DataUtil.isNullOrEmpty(payload) ? payload : new LinkedMultiValueMap<>();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Sends a POST request to an external certificate file service API with error
-     * handling.
-     */
-    @Override
-    public Mono<String> callApiCertificateFileService(
-            WebClient webClient,
-            String url,
-            MultiValueMap<String, String> headerList,
-            Object payload,
-            Class<?> resultClass) {
-        if (DataUtil.isNullOrEmpty(payload)) {
-            payload = new LinkedMultiValueMap<>();
-        }
-        return webClient
-                .post()
-                .uri(url)
-                .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
-                .bodyValue(payload)
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, BaseRestClientImpl::handleErrorResponse)
-                .bodyToMono(String.class)
-                .map(response -> response)
-                .onErrorResume(WebClientResponseException.class, e -> {
-                    log.error("call post rest api: ", e);
-                    String responseError = e.getResponseBodyAsString(UTF_8);
-                    return Mono.just(responseError);
-                });
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Sends a POST request with JSON payload and maps the response to the specified
-     * class type.
-     */
-    @Override
-    public Mono<Optional<T>> callPostBodyJson(
-            WebClient webClient,
-            String url,
-            MultiValueMap<String, String> headerList,
-            Object payload,
-            Class<?> resultClass) {
-        if (DataUtil.isNullOrEmpty(payload)) {
-            payload = new LinkedMultiValueMap<>();
-        }
-        log.info("payload when call post {}", payload);
-
-        return webClient
-                .post()
-                .uri(url)
-                .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
-                .bodyValue(Objects.requireNonNull(ObjectMapperUtil.convertObjectToJson(payload)))
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, BaseRestClientImpl::handleErrorResponse)
-                .bodyToMono(String.class)
-                .map(response -> processReturn(response, resultClass))
-                .onErrorResume(WebClientResponseException.class, e -> {
-                    log.error("call post rest api: ", e);
-                    String responseError = e.getResponseBodyAsString(UTF_8);
-                    T result = DataUtil.parseStringToObject(responseError, resultClass);
-                    return Mono.just(Optional.ofNullable(result));
-                });
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Configures an HTTPS WebClient with optional proxy settings.
+     * Configures an HTTPS WebClient with optional proxy settings
      */
     @Override
     public WebClient proxyClient(String proxyHost, Integer proxyPort, Boolean proxyEnable) {
@@ -350,122 +228,45 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
                 .option(EpollChannelOption.TCP_KEEPIDLE, 300)
                 .option(EpollChannelOption.TCP_KEEPINTVL, 60)
                 .option(EpollChannelOption.TCP_KEEPCNT, 8);
-        if (proxyEnable) {
+        if (Boolean.TRUE.equals(proxyEnable)) {
             SslContext sslContext;
             try {
-                sslContext = SslContextBuilder.forClient()
+                sslContext = SslContextBuilder
+                        .forClient()
                         .trustManager(InsecureTrustManagerFactory.INSTANCE)
                         .build();
+                httpClient = httpClient
+                        .proxy(proxy ->
+                                proxy.type(ProxyProvider.Proxy.HTTP).host(proxyHost).port(proxyPort))
+                        .secure(t -> t.sslContext(sslContext));
             } catch (Exception ex) {
-                return null;
+                log.error("Failed to configure proxy SSL context: {}", ex.getMessage(), ex);
             }
-            httpClient = httpClient
-                    .proxy(proxy ->
-                            proxy.type(ProxyProvider.Proxy.HTTP).host(proxyHost).port(proxyPort))
-                    .secure(t -> t.sslContext(sslContext));
         }
-        var clientConnector = new ReactorClientHttpConnector(httpClient);
         return WebClient.builder()
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .codecs(clientCodecConfigurer -> {
                     clientCodecConfigurer
                             .defaultCodecs()
-                            .maxInMemorySize(16 * 1024 * 1024); // config max memory in byte
+                            .maxInMemorySize(16 * 1024 * 1024); //16MB
                 })
-                .clientConnector(clientConnector)
                 .build();
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * Configures an HTTP WebClient with proxy settings for non-secure connections.
+     * Configures an HTTP WebClient with proxy settings for non-secure connections
      */
     @Override
     public WebClient proxyHttpClient(String proxyHost, Integer proxyPort) {
         HttpClient httpClient = HttpClient.create()
-                .proxy(proxy ->
-                        proxy.type(ProxyProvider.Proxy.HTTP).host(proxyHost).port(proxyPort));
+                .proxy(proxy -> proxy.type(ProxyProvider.Proxy.HTTP)
+                        .host(proxyHost)
+                        .port(proxyPort));
         ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
         return WebClient.builder()
                 .clientConnector(connector)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .build();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Sends a POST request with JSON payload containing LocalDateTime values and
-     * maps the response.
-     */
-    @Override
-    public Mono<Optional<T>> callPostBodyJsonForLocalDateTime(
-            WebClient webClient,
-            String url,
-            MultiValueMap<String, String> headerList,
-            Object payload,
-            Class<?> resultClass) {
-        if (DataUtil.isNullOrEmpty(payload)) {
-            payload = new LinkedMultiValueMap<>();
-        }
-        return webClient
-                .post()
-                .uri(url)
-                .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
-                .bodyValue(Objects.requireNonNull(ObjectMapperUtil.convertObjectToJsonForLocalDateTime(payload)))
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, BaseRestClientImpl::handleErrorResponse)
-                .bodyToMono(String.class)
-                .map(response -> processReturn(response, resultClass))
-                .onErrorResume(WebClientResponseException.class, e -> {
-                    log.error("call post rest api: ", e);
-                    String responseError = e.getResponseBodyAsString(UTF_8);
-                    T result = DataUtil.parseStringToObject(responseError, resultClass);
-                    return Mono.just(Optional.ofNullable(result));
-                });
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Sends a POST request with raw JSON payload, handling errors by logging.
-     */
-    @Override
-    public Mono<String> postRawBodyJson(
-            WebClient webClient, String url, MultiValueMap<String, String> headerList, Object payload) {
-        return webClient
-                .post()
-                .uri(url)
-                .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
-                .bodyValue(Objects.requireNonNull(ObjectMapperUtil.convertObjectToJson(payload)))
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, BaseRestClientImpl::handleErrorResponse)
-                .bodyToMono(String.class)
-                .map(DataUtil::safeToString)
-                .onErrorResume(WebClientResponseException.class, e -> {
-                    log.error("call rest api ", e);
-                    return Mono.just("");
-                });
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Sends a GET request to a specified URI, with headers and error handling.
-     */
-    @Override
-    public Mono<String> getRawWithFixedUri(WebClient webClient, String uri, MultiValueMap<String, String> headerMap) {
-        return webClient
-                .get()
-                .uri(uri)
-                .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerMap)))
-                .retrieve()
-                .bodyToMono(String.class)
-                .map(DataUtil::safeToString)
-                .onErrorResume(WebClientResponseException.class, e -> {
-                    log.error("call rest api ", e);
-                    return Mono.just("");
-                });
     }
 
     /**
@@ -500,10 +301,59 @@ public class BaseRestClientImpl<T> implements BaseRestClient<T> {
      *         from the response body. If the response body cannot be read, the
      *         error will be propagated.
      */
-    public static Mono<? extends Throwable> handleErrorResponse(ClientResponse response) {
+    private static Mono<? extends Throwable> handleErrorResponse(ClientResponse response) {
         return response.bodyToMono(String.class).flatMap(errorBody -> {
             log.info("log when call error {}", errorBody);
             return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody));
         });
+    }
+
+    /**
+     * Ensures a safe MultiValueMap for payload, returning an empty map if the input
+     * is null or empty.
+     *
+     * @param payload
+     *            the payload map to check.
+     * @return the original payload if not empty, otherwise an empty
+     *         LinkedMultiValueMap.
+     */
+    private MultiValueMap<String, String> getSafePayload(MultiValueMap<String, String> payload) {
+        return !DataUtil.isNullOrEmpty(payload) ? payload : new LinkedMultiValueMap<>();
+    }
+
+    // ================== Generic Execute ==================
+    private <T> Mono<Optional<T>> execute(WebClient.RequestHeadersSpec<?> requestSpec, Class<?> resultClass) {
+        return requestSpec
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, BaseRestClientImpl::handleErrorResponse)
+                .bodyToMono(String.class)
+                .map(response -> {
+                    if (DataUtil.isNullOrEmpty(response)) return Optional.<T>empty();
+                    if (resultClass == String.class) {
+                        @SuppressWarnings("unchecked")
+                        T stringResponse = (T) response;
+                        return Optional.of(stringResponse);
+                    }
+                    T result = DataUtil.parseStringToObject(response, resultClass);
+                    return Optional.ofNullable(result);
+                })
+                .onErrorResume(WebClientResponseException.class, e -> {
+                    log.error("Call rest api error: ", e);
+                    String responseError = e.getResponseBodyAsString(StandardCharsets.UTF_8);
+                    T result = DataUtil.parseStringToObject(responseError, resultClass);
+                    return Mono.just(Optional.ofNullable(result));
+                });
+    }
+
+    // ================== Generic Execute Raw ==================
+    private Mono<String> executeRaw(WebClient.RequestHeadersSpec<?> requestSpec) {
+        return requestSpec
+                .retrieve()
+                .bodyToMono(String.class)
+                .map(DataUtil::safeToString)
+                .onErrorResume(WebClientResponseException.class, e -> {
+                    log.error("Call rest api error: ", e);
+                    return Mono.just("");
+                });
     }
 }

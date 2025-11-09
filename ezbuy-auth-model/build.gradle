@@ -1,5 +1,0 @@
-dependencies {
-    testImplementation libs.junit.junit
-}
-
-description = 'ezbuy-auth-model'

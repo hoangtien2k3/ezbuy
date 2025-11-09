@@ -222,7 +222,7 @@ public class AuthClientImpl implements AuthClient {
     @Override
     public Mono<String> updateTrustStatusByTenantId(UpdateTenantTrustStatusRequest request) {
         return baseRestClient
-                .callPostBodyJson(authClient, "/identify/org-trust-status/tenant-id", null, request, DataResponse.class)
+                .postBodyJson(authClient, "/identify/org-trust-status/tenant-id", null, request, DataResponse.class)
                 .map(dataResponse -> {
                     if (DataUtil.isNullOrEmpty(dataResponse)) {
                         return Mono.error(
@@ -271,7 +271,7 @@ public class AuthClientImpl implements AuthClient {
     @Override
     public Mono<String> updateTrustStatusNotSign(UpdateTenantTrustStatusRequest request) {
         return baseRestClient
-                .callPostBodyJson(authClient, "/identify/org-trust-status/not-sign", null, request, DataResponse.class)
+                .postBodyJson(authClient, "/identify/org-trust-status/not-sign", null, request, DataResponse.class)
                 .map(dataResponse -> {
                     if (DataUtil.isNullOrEmpty(dataResponse)) {
                         return Mono.error(

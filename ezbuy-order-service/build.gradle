@@ -18,7 +18,6 @@ dependencies {
     implementation project(':ezbuy-setting-model')
     implementation project(':ezbuy-cart-model')
     implementation project(':ezbuy-payment-model')
-    implementation project(':ezbuy-auth-model')
     implementation libs.org.apache.mina.mina.core
     implementation libs.commons.io.commons.io
     implementation libs.org.apache.poi.poi

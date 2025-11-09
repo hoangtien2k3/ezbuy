@@ -178,7 +178,7 @@ public class DataUtil {
             try {
                 result = Integer.parseInt(obj1.toString());
             } catch (Exception ignored) {
-                log.error("safeToInt error: ", ignored);
+                log.error("safeToInt error");
             }
         }
         return result;
@@ -417,15 +417,21 @@ public class DataUtil {
             return null;
         }
         try {
-            return (T) ObjectMapperFactory.getInstance().readValue(safeToString(content), clz);
+            @SuppressWarnings("unchecked")
+            T result = (T) ObjectMapperFactory.getInstance().readValue(safeToString(content), clz);
+            return result;
         } catch (JsonProcessingException e) {
             log.error("Parse json error", e);
         }
         try {
-            return (T) clz.newInstance();
+            @SuppressWarnings("unchecked")
+            T result = (T) clz.getDeclaredConstructor().newInstance();
+            return result;
         } catch (Exception e) {
             log.error("cast object error: ", e);
-            return (T) new Object();
+            @SuppressWarnings("unchecked")
+            T ex = (T) new Object();
+            return ex;
         }
     }
 
@@ -582,7 +588,7 @@ public class DataUtil {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
             return date.format(formatter);
         } catch (Exception e) {
-            log.error("====> parse local date time to string ==> " + e.getMessage(), e);
+            log.error("====> parse local date time to string ==> {}", e.getMessage(), e);
             return null;
         }
     }
@@ -597,15 +603,11 @@ public class DataUtil {
      */
     public static LocalDateTime convertStringToDateTime(String dateString) {
         try {
-            // Define the date formatter for the input format
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
             // Parse the date string to a LocalDate object
             LocalDate date = LocalDate.parse(dateString, dateFormatter);
-
-            // Create a LocalTime object set to midnight (00:00:00)
+            // LocalTime object set to midnight (00:00:00)
             LocalTime time = LocalTime.MIDNIGHT;
-
             // Combine the date and time to create a LocalDateTime object
             return LocalDateTime.of(date, time);
         } catch (Exception ex) {
@@ -619,7 +621,7 @@ public class DataUtil {
      *
      * @param field
      *            the string to append the wildcard to
-     * @return the string with the appended wildcard
+     * @return the appended wildcard
      */
     public static String appendLikeQuery(String field) {
         return "%" + field + "%";
@@ -680,8 +682,7 @@ public class DataUtil {
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             StringWriter writer = new StringWriter();
             transformer.transform(new DOMSource(doc), new StreamResult(writer));
-            String output = writer.getBuffer().toString();
-            return output;
+            return writer.getBuffer().toString();
         } catch (TransformerException e) {
             return null;
         }
@@ -699,14 +700,9 @@ public class DataUtil {
     private static Document convertStringToDocument(String xmlStr) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder;
-        try {
-            InputSource inputSource = new InputSource(new StringReader(xmlStr));
-            builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(inputSource);
-            return doc;
-        } catch (Exception e) {
-            throw e;
-        }
+        InputSource inputSource = new InputSource(new StringReader(xmlStr));
+        builder = factory.newDocumentBuilder();
+        return builder.parse(inputSource);
     }
 
     /**
@@ -782,15 +778,16 @@ public class DataUtil {
      * @return the validated page index
      */
     public static int validatePageIndex(Integer pageIndex, Integer pageSize) {
-        int offset = 1;
-        if (pageIndex == null) {
-            offset = 1;
-        } else if (pageIndex < 0) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.pageIndex.invalid");
-        } else {
-            offset = (pageIndex - 1) * pageSize;
+        if (pageSize == null || pageSize <= 0) {
+            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.pageSize.invalid");
         }
-        return offset;
+        if (pageIndex == null) {
+            return 0;
+        }
+        if (pageIndex < 1) {
+            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.pageIndex.invalid");
+        }
+        return (pageIndex - 1) * pageSize;
     }
 
     /**
@@ -830,8 +827,7 @@ public class DataUtil {
      */
     public static String convertDate2yyyyMMddStringNoSlash(Date value) {
         if (value != null) {
-            SimpleDateFormat yyyymm = new SimpleDateFormat("yyyyMMdd");
-            return yyyymm.format(value);
+            return new SimpleDateFormat("yyyyMMdd").format(value);
         } else {
             return "";
         }

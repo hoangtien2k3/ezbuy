@@ -14,7 +14,6 @@ dependencies {
 //    implementation libs.io.github.hoangtien2k3.reactify.core
     implementation project(':ezbuy-core')
     implementation project(':ezbuy-order-model')
-    implementation project(':ezbuy-auth-model')
     implementation project(':ezbuy-product-model')
     implementation libs.org.springframework.boot.spring.boot.starter.quartz
     implementation libs.com.zaxxer.hikaricp

@@ -1,5 +1,4 @@
 rootProject.name = 'ezbuy'
-include(':ezbuy-auth-model')
 include(':ezbuy-auth')
 include(':ezbuy-cart-model')
 include(':ezbuy-cart-service')

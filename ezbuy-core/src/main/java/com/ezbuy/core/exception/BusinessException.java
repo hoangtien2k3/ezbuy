@@ -16,6 +16,8 @@
 package com.ezbuy.core.exception;
 
 import com.ezbuy.core.util.Translator;
+import lombok.Getter;
+
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -61,6 +63,7 @@ import java.util.Objects;
  * @version 1.2.6
  * @author hoangtien2k3
  */
+@Getter
 public class BusinessException extends RuntimeException {
 
     /** Error code associated with the exception */
@@ -83,7 +86,7 @@ public class BusinessException extends RuntimeException {
      */
     public BusinessException(String errorCode, String message) {
         this.errorCode = errorCode;
-        this.message = Translator.toLocaleVi(message);
+        this.message = Translator.toLocale(message);
     }
 
     /**
@@ -108,18 +111,6 @@ public class BusinessException extends RuntimeException {
         this.errorCode = errorCode;
         this.paramsMsg = Arrays.stream(paramsMsg).map(Translator::toLocaleVi).toArray(String[]::new);
         this.message = Translator.toLocaleVi(message, this.paramsMsg);
-    }
-
-    public String getErrorCode() {
-        return errorCode;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public Object[] getParamsMsg() {
-        return paramsMsg;
     }
 
     @Override

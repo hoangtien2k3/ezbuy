@@ -22,6 +22,9 @@ import com.ezbuy.core.filter.properties.ProxyProperties;
 import com.ezbuy.core.filter.properties.RetryProperties;
 import com.ezbuy.core.filter.properties.TimeoutProperties;
 import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 
 /**
@@ -35,6 +38,8 @@ import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
  *
  * @author hoangtien2k3
  */
+@Setter
+@Getter
 public class WebClientProperties {
 
     /**
@@ -122,121 +127,4 @@ public class WebClientProperties {
      * {@code internalOauth}.
      */
     private boolean tokenRelay = false;
-
-    /**
-     * Constructs a new instance of {@code WebClientProperties}.
-     */
-    public WebClientProperties() {}
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getAuthorization() {
-        return authorization;
-    }
-
-    public void setAuthorization(String authorization) {
-        this.authorization = authorization;
-    }
-
-    public PoolProperties getPool() {
-        return pool;
-    }
-
-    public void setPool(PoolProperties pool) {
-        this.pool = pool;
-    }
-
-    public TimeoutProperties getTimeout() {
-        return timeout;
-    }
-
-    public void setTimeout(TimeoutProperties timeout) {
-        this.timeout = timeout;
-    }
-
-    public RetryProperties getRetry() {
-        return retry;
-    }
-
-    public void setRetry(RetryProperties retry) {
-        this.retry = retry;
-    }
-
-    public ClientLogProperties getLog() {
-        return log;
-    }
-
-    public void setLog(ClientLogProperties log) {
-        this.log = log;
-    }
-
-    public MonitoringProperties getMonitoring() {
-        return monitoring;
-    }
-
-    public void setMonitoring(MonitoringProperties monitoring) {
-        this.monitoring = monitoring;
-    }
-
-    public ProxyProperties getProxy() {
-        return proxy;
-    }
-
-    public void setProxy(ProxyProperties proxy) {
-        this.proxy = proxy;
-    }
-
-    public List<ExchangeFilterFunction> getCustomFilters() {
-        return customFilters;
-    }
-
-    public void setCustomFilters(List<ExchangeFilterFunction> customFilters) {
-        this.customFilters = customFilters;
-    }
-
-    public boolean isInternalOauth() {
-        return internalOauth;
-    }
-
-    public void setInternalOauth(boolean internalOauth) {
-        this.internalOauth = internalOauth;
-    }
-
-    public boolean isTokenRelay() {
-        return tokenRelay;
-    }
-
-    public void setTokenRelay(boolean tokenRelay) {
-        this.tokenRelay = tokenRelay;
-    }
 }
