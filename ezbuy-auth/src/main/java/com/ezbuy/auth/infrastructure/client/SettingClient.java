@@ -12,7 +12,7 @@ public interface SettingClient {
 
     Mono<DataResponse<List<AreaDTO>>> getAreas(String parentCode);
 
-    Mono<Optional<DataResponse>> getAdminRole(@RequestParam String originId);
+    Mono<Optional<DataResponse<String>>> getAdminRole(@RequestParam String originId);
 
     Mono<Optional<DataResponse>> getAdminRoleByAlias(@RequestParam String originId);
 

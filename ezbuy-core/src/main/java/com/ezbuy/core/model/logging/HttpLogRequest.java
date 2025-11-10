@@ -15,11 +15,14 @@
  */
 package com.ezbuy.core.model.logging;
 
+import lombok.Getter;
+
 /**
  * Record representing the configuration for HTTP log requests.
  *
  * @author hoangtien2k3
  */
+@Getter
 public class HttpLogRequest {
 
     private final boolean enable;
@@ -35,9 +38,5 @@ public class HttpLogRequest {
 
     public HttpLogRequest(boolean enable) {
         this.enable = enable;
-    }
-
-    public boolean isEnable() {
-        return enable;
     }
 }

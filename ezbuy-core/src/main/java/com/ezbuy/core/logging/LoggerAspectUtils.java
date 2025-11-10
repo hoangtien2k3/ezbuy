@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ezbuy.core.annotations.logging;
+package com.ezbuy.core.logging;
 
 import brave.Span;
 import brave.Tracer;
-import com.ezbuy.core.annotations.LogPerformance;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.util.DataUtil;
 import java.lang.reflect.Method;

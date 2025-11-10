@@ -11,7 +11,7 @@ import com.ezbuy.settingservice.repository.OptionSetRepository;
 import com.ezbuy.settingservice.repository.OptionSetValueRepository;
 import com.ezbuy.settingservice.repositoryTemplate.OptionSetRepositoryTemplate;
 import com.ezbuy.settingservice.service.OptionSetService;
-import com.ezbuy.core.annotations.LocalCache;
+import com.ezbuy.core.cache.LocalCache;
 import com.ezbuy.core.constants.CommonErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.exception.BusinessException;

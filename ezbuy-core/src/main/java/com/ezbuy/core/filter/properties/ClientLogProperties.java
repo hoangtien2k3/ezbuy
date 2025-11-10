@@ -16,6 +16,8 @@
 package com.ezbuy.core.filter.properties;
 
 import com.ezbuy.core.constants.Constants;
+import lombok.Data;
+
 import java.util.List;
 
 /**
@@ -38,6 +40,7 @@ import java.util.List;
  *
  * @author hoangtien2k3
  */
+@Data
 public class ClientLogProperties {
 
     /**
@@ -62,13 +65,5 @@ public class ClientLogProperties {
     public ClientLogProperties(boolean enable, List<String> obfuscateHeaders) {
         this.enable = enable;
         this.obfuscateHeaders = obfuscateHeaders;
-    }
-
-    public boolean isEnable() {
-        return enable;
-    }
-
-    public List<String> getObfuscateHeaders() {
-        return obfuscateHeaders;
     }
 }

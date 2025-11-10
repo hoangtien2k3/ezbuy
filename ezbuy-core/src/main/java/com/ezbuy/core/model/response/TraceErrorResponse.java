@@ -15,6 +15,9 @@
  */
 package com.ezbuy.core.model.response;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Represents an error response with trace information, extending DataResponse.
  *
@@ -22,6 +25,8 @@ package com.ezbuy.core.model.response;
  *            the type of the response data
  * @author hoangtien2k3
  */
+@Setter
+@Getter
 public class TraceErrorResponse<T> extends DataResponse<T> {
 
     /**
@@ -44,14 +49,6 @@ public class TraceErrorResponse<T> extends DataResponse<T> {
      */
     public TraceErrorResponse(String errorCode, String message, T data, String requestId) {
         super(errorCode, message, data);
-        this.requestId = requestId;
-    }
-
-    public String getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(String requestId) {
         this.requestId = requestId;
     }
 }

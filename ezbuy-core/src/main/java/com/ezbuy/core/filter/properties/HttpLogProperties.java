@@ -17,6 +17,7 @@ package com.ezbuy.core.filter.properties;
 
 import com.ezbuy.core.model.logging.HttpLogRequest;
 import com.ezbuy.core.model.logging.HttpLogResponse;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +38,7 @@ import org.springframework.stereotype.Component;
  *
  * @author hoangtien2k3
  */
+@Data
 @Component
 @ConfigurationProperties(prefix = "application.http-logging", ignoreInvalidFields = true)
 public class HttpLogProperties {
@@ -50,27 +52,4 @@ public class HttpLogProperties {
      * Properties related to HTTP response logging.
      */
     private HttpLogResponse response = new HttpLogResponse();
-
-    public HttpLogProperties() {}
-
-    public HttpLogProperties(HttpLogRequest request, HttpLogResponse response) {
-        this.request = request;
-        this.response = response;
-    }
-
-    public HttpLogRequest getRequest() {
-        return request;
-    }
-
-    public void setRequest(HttpLogRequest request) {
-        this.request = request;
-    }
-
-    public HttpLogResponse getResponse() {
-        return response;
-    }
-
-    public void setResponse(HttpLogResponse response) {
-        this.response = response;
-    }
 }

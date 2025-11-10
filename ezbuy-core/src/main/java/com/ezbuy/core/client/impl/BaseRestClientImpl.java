@@ -20,18 +20,19 @@ import com.ezbuy.core.constants.CommonErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.util.DataUtil;
-import com.ezbuy.core.util.ObjectMapperUtil;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.epoll.EpollChannelOption;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.Objects;
 import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -79,44 +80,33 @@ public class BaseRestClientImpl implements BaseRestClient {
             String url,
             MultiValueMap<String, String> headerMap,
             MultiValueMap<String, String> payload,
-            Class<?> resultClass) {
-        return execute(webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(url)
-                        .queryParams(getSafePayload(payload))
-                        .build())
-                .headers(h -> h.addAll(getSafeRestHeader(headerMap))), resultClass
+            Class<T> resultClass) {
+        return execute(
+                webClient.get()
+                        .uri(uriBuilder -> uriBuilder
+                                .path(url)
+                                .queryParams(getSafePayload(payload))
+                                .build())
+                        .headers(h -> h.addAll(getSafeRestHeader(headerMap))),
+                resultClass
         );
     }
 
-    /**
-     * GET request and returns the raw response as a string
-     */
     @Override
-    public Mono<String> getRaw(
+    public <T> Mono<Optional<T>> get(
             WebClient webClient,
             String url,
             MultiValueMap<String, String> headerMap,
-            MultiValueMap<String, String> payload) {
-        return executeRaw(webClient
-                .get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(url)
-                        .queryParams(getSafePayload(payload))
-                        .build())
-                .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerMap)))
-        );
-    }
-
-    /**
-     * Sends a GET request to a specified URI, with headers and error handling
-     */
-    @Override
-    public Mono<String> getRawWithFixedUri(WebClient webClient, String uri, MultiValueMap<String, String> headerMap) {
-        return executeRaw(webClient
-                .get()
-                .uri(uri)
-                .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerMap)))
+            MultiValueMap<String, String> payload,
+            ParameterizedTypeReference<T> typeRef) {
+        return execute(
+                webClient.get()
+                        .uri(uriBuilder -> uriBuilder
+                                .path(url)
+                                .queryParams(getSafePayload(payload))
+                                .build())
+                        .headers(h -> h.addAll(getSafeRestHeader(headerMap))),
+                typeRef
         );
     }
 
@@ -129,12 +119,33 @@ public class BaseRestClientImpl implements BaseRestClient {
             String url,
             MultiValueMap<String, String> headerList,
             Object payload,
-            Class<?> resultClass) {
-        if (DataUtil.isNullOrEmpty(payload)) payload = new LinkedMultiValueMap<>();
-        return execute(webClient.post()
-                .uri(url)
-                .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
-                .bodyValue(payload), resultClass
+            Class<T> resultClass) {
+        if (DataUtil.isNullOrEmpty(payload))
+            payload = new LinkedMultiValueMap<>();
+        return execute(
+                webClient.post()
+                        .uri(url)
+                        .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
+                        .bodyValue(payload),
+                resultClass
+        );
+    }
+
+    @Override
+    public <T> Mono<Optional<T>> post(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerList,
+            Object payload,
+            ParameterizedTypeReference<T> typeRef) {
+        if (DataUtil.isNullOrEmpty(payload))
+            payload = new LinkedMultiValueMap<>();
+        return execute(
+                webClient.post()
+                        .uri(url)
+                        .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
+                        .bodyValue(payload),
+                typeRef
         );
     }
 
@@ -142,53 +153,75 @@ public class BaseRestClientImpl implements BaseRestClient {
      * POST request with form data as payload
      */
     @Override
-    public <T> Mono<Optional<T>> postFormData(
+    public <T> Mono<Optional<T>> post(
             WebClient webClient,
             String url,
             MultiValueMap<String, String> headerList,
             MultiValueMap<String, String> formData,
-            Class<?> resultClass) {
-        if (formData == null) formData = new LinkedMultiValueMap<>();
-        return execute(webClient
-                .post()
-                .uri(url)
-                .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(BodyInserters.fromFormData(formData)), resultClass);
+            Class<T> resultClass) {
+        if (formData == null)
+            formData = new LinkedMultiValueMap<>();
+        return execute(
+                webClient.post()
+                        .uri(url)
+                        .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .body(BodyInserters.fromFormData(formData)),
+                resultClass);
     }
 
-    /**
-     * POST request with JSON payload and maps the response to the specified class type
-     */
     @Override
-    public <T> Mono<Optional<T>> postBodyJson(
+    public <T> Mono<Optional<T>> post(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerList,
+            MultiValueMap<String, String> formData,
+            ParameterizedTypeReference<T> typeRef) {
+        if (formData == null)
+            formData = new LinkedMultiValueMap<>();
+        return execute(
+                webClient.post()
+                        .uri(url)
+                        .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .body(BodyInserters.fromFormData(formData)),
+                typeRef
+        );
+    }
+
+    @Override
+    public <T> Mono<Optional<T>> put(
             WebClient webClient,
             String url,
             MultiValueMap<String, String> headerList,
             Object payload,
-            Class<?> resultClass) {
-        if (DataUtil.isNullOrEmpty(payload)) payload = new LinkedMultiValueMap<>();
-        return execute(webClient
-                .post()
-                .uri(url)
-                .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
-                .bodyValue(Objects.requireNonNull(ObjectMapperUtil.convertObjectToJson(payload))), resultClass);
+            Class<T> resultClass) {
+        if (DataUtil.isNullOrEmpty(payload))
+            payload = new LinkedMultiValueMap<>();
+        return execute(
+                webClient.put()
+                        .uri(url)
+                        .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
+                        .bodyValue(payload),
+                resultClass
+        );
     }
 
-    /**
-     * Sends a POST request with raw JSON payload, handling errors by logging
-     */
     @Override
-    public Mono<String> postRawBodyJson(
+    public <T> Mono<Optional<T>> put(
             WebClient webClient,
             String url,
             MultiValueMap<String, String> headerList,
-            Object payload) {
-        return executeRaw(webClient
-                .post()
-                .uri(url)
-                .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
-                .bodyValue(Objects.requireNonNull(ObjectMapperUtil.convertObjectToJson(payload)))
+            Object payload,
+            ParameterizedTypeReference<T> typeRef) {
+        if (DataUtil.isNullOrEmpty(payload))
+            payload = new LinkedMultiValueMap<>();
+        return execute(
+                webClient.put()
+                        .uri(url)
+                        .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
+                        .bodyValue(payload),
+                typeRef
         );
     }
 
@@ -201,14 +234,36 @@ public class BaseRestClientImpl implements BaseRestClient {
             String url,
             MultiValueMap<String, String> headerList,
             MultiValueMap<String, String> payload,
-            Class<?> resultClass) {
-        return execute(webClient
-                .delete()
-                .uri(uriBuilder -> uriBuilder
-                        .path(url)
-                        .queryParams(getSafePayload(payload))
-                        .build())
-                .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList))), resultClass
+            Class<T> resultClass) {
+        return execute(
+                webClient.delete()
+                        .uri(uriBuilder -> uriBuilder
+                                .path(url)
+                                .queryParams(getSafePayload(payload))
+                                .build())
+                        .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList))),
+                resultClass
+        );
+    }
+
+    /**
+     * DELETE request with specified headers and query parameters
+     */
+    @Override
+    public <T> Mono<Optional<T>> delete(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerList,
+            MultiValueMap<String, String> payload,
+            ParameterizedTypeReference<T> typeRef) {
+        return execute(
+                webClient.delete()
+                        .uri(uriBuilder -> uriBuilder
+                                .path(url)
+                                .queryParams(getSafePayload(payload))
+                                .build())
+                        .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList))),
+                typeRef
         );
     }
 
@@ -273,10 +328,9 @@ public class BaseRestClientImpl implements BaseRestClient {
      * Ensures a safe MultiValueMap for headers, with a default "Content-Type:
      * application/json" if empty.
      *
-     * @param headerMap
-     *            the header map to check and potentially initialize.
+     * @param headerMap the header map to check and potentially initialize.
      * @return the original header map if not empty, otherwise a new map with a JSON
-     *         Content-Type.
+     * Content-Type.
      */
     private MultiValueMap<String, String> getSafeRestHeader(MultiValueMap<String, String> headerMap) {
         if (!DataUtil.isNullOrEmpty(headerMap)) {
@@ -295,11 +349,10 @@ public class BaseRestClientImpl implements BaseRestClient {
      * the error message. The method is designed to be used in error handling
      * scenarios where the response indicates an error (non-2xx status code).
      *
-     * @param response
-     *            The ClientResponse to handle, which may contain error details.
+     * @param response The ClientResponse to handle, which may contain error details.
      * @return A Mono that emits a {@link BusinessException} with the error message
-     *         from the response body. If the response body cannot be read, the
-     *         error will be propagated.
+     * from the response body. If the response body cannot be read, the
+     * error will be propagated.
      */
     private static Mono<? extends Throwable> handleErrorResponse(ClientResponse response) {
         return response.bodyToMono(String.class).flatMap(errorBody -> {
@@ -312,23 +365,23 @@ public class BaseRestClientImpl implements BaseRestClient {
      * Ensures a safe MultiValueMap for payload, returning an empty map if the input
      * is null or empty.
      *
-     * @param payload
-     *            the payload map to check.
+     * @param payload the payload map to check.
      * @return the original payload if not empty, otherwise an empty
-     *         LinkedMultiValueMap.
+     * LinkedMultiValueMap.
      */
     private MultiValueMap<String, String> getSafePayload(MultiValueMap<String, String> payload) {
         return !DataUtil.isNullOrEmpty(payload) ? payload : new LinkedMultiValueMap<>();
     }
 
-    // ================== Generic Execute ==================
-    private <T> Mono<Optional<T>> execute(WebClient.RequestHeadersSpec<?> requestSpec, Class<?> resultClass) {
+    // ================== Generic Execute Class ==================
+    private <T> Mono<Optional<T>> execute(WebClient.RequestHeadersSpec<?> requestSpec, Class<T> resultClass) {
         return requestSpec
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, BaseRestClientImpl::handleErrorResponse)
                 .bodyToMono(String.class)
                 .map(response -> {
-                    if (DataUtil.isNullOrEmpty(response)) return Optional.<T>empty();
+                    if (DataUtil.isNullOrEmpty(response))
+                        return Optional.<T>empty();
                     if (resultClass == String.class) {
                         @SuppressWarnings("unchecked")
                         T stringResponse = (T) response;
@@ -345,15 +398,16 @@ public class BaseRestClientImpl implements BaseRestClient {
                 });
     }
 
-    // ================== Generic Execute Raw ==================
-    private Mono<String> executeRaw(WebClient.RequestHeadersSpec<?> requestSpec) {
+    // ================== Generic Execute ParameterizedTypeReference ==================
+    private <T> Mono<Optional<T>> execute(WebClient.RequestHeadersSpec<?> requestSpec, ParameterizedTypeReference<T> typeRef) {
         return requestSpec
                 .retrieve()
-                .bodyToMono(String.class)
-                .map(DataUtil::safeToString)
+                .onStatus(HttpStatusCode::isError, BaseRestClientImpl::handleErrorResponse)
+                .bodyToMono(typeRef)
+                .map(Optional::ofNullable)
                 .onErrorResume(WebClientResponseException.class, e -> {
                     log.error("Call rest api error: ", e);
-                    return Mono.just("");
+                    return Mono.just(Optional.empty());
                 });
     }
 }

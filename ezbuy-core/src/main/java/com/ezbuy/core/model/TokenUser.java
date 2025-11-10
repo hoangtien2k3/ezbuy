@@ -17,7 +17,8 @@ package com.ezbuy.core.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.Objects;
+import lombok.Builder;
+import lombok.Data;
 
 /**
  * <p>
@@ -34,6 +35,8 @@ import java.util.Objects;
  *
  * @author hoangtien2k3
  */
+@Data
+@Builder
 @JsonIgnoreProperties
 public class TokenUser {
     private String id;
@@ -46,127 +49,4 @@ public class TokenUser {
 
     @JsonProperty("organization_id")
     private String organizationId;
-
-    public TokenUser() {}
-
-    private TokenUser(Builder builder) {
-        this.id = builder.id;
-        this.name = builder.name;
-        this.username = builder.username;
-        this.email = builder.email;
-        this.individualId = builder.individualId;
-        this.organizationId = builder.organizationId;
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static class Builder {
-        private String id;
-        private String name;
-        private String username;
-        private String email;
-        private String individualId;
-        private String organizationId;
-
-        public Builder id(String id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder username(String username) {
-            this.username = username;
-            return this;
-        }
-
-        public Builder email(String email) {
-            this.email = email;
-            return this;
-        }
-
-        public Builder individualId(String individualId) {
-            this.individualId = individualId;
-            return this;
-        }
-
-        public Builder organizationId(String organizationId) {
-            this.organizationId = organizationId;
-            return this;
-        }
-
-        public TokenUser build() {
-            return new TokenUser(this);
-        }
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getIndividualId() {
-        return individualId;
-    }
-
-    public void setIndividualId(String individualId) {
-        this.individualId = individualId;
-    }
-
-    public String getOrganizationId() {
-        return organizationId;
-    }
-
-    public void setOrganizationId(String organizationId) {
-        this.organizationId = organizationId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof TokenUser tokenUser)) return false;
-        return Objects.equals(getId(), tokenUser.getId())
-                && Objects.equals(getName(), tokenUser.getName())
-                && Objects.equals(getUsername(), tokenUser.getUsername())
-                && Objects.equals(getEmail(), tokenUser.getEmail())
-                && Objects.equals(getIndividualId(), tokenUser.getIndividualId())
-                && Objects.equals(getOrganizationId(), tokenUser.getOrganizationId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getName(), getUsername(), getEmail(), getIndividualId(), getOrganizationId());
-    }
 }

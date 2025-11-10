@@ -16,49 +16,17 @@
 package com.ezbuy.core.model;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * <p>
  * WhiteList class.
  * </p>
  *
+ * @param uri     uri the URI to be whitelisted
+ * @param methods methods the list of HTTP methods allowed for the URI
  * @author hoangtien2k3
  */
-public class WhiteList {
-
-    /**
-     * uri the URI to be whitelisted
-     */
-    private final String uri;
-
-    /**
-     * methods the list of HTTP methods allowed for the URI
-     */
-    private final List<String> methods;
-
-    public WhiteList(String uri, List<String> methods) {
-        this.uri = uri;
-        this.methods = methods;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public List<String> getMethods() {
-        return methods;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof WhiteList whiteList)) return false;
-        return Objects.equals(getUri(), whiteList.getUri()) && Objects.equals(getMethods(), whiteList.getMethods());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getUri(), getMethods());
-    }
-}
+public record WhiteList(
+        String uri,
+        List<String> methods
+) { }

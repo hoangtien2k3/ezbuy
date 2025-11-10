@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ezbuy.core.annotations.logging;
+package com.ezbuy.core.logging;
 
 import brave.Span;
 import com.ezbuy.core.model.logging.LoggerDTO;
@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicReference;
+
+import lombok.Getter;
 import reactor.util.context.Context;
 
 /**
@@ -50,16 +52,10 @@ public class LoggerQueue {
     private static LoggerQueue mMe = null;
     private final ArrayBlockingQueue<LoggerDTO> myQueue;
 
+    @Getter
     private int countFalse = 0;
+    @Getter
     private int countSuccess = 0;
-
-    public int getCountFalse() {
-        return countFalse;
-    }
-
-    public int getCountSuccess() {
-        return countSuccess;
-    }
 
     /**
      * <p>

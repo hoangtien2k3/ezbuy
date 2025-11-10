@@ -22,23 +22,25 @@ subprojects {
     }
 
     dependencies {
-        annotationProcessor("org.projectlombok:lombok:1.18.32")
+        annotationProcessor libs.org.projectlombok.lombok
 
-        implementation("org.springframework.boot:spring-boot-starter-webflux:${springBootVersion}")
-        implementation("org.springframework.boot:spring-boot-starter-validation:${springBootVersion}")
-        implementation("org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}")
-        implementation("org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}")
-        implementation("org.springframework.boot:spring-boot-starter-data-r2dbc:${springBootVersion}")
+        implementation libs.org.springframework.boot.spring.boot.starter.webflux
+        implementation libs.org.springframework.boot.spring.boot.starter.validation
+        implementation libs.org.springframework.boot.spring.boot.starter.actuator
+        implementation libs.org.springframework.boot.spring.boot.configuration.processor
+        implementation libs.org.springframework.boot.spring.boot.starter.data.r2dbc
+        implementation libs.com.fasterxml.jackson.core.jackson.databind
+        implementation libs.org.modelmapper.modelmapper
+        implementation libs.io.r2dbc.r2dbc.pool
+        implementation libs.org.apache.commons.commons.lang3
+        implementation libs.org.projectlombok.lombok
 
-        implementation("com.fasterxml.jackson.core:jackson-databind:2.19.1")
-        implementation("org.modelmapper:modelmapper:3.2.0")
-        implementation("io.r2dbc:r2dbc-pool:1.0.2.RELEASE")
-        implementation("org.apache.commons:commons-lang3:3.18.0")
-        implementation("org.projectlombok:lombok:1.18.32")
+        runtimeOnly libs.org.postgresql.r2dbc.postgresql
+        runtimeOnly libs.org.postgresql.postgresql
 
-        compileOnly("org.projectlombok:lombok:1.18.32")
+        compileOnly libs.org.projectlombok.lombok
 
-        testImplementation("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+        testImplementation libs.org.springframework.boot.spring.boot.starter.test
     }
 
     java {

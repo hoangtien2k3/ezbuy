@@ -8,7 +8,7 @@ import com.ezbuy.settingmodel.response.SearchSettingResponse;
 import com.ezbuy.settingservice.repository.SettingRepository;
 import com.ezbuy.settingservice.repositoryTemplate.SettingRepositoryTemplate;
 import com.ezbuy.settingservice.service.SettingService;
-import com.ezbuy.core.annotations.LocalCache;
+import com.ezbuy.core.cache.LocalCache;
 import com.ezbuy.core.constants.CommonErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.exception.BusinessException;

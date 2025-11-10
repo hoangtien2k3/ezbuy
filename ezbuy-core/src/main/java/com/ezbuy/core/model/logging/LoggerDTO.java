@@ -17,6 +17,9 @@ package com.ezbuy.core.model.logging;
 
 import brave.Span;
 import java.util.concurrent.atomic.AtomicReference;
+
+import lombok.Builder;
+import lombok.Data;
 import reactor.util.context.Context;
 
 /**
@@ -24,6 +27,8 @@ import reactor.util.context.Context;
  *
  * @author hoangtien2k3
  */
+@Data
+@Builder
 public class LoggerDTO {
     private final AtomicReference<Context> contextRef;
     private final Span newSpan;
@@ -36,139 +41,4 @@ public class LoggerDTO {
     private final String actionType;
     private final Object[] args;
     private final String title;
-
-    private LoggerDTO(Builder builder) {
-        this.contextRef = builder.contextRef;
-        this.newSpan = builder.newSpan;
-        this.service = builder.service;
-        this.startTime = builder.startTime;
-        this.endTime = builder.endTime;
-        this.result = builder.result;
-        this.response = builder.response;
-        this.logType = builder.logType;
-        this.actionType = builder.actionType;
-        this.args = builder.args;
-        this.title = builder.title;
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static class Builder {
-        private AtomicReference<Context> contextRef;
-        private Span newSpan;
-        private String service;
-        private Long startTime;
-        private Long endTime;
-        private String result;
-        private Object response;
-        private String logType;
-        private String actionType;
-        private Object[] args;
-        private String title;
-
-        public Builder contextRef(AtomicReference<Context> contextRef) {
-            this.contextRef = contextRef;
-            return this;
-        }
-
-        public Builder newSpan(Span newSpan) {
-            this.newSpan = newSpan;
-            return this;
-        }
-
-        public Builder service(String service) {
-            this.service = service;
-            return this;
-        }
-
-        public Builder startTime(Long startTime) {
-            this.startTime = startTime;
-            return this;
-        }
-
-        public Builder endTime(Long endTime) {
-            this.endTime = endTime;
-            return this;
-        }
-
-        public Builder result(String result) {
-            this.result = result;
-            return this;
-        }
-
-        public Builder response(Object response) {
-            this.response = response;
-            return this;
-        }
-
-        public Builder logType(String logType) {
-            this.logType = logType;
-            return this;
-        }
-
-        public Builder actionType(String actionType) {
-            this.actionType = actionType;
-            return this;
-        }
-
-        public Builder args(Object[] args) {
-            this.args = args;
-            return this;
-        }
-
-        public Builder title(String title) {
-            this.title = title;
-            return this;
-        }
-
-        public LoggerDTO build() {
-            return new LoggerDTO(this);
-        }
-    }
-
-    public AtomicReference<Context> getContextRef() {
-        return contextRef;
-    }
-
-    public Span getNewSpan() {
-        return newSpan;
-    }
-
-    public String getService() {
-        return service;
-    }
-
-    public Long getStartTime() {
-        return startTime;
-    }
-
-    public Long getEndTime() {
-        return endTime;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public Object getResponse() {
-        return response;
-    }
-
-    public String getLogType() {
-        return logType;
-    }
-
-    public String getActionType() {
-        return actionType;
-    }
-
-    public Object[] getArgs() {
-        return args;
-    }
-
-    public String getTitle() {
-        return title;
-    }
 }

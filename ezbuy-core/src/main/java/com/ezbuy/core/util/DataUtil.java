@@ -86,9 +86,8 @@ public class DataUtil {
      */
     public static boolean isNullOrEmpty(CharSequence cs) {
         int strLen;
-        if (cs == null || (strLen = cs.length()) == 0) {
+        if (cs == null || (strLen = cs.length()) == 0)
             return true;
-        }
         for (int i = 0; i < strLen; i++) {
             if (!Character.isWhitespace(cs.charAt(i))) {
                 return false;
@@ -142,10 +141,7 @@ public class DataUtil {
      *         object is null
      */
     public static String safeToString(Object obj, String defaultValue) {
-        if (obj == null) {
-            return defaultValue;
-        }
-        return obj.toString();
+        return (obj != null) ? obj.toString() : defaultValue;
     }
 
     /**
@@ -206,7 +202,7 @@ public class DataUtil {
     public static Boolean safeToBoolean(Object obj1) {
         Boolean result = null;
         try {
-            result = obj1 == null ? null : (Boolean) obj1;
+            result = (obj1 == null) ? null : (Boolean) obj1;
         } catch (Exception ex) {
             log.error("safeToBoolean error ", ex);
         }
@@ -217,36 +213,42 @@ public class DataUtil {
      * Converts an object to a long, returning a default value if the conversion
      * fails.
      *
-     * @param obj1
+     * @param value
      *            the object to convert
      * @param defaultValue
      *            the default value to return if the conversion fails
      * @return the long representation of the object or the default value if the
      *         conversion fails
      */
-    public static Long safeToLong(Object obj1, Long defaultValue) {
-        Long result = defaultValue;
-        if (obj1 != null) {
-            switch (obj1) {
-                case BigDecimal bigDecimal -> {
-                    return bigDecimal.longValue();
+    public static Long safeToLong(Object value, Long defaultValue) {
+        if (value == null) return defaultValue;
+        return switch (value) {
+            case Long v -> v;
+            case Integer v -> v.longValue();
+            case Short v -> v.longValue();
+            case Byte v -> v.longValue();
+            case Float v -> v.longValue();
+            case Double v -> v.longValue();
+            case BigDecimal v -> v.longValue();
+            case BigInteger v -> v.longValue();
+            case String s -> {
+                try {
+                    yield Long.parseLong(s.trim());
+                } catch (NumberFormatException e) {
+                    log.debug("safeToLong: cannot parse '{}'", s);
+                    yield defaultValue;
                 }
-                case BigInteger bigInteger -> {
-                    return bigInteger.longValue();
-                }
-                case Double v -> {
-                    return v.longValue();
-                }
-                default -> {}
             }
-
-            try {
-                result = Long.parseLong(obj1.toString());
-            } catch (Exception e) {
-                log.error("safeToInt error: ", e);
+            default -> {
+                try {
+                    yield Long.parseLong(value.toString().trim());
+                } catch (Exception e) {
+                    log.debug("safeToLong: cannot parse from type {} with value '{}'",
+                            value.getClass().getSimpleName(), value);
+                    yield defaultValue;
+                }
             }
-        }
-        return result;
+        };
     }
 
     /**
@@ -412,21 +414,17 @@ public class DataUtil {
      *            the type of the object
      * @return the parsed object or a new instance of the class if parsing fails
      */
-    public static <T> T parseStringToObject(String content, Class<?> clz) {
+    public static <T> T parseStringToObject(String content, Class<T> clz) {
         if (isNullOrEmpty(content)) {
             return null;
         }
         try {
-            @SuppressWarnings("unchecked")
-            T result = (T) ObjectMapperFactory.getInstance().readValue(safeToString(content), clz);
-            return result;
+            return (T) ObjectMapperFactory.getInstance().readValue(safeToString(content), clz);
         } catch (JsonProcessingException e) {
             log.error("Parse json error", e);
         }
         try {
-            @SuppressWarnings("unchecked")
-            T result = (T) clz.getDeclaredConstructor().newInstance();
-            return result;
+            return (T) clz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             log.error("cast object error: ", e);
             @SuppressWarnings("unchecked")
@@ -469,9 +467,7 @@ public class DataUtil {
      *         conversion fails
      */
     public static String parseObjectToString(Object obj) {
-        if (obj == null) {
-            return "";
-        }
+        if (obj == null) return "";
         try {
             return ObjectMapperFactory.getInstance().writeValueAsString(obj);
         } catch (JsonProcessingException ex) {
@@ -491,9 +487,7 @@ public class DataUtil {
      *         fails
      */
     public static LocalDateTime convertStringToLocalDateTime(String input, String format) {
-        if (isNullOrEmpty(input)) {
-            return null;
-        }
+        if (isNullOrEmpty(input)) return null;
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
             return LocalDateTime.parse(input, formatter);
@@ -515,9 +509,7 @@ public class DataUtil {
      * @return the formatted string or the fallback value if the date is null
      */
     public static String formatDate(TemporalAccessor date, String format, String fallbackValue) {
-        if (isNullOrEmpty(date)) {
-            return fallbackValue;
-        }
+        if (isNullOrEmpty(date)) return fallbackValue;
         DateTimeFormatter df = DateTimeFormatter.ofPattern(format);
         return df.format(date);
     }
@@ -531,9 +523,7 @@ public class DataUtil {
      */
     public static String sumListString(String... list) {
         StringBuilder result = new StringBuilder();
-        for (String str : list) {
-            result.append(str);
-        }
+        for (String str : list) result.append(str);
         return result.toString();
     }
 
@@ -545,9 +535,7 @@ public class DataUtil {
      * @return the SQL LIKE query string
      */
     public static String getLikeStr(String str) {
-        if (str == null) {
-            str = "";
-        }
+        if (str == null) str = "";
         return "%" + str + "%";
     }
 
@@ -760,11 +748,10 @@ public class DataUtil {
      * @return the validated page size
      */
     public static int validatePageSize(Integer pageSize, int defaultPageSize) {
-        if (pageSize == null) {
+        if (pageSize == null)
             pageSize = defaultPageSize;
-        } else if (pageSize <= 0) {
+        else if (pageSize <= 0)
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.pageSize.invalid");
-        }
         return pageSize;
     }
 
@@ -778,15 +765,12 @@ public class DataUtil {
      * @return the validated page index
      */
     public static int validatePageIndex(Integer pageIndex, Integer pageSize) {
-        if (pageSize == null || pageSize <= 0) {
+        if (pageSize == null || pageSize <= 0)
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.pageSize.invalid");
-        }
-        if (pageIndex == null) {
+        if (pageIndex == null)
             return 0;
-        }
-        if (pageIndex < 1) {
+        if (pageIndex < 1)
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.pageIndex.invalid");
-        }
         return (pageIndex - 1) * pageSize;
     }
 
@@ -800,9 +784,7 @@ public class DataUtil {
      * @return the LocalDateTime representation of the date string
      */
     public static LocalDateTime convertDateStrToLocalDateTime(String input, String format) {
-        if (isNullOrEmpty(input) || DataUtil.isNullOrEmpty(format)) {
-            return null;
-        }
+        if (isNullOrEmpty(input) || DataUtil.isNullOrEmpty(format)) return null;
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(format);
         DateTimeFormatter convertDateFormatter = new DateTimeFormatterBuilder()
                 .append(dateFormatter)
@@ -826,10 +808,7 @@ public class DataUtil {
      * @return the string representation of the Date in the format yyyyMMdd
      */
     public static String convertDate2yyyyMMddStringNoSlash(Date value) {
-        if (value != null) {
-            return new SimpleDateFormat("yyyyMMdd").format(value);
-        } else {
-            return "";
-        }
+        if (value != null) return new SimpleDateFormat("yyyyMMdd").format(value);
+        else return "";
     }
 }

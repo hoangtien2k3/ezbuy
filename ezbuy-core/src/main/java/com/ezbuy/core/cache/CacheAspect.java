@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ezbuy.core.annotations.cache;
+package com.ezbuy.core.cache;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import com.ezbuy.core.annotations.LocalCache;
 import com.ezbuy.core.util.DataUtil;
 import java.util.Optional;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -53,7 +52,7 @@ public class CacheAspect {
      */
     private static final Logger log = LoggerFactory.getLogger(CacheAspect.class);
 
-    @Pointcut("@annotation(com.ezbuy.core.annotations.LocalCache)")
+    @Pointcut("@annotation(com.ezbuy.core.cache.LocalCache)")
     private void processAnnotation() {}
 
     /**

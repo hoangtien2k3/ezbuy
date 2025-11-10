@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ezbuy.core.common;
+package com.ezbuy.core.rsa;
 
 import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -23,7 +23,7 @@ import javax.crypto.Cipher;
 
 /**
  * <p>
- * The {@code RSACryptoExample} class provides methods for RSA encryption and
+ * The {@code RSACrypto} class provides methods for RSA encryption and
  * decryption using public and private keys. It includes functionalities for
  * converting string representations of keys to their respective
  * {@link java.security.PublicKey} and {@link java.security.PrivateKey} objects,
@@ -40,7 +40,7 @@ import javax.crypto.Cipher;
  * </p>
  *
  */
-public class RSACryptoExample {
+public class RSACrypto {
 
     /**
      * Converts a Base64 encoded string representation of a public key to a

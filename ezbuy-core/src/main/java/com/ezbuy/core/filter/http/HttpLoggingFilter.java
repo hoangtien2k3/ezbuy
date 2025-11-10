@@ -261,7 +261,7 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
      */
     private DataBuffer logResponseBody(DataBuffer buffer, ServerWebExchange exchange) {
         StringBuilder msg = new StringBuilder();
-        Integer capacity = buffer.capacity();
+        int capacity = buffer.capacity();
         if (capacity < Constants.LoggingTitle.BODY_SIZE_RESPONSE_MAX) {
             msg.append(String.format("%s", StandardCharsets.UTF_8.decode(buffer.asByteBuffer())));
         } else {
@@ -288,10 +288,10 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
         msg.append(Constants.LoggingTitle.REQUEST_BODY);
         String message = "body request too long to log";
         try {
-            Integer capacity = dataBuffer.capacity();
+            int capacity = dataBuffer.capacity();
             if (capacity < Constants.LoggingTitle.BODY_SIZE_REQUEST_MAX) {
                 message = StandardCharsets.UTF_8
-                        .decode(dataBuffer.asByteBuffer())
+                        .decode(dataBuffer.toByteBuffer())
                         .toString()
                         .replaceAll("\\s", "");
             }

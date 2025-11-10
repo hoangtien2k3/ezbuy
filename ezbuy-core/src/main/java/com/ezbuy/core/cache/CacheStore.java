@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ezbuy.core.annotations.cache;
+package com.ezbuy.core.cache;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Scheduler;
-import com.ezbuy.core.annotations.LocalCache;
+
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.*;

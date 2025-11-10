@@ -15,113 +15,57 @@
  */
 package com.ezbuy.core.model.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.ezbuy.core.constants.MessageConstant;
 import com.ezbuy.core.util.Translator;
 import java.io.Serializable;
 import java.util.Objects;
+
+import lombok.Builder;
+import lombok.Data;
 import org.springframework.http.HttpStatus;
 
 /**
  * Represents a standardized response structure for API responses.
  *
- * @param <T>
- *            the type of the response data
+ * @param <T> the type of the response data
  * @author hoangtien2k3
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(Include.NON_NULL)
+@Data
+@Builder
 public class DataResponse<T> implements Serializable {
     private String errorCode;
     private String message;
     private T data;
 
-    public static class Builder<T> {
-        private String errorCode;
-        private String message;
-        private T data;
-
-        public Builder<T> errorCode(String errorCode) {
-            this.errorCode = errorCode;
-            return this;
-        }
-
-        public Builder<T> message(String message) {
-            this.message = message;
-            return this;
-        }
-
-        public Builder<T> data(T data) {
-            this.data = data;
-            return this;
-        }
-
-        public DataResponse<T> build() {
-            DataResponse<T> response = new DataResponse<>(this.message, this.data);
-            response.setErrorCode(this.errorCode);
-            return response;
-        }
-    }
-
     public static <T> DataResponse<T> success(T data) {
-        return DataResponse.<T>builder()
-                .errorCode(MessageConstant.ERROR_CODE_SUCCESS)
-                .message(MessageConstant.SUCCESS)
-                .data(data)
-                .build();
+        return new DataResponse<>(
+                MessageConstant.ERROR_CODE_SUCCESS,
+                MessageConstant.SUCCESS,
+                data
+        );
     }
 
     public static <T> DataResponse<T> failed(T data) {
-        return DataResponse.<T>builder()
-                .errorCode(String.valueOf(HttpStatus.BAD_REQUEST.value()))
-                .message(MessageConstant.FAIL)
-                .data(data)
-                .build();
+        return new DataResponse<>(
+                String.valueOf(HttpStatus.BAD_REQUEST.value()),
+                MessageConstant.FAIL,
+                data
+        );
     }
 
     public DataResponse(String errorCode, String message, T data) {
         this.errorCode = errorCode;
-        this.message = Translator.toLocaleVi(message);
+        this.message = Translator.toLocale(message);
         this.data = data;
     }
 
     public DataResponse(String message, T data) {
-        this.message = Translator.toLocaleVi(message);
+        this.message = Translator.toLocale(message);
         this.data = data;
     }
 
     public DataResponse(String message) {
-        this.message = Translator.toLocaleVi(message);
-    }
-
-    public static <T> Builder<T> builder() {
-        return new Builder<>();
-    }
-
-    public String getErrorCode() {
-        return errorCode;
-    }
-
-    public void setErrorCode(String errorCode) {
-        this.errorCode = errorCode;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
+        this.message = Translator.toLocale(message);
     }
 
     @Override

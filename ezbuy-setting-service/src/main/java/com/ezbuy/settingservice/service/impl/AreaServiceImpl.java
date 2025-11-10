@@ -4,7 +4,7 @@ import com.ezbuy.settingmodel.dto.AreaDTO;
 import com.ezbuy.settingmodel.model.Area;
 import com.ezbuy.settingservice.repository.AreaRepository;
 import com.ezbuy.settingservice.service.AreaService;
-import com.ezbuy.core.annotations.LocalCache;
+import com.ezbuy.core.cache.LocalCache;
 import com.ezbuy.core.model.response.DataResponse;
 import com.ezbuy.core.util.DataUtil;
 import java.util.ArrayList;

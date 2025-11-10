@@ -15,5 +15,5 @@ public interface NotiServiceClient {
      * @return a Mono emitting an Optional containing a DataResponse if the
      *         operation was successful, or an empty Optional if not
      */
-    Mono<Optional<DataResponse>> insertTransmission(CreateNotificationDTO createNotificationDTO);
+    Mono<Optional<DataResponse<Object>>> insertTransmission(CreateNotificationDTO createNotificationDTO);
 }

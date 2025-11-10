@@ -15,6 +15,9 @@
  */
 package com.ezbuy.core.filter.properties;
 
+import lombok.Data;
+import lombok.Getter;
+
 /**
  * <p>
  * The TimeoutProperties class is a record that encapsulates configuration
@@ -29,6 +32,7 @@ package com.ezbuy.core.filter.properties;
  *
  * @author hoangtien2k3
  */
+@Data
 public class TimeoutProperties {
 
     /**
@@ -51,13 +55,5 @@ public class TimeoutProperties {
     public TimeoutProperties(int read, int connection) {
         this.read = read;
         this.connection = connection;
-    }
-
-    public int getRead() {
-        return read;
-    }
-
-    public int getConnection() {
-        return connection;
     }
 }

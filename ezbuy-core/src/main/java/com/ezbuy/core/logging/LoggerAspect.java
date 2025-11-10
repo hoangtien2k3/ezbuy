@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ezbuy.core.annotations.logging;
+package com.ezbuy.core.logging;
 
-import com.ezbuy.core.annotations.LogPerformance;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -78,7 +77,7 @@ public class LoggerAspect {
      * {@link LogPerformance}.
      * </p>
      */
-    @Pointcut("@annotation(com.ezbuy.core.annotations.LogPerformance)")
+    @Pointcut("@annotation(com.ezbuy.core.logging.LogPerformance)")
     private void logPerfMethods() {}
 
     /**

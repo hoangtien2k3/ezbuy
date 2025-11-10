@@ -15,11 +15,14 @@
  */
 package com.ezbuy.core.model.logging;
 
+import lombok.Getter;
+
 /**
  * Record representing the configuration for HTTP log responses.
  *
  * @author hoangtien2k3
  */
+@Getter
 public class HttpLogResponse {
 
     private final boolean enable;
@@ -31,13 +34,5 @@ public class HttpLogResponse {
      */
     public HttpLogResponse() {
         this.enable = true;
-    }
-
-    public HttpLogResponse(boolean enable) {
-        this.enable = enable;
-    }
-
-    public boolean isEnable() {
-        return enable;
     }
 }

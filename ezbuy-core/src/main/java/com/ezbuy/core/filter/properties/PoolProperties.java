@@ -15,6 +15,8 @@
  */
 package com.ezbuy.core.filter.properties;
 
+import lombok.Getter;
+
 /**
  * <p>
  * The PoolProperties class is a record that holds configuration properties for
@@ -30,6 +32,7 @@ package com.ezbuy.core.filter.properties;
  *
  * @author hoangtien2k3
  */
+@Getter
 public class PoolProperties {
 
     /**
@@ -54,13 +57,5 @@ public class PoolProperties {
     public PoolProperties(Integer maxSize, Integer maxPendingAcquire) {
         this.maxSize = maxSize;
         this.maxPendingAcquire = maxPendingAcquire;
-    }
-
-    public Integer getMaxSize() {
-        return maxSize;
-    }
-
-    public Integer getMaxPendingAcquire() {
-        return maxPendingAcquire;
     }
 }

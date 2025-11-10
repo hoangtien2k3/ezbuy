@@ -17,7 +17,12 @@ package com.ezbuy.core.filter.properties;
 
 import io.netty.channel.ConnectTimeoutException;
 import io.netty.handler.timeout.ReadTimeoutException;
+
 import java.util.List;
+
+import jdk.jfr.DataAmount;
+import lombok.Data;
+import lombok.Getter;
 import org.springframework.http.HttpMethod;
 
 /**
@@ -36,6 +41,7 @@ import org.springframework.http.HttpMethod;
  *
  * @author hoangtien2k3
  */
+@Data
 public class RetryProperties {
 
     /**
@@ -64,34 +70,22 @@ public class RetryProperties {
      * </p>
      */
     public RetryProperties() {
-        this(
-                true, // Default to enabling retries
-                2, // Default number of retry attempts
-                List.of(HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE), // Default HTTP methods for retries
-                List.of(ConnectTimeoutException.class, ReadTimeoutException.class)); // Default exceptions for retry
+        this(true,   // Default to enabling retries
+                2,           // Default number of retry attempts
+                List.of(HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE),         // Default HTTP methods for retries
+                List.of(ConnectTimeoutException.class, ReadTimeoutException.class)  // Default exceptions for retry
+        );
     }
 
     public RetryProperties(
-            boolean isEnable, int count, List<HttpMethod> methods, List<Class<? extends Exception>> exceptions) {
+            boolean isEnable,
+            int count,
+            List<HttpMethod> methods,
+            List<Class<? extends Exception>> exceptions
+    ) {
         this.isEnable = isEnable;
         this.count = count;
         this.methods = methods;
         this.exceptions = exceptions;
-    }
-
-    public boolean isEnable() {
-        return isEnable;
-    }
-
-    public int getCount() {
-        return count;
-    }
-
-    public List<HttpMethod> getMethods() {
-        return methods;
-    }
-
-    public List<Class<? extends Exception>> getExceptions() {
-        return exceptions;
     }
 }

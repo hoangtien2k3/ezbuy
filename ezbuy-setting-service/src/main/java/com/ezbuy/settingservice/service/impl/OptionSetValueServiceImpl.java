@@ -9,7 +9,7 @@ import com.ezbuy.settingmodel.response.SearchOptionSetValueResponse;
 import com.ezbuy.settingservice.repository.OptionSetValueRepository;
 import com.ezbuy.settingservice.repositoryTemplate.OptionSetValueRepositoryTemplate;
 import com.ezbuy.settingservice.service.OptionSetValueService;
-import com.ezbuy.core.annotations.LocalCache;
+import com.ezbuy.core.cache.LocalCache;
 import com.ezbuy.core.constants.CommonErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.exception.BusinessException;

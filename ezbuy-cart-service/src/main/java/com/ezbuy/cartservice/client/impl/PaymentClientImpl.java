@@ -32,19 +32,18 @@ public class PaymentClientImpl implements PaymentClient {
     public Mono<Optional<Long>> estimatePrice(ProductPriceRequest productPriceRequest) {
         return baseRestClient
                 .post(payment, "/price/calculate", null, productPriceRequest, DataResponse.class)
-                .map(resp -> {
-                    Optional<DataResponse> respOptional = (Optional<DataResponse>) resp;
-                    if (respOptional.isEmpty()) {
+                .flatMap(resp -> {
+                    if (resp.isEmpty()) {
                         return Mono.error(new BusinessException(
                                 CommonErrorCode.INTERNAL_SERVER_ERROR, Translator.toLocaleVi("server.error")));
                     }
                     String jsonValue =
-                            DataUtil.parseObjectToString(respOptional.get().getData());
+                            DataUtil.parseObjectToString(resp.get().getData());
                     EstimatePriceDTO totalPrice = DataUtil.parseStringToObject(jsonValue, EstimatePriceDTO.class);
                     if (totalPrice != null) {
-                        return Optional.of(DataUtil.safeToLong(totalPrice.getTotalPrice()));
+                        return Mono.just(Optional.of(DataUtil.safeToLong(totalPrice.getTotalPrice())));
                     }
-                    return Optional.of(0L);
+                    return Mono.just(Optional.of(0L));
                 });
     }
 }

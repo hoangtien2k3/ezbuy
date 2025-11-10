@@ -25,6 +25,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import static com.ezbuy.core.client.BaseRestClient.typeOf;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -37,18 +39,23 @@ public class SettingClientImpl implements SettingClient {
     private final BaseRestClient baseRestClient;
 
     @Override
-    public Mono<Optional<DataResponse>> getAdminRole(String originId) {
+    public Mono<Optional<DataResponse<String>>> getAdminRole(String originId) {
         MultiValueMap<String, String> req = new LinkedMultiValueMap<>();
         req.set("originId", originId);
-        return baseRestClient.get(settingClient, "/v1/telecom-services/admin-role", null, req, DataResponse.class);
+        return baseRestClient.get(
+                settingClient,
+                "/v1/telecom-services/admin-role",
+                null,
+                req,
+                typeOf()
+        );
     }
 
     @Override
     public Mono<Optional<DataResponse>> getAdminRoleByAlias(String serviceAlias) {
         MultiValueMap<String, String> req = new LinkedMultiValueMap<>();
         req.set("serviceAlias", serviceAlias);
-        return baseRestClient.get(
-                settingClient, "/v1/telecom-services/admin-role/alias", null, req, DataResponse.class);
+        return baseRestClient.get(settingClient, "/v1/telecom-services/admin-role/alias", null, req, DataResponse.class);
     }
 
     @Override
@@ -129,7 +136,7 @@ public class SettingClientImpl implements SettingClient {
                     if (dataResponse.isEmpty()) {
                         return Mono.just(new ArrayList<OptionSetValue>());
                     }
-                    String dataJson = DataUtil.parseObjectToString(dataResponse.get());
+                    String dataJson = DataUtil.parseObjectToString(dataResponse.get().getData());
                     List<OptionSetValue> optionSetValues =
                             DataUtil.parseStringToObject(dataJson, new TypeReference<>() {}, result);
                     return Mono.just(optionSetValues);

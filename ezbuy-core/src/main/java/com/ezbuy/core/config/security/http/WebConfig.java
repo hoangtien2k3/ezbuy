@@ -107,9 +107,9 @@ public class WebConfig {
         List<WhiteList> whiteListList = whiteListProperties.getWhiteList();
         if (!DataUtil.isNullOrEmpty(whiteListList)) {
             for (WhiteList whiteList : whiteListList) {
-                String uri = whiteList.getUri();
+                String uri = whiteList.uri();
                 log.info("whitelist: {}", uri);
-                List<String> methods = whiteList.getMethods();
+                List<String> methods = whiteList.methods();
                 if (!DataUtil.isNullOrEmpty(methods)) {
                     for (String method : methods) {
                         HttpMethod convertedMethod = HttpMethod.valueOf(method);

@@ -17,6 +17,7 @@ package com.ezbuy.core.filter.properties;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.logging.LoggingMeterRegistry;
+import lombok.Data;
 
 /**
  * <p>
@@ -31,13 +32,9 @@ import io.micrometer.core.instrument.logging.LoggingMeterRegistry;
  * LoggingMeterRegistry for logging metrics to the console or log file.
  * </p>
  *
- * @param isEnable
- *            a flag indicating whether monitoring is enabled
- * @param meterRegistry
- *            the MeterRegistry instance used for collecting and reporting
- *            metrics
  * @author hoangtien2k3
  */
+@Data
 public class MonitoringProperties {
 
     /**
@@ -62,13 +59,5 @@ public class MonitoringProperties {
     public MonitoringProperties(boolean isEnable, MeterRegistry meterRegistry) {
         this.isEnable = isEnable;
         this.meterRegistry = meterRegistry;
-    }
-
-    public boolean isEnable() {
-        return isEnable;
-    }
-
-    public MeterRegistry getMeterRegistry() {
-        return meterRegistry;
     }
 }

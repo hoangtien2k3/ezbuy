@@ -26,7 +26,15 @@ public class NotiServiceClientImpl implements NotiServiceClient {
     private final BaseRestClient baseRestClient;
 
     @Override
-    public Mono<Optional<DataResponse>> insertTransmission(CreateNotificationDTO createNotificationDTO) {
-        return baseRestClient.post(notiServiceClient, "/v1/transmission/create-noti", null, createNotificationDTO, DataResponse.class);
+    public Mono<Optional<DataResponse<Object>>> insertTransmission(CreateNotificationDTO createNotificationDTO) {
+        return baseRestClient.post(notiServiceClient, "/v1/transmission/create-noti", null, createNotificationDTO, DataResponse.class)
+                .map(optionalResponse -> {
+                    if (optionalResponse.isPresent()) {
+                        DataResponse<Object> response = optionalResponse.get();
+                        return Optional.of(response);
+                    } else {
+                        return Optional.<DataResponse<Object>>empty();
+                    }
+                });
     }
 }

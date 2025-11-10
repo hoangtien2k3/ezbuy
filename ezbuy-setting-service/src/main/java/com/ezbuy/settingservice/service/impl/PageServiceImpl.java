@@ -15,7 +15,7 @@ import com.ezbuy.settingservice.repository.PageRepository;
 import com.ezbuy.settingservice.repositoryTemplate.ContentDisplayRepositoryTemplate;
 import com.ezbuy.settingservice.repositoryTemplate.PageRepositoryTemplate;
 import com.ezbuy.settingservice.service.PageService;
-import com.ezbuy.core.annotations.LocalCache;
+import com.ezbuy.core.cache.LocalCache;
 import com.ezbuy.core.constants.CommonErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.factory.ModelMapperFactory;

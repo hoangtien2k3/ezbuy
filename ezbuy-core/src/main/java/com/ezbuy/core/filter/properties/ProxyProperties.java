@@ -15,6 +15,8 @@
  */
 package com.ezbuy.core.filter.properties;
 
+import lombok.Getter;
+
 /**
  * <p>
  * The ProxyProperties class is a record that holds configuration properties for
@@ -29,6 +31,7 @@ package com.ezbuy.core.filter.properties;
  *
  * @author hoangtien2k3
  */
+@Getter
 public class ProxyProperties {
 
     /**
@@ -71,25 +74,5 @@ public class ProxyProperties {
         this.httpPort = httpPort;
         this.httpsHost = httpsHost;
         this.httpsPort = httpsPort;
-    }
-
-    public boolean isEnable() {
-        return enable;
-    }
-
-    public String getHttpHost() {
-        return httpHost;
-    }
-
-    public Integer getHttpPort() {
-        return httpPort;
-    }
-
-    public String getHttpsHost() {
-        return httpsHost;
-    }
-
-    public Integer getHttpsPort() {
-        return httpsPort;
     }
 }

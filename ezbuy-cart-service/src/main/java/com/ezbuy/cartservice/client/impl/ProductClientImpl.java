@@ -37,16 +37,14 @@ public class ProductClientImpl implements ProductClient {
         return baseRestClient
                 .post(product, "/v1/filter-product-template", null, filterProductTemplateDTO, DataResponse.class)
                 .map(resp -> {
-                    Optional<DataResponse> respOptional = (Optional<DataResponse>) resp;
+                    Optional<DataResponse> respOptional = resp;
                     if (respOptional.isEmpty()) {
                         return Mono.error(new BusinessException(
                                 CommonErrorCode.INTERNAL_SERVER_ERROR, Translator.toLocaleVi("server.error")));
                     }
 
-                    String jsonValue =
-                            DataUtil.parseObjectToString(respOptional.get().getData());
-                    ListProductOfferResponse listProductOfferResponse =
-                            DataUtil.parseStringToObject(jsonValue, ListProductOfferResponse.class);
+                    String jsonValue = DataUtil.parseObjectToString(respOptional.get().getData());
+                    ListProductOfferResponse listProductOfferResponse = DataUtil.parseStringToObject(jsonValue, ListProductOfferResponse.class);
                     if (listProductOfferResponse == null) {
                         listProductOfferResponse = new ListProductOfferResponse();
                     }

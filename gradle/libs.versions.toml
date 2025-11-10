@@ -19,12 +19,20 @@ org-springframework-boot-spring-boot-starter-data-elasticsearch = "3.5.3"
 org-springframework-boot-spring-boot-starter-mail = "3.5.3"
 org-springframework-boot-spring-boot-starter-quartz = "3.5.3"
 org-springframework-boot-spring-boot-starter-thymeleaf = "3.5.3"
+org-springframework-boot-spring-boot-starter-aop = "3.5.3"
+org-springframework-boot-spring-boot-starter-data-r2dbc = "3.5.3"
+org-springframework-boot-spring-boot-starter-oauth2-client = "3.5.3"
+org-springframework-boot-spring-boot-starter-oauth2-resource-server = "3.5.3"
+org-springframework-boot-spring-boot-starter-webflux = "3.5.3"
+org-springframework-boot-spring-boot-starter-validation = "3.5.3"
+org-springframework-boot-spring-boot-starter-actuator = "3.5.3"
+org-springframework-boot-spring-boot-configuration-processor = "3.5.3"
+org-springframework-boot-spring-boot-starter-test = "3.5.3"
 org-springframework-cloud-spring-cloud-gateway-server-webflux = "4.3.0"
 org-springframework-cloud-spring-cloud-starter-consul-discovery = "4.3.0"
 org-springframework-data-spring-data-elasticsearch = "5.4.1"
 net-logstash-logback-logstash-logback-encoder = "8.1"
 org-testcontainers-elasticsearch = "1.12.2"
-
 com-github-ben-manes-caffeine-caffeine = "3.1.8"
 io-micrometer-micrometer-core = "1.14.4"
 io-micrometer-micrometer-tracing-bridge-brave = "1.4.3"
@@ -35,11 +43,11 @@ javax-annotation-javax-annotation-api = "1.3.2"
 javax-xml-bind-jaxb-api = "2.3.1"
 org-modelmapper-modelmapper = "3.2.0"
 org-reflections-reflections = "0.10.2"
-org-springframework-boot-spring-boot-starter-aop = "3.3.5"
-org-springframework-boot-spring-boot-starter-data-r2dbc = "3.3.5"
-org-springframework-boot-spring-boot-starter-oauth2-client = "3.3.5"
-org-springframework-boot-spring-boot-starter-oauth2-resource-server = "3.3.5"
-org-springframework-boot-spring-boot-starter-webflux = "3.3.5"
+org-projectlombok-lombok = "1.18.32"
+com-fasterxml-jackson-core-jackson-databind = "2.19.1"
+org-apache-commons-commons-lang3 = "3.18.0"
+org-postgresql-r2dbc-postgresql = "1.0.7.RELEASE"
+org-postgresql-postgresql = "42.7.3"
 
 [libraries]
 com-google-code-gson-gson = { module = "com.google.code.gson:gson", version.ref = "com-google-code-gson-gson" }
@@ -62,12 +70,20 @@ org-springframework-boot-spring-boot-starter-data-elasticsearch = { module = "or
 org-springframework-boot-spring-boot-starter-mail = { module = "org.springframework.boot:spring-boot-starter-mail", version.ref = "org-springframework-boot-spring-boot-starter-mail" }
 org-springframework-boot-spring-boot-starter-quartz = { module = "org.springframework.boot:spring-boot-starter-quartz", version.ref = "org-springframework-boot-spring-boot-starter-quartz" }
 org-springframework-boot-spring-boot-starter-thymeleaf = { module = "org.springframework.boot:spring-boot-starter-thymeleaf", version.ref = "org-springframework-boot-spring-boot-starter-thymeleaf" }
+org-springframework-boot-spring-boot-starter-aop = { module = "org.springframework.boot:spring-boot-starter-aop", version.ref = "org-springframework-boot-spring-boot-starter-aop" }
+org-springframework-boot-spring-boot-starter-data-r2dbc = { module = "org.springframework.boot:spring-boot-starter-data-r2dbc", version.ref = "org-springframework-boot-spring-boot-starter-data-r2dbc" }
+org-springframework-boot-spring-boot-starter-oauth2-client = { module = "org.springframework.boot:spring-boot-starter-oauth2-client", version.ref = "org-springframework-boot-spring-boot-starter-oauth2-client" }
+org-springframework-boot-spring-boot-starter-oauth2-resource-server = { module = "org.springframework.boot:spring-boot-starter-oauth2-resource-server", version.ref = "org-springframework-boot-spring-boot-starter-oauth2-resource-server" }
+org-springframework-boot-spring-boot-starter-webflux = { module = "org.springframework.boot:spring-boot-starter-webflux", version.ref = "org-springframework-boot-spring-boot-starter-webflux" }
+org-springframework-boot-spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation", version.ref = "org-springframework-boot-spring-boot-starter-validation" }
+org-springframework-boot-spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "org-springframework-boot-spring-boot-starter-actuator" }
+org-springframework-boot-spring-boot-configuration-processor = { module = "org.springframework.boot:spring-boot-configuration-processor", version.ref = "org-springframework-boot-spring-boot-configuration-processor" }
+org-springframework-boot-spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "org-springframework-boot-spring-boot-starter-test" }
 org-springframework-cloud-spring-cloud-gateway-server-webflux = { module = "org.springframework.cloud:spring-cloud-gateway-server-webflux", version.ref = "org-springframework-cloud-spring-cloud-gateway-server-webflux" }
 org-springframework-cloud-spring-cloud-starter-consul-discovery = { module = "org.springframework.cloud:spring-cloud-starter-consul-discovery", version.ref = "org-springframework-cloud-spring-cloud-starter-consul-discovery" }
 org-springframework-data-spring-data-elasticsearch = { module = "org.springframework.data:spring-data-elasticsearch", version.ref = "org-springframework-data-spring-data-elasticsearch" }
 net-logstash-logback = { module = "net.logstash.logback:logstash-logback-encoder", version.ref = "net-logstash-logback-logstash-logback-encoder" }
 org-testcontainers-elasticsearch = { module = "org.testcontainers:elasticsearch", version.ref = "org-testcontainers-elasticsearch" }
-
 com-github-ben-manes-caffeine-caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "com-github-ben-manes-caffeine-caffeine" }
 io-micrometer-micrometer-core = { module = "io.micrometer:micrometer-core", version.ref = "io-micrometer-micrometer-core" }
 io-micrometer-micrometer-tracing-bridge-brave = { module = "io.micrometer:micrometer-tracing-bridge-brave", version.ref = "io-micrometer-micrometer-tracing-bridge-brave" }
@@ -78,8 +94,8 @@ javax-annotation-javax-annotation-api = { module = "javax.annotation:javax.annot
 javax-xml-bind-jaxb-api = { module = "javax.xml.bind:jaxb-api", version.ref = "javax-xml-bind-jaxb-api" }
 org-modelmapper-modelmapper = { module = "org.modelmapper:modelmapper", version.ref = "org-modelmapper-modelmapper" }
 org-reflections-reflections = { module = "org.reflections:reflections", version.ref = "org-reflections-reflections" }
-org-springframework-boot-spring-boot-starter-aop = { module = "org.springframework.boot:spring-boot-starter-aop", version.ref = "org-springframework-boot-spring-boot-starter-aop" }
-org-springframework-boot-spring-boot-starter-data-r2dbc = { module = "org.springframework.boot:spring-boot-starter-data-r2dbc", version.ref = "org-springframework-boot-spring-boot-starter-data-r2dbc" }
-org-springframework-boot-spring-boot-starter-oauth2-client = { module = "org.springframework.boot:spring-boot-starter-oauth2-client", version.ref = "org-springframework-boot-spring-boot-starter-oauth2-client" }
-org-springframework-boot-spring-boot-starter-oauth2-resource-server = { module = "org.springframework.boot:spring-boot-starter-oauth2-resource-server", version.ref = "org-springframework-boot-spring-boot-starter-oauth2-resource-server" }
-org-springframework-boot-spring-boot-starter-webflux = { module = "org.springframework.boot:spring-boot-starter-webflux", version.ref = "org-springframework-boot-spring-boot-starter-webflux" }
+org-projectlombok-lombok = { module = "org.projectlombok:lombok", version.ref = "org-projectlombok-lombok" }
+com-fasterxml-jackson-core-jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "com-fasterxml-jackson-core-jackson-databind" }
+org-apache-commons-commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "org-apache-commons-commons-lang3" }
+org-postgresql-r2dbc-postgresql = { module = "org.postgresql:r2dbc-postgresql", version.ref = "org-postgresql-r2dbc-postgresql" }
+org-postgresql-postgresql = { module = "org.postgresql:postgresql", version.ref = "org-postgresql-postgresql" }

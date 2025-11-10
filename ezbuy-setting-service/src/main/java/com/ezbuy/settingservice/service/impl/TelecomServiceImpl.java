@@ -15,7 +15,7 @@ import com.ezbuy.settingservice.repository.TelecomRepository;
 import com.ezbuy.settingservice.repository.TelecomServiceConfigRep;
 import com.ezbuy.settingservice.repositoryTemplate.TelecomRepositoryTemplate;
 import com.ezbuy.settingservice.service.TelecomService;
-import com.ezbuy.core.annotations.LocalCache;
+import com.ezbuy.core.cache.LocalCache;
 import com.ezbuy.core.constants.CommonErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.model.response.DataResponse;

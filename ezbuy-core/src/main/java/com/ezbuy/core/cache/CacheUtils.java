@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ezbuy.core.annotations.cache;
+package com.ezbuy.core.cache;
 
-import com.ezbuy.core.annotations.LocalCache;
 import com.ezbuy.core.config.ApplicationContextProvider;
 import java.lang.reflect.Method;
 import org.slf4j.Logger;

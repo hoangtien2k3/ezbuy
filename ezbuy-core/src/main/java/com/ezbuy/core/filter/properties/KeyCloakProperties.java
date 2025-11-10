@@ -15,6 +15,8 @@
  */
 package com.ezbuy.core.filter.properties;
 
+import lombok.Data;
+
 /**
  * <p>
  * The KeyCloakProperties class is a record that holds configuration properties
@@ -30,6 +32,7 @@ package com.ezbuy.core.filter.properties;
  *
  * @author hoangtien2k3
  */
+@Data
 public class KeyCloakProperties {
 
     /**
@@ -41,19 +44,4 @@ public class KeyCloakProperties {
      * the client secret used for authenticating with the Keycloak server
      */
     private String clientSecret;
-
-    public KeyCloakProperties() {}
-
-    public KeyCloakProperties(String clientId, String clientSecret) {
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
-    }
-
-    public String getClientId() {
-        return clientId;
-    }
-
-    public String getClientSecret() {
-        return clientSecret;
-    }
 }
