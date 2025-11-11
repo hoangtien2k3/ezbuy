@@ -28,7 +28,7 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.19.1")
     implementation("jakarta.annotation:jakarta.annotation-api:3.0.0")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.2")
-    implementation("org.modelmapper:modelmapper:3.2.0")
+    implementation("org.modelmapper:modelmapper:3.2.6")
     implementation("io.r2dbc:r2dbc-pool:1.0.2.RELEASE")
     implementation("org.apache.commons:commons-lang3:3.18.0")
     implementation("org.projectlombok:lombok:1.18.32")
