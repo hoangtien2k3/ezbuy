@@ -1,6 +1,5 @@
 package com.ezbuy.auth.web.controller;
 
-import com.ezbuy.auth.shared.constants.UrlPaths;
 import com.ezbuy.auth.application.dto.UserProfileDTO;
 import com.ezbuy.auth.application.dto.request.QueryUserRequest;
 import com.ezbuy.auth.application.dto.request.UpdateUserRequest;
@@ -28,11 +27,11 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = UrlPaths.User.PREFIX)
+@RequestMapping("/v1/auth/user")
 public class UserController {
     private final UserService userService;
 
-    @GetMapping(UrlPaths.User.GET_USER)
+    @GetMapping
     @PreAuthorize("hasAnyAuthority('user')")
     public Mono<ResponseEntity<DataResponse<UserProfileEntity>>> getUser() {
         return userService
@@ -41,13 +40,13 @@ public class UserController {
                         .orElseGet(() -> ResponseEntity.notFound().build()));
     }
 
-    @PostMapping(UrlPaths.User.UPDATE_USER)
+    @PostMapping("/update")
     @PreAuthorize("hasAnyAuthority('user')")
     public Mono<DataResponse<UserProfileEntity>> updateUser(@Valid @RequestBody UpdateUserRequest user) {
         return userService.update(user).map(rs -> new DataResponse<>(Translator.toLocaleVi("user.update.success"), rs));
     }
 
-    @GetMapping(UrlPaths.User.CONTACTS)
+    @GetMapping("/contacts")
     @PreAuthorize("hasAnyAuthority('system')")
     public Mono<ResponseEntity<DataResponse<List<UserContact>>>> getUserContacts(@RequestBody List<UUID> ids) {
         return userService
@@ -56,7 +55,7 @@ public class UserController {
                 .map(rs -> ResponseEntity.ok(DataResponse.success(rs)));
     }
 
-    @GetMapping(UrlPaths.User.GET_USER_BY_ID)
+    @GetMapping("/id/{id}")
     @PreAuthorize("hasAnyAuthority('system')")
     public Mono<ResponseEntity<DataResponse<UserProfileEntity>>> getUserById(@PathVariable String id) {
         return userService
@@ -66,13 +65,13 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyAuthority('admin')")
-    @GetMapping(UrlPaths.User.USER_PROFILES)
+    @GetMapping("/search")
     public Mono<ResponseEntity<DataResponse<QueryUserResponse>>> getUserProfiles(QueryUserRequest request) {
         return userService.queryUserProfile(request)
                 .map(rs -> ResponseEntity.ok(DataResponse.success(rs)));
     }
 
-    @GetMapping(UrlPaths.User.EXPORT_PROFILES)
+    @GetMapping("/export")
     public Mono<ResponseEntity<Resource>> exportUserProfiles(QueryUserRequest request) {
         return userService.exportUser(request).map(resource -> ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
@@ -80,14 +79,14 @@ public class UserController {
                 .body(resource));
     }
 
-    @GetMapping(UrlPaths.User.GET_PROFILES)
+    @GetMapping("/{id}")
     public Mono<ResponseEntity<DataResponse<UserProfileDTO>>> getUserProfile(@PathVariable("id") String userId) {
         return userService
                 .getUserProfile(userId)
                 .map(rs -> ResponseEntity.ok(DataResponse.success(rs)));
     }
 
-    @GetMapping(UrlPaths.User.KEYCLOAK)
+    @GetMapping("/keycloak")
     @PreAuthorize("hasAnyAuthority('system', 'admin')")
     public Mono<String> getEmailByKeycloakUsername(@RequestParam String username) {
         return userService.getEmailsByKeycloakUsername(username).map(UserRepresentation::getEmail);

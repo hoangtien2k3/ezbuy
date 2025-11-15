@@ -7,7 +7,6 @@ import com.ezbuy.core.model.response.DataResponse;
 
 import java.util.Optional;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
@@ -17,24 +16,20 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 @DependsOn("webClientFactory")
 public class NotiServiceClientImpl implements NotiServiceClient {
 
-    @Qualifier("notiServiceClient")
     private final WebClient notiServiceClient;
     private final BaseRestClient baseRestClient;
 
+    public NotiServiceClientImpl(@Qualifier("notiServiceClient") WebClient notiServiceClient,
+                                 BaseRestClient baseRestClient) {
+        this.notiServiceClient = notiServiceClient;
+        this.baseRestClient = baseRestClient;
+    }
+
     @Override
     public Mono<Optional<DataResponse<Object>>> insertTransmission(CreateNotificationDTO createNotificationDTO) {
-        return baseRestClient.post(notiServiceClient, "/v1/transmission/create-noti", null, createNotificationDTO, DataResponse.class)
-                .map(optionalResponse -> {
-                    if (optionalResponse.isPresent()) {
-                        DataResponse<Object> response = optionalResponse.get();
-                        return Optional.of(response);
-                    } else {
-                        return Optional.<DataResponse<Object>>empty();
-                    }
-                });
+        return baseRestClient.post(notiServiceClient, "/v1/transmission/create-noti", null, createNotificationDTO, BaseRestClient.typeOf());
     }
 }

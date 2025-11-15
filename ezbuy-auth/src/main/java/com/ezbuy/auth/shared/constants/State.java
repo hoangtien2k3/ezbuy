@@ -10,9 +10,11 @@ public enum State {
     INACTIVE(1, "INACTIVE");
 
     private final Integer value;
+    private final String name;
 
     State(Integer value, String name) {
         this.value = value;
+        this.name = name;
     }
 
     @JsonCreator

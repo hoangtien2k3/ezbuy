@@ -1,6 +1,5 @@
 package com.ezbuy.auth.web.controller;
 
-import com.ezbuy.auth.shared.constants.UrlPaths;
 import com.ezbuy.auth.application.dto.request.ActionLogRequest;
 import com.ezbuy.auth.application.service.ActionLogService;
 import com.ezbuy.core.model.response.DataResponse;
@@ -17,7 +16,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = UrlPaths.ActionLog.PREFIX)
+@RequestMapping("/v1/auth/action-log")
 public class ActionLogController {
 
     private final ActionLogService actionLogService;
@@ -30,7 +29,7 @@ public class ActionLogController {
                 .flatMap(rs -> Mono.just(ResponseEntity.ok(new DataResponse<>("common.success", rs))));
     }
 
-    @GetMapping(value = UrlPaths.ActionLog.EXPORT_EXCEL)
+    @GetMapping("/export")
     public Mono<ResponseEntity<Resource>> getExportFile(ActionLogRequest request) {
         return actionLogService.exportUser(request).map(resource -> ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)

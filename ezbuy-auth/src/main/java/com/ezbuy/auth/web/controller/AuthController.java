@@ -12,7 +12,6 @@ import com.ezbuy.auth.application.dto.request.ProviderLogin;
 import com.ezbuy.auth.application.dto.request.RefreshTokenRequest;
 import com.ezbuy.auth.application.dto.request.ResetPasswordRequest;
 import com.ezbuy.auth.application.dto.request.SignupRequest;
-import com.ezbuy.auth.shared.constants.UrlPaths;
 import com.ezbuy.auth.application.dto.AccessToken;
 import com.ezbuy.auth.application.dto.response.GetActionLoginReportResponse;
 import com.ezbuy.auth.application.dto.response.GetTwoWayPasswordResponse;
@@ -36,13 +35,13 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @RestController
-@RequestMapping(UrlPaths.Auth.PREFIX)
+@RequestMapping("/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping(value = UrlPaths.Auth.LOGIN)
+    @PostMapping("/login")
     public Mono<ResponseEntity<DataResponse<Optional<AccessToken>>>> login(
             @Valid @RequestBody LoginRequest loginRequest) {
         return authService
@@ -50,7 +49,7 @@ public class AuthController {
                 .map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
     }
 
-    @PostMapping(value = UrlPaths.Auth.GET_TOKEN_FROM_AUTHORIZATION_CODE)
+    @PostMapping("/provider-code")
     public Mono<ResponseEntity<DataResponse<Optional<AccessToken>>>> getTokenFromAuthorizationCode(
             @Valid @RequestBody ProviderLogin providerLogin) {
         return authService
@@ -58,13 +57,13 @@ public class AuthController {
                 .map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
     }
 
-    @PostMapping(value = UrlPaths.Auth.GET_TOKEN_FROM_PROVIDER_CODE)
+    @PostMapping("/client-code")
     public Mono<ResponseEntity<DataResponse<Optional<AccessToken>>>> getTokenFromAuthorizationProviderCode(
             @Valid @RequestBody ClientLogin clientLogin) {
         return authService.getToken(clientLogin).map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
     }
 
-    @GetMapping(value = UrlPaths.Auth.GET_PERMISSION)
+    @GetMapping("/permissions")
     public Mono<ResponseEntity<DataResponse<List<Permission>>>> getPermission(
             @RequestParam(name = "clientId") String clientId) {
         return authService
@@ -72,7 +71,7 @@ public class AuthController {
                 .map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
     }
 
-    @GetMapping(value = UrlPaths.Auth.GET_ORG_PERMISSION)
+    @GetMapping("/org-permissions")
     public Mono<ResponseEntity<DataResponse<List<Permission>>>> getOrgPermission(
             @RequestParam(name = "clientId", defaultValue = "ezbuyClient") String clientId,
             @RequestParam(name = "organizationId", required = false) String organizationId,
@@ -82,7 +81,7 @@ public class AuthController {
                 .map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
     }
 
-    @PostMapping(value = UrlPaths.Auth.REFRESH_TOKEN)
+    @PostMapping("/refresh")
     public Mono<ResponseEntity<DataResponse<Optional<AccessToken>>>> refreshToken(
             @Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
         return authService
@@ -90,28 +89,28 @@ public class AuthController {
                 .map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
     }
 
-    @PostMapping(value = UrlPaths.Auth.LOGOUT)
+    @PostMapping("/logout")
     public Mono<ResponseEntity<DataResponse<Boolean>>> logout(@Valid @RequestBody LogoutRequest logoutRequest) {
         return authService.logout(logoutRequest).map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
     }
 
-    @PostMapping(value = UrlPaths.Auth.SIGNUP)
+    @PostMapping("/signup")
     public Mono<DataResponse<UserOtpEntity>> signup(@Valid @RequestBody SignupRequest signupRequest) {
         return authService.signUp(signupRequest).map(su -> new DataResponse<>("otp.success", null));
     }
 
-    @PostMapping(value = UrlPaths.Auth.FORGOT_PASSWORD)
+    @PostMapping("/forgot-password")
     public Mono<DataResponse<UserOtpEntity>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest forgotPasswordRequest) {
         return authService.forgotPassword(forgotPasswordRequest).map(su -> new DataResponse<>("otp.success", null));
     }
 
-    @PostMapping(UrlPaths.Auth.CHANGE_PASSWORD)
+    @PostMapping("/change-password")
     public Mono<DataResponse<Void>> changePassword(
             @Valid @RequestBody ChangePasswordRequest request, ServerWebExchange serverWebExchange) {
         return authService.changePassword(request, serverWebExchange).thenReturn(DataResponse.success(null));
     }
 
-    @PostMapping(UrlPaths.Auth.RESET_PASSWORD)
+    @PostMapping("/reset-password")
     public Mono<DataResponse<UserOtpEntity>> resetPassword(
             @Valid @RequestBody ResetPasswordRequest resetPasswordRequest, ServerWebExchange serverWebExchange) {
         return authService
@@ -119,7 +118,7 @@ public class AuthController {
                 .map(success -> new DataResponse<>(DataUtil.safeToString(success.getMessage()), null));
     }
 
-    @PostMapping(UrlPaths.Auth.CONFIRM_OTP_FOR_CREATE_ACCOUNT)
+    @PostMapping("/confirm-create")
     public Mono<ResponseEntity<DataResponse<IndividualEntity>>> confirmOtpAndCreateAccount(
             @Valid @RequestBody CreateAccount createAccount) {
         return authService
@@ -127,12 +126,12 @@ public class AuthController {
                 .map(rs -> ResponseEntity.ok(new DataResponse<>("success", rs)));
     }
 
-    @GetMapping(value = UrlPaths.Auth.GET_ALL_USERID)
+    @GetMapping("/get-all")
     public Mono<List<String>> getAllUserId() {
         return authService.getAllUserId();
     }
 
-    @GetMapping(UrlPaths.Auth.GET_TWO_WAY_PASSWORD)
+    @GetMapping("/two-way-password")
     @PreAuthorize("hasAnyAuthority('system')")
     public Mono<ResponseEntity<DataResponse<GetTwoWayPasswordResponse>>> getTwoWayPassword(
             @RequestParam(name = "username", required = false) String username) {
@@ -141,7 +140,7 @@ public class AuthController {
                 .map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
     }
 
-    @GetMapping(value = UrlPaths.Auth.ACTION_LOGIN)
+    @GetMapping("/action-login")
     public Mono<ResponseEntity<DataResponse<GetActionLoginReportResponse>>> getActionLoginReport(
             @RequestBody GetActionLoginReportRequest request) {
         return authService
@@ -149,7 +148,7 @@ public class AuthController {
                 .map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
     }
 
-    @PostMapping(UrlPaths.Auth.CONFIRM_OTP)
+    @PostMapping("/confirm-otp")
     public Mono<DataResponse<Map<String, String>>> confirmOTP(
             @Valid @RequestBody ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange) {
         return authService
@@ -157,7 +156,7 @@ public class AuthController {
                 .map(success -> new DataResponse<>(DataUtil.safeToString(success.getMessage()), success.getData()));
     }
 
-    @PostMapping(UrlPaths.Auth.GENERATE_OTP)
+    @PostMapping("/generate-otp")
     public Mono<DataResponse<String>> generateOtp(
             @Valid @RequestBody ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange) {
         return authService.generateOtp(confirmOTPRequest, serverWebExchange);

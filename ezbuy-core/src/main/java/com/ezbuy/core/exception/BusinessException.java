@@ -16,7 +16,6 @@
 package com.ezbuy.core.exception;
 
 import com.ezbuy.core.util.Translator;
-import lombok.Builder;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -65,7 +64,6 @@ import java.util.Objects;
  * @author hoangtien2k3
  */
 @Getter
-@Builder
 public class BusinessException extends RuntimeException {
 
     /** Error code associated with the exception */

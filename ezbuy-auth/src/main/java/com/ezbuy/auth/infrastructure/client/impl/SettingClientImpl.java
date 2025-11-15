@@ -13,7 +13,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,14 +28,17 @@ import static com.ezbuy.core.client.BaseRestClient.typeOf;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 @DependsOn("webClientFactory")
 public class SettingClientImpl implements SettingClient {
 
-    @Qualifier("settingClient")
     private final WebClient settingClient;
-
     private final BaseRestClient baseRestClient;
+
+    public SettingClientImpl(@Qualifier("settingClient") WebClient settingClient,
+                             BaseRestClient baseRestClient) {
+        this.settingClient = settingClient;
+        this.baseRestClient = baseRestClient;
+    }
 
     @Override
     public Mono<Optional<DataResponse<String>>> getAdminRole(String originId) {

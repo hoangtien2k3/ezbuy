@@ -28,9 +28,7 @@ public interface OtpRepository extends R2dbcRepository<UserOtpEntity, String> {
             """)
     Mono<UserOtpEntity> disableOtp(String email, String type, String updateBy);
 
-    @Query("""
-            SELECT NOW()
-            """)
+    @Query("SELECT NOW()")
     Mono<LocalDateTime> currentTimeDB();
 
     @Query("""

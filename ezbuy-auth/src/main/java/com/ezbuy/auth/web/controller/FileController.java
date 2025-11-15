@@ -1,6 +1,5 @@
 package com.ezbuy.auth.web.controller;
 
-import com.ezbuy.auth.shared.constants.UrlPaths;
 import com.ezbuy.core.model.response.DataResponse;
 import com.ezbuy.core.util.MinioUtils;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +12,7 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @RestController
-@RequestMapping(UrlPaths.FILE.PREFIX)
+@RequestMapping("/v1/auth/file")
 @RequiredArgsConstructor
 public class FileController {
     private final MinioUtils minioUtils;
@@ -21,7 +20,7 @@ public class FileController {
     @Value("${minio.bucket}")
     private String bucket;
 
-    @GetMapping(UrlPaths.FILE.DOWNLOAD)
+    @GetMapping("/download")
     @PreAuthorize("hasAnyAuthority('user')")
     public Mono<ResponseEntity<DataResponse<?>>> download(@RequestParam String filePath) {
         return Mono.just(minioUtils.getBase64FromUrl(bucket, filePath))

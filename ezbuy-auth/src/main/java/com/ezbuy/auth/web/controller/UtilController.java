@@ -1,6 +1,5 @@
 package com.ezbuy.auth.web.controller;
 
-import com.ezbuy.auth.shared.constants.UrlPaths;
 import com.ezbuy.auth.application.dto.request.JobAddRoleAdminForOldUserRequest;
 import com.ezbuy.auth.application.service.UtilService;
 import com.ezbuy.core.model.response.DataResponse;
@@ -13,18 +12,12 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = UrlPaths.Util.PREFIX)
+@RequestMapping("/v1/auth/util")
 public class UtilController {
 
     private final UtilService utilService;
 
-    /**
-     * add role admin for old user
-     *
-     * @param request
-     * @return
-     */
-    @PostMapping(value = UrlPaths.Util.JOB_ADD_ROLE_ADMIN_FOR_OLD_USER)
+    @PostMapping("/add-role-admin-for-old-user")
     @PreAuthorize("hasAnyAuthority('system')")
     public Mono<ResponseEntity<DataResponse>> jobAddRoleAdminForOldUser(
             @Valid @RequestBody JobAddRoleAdminForOldUserRequest request) {

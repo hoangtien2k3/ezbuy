@@ -38,8 +38,7 @@ public class ActionLogRepositoryTemplateImpl extends BaseTemplateRepository impl
             query.append("LIMIT :pageSize \n");
             query.append("OFFSET :index \n");
             params.put("pageSize", request.getPageSize());
-            BigDecimal index =
-                    (new BigDecimal(request.getPageIndex() - 1)).multiply(new BigDecimal(request.getPageSize()));
+            BigDecimal index = (new BigDecimal(request.getPageIndex() - 1)).multiply(new BigDecimal(request.getPageSize()));
             params.put("index", index);
         }
         return listQuery(query.toString(), params, ActionLogEntity.class);
@@ -57,9 +56,7 @@ public class ActionLogRepositoryTemplateImpl extends BaseTemplateRepository impl
         builder.append("select * from action_log where 1 = 1 ");
         if (!DataUtil.isNullOrEmpty(request.getUsername())) {
             builder.append(" and username LIKE CONCAT('%',:username, '%') ");
-            params.put(
-                    "username",
-                    SQLUtils.replaceSpecialDigit(request.getUsername().trim()));
+            params.put("username", SQLUtils.replaceSpecialDigit(request.getUsername().trim()));
         }
         if (!DataUtil.isNullOrEmpty(request.getIp())) {
             builder.append(" and ip LIKE CONCAT('%',:ip, '%') ");
@@ -75,12 +72,10 @@ public class ActionLogRepositoryTemplateImpl extends BaseTemplateRepository impl
     }
 
     private LocalDateTime getFromDate(LocalDate fromDate) {
-        return fromDate == null
-                ? LocalDateTime.from(LocalDate.now().atStartOfDay().minusDays(32))
-                : fromDate.atTime(0, 0, 0);
+        return fromDate == null ? LocalDate.now().atStartOfDay().minusDays(32) : fromDate.atTime(0, 0, 0);
     }
 
     private LocalDateTime getToDate(LocalDate toDate) {
-        return toDate == null ? LocalDateTime.from(LocalDate.now().atTime(LocalTime.MAX)) : toDate.atTime(23, 59, 59);
+        return toDate == null ? LocalDate.now().atTime(LocalTime.MAX) : toDate.atTime(23, 59, 59);
     }
 }

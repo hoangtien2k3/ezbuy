@@ -26,10 +26,11 @@ import com.ezbuy.core.constants.CommonErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.util.DataUtil;
+
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
+
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
@@ -55,15 +56,8 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 @DependsOn("webClientFactory")
 public class KeyCloakClientImpl implements KeyCloakClient {
-
-    @Qualifier("keycloak")
-    private final WebClient keycloak;
-
-    private final KeycloakProvider keycloakProvider;
-    private final KeycloakClientProperties keyCloakConfig;
 
     @Value("${keycloak.serverUrl}")
     private String keycloakUrl;
@@ -80,6 +74,18 @@ public class KeyCloakClientImpl implements KeyCloakClient {
     @Value("${keycloak.host}")
     private String hostKeycloak;
 
+    private final WebClient keycloak;
+    private final KeycloakProvider keycloakProvider;
+    private final KeycloakClientProperties keyCloakConfig;
+
+    public KeyCloakClientImpl(@Qualifier("keycloak") WebClient keycloak,
+                              KeycloakProvider keycloakProvider,
+                              KeycloakClientProperties keyCloakConfig) {
+        this.keycloak = keycloak;
+        this.keycloakProvider = keycloakProvider;
+        this.keyCloakConfig = keyCloakConfig;
+    }
+
     @Override
     public Mono<Optional<AccessToken>> getToken(LoginRequest loginRequest) {
         MultiValueMap<String, String> formParameters = new LinkedMultiValueMap<>();
@@ -95,13 +101,10 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                         formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, clientRepresentation.getSecret());
                         return requestToken(formParameters);
                     })
-                    .switchIfEmpty(
-                            Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "client.id.not.valid")));
+                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "client.id.not.valid")));
         } else {
-            formParameters.add(
-                    OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().getClientId());
-            formParameters.add(
-                    OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().getClientSecret());
+            formParameters.add(OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().getClientId());
+            formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().getClientSecret());
         }
         return requestToken(formParameters);
     }
@@ -112,7 +115,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .getClientWithSecret(clientLogin.getClientId())
                 .flatMap(clientRepresentation -> {
                     if (DataUtil.isNullOrEmpty(clientLogin.getRedirectUri())) {
-                        clientLogin.setRedirectUri("http://localhost:8213/callback");
+                        clientLogin.setRedirectUri(AuthConstants.OAuth.REDIRECT_URI);
                     }
                     MultiValueMap<String, String> formParameters = new LinkedMultiValueMap<>();
                     formParameters.add(OAuth2ParameterNames.GRANT_TYPE, AuthConstants.OAuth.AUTHOR_CODE);
@@ -130,8 +133,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                     formParameters.add(OAuth2ParameterNames.CLIENT_ID, clientLogin.getClientId());
                     return requestToken(formParameters);
                 })
-                .switchIfEmpty(
-                        Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "login.client.id.not.exist")));
+                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "login.client.id.not.exist")));
     }
 
     @Override
@@ -149,17 +151,16 @@ public class KeyCloakClientImpl implements KeyCloakClient {
         formParameters.add(OAuth2ParameterNames.GRANT_TYPE, AuthConstants.OAuth.AUTHOR_CODE);
         formParameters.add(OAuth2ParameterNames.CODE, providerLogin.getCode());
         formParameters.add(OAuth2ParameterNames.REDIRECT_URI, AuthConstants.OAuth.REDIRECT_URI);
-        formParameters.add(
-                OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().getClientId());
-        formParameters.add(
-                OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().getClientSecret());
+        formParameters.add(OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().getClientId());
+        formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().getClientSecret());
         return requestToken(formParameters);
     }
 
     @Override
     public Mono<Optional<AccessToken>> refreshToken(RefreshTokenRequest refreshTokenRequest) {
         String clientId = refreshTokenRequest.getClientId();
-        if (DataUtil.isNullOrEmpty(clientId)) clientId = keyCloakConfig.getAuth().getClientId();
+        if (DataUtil.isNullOrEmpty(clientId))
+            clientId = keyCloakConfig.getAuth().getClientId();
         return keycloakProvider.getClientWithSecret(clientId).flatMap(clientRepresentation -> {
             MultiValueMap<String, String> formParameters = new LinkedMultiValueMap<>();
             formParameters.add(OAuth2ParameterNames.GRANT_TYPE, OAuth2ParameterNames.REFRESH_TOKEN);
@@ -183,8 +184,8 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                     .body(BodyInserters.fromFormData(formParameters))
                     .retrieve()
                     .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
-                            .flatMap(errorBody -> Mono.error(new BusinessException(
-                                    CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
+                            .flatMap(errorBody -> Mono.error(
+                                    new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getMessage()))))
                     .bodyToMono(Object.class)
                     .switchIfEmpty(Mono.just(true))
                     .map(response -> true)
@@ -242,7 +243,8 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {})
+                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {
+                })
                 .map(result -> result.stream()
                         .map(record -> {
                             ClientResource res = new ClientResource();
@@ -261,7 +263,8 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<GroupPolicyRepresentation>>() {})
+                .bodyToMono(new ParameterizedTypeReference<List<GroupPolicyRepresentation>>() {
+                })
                 .onErrorReturn(new ArrayList<>());
     }
 
@@ -273,7 +276,8 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<RolePolicyRepresentation>>() {})
+                .bodyToMono(new ParameterizedTypeReference<List<RolePolicyRepresentation>>() {
+                })
                 .onErrorReturn(new ArrayList<>());
     }
 
@@ -420,8 +424,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
 
     @Override
     public Mono<List<RoleDTO>> getRoleNameByUserIdAndClientId(String userId, String clientId, String token) {
-        String url = keycloakUrl + "/realms/" + realm + "/users/" + userId + "/role-mappings/clients/" + clientId
-                + "/composite";
+        String url = keycloakUrl + "/realms/" + realm + "/users/" + userId + "/role-mappings/clients/" + clientId + "/composite";
         return keycloak.get()
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -432,13 +435,13 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .bodyToMono(String.class)
                 .map(response -> {
                     Gson gson = new Gson();
-                    Type listType = new TypeToken<List<RoleDTO>>() {}.getType();
+                    Type listType = new TypeToken<List<RoleDTO>>() {
+                    }.getType();
                     log.info("response when login {}", response);
                     return gson.<List<RoleDTO>>fromJson(response, listType);
                 })
                 .doOnError(err -> log.error("Call keycloak error ", err))
-                .onErrorResume(throwable -> Mono.error(
-                        new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "Call keycloak that bai")));
+                .onErrorResume(throwable -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "Call keycloak that bai")));
     }
 
     @Override
@@ -462,7 +465,8 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {})
+                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {
+                })
                 .doOnError(err -> log.error("Error when get all resource ", err))
                 .map(result -> result.stream()
                         .map(record -> (String) record.get("name"))

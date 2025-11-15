@@ -1,6 +1,5 @@
 package com.ezbuy.auth.web.controller;
 
-import com.ezbuy.auth.shared.constants.UrlPaths;
 import com.ezbuy.auth.application.service.UserCredentialService;
 import com.ezbuy.core.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +12,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = UrlPaths.UserCredential.PREFIX)
+@RequestMapping("/v1/auth/user-credential")
 public class UserCredentialController {
 
     private final UserCredentialService userCredentialService;

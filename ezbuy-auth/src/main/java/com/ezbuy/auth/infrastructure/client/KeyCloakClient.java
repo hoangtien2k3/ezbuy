@@ -21,10 +21,6 @@ import org.keycloak.representations.idm.authorization.GroupPolicyRepresentation;
 import org.keycloak.representations.idm.authorization.RolePolicyRepresentation;
 import reactor.core.publisher.Mono;
 
-/**
- * Interface for interacting with Keycloak for various authentication and
- * authorization operations.
- */
 public interface KeyCloakClient {
 
     /**
