@@ -123,7 +123,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Mono<List<Permission>> getPermission(String clientId) {
-        return SecurityUtils.getTokenUser().flatMap(userToken -> keyCloakClient.getPermissions(clientId, userToken));
+        return SecurityUtils
+                .getTokenUser()
+                .flatMap(userToken -> keyCloakClient.getPermissions(clientId, userToken));
     }
 
     @Override
@@ -136,8 +138,7 @@ public class AuthServiceImpl implements AuthService {
                 return organizationRepo
                         .findOrganizationByIdentify(AuthConstants.TenantType.ORGANIZATION, idNo)
                         .flatMap(orgIdDb -> getPermission(clientId, orgIdDb, currentUser.getId()))
-                        .switchIfEmpty(
-                                Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "id.no.not.existed")));
+                        .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "id.no.not.existed")));
             } else {
                 return getPermission(clientId, orgId, currentUser.getId());
             }
@@ -153,13 +154,11 @@ public class AuthServiceImpl implements AuthService {
             }
             return kcProvider
                     .getClient(clientId)
-                    .switchIfEmpty(
-                            Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "client.not.existed")))
+                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "client.not.existed")))
                     .flatMap(client -> {
                         PolicyEvaluationRequest policyEvaluationRequest = new PolicyEvaluationRequest();
                         policyEvaluationRequest.setUserId(userId);
                         policyEvaluationRequest.setEntitlements(false);
-
                         Mono<PolicyEvaluationResponse> allPermissionsMono = Mono.fromCallable(() -> kcProvider
                                         .getRealmResource()
                                         .clients()
@@ -168,19 +167,17 @@ public class AuthServiceImpl implements AuthService {
                                         .policies()
                                         .evaluate(policyEvaluationRequest))
                                 .subscribeOn(Schedulers.boundedElastic());
-
                         Mono<List<PermissionPolicyEntity>> orgPoliciesMono = indOrgPermissionRepo
                                 .getAllByUserId(orgId, userId)
                                 .collectList();
-
                         return Mono.zip(allPermissionsMono, orgPoliciesMono)
                                 .map(tuple -> findOrgPermissions(tuple.getT1(), tuple.getT2()))
                                 .defaultIfEmpty(Collections.emptyList())
-                                .doOnError(err -> log.error(
-                                        "Error getting permissions for user {} and client {}: {}",
+                                .doOnError(err -> log.error("Error getting permissions for user {} and client {}: {}",
                                         userId,
                                         clientId,
-                                        err.getMessage()));
+                                        err.getMessage())
+                                );
                     });
         });
     }
@@ -190,11 +187,9 @@ public class AuthServiceImpl implements AuthService {
         if (allPermissions.getResults() == null) {
             return Collections.emptyList();
         }
-
         Set<String> orgPolicyIdSet = orgPermissionPolicies.stream()
                 .map(PermissionPolicyEntity::getPolicyId)
                 .collect(Collectors.toSet());
-
         return allPermissions.getResults().stream()
                 .filter(pe -> DecisionEffect.PERMIT.equals(pe.getStatus())
                         && pe.getPolicies() != null
@@ -216,33 +211,6 @@ public class AuthServiceImpl implements AuthService {
                         && DecisionEffect.PERMIT.equals(policy.getStatus()));
     }
 
-    // Function<? super Throwable, Mono<? extends BusinessException>>
-    private Mono handleKeyCloakError(WebClientResponseException err) {
-        String bodyResponse = err.getResponseBodyAsString();
-        KeycloakErrorResponse errorResponse =
-                objectMapperUtil.convertStringToObject(bodyResponse, KeycloakErrorResponse.class);
-
-        if (errorResponse == null) {
-            return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "token.error"));
-        }
-
-        String errorCode = errorResponse.getError();
-        String errorDescription = errorResponse.getErrorDescription();
-
-        if (Constants.KeyCloakError.INVALID_GRANT.equalsIgnoreCase(errorCode)) {
-            if (errorDescription != null) {
-                String upperCaseDescription = errorDescription.toUpperCase();
-                if (upperCaseDescription.contains(Constants.KeyCloakError.DISABLED)) {
-                    return Mono.error(new BusinessException(ErrorCode.AuthErrorCode.USER_DISABLED, "user.disabled"));
-                } else if (upperCaseDescription.contains(Constants.KeyCloakError.INVALID)) {
-                    return Mono.error(new BusinessException(ErrorCode.AuthErrorCode.INVALID, "user.invalid"));
-                }
-            }
-        }
-
-        return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorDescription));
-    }
-
     @Override
     @Transactional
     public Mono<UserOtpEntity> signUp(SignupRequest signupRequest) {
@@ -257,7 +225,7 @@ public class AuthServiceImpl implements AuthService {
         String otpValue = generateOtpValue();
         CreateNotificationDTO createNotificationDTO = createNotificationDTO(
                 otpValue,
-                Translator.toLocaleVi("email.title.signup"),
+                Translator.toLocale("email.title.signup"),
                 AuthConstants.TemplateMail.SIGN_UP,
                 ReceiverDataDTO.builder().email(requestEmail).build(),
                 null);
@@ -307,8 +275,7 @@ public class AuthServiceImpl implements AuthService {
             return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "forgot.pass.email"));
         }
         String otpValue = generateOtpValue();
-        List<UserRepresentation> listUser =
-                kcProvider.getRealmResource().users().search(userName, true);
+        List<UserRepresentation> listUser = kcProvider.getRealmResource().users().search(userName, true);
         UserRepresentation user = listUser.getFirst();
         String requestEmail = user.getEmail();
         CreateNotificationDTO createNotificationDTO = createNotificationDTO(
@@ -357,8 +324,7 @@ public class AuthServiceImpl implements AuthService {
                             CommonErrorCode.INVALID_PARAMS,
                             (objects.isPresent()) ? objects.get().getMessage() : "params.invalid"));
                 })
-                .onErrorResume(throwable ->
-                        Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "noti.service.error")));
+                .onErrorResume(throwable -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "noti.service.error")));
     }
 
     private Mono<UserOtpEntity> generateOtpAndSave(UserOtpEntity otp) {
@@ -747,4 +713,29 @@ public class AuthServiceImpl implements AuthService {
         Random random = new SecureRandom();
         return new DecimalFormat("000000").format(random.nextInt(999999));
     }
+
+    private Mono<Optional<AccessToken>> handleKeyCloakError(WebClientResponseException err) {
+        return Mono.error(mapKeycloakError(err));
+    }
+
+    private BusinessException mapKeycloakError(WebClientResponseException err) {
+        String body = err.getResponseBodyAsString();
+        KeycloakErrorResponse errorResponse = objectMapperUtil.convertStringToObject(body, KeycloakErrorResponse.class);
+        if (Objects.isNull(errorResponse)) {
+            return new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "token.error");
+        }
+        String errorCode = errorResponse.getError();
+        String errorDescription = errorResponse.getErrorDescription();
+        if (Constants.KeyCloakError.INVALID_GRANT.equalsIgnoreCase(errorCode)) {
+            String upperCaseDescription = Objects.isNull(errorDescription) ? "" : errorDescription.toUpperCase();
+            if (Constants.KeyCloakError.DISABLED.contains(upperCaseDescription)) {
+                return new BusinessException(ErrorCode.AuthErrorCode.USER_DISABLED, "user.disabled");
+            }
+            if (Constants.KeyCloakError.INVALID.contains(upperCaseDescription)) {
+                return new BusinessException(ErrorCode.AuthErrorCode.INVALID, "user.invalid");
+            }
+        }
+        return new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorDescription);
+    }
+
 }

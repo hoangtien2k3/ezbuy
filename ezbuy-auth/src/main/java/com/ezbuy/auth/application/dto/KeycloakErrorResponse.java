@@ -2,9 +2,11 @@ package com.ezbuy.auth.application.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class KeycloakErrorResponse extends AccessToken {
     @JsonProperty("error")
