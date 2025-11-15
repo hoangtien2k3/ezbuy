@@ -37,6 +37,8 @@ spring:
     pool:
       max-size: 10
       initial-size: 5
+      max-idle-time: 30m
+      max-create-connection-time: 30s
   security:
     oauth2:
       client:

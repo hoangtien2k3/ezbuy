@@ -1,4 +1,5 @@
 plugins {
+    id 'java'
     id 'java-library'
     id 'maven-publish'
     id 'application'
@@ -21,6 +22,13 @@ subprojects {
         mavenCentral()
     }
 
+    configurations {
+        developmentOnly
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
     dependencies {
         annotationProcessor libs.org.projectlombok.lombok
 
@@ -29,6 +37,8 @@ subprojects {
         implementation libs.org.springframework.boot.spring.boot.starter.actuator
         implementation libs.org.springframework.boot.spring.boot.configuration.processor
         implementation libs.org.springframework.boot.spring.boot.starter.data.r2dbc
+        implementation libs.org.springframework.cloud.spring.cloud.starter.consul.discovery
+        implementation libs.org.springdoc.springdoc.openapi.starter.webflux.api
         implementation libs.com.fasterxml.jackson.core.jackson.databind
         implementation libs.org.modelmapper.modelmapper
         implementation libs.io.r2dbc.r2dbc.pool
@@ -56,6 +66,8 @@ subprojects {
     tasks.withType(Javadoc).configureEach {
         options.encoding = 'UTF-8'
     }
+
+    test.classpath += configurations.developmentOnly
 
     test {
         useJUnitPlatform()

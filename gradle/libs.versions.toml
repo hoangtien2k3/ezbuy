@@ -31,6 +31,7 @@ org-springframework-boot-spring-boot-starter-test = "3.5.3"
 org-springframework-cloud-spring-cloud-gateway-server-webflux = "4.3.0"
 org-springframework-cloud-spring-cloud-starter-consul-discovery = "4.3.0"
 org-springframework-data-spring-data-elasticsearch = "5.4.1"
+org-springframework-cloud-spring-cloud-dependencies = "2025.0.0"
 net-logstash-logback-logstash-logback-encoder = "8.1"
 org-testcontainers-elasticsearch = "1.12.2"
 com-github-ben-manes-caffeine-caffeine = "3.1.8"
@@ -82,6 +83,7 @@ org-springframework-boot-spring-boot-starter-test = { module = "org.springframew
 org-springframework-cloud-spring-cloud-gateway-server-webflux = { module = "org.springframework.cloud:spring-cloud-gateway-server-webflux", version.ref = "org-springframework-cloud-spring-cloud-gateway-server-webflux" }
 org-springframework-cloud-spring-cloud-starter-consul-discovery = { module = "org.springframework.cloud:spring-cloud-starter-consul-discovery", version.ref = "org-springframework-cloud-spring-cloud-starter-consul-discovery" }
 org-springframework-data-spring-data-elasticsearch = { module = "org.springframework.data:spring-data-elasticsearch", version.ref = "org-springframework-data-spring-data-elasticsearch" }
+org-springframework-cloud-spring-cloud-dependencies = { module = "org.springframework.cloud:spring-cloud-dependencies", version.ref = "org-springframework-cloud-spring-cloud-dependencies" }
 net-logstash-logback = { module = "net.logstash.logback:logstash-logback-encoder", version.ref = "net-logstash-logback-logstash-logback-encoder" }
 org-testcontainers-elasticsearch = { module = "org.testcontainers:elasticsearch", version.ref = "org-testcontainers-elasticsearch" }
 com-github-ben-manes-caffeine-caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "com-github-ben-manes-caffeine-caffeine" }

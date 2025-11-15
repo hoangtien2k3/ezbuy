@@ -4,11 +4,9 @@ plugins {
     id 'com.palantir.git-version' version '4.0.0'
 }
 
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-    }
-}
+group = 'com.ezbuy.auth'
+version = '1.0-SNAPSHOT'
+description = 'ezbuy-auth'
 
 dependencies {
     implementation project(':ezbuy-core')
@@ -24,9 +22,8 @@ dependencies {
     implementation libs.commons.io.commons.io
     implementation libs.org.springdoc.springdoc.openapi.starter.webflux.api
     implementation libs.org.springframework.cloud.spring.cloud.starter.consul.discovery
+    implementation platform(libs.org.springframework.cloud.spring.cloud.dependencies)
 }
-
-description = 'ezbuy-auth'
 
 ext {
     imageDocker = 'hoangtien2k3/ezbuy-auth-service'
@@ -47,6 +44,10 @@ jib {
     }
     container {
         creationTime = 'USE_CURRENT_TIMESTAMP'
+        jvmFlags = ['-Xms256m', '-Xmx1024m', '-XX:+UseShenandoahGC',
+                    '-XX:+UnlockExperimentalVMOptions',
+                    '-XX:ShenandoahUncommitDelay=1000',
+                    '-XX:ShenandoahGuaranteedGCInterval=10000']
 //        jvmFlags = ['-Xms512mb', '-Xdebug',
 //                    '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5005']
     }
