@@ -34,7 +34,7 @@ public class SettingClientImpl implements SettingClient {
     private final WebClient settingClient;
     private final BaseRestClient baseRestClient;
 
-    public SettingClientImpl(@Qualifier("settingClient") WebClient settingClient,
+    public SettingClientImpl(@Qualifier("settingServiceClient") WebClient settingClient,
                              BaseRestClient baseRestClient) {
         this.settingClient = settingClient;
         this.baseRestClient = baseRestClient;

@@ -18,6 +18,8 @@ package com.ezbuy.core.cache;
 import com.github.benmanes.caffeine.cache.RemovalCause;
 import com.github.benmanes.caffeine.cache.RemovalListener;
 import java.lang.reflect.Method;
+
+import lombok.RequiredArgsConstructor;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
@@ -32,24 +34,13 @@ import org.slf4j.LoggerFactory;
  *
  * @author hoangtien2k3
  */
-public class CustomizeRemovalListener implements RemovalListener<Object, Object> {
+@RequiredArgsConstructor
+public class CacheRemovalListener implements RemovalListener<Object, Object> {
 
-    private static final Logger log = LoggerFactory.getLogger(CustomizeRemovalListener.class);
+    private static final Logger log = LoggerFactory.getLogger(CacheRemovalListener.class);
 
-    /** The method to be invoked upon eviction */
     private final Method method;
 
-    /**
-     * Constructs a removal listener with a specific method to invoke upon eviction.
-     *
-     * @param method
-     *            The method to be invoked when an entry is evicted
-     */
-    public CustomizeRemovalListener(Method method) {
-        this.method = method;
-    }
-
-    /** {@inheritDoc} */
     @Override
     public void onRemoval(@Nullable Object key, @Nullable Object value, @NonNull RemovalCause removalCause) {
         if (!removalCause.wasEvicted()) {

@@ -15,12 +15,12 @@
  */
 package com.ezbuy.core.config.security.http;
 
-import com.ezbuy.core.config.WhiteListProperties;
+import com.ezbuy.core.config.properties.WhiteListProperties;
 import com.ezbuy.core.model.WhiteList;
 import com.ezbuy.core.util.DataUtil;
+
 import java.util.List;
 
-import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -61,7 +61,6 @@ import reactor.core.publisher.Mono;
  *
  * @author hoangtien2k3
  */
-@AllArgsConstructor
 @Configuration
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
@@ -72,6 +71,10 @@ public class WebConfig {
 
     private final WhiteListProperties whiteListProperties;
 
+    public WebConfig(WhiteListProperties whiteListProperties) {
+        this.whiteListProperties = whiteListProperties;
+    }
+
     /**
      * <p>
      * Configures the security filter chain for the application. This method sets up
@@ -79,16 +82,14 @@ public class WebConfig {
      * authentication.
      * </p>
      *
-     * @param http
-     *            a
-     *            {@link org.springframework.security.config.web.server.ServerHttpSecurity}
-     *            object to configure security settings
-     * @param jwtAuthenticationConverter
-     *            a {@link org.springframework.core.convert.converter.Converter}
-     *            object for JWT to authentication conversion
+     * @param http                       a
+     *                                   {@link org.springframework.security.config.web.server.ServerHttpSecurity}
+     *                                   object to configure security settings
+     * @param jwtAuthenticationConverter a {@link org.springframework.core.convert.converter.Converter}
+     *                                   object for JWT to authentication conversion
      * @return a
-     *         {@link org.springframework.security.web.server.SecurityWebFilterChain}
-     *         object representing the security filter chain
+     * {@link org.springframework.security.web.server.SecurityWebFilterChain}
+     * object representing the security filter chain
      */
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(
@@ -103,21 +104,17 @@ public class WebConfig {
                 if (!DataUtil.isNullOrEmpty(methods)) {
                     for (String method : methods) {
                         HttpMethod convertedMethod = HttpMethod.valueOf(method);
-                        http.authorizeExchange(authorize ->
-                                authorize.pathMatchers(convertedMethod, uri).permitAll());
+                        http.authorizeExchange(authorize -> authorize.pathMatchers(convertedMethod, uri).permitAll());
                     }
                 } else {
-                    http.authorizeExchange(
-                            authorize -> authorize.pathMatchers(uri).permitAll());
+                    http.authorizeExchange(authorize -> authorize.pathMatchers(uri).permitAll());
                 }
             }
         }
         http.cors(corsSpec -> corsSpec.configurationSource(corsConfigurationSource()))
                 .authorizeExchange(authorize -> authorize.anyExchange().authenticated())
-                .oauth2ResourceServer(
-                        oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)));
-        http.headers(headers -> headers.frameOptions(
-                frameOptions -> frameOptions.mode(XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN)));
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)));
+        http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.mode(XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN)));
         return http.build();
     }
 
@@ -129,7 +126,7 @@ public class WebConfig {
      * </p>
      *
      * @return a {@link CorsConfigurationSource} object that provides the CORS
-     *         configuration
+     * configuration
      */
     private CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

@@ -92,7 +92,7 @@ public class AuthServiceImpl implements AuthService {
     @Value("${hashing-password.public-key}")
     private String publicKey;
 
-    @Value("${keycloak.clientId}")
+    @Value("${keycloak.client-id}")
     private String clientId;
 
     @Override
@@ -344,7 +344,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private String createUserKeycloak(String username, String password, String email) {
-        // create new keycloak's user
+        // create new keycloak user
         UsersResource usersResource = kcProvider.getRealmResource().users();
         UserRepresentation kcUser = new UserRepresentation();
         kcUser.setUsername(username);
@@ -368,7 +368,7 @@ public class AuthServiceImpl implements AuthService {
                 .toRepresentation();
         userResource.roles().realmLevel().add(Collections.singletonList(userRealmRole));
         // get and add role 'user' for ezbuy-client
-        String clientIdOfHub = kcProvider
+        String clientIdOfEzbuy = kcProvider
                 .getRealmResource()
                 .clients()
                 .findByClientId(clientId)
@@ -377,11 +377,11 @@ public class AuthServiceImpl implements AuthService {
         RoleRepresentation adminRoleWebclient = kcProvider
                 .getRealmResource()
                 .clients()
-                .get(clientIdOfHub)
+                .get(clientIdOfEzbuy)
                 .roles()
                 .get(AuthConstants.RoleName.USER)
                 .toRepresentation();
-        userResource.roles().clientLevel(clientIdOfHub).add(Collections.singletonList(adminRoleWebclient));
+        userResource.roles().clientLevel(clientIdOfEzbuy).add(Collections.singletonList(adminRoleWebclient));
         return userId;
     }
 
@@ -390,13 +390,13 @@ public class AuthServiceImpl implements AuthService {
             ResetPasswordRequest resetPasswordRequest, ServerWebExchange serverWebExchange) {
         String requestEmail = DataUtil.safeTrim(resetPasswordRequest.getEmail());
         String requestOtp = DataUtil.safeTrim(resetPasswordRequest.getOtp());
-        if (!requestOtp.matches(Regex.OTP_REGEX)) {
+        if (!Regex.OTP_REGEX.matches(requestOtp)) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "dto.otp.invalid"));
         }
-        if (!resetPasswordRequest.getPassword().matches(Regex.PASSWORD_REGEX)) {
+        if (!Regex.PASSWORD_REGEX.matches(resetPasswordRequest.getPassword())) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "dto.password.invalid"));
         }
-        if (!resetPasswordRequest.getPassword().matches(Regex.UTF8_REGEX)) {
+        if (!Regex.UTF8_REGEX.matches(resetPasswordRequest.getPassword())) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "dto.password.invalid"));
         }
 

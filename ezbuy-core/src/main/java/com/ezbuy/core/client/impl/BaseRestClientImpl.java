@@ -66,14 +66,8 @@ import reactor.netty.transport.ProxyProvider;
 @Service
 public class BaseRestClientImpl implements BaseRestClient {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(BaseRestClientImpl.class);
 
-    /**
-     * GET request with specified headers and query parameters
-     */
     @Override
     public <T> Mono<Optional<T>> get(
             WebClient webClient,
@@ -110,9 +104,6 @@ public class BaseRestClientImpl implements BaseRestClient {
         );
     }
 
-    /**
-     * POST request with specified headers and payload
-     */
     @Override
     public <T> Mono<Optional<T>> post(
             WebClient webClient,
@@ -149,9 +140,6 @@ public class BaseRestClientImpl implements BaseRestClient {
         );
     }
 
-    /**
-     * POST request with form data as payload
-     */
     @Override
     public <T> Mono<Optional<T>> post(
             WebClient webClient,
@@ -225,9 +213,6 @@ public class BaseRestClientImpl implements BaseRestClient {
         );
     }
 
-    /**
-     * DELETE request with specified headers and query parameters
-     */
     @Override
     public <T> Mono<Optional<T>> delete(
             WebClient webClient,
@@ -246,9 +231,6 @@ public class BaseRestClientImpl implements BaseRestClient {
         );
     }
 
-    /**
-     * DELETE request with specified headers and query parameters
-     */
     @Override
     public <T> Mono<Optional<T>> delete(
             WebClient webClient,

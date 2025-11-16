@@ -56,9 +56,6 @@ import reactor.core.publisher.Mono;
 @Service
 public class BaseSoapClientImpl<T> implements BaseSoapClient<T> {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(BaseSoapClientImpl.class);
 
     /**

@@ -11,6 +11,7 @@ import com.ezbuy.auth.application.dto.request.LogoutRequest;
 import com.ezbuy.auth.application.dto.request.ProviderLogin;
 import com.ezbuy.auth.application.dto.request.RefreshTokenRequest;
 import com.ezbuy.auth.application.dto.request.UpdateUserKeycloakRequest;
+import com.ezbuy.auth.infrastructure.client.properties.KeycloakClientProperties;
 import com.ezbuy.auth.shared.constants.AuthConstants;
 import com.ezbuy.auth.application.dto.AccessToken;
 import com.ezbuy.auth.application.dto.ClientResource;
@@ -18,8 +19,8 @@ import com.ezbuy.auth.application.dto.KeycloakError;
 import com.ezbuy.auth.application.dto.RoleDTO;
 import com.ezbuy.auth.application.dto.response.Permission;
 import com.ezbuy.auth.infrastructure.client.KeyCloakClient;
-import com.ezbuy.auth.infrastructure.client.properties.KeycloakClientProperties;
 import com.ezbuy.auth.infrastructure.config.KeycloakProvider;
+import com.ezbuy.core.config.properties.KeycloakProperties;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.ezbuy.core.constants.CommonErrorCode;
@@ -31,14 +32,14 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import lombok.extern.slf4j.Slf4j;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.representations.idm.authorization.GroupPolicyRepresentation;
 import org.keycloak.representations.idm.authorization.RolePolicyRepresentation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -54,36 +55,30 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Slf4j
 @Service
 @DependsOn("webClientFactory")
-public class KeyCloakClientImpl implements KeyCloakClient {
+public class KeycloakClientImpl implements KeyCloakClient {
 
-    @Value("${keycloak.serverUrl}")
-    private String keycloakUrl;
-
-    @Value("${keycloak.realm}")
-    public String realm;
-
-    @Value("${keycloak.clientId}")
-    public String clientID;
-
-    @Value("${keycloak.clientSecret}")
-    public String clientSecret;
-
-    @Value("${keycloak.host}")
-    private String hostKeycloak;
+    private static final Logger log = LoggerFactory.getLogger(KeycloakClientImpl.class);
 
     private final WebClient keycloak;
     private final KeycloakProvider keycloakProvider;
     private final KeycloakClientProperties keyCloakConfig;
 
-    public KeyCloakClientImpl(@Qualifier("keycloak") WebClient keycloak,
+    private final String keycloakUrl;
+    private final String realm;
+    private final String hostKeycloak;
+
+    public KeycloakClientImpl(@Qualifier("keycloak") WebClient keycloak,
                               KeycloakProvider keycloakProvider,
-                              KeycloakClientProperties keyCloakConfig) {
+                              KeycloakClientProperties keyCloakConfig,
+                              KeycloakProperties keycloakProperties) {
         this.keycloak = keycloak;
         this.keycloakProvider = keycloakProvider;
         this.keyCloakConfig = keyCloakConfig;
+        this.keycloakUrl = keycloakProperties.getServerUrl();
+        this.realm = keycloakProperties.getRealm();
+        this.hostKeycloak = keycloakProperties.getHost();
     }
 
     @Override
@@ -103,8 +98,8 @@ public class KeyCloakClientImpl implements KeyCloakClient {
                     })
                     .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "client.id.not.valid")));
         } else {
-            formParameters.add(OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().getClientId());
-            formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().getClientSecret());
+            formParameters.add(OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getKeycloakAuth().getClientId());
+            formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getKeycloakAuth().getClientSecret());
         }
         return requestToken(formParameters);
     }
@@ -151,8 +146,8 @@ public class KeyCloakClientImpl implements KeyCloakClient {
         formParameters.add(OAuth2ParameterNames.GRANT_TYPE, AuthConstants.OAuth.AUTHOR_CODE);
         formParameters.add(OAuth2ParameterNames.CODE, providerLogin.getCode());
         formParameters.add(OAuth2ParameterNames.REDIRECT_URI, AuthConstants.OAuth.REDIRECT_URI);
-        formParameters.add(OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getAuth().getClientId());
-        formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getAuth().getClientSecret());
+        formParameters.add(OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getKeycloakAuth().getClientId());
+        formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getKeycloakAuth().getClientSecret());
         return requestToken(formParameters);
     }
 
@@ -160,7 +155,7 @@ public class KeyCloakClientImpl implements KeyCloakClient {
     public Mono<Optional<AccessToken>> refreshToken(RefreshTokenRequest refreshTokenRequest) {
         String clientId = refreshTokenRequest.getClientId();
         if (DataUtil.isNullOrEmpty(clientId))
-            clientId = keyCloakConfig.getAuth().getClientId();
+            clientId = keyCloakConfig.getKeycloakAuth().getClientId();
         return keycloakProvider.getClientWithSecret(clientId).flatMap(clientRepresentation -> {
             MultiValueMap<String, String> formParameters = new LinkedMultiValueMap<>();
             formParameters.add(OAuth2ParameterNames.GRANT_TYPE, OAuth2ParameterNames.REFRESH_TOKEN);

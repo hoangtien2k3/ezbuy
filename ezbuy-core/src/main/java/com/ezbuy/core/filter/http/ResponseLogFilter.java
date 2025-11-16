@@ -24,7 +24,6 @@ import io.netty.buffer.UnpooledByteBufAllocator;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
-import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
@@ -118,16 +117,10 @@ public class ResponseLogFilter implements WebFilter, Ordered {
                 if (LogUtils.legalLogMediaTypes.contains(contentType)) {
                     if (body instanceof Mono) {
                         final Mono<DataBuffer> monoBody = Mono.from(body);
-                        return super.writeWith(monoBody
-                                .publishOn(single())
-                                .map(buffer -> logRequestBody(buffer, exchange))
-                        );
+                        return super.writeWith(monoBody.publishOn(single()).map(buffer -> logRequestBody(buffer, exchange)));
                     } else if (body instanceof Flux) {
                         final Flux<DataBuffer> monoBody = Flux.from(body);
-                        return super.writeWith(monoBody
-                                .publishOn(single())
-                                .map(buffer -> logRequestBody(buffer, exchange))
-                        );
+                        return super.writeWith(monoBody.publishOn(single()).map(buffer -> logRequestBody(buffer, exchange)));
                     }
                 }
                 return super.writeWith(body);
@@ -179,12 +172,22 @@ public class ResponseLogFilter implements WebFilter, Ordered {
      * stream representation of the response body along with the headers, status
      * code, and cookies.
      */
-    @AllArgsConstructor
     public static class ResponseAdapter implements ClientHttpResponse {
         private final Flux<DataBuffer> flux;
         private final HttpHeaders headers;
         private final HttpStatus statusCode;
         private final MultiValueMap<String, ResponseCookie> cookies;
+
+        public ResponseAdapter(
+                Publisher<? extends DataBuffer> body,
+                HttpHeaders headers,
+                HttpStatus statusCode,
+                MultiValueMap<String, ResponseCookie> cookies) {
+            this.headers = headers;
+            this.statusCode = statusCode;
+            this.cookies = cookies;
+            flux = Flux.from(body);
+        }
 
         /**
          * Returns the response body as a Flux of DataBuffer.

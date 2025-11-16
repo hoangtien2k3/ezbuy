@@ -11,7 +11,7 @@ import com.ezbuy.settingservice.repository.MarketSectionRepository;
 import com.ezbuy.settingservice.repository.ServiceMediaRepository;
 import com.ezbuy.settingservice.repositoryTemplate.MarketSectionRepositoryTemplate;
 import com.ezbuy.settingservice.service.MarketSectionService;
-import com.ezbuy.core.config.MinioProperties;
+import com.ezbuy.core.config.properties.MinioProperties;
 import com.ezbuy.core.constants.CommonErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.exception.BusinessException;

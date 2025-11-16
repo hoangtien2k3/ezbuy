@@ -15,7 +15,7 @@
  */
 package com.ezbuy.core.util;
 
-import com.ezbuy.core.config.MinioProperties;
+import com.ezbuy.core.config.properties.MinioProperties;
 import com.ezbuy.core.constants.CommonErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import io.minio.*;
@@ -151,7 +151,8 @@ public class MinioUtils {
                 XLSX_CONTENT_TYPE,
                 EXCEL_FOLDER,
                 DOCX_CONTENT_TYPE,
-                WORD_FOLDER);
+                WORD_FOLDER
+        );
     }
 
     /**

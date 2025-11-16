@@ -1,10 +1,7 @@
 package com.ezbuy.auth.infrastructure.config;
 
-import java.util.HashMap;
-import java.util.Map;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -12,35 +9,31 @@ import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-@Configuration
 @Getter
 @NoArgsConstructor
-@Slf4j
-@Component
+@Configuration
 public class KeycloakProvider {
 
-    private static final Map<String, ClientRepresentation> clientMap = new HashMap<>();
-    private volatile Keycloak keycloak = null;
-
-    @Value("${keycloak.serverUrl}")
-    public String serverURL;
+    @Value("${keycloak.server-url}")
+    private String serverURL;
 
     @Value("${keycloak.realm}")
-    public String realm;
+    private String realm;
 
-    @Value("${keycloak.clientId}")
-    public String clientID;
+    @Value("${keycloak.client-id}")
+    private String clientID;
 
-    @Value("${keycloak.clientSecret}")
-    public String clientSecret;
+    @Value("${keycloak.client-secret}")
+    private String clientSecret;
 
     @Value("${keycloak.host}")
     private String hostKeycloak;
 
-    // volatile and Double-Checked Locking -> Thread-Safe.
+    private volatile Keycloak keycloak;
+
+    //Double-Checked Locking Keycloak
     public Keycloak getInstance() {
         if (keycloak == null) {
             synchronized (KeycloakProvider.class) {

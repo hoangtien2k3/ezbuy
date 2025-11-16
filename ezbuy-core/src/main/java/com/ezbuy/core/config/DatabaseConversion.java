@@ -133,7 +133,6 @@ public class DatabaseConversion {
      */
     @WritingConverter
     public enum InstantWriteConverter implements Converter<Instant, LocalDateTime> {
-        /** The singleton instance of BinaryToUUIDConverter. */
         INSTANCE;
 
         public LocalDateTime convert(@NotNull Instant source) {
@@ -146,7 +145,6 @@ public class DatabaseConversion {
      */
     @ReadingConverter
     public enum BlobToStringConverter implements Converter<Blob, String> {
-        /** The singleton instance of BinaryToUUIDConverter. */
         INSTANCE;
 
         @Override
@@ -168,7 +166,6 @@ public class DatabaseConversion {
      */
     @WritingConverter
     public enum UUIDToBinaryConverter implements Converter<UUID, byte[]> {
-        /** The singleton instance of BinaryToUUIDConverter. */
         INSTANCE;
 
         @Override
@@ -185,7 +182,6 @@ public class DatabaseConversion {
      */
     @ReadingConverter
     public enum BinaryToUUIDConverter implements Converter<byte[], UUID> {
-        /** The singleton instance of BinaryToUUIDConverter. */
         INSTANCE;
 
         @Override
@@ -202,7 +198,6 @@ public class DatabaseConversion {
      */
     @ReadingConverter
     public enum InstantReadConverter implements Converter<LocalDateTime, Instant> {
-        /** The singleton instance of BinaryToUUIDConverter. */
         INSTANCE;
 
         @Override
@@ -216,7 +211,6 @@ public class DatabaseConversion {
      */
     @ReadingConverter
     public enum BitSetReadConverter implements Converter<BitSet, Boolean> {
-        /** The singleton instance of BinaryToUUIDConverter. */
         INSTANCE;
 
         @Override
@@ -230,7 +224,6 @@ public class DatabaseConversion {
      */
     @ReadingConverter
     public enum ZonedDateTimeReadConverter implements Converter<LocalDateTime, ZonedDateTime> {
-        /** The singleton instance of BinaryToUUIDConverter. */
         INSTANCE;
 
         @Override
@@ -245,7 +238,6 @@ public class DatabaseConversion {
      */
     @WritingConverter
     public enum ZonedDateTimeWriteConverter implements Converter<ZonedDateTime, LocalDateTime> {
-        /** The singleton instance of BinaryToUUIDConverter. */
         INSTANCE;
 
         @Override
@@ -259,7 +251,6 @@ public class DatabaseConversion {
      */
     @WritingConverter
     public enum DurationWriteConverter implements Converter<Duration, Long> {
-        /** The singleton instance of BinaryToUUIDConverter. */
         INSTANCE;
 
         @Override
@@ -273,12 +264,10 @@ public class DatabaseConversion {
      */
     @ReadingConverter
     public enum LocalDateTimeToDateReadConverter implements Converter<LocalDateTime, Date> {
-        /** The singleton instance of BinaryToUUIDConverter. */
         INSTANCE;
 
         @Override
         public Date convert(LocalDateTime localDateTime) {
-            // Be aware - we are using the UTC timezone
             Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
             return Date.from(instant);
         }
@@ -289,7 +278,6 @@ public class DatabaseConversion {
      */
     @ReadingConverter
     public enum DurationReadConverter implements Converter<Long, Duration> {
-        /** The singleton instance of BinaryToUUIDConverter. */
         INSTANCE;
 
         @Override

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ezbuy.core.config;
+package com.ezbuy.core.config.properties;
 
 import com.ezbuy.core.model.WhiteList;
 import java.util.List;

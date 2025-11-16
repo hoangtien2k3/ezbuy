@@ -18,8 +18,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         })
 @EnableScheduling
 @EnableDiscoveryClient
-public class AuthApplication {
+public class AuthServiceApplication {
     public static void main(String[] args) {
-        SpringApplication.run(AuthApplication.class, args);
+        SpringApplication.run(AuthServiceApplication.class, args);
     }
 }

@@ -1,16 +1,30 @@
 package com.ezbuy.auth.infrastructure.client.properties;
 
 import com.ezbuy.core.client.properties.WebClientProperties;
-import com.ezbuy.core.filter.properties.KeyCloakProperties;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
-@Component("keycloakProperties")
+@Getter
+@Setter
+@Component("keycloakServiceProperties")
 @ConfigurationProperties(prefix = "client.keycloak", ignoreInvalidFields = true)
 public class KeycloakClientProperties extends WebClientProperties {
-    private KeyCloakProperties auth;
+
+    private KeycloakAuthProperties keycloakAuth;
+
+    @Getter
+    @Setter
+    public static class KeycloakAuthProperties {
+        /**
+         * the client ID used for authenticating with the Keycloak server
+         */
+        private String clientId;
+
+        /**
+         * the client secret used for authenticating with the Keycloak server
+         */
+        private String clientSecret;
+    }
 }

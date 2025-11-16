@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ezbuy.core.config;
+package com.ezbuy.core.config.properties;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -39,6 +39,14 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "minio")
 public class MinioProperties {
+
+    /**
+     * <p>
+     * Indicates whether Minio integration is enabled.
+     * </p>
+     *
+     */
+    private String enabled;
 
     /**
      * <p>

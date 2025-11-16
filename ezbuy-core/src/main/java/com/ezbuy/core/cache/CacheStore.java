@@ -85,7 +85,7 @@ public class CacheStore implements ApplicationContextAware {
                         .expireAfterWrite(Duration.ofMinutes(durationInMinute))
                         .recordStats()
                         .maximumSize(maxRecord)
-                        .removalListener(new CustomizeRemovalListener(method))
+                        .removalListener(new CacheRemovalListener(method))
                         .build();
                 autoLoadMethods.add(method);
             } else {

@@ -15,6 +15,7 @@
  */
 package com.ezbuy.core.config;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -74,7 +75,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
     /** {@inheritDoc} */
     @SuppressWarnings("squid:S2696")
     @Override
-    public void setApplicationContext(ApplicationContext ac) throws BeansException {
+    public void setApplicationContext(@NotNull ApplicationContext ac) throws BeansException {
         if (context == null) {
             synchronized (ApplicationContextProvider.class) {
                 if (context == null) {

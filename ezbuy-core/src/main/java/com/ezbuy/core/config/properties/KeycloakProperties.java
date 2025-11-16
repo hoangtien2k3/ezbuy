@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ezbuy.core.filter.properties;
+package com.ezbuy.core.config.properties;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 /**
  * <p>
- * The KeyCloakProperties class is a record that holds configuration properties
+ * The KeycloakProperties class is a record that holds configuration properties
  * for connecting to a Keycloak server. This includes the client ID and client
  * secret required for authentication.
  * </p>
@@ -35,7 +37,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class KeyCloakProperties {
+@Component
+@ConfigurationProperties(prefix = "keycloak")
+public class KeycloakProperties {
 
     /**
      * the client ID used for authenticating with the Keycloak server
@@ -46,4 +50,24 @@ public class KeyCloakProperties {
      * the client secret used for authenticating with the Keycloak server
      */
     private String clientSecret;
+
+    /**
+     * the realm used for authenticating with the Keycloak server
+     */
+    private String realm;
+
+    /**
+     * the server URL of the Keycloak server
+     */
+    private String serverUrl;
+
+    /**
+     * the grant type used for authenticating with the Keycloak server
+     */
+    private String grantType;
+
+    /**
+     * the host used for connecting to the Keycloak server
+     */
+    private String host;
 }

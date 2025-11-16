@@ -114,11 +114,11 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
                     setTraceIdFromContext(newSpan.context().traceIdString());
                     return context;
                 })
-                .doFinally(signalType -> {
+                .then(Mono.fromRunnable(() -> {
                     if (!List.of(environment.getActiveProfiles()).contains("prod")) {
-                        logReqResponse(exchange);
+                        this.logReqResponse(exchange);
                     }
-                });
+                }));
     }
 
     /**

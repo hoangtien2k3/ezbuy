@@ -15,11 +15,12 @@
  */
 package com.ezbuy.core.config;
 
+import com.ezbuy.core.config.properties.MinioProperties;
 import io.minio.MinioClient;
-import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -38,13 +39,11 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author hoangtien2k3
  */
-@AllArgsConstructor
 @Configuration
+@EnableConfigurationProperties(MinioProperties.class)
 public class MinioConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(MinioConfiguration.class);
-
-    private final MinioProperties minioProperties;
 
     /**
      * <p>
@@ -59,8 +58,8 @@ public class MinioConfiguration {
      *             if there is an error during Minio client configuration.
      */
     @Bean
-    @ConditionalOnProperty(value = "minio.enabled", havingValue = "true", matchIfMissing = false)
-    public MinioClient minioClient() {
+    @ConditionalOnProperty(value = "minio.enabled", havingValue = "true")
+    public MinioClient minioClient(MinioProperties minioProperties) {
         log.info("Configuring minio client: {}", minioProperties.getBaseUrl());
         return MinioClient.builder()
                 .endpoint(minioProperties.getBaseUrl())

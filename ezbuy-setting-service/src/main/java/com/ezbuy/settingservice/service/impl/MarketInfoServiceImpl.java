@@ -10,7 +10,7 @@ import com.ezbuy.settingservice.repository.MarketInfoRepository;
 import com.ezbuy.settingservice.repositoryTemplate.MarketInfoRepositoryTemplate;
 import com.ezbuy.settingservice.service.MarketInfoService;
 import com.ezbuy.settingservice.service.TelecomService;
-import com.ezbuy.core.config.MinioProperties;
+import com.ezbuy.core.config.properties.MinioProperties;
 import com.ezbuy.core.constants.CommonErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.exception.BusinessException;

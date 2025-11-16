@@ -1,9 +1,9 @@
 package com.ezbuy.auth.infrastructure.config;
 
-import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.web.cors.CorsConfiguration;
@@ -14,24 +14,20 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 @EnableReactiveMethodSecurity
 public class SecurityConfiguration {
 
-    @Value("${frontend-cors.ezbuyCms}")
-    private String frontendEzbuyCms;
-
     @Value("${frontend-cors.ezbuy}")
     private String frontendEzbuy;
 
     @Bean
     CorsConfigurationSource corsConfiguration() {
-        CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.applyPermitDefaultValues();
-        corsConfig.addAllowedMethod(HttpMethod.GET);
-        corsConfig.addAllowedMethod(HttpMethod.POST);
-        corsConfig.addAllowedMethod(HttpMethod.PUT);
-        corsConfig.addAllowedMethod(HttpMethod.DELETE);
-        corsConfig.addAllowedMethod(HttpMethod.POST);
-        corsConfig.setAllowedOrigins(Arrays.asList(frontendEzbuyCms, frontendEzbuy));
+        CorsConfiguration cors = new CorsConfiguration();
+        cors.setAllowedOrigins(List.of(frontendEzbuy));
+        cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
+        cors.setAllowedHeaders(List.of("*"));
+        cors.setExposedHeaders(List.of("*"));
+        cors.setAllowCredentials(true);
+        cors.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfig);
+        source.registerCorsConfiguration("/**", cors);
         return source;
     }
 }

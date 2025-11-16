@@ -54,9 +54,6 @@ public class UserServiceImpl implements UserService {
     @Value("${keycloak.realm}")
     public String realm;
 
-    @Value("${minio.bucket}")
-    public String mySignBucket;
-
     @Override
     public Mono<Optional<UserProfileEntity>> getUserProfile() {
         return SecurityUtils.getCurrentUser().flatMap(currentUser -> userRepository
