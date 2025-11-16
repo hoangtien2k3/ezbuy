@@ -13,30 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ezbuy.core.model.logging;
+package com.ezbuy.core.logging.logging;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-/**
- * Record representing log fields for tracking service requests and responses.
- *
- * @author hoangtien2k3
- */
-@Data
+@Setter
+@Getter
 @Builder
 public class LogField {
-    private final String traceId;
-    private final String requestId;
-    private final String service;
-    private final Long duration;
-    private final String logType;
-    private final String actionType;
-    private final Long startTime;
-    private final Long endTime;
-    private final String clientAddress;
-    private final String title;
-    private final String inputs;
-    private final String response;
-    private final String result;
+    private String traceId;
+    private String requestId;
+    private String service;
+    private Long duration;
+    private String logType;
+    private String actionType;
+    private Long startTime;
+    private Long endTime;
+    private String clientAddress;
+    private String title;
+    private String inputs;
+    private String response;
+    private String result;
 }

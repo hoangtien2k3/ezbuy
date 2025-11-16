@@ -40,9 +40,6 @@ import reactor.core.publisher.Mono;
 @Component
 public class CacheUtils {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(CacheUtils.class);
 
     /**

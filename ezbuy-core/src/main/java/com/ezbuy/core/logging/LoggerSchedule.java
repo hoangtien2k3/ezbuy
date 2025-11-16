@@ -18,8 +18,8 @@ package com.ezbuy.core.logging;
 import static com.ezbuy.core.constants.Constants.MAX_BYTE;
 
 import com.ezbuy.core.factory.ObjectMapperFactory;
-import com.ezbuy.core.model.logging.LogField;
-import com.ezbuy.core.model.logging.LoggerDTO;
+import com.ezbuy.core.logging.logging.LogField;
+import com.ezbuy.core.logging.logging.LoggerDTO;
 import com.ezbuy.core.util.DataUtil;
 import com.ezbuy.core.util.RequestUtils;
 import com.ezbuy.core.util.TruncateUtils;
@@ -63,11 +63,7 @@ import reactor.core.publisher.Mono;
 @Configuration
 public class LoggerSchedule {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(LoggerSchedule.class);
-
     private static final Logger logPerf = LoggerFactory.getLogger("perfLogger");
 
     /**
@@ -86,7 +82,6 @@ public class LoggerSchedule {
     public void scheduleSaveLogClick() {
         AtomicInteger numSuccess = new AtomicInteger(0);
         AtomicInteger numFalse = new AtomicInteger(0);
-
         List<LoggerDTO> records = LoggerQueue.getInstance().getRecords();
         records.parallelStream().forEach(record -> {
             try {
@@ -97,7 +92,6 @@ public class LoggerSchedule {
                 log.error("Error while handling record queue: {}", e.getMessage(), e);
             }
         });
-
         LoggerQueue.getInstance().resetCount();
     }
 
@@ -131,7 +125,6 @@ public class LoggerSchedule {
                     .filter(s -> !DataUtil.isNullOrEmpty(s))
                     .orElse(null);
         }
-
         String inputs = null;
         try {
             if (record.getArgs() != null) {
@@ -140,7 +133,6 @@ public class LoggerSchedule {
         } catch (Exception ex) {
             log.error("Error while handle record queue: {}", ex.getMessage());
         }
-
         String resStr = null;
         try {
             if (record.getResponse() instanceof Optional<?> output) {
@@ -155,14 +147,12 @@ public class LoggerSchedule {
         } catch (Exception ex) {
             log.error("Error while handle record queue: {}", ex.getMessage());
         }
-
         try {
             inputs = TruncateUtils.truncate(inputs, MAX_BYTE);
             resStr = TruncateUtils.truncate(resStr, MAX_BYTE);
         } catch (Exception ex) {
             log.error("Truncate input/output error ", ex);
         }
-
         logInfo(LogField.builder()
                 .traceId(traceId)
                 .requestId(requestId)

@@ -16,6 +16,7 @@
 package com.ezbuy.core.filter.webclient;
 
 import com.ezbuy.core.filter.properties.RetryProperties;
+import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,22 +45,12 @@ import reactor.util.retry.Retry;
  *
  * @author hoangtien2k3
  */
+@AllArgsConstructor
 public class WebClientRetryHandler implements ExchangeFilterFunction {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(WebClientRetryHandler.class);
 
-    /**
-     * the {@link RetryProperties} defining retry behavior, including retry count,
-     * applicable HTTP methods, and exceptions to retry
-     */
     private final RetryProperties properties;
-
-    public WebClientRetryHandler(RetryProperties properties) {
-        this.properties = properties;
-    }
 
     /**
      * {@inheritDoc}

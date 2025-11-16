@@ -93,12 +93,8 @@ application:
   http-logging:
     request:
       enable: true
-      header: true
-      param: true
-      body: true
     response:
       enable: true
-      body: true
   whiteList:
     - uri: /v1/auth/swagger-ui.html
       methods:
@@ -237,7 +233,7 @@ springdoc:
     path: /v1/auth/swagger-ui.html
     url: /v1/auth/v3/api-docs
 ---
-#config cors (cross origin resource sharing)
+#config cors (cross-origin resource sharing)
 frontend-cors:
   ezbuyCms: http://localhost:3000
   ezbuy: http://localhost:3000

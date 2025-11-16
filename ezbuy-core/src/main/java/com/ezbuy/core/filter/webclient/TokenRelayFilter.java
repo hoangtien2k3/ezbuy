@@ -15,6 +15,7 @@
  */
 package com.ezbuy.core.filter.webclient;
 
+import java.util.Objects;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -54,12 +55,7 @@ import reactor.core.publisher.Mono;
  */
 public class TokenRelayFilter implements ExchangeFilterFunction {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(TokenRelayFilter.class);
-
-    public TokenRelayFilter() {}
 
     /**
      * <p>
@@ -83,22 +79,18 @@ public class TokenRelayFilter implements ExchangeFilterFunction {
         return ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)
                 .flatMap(authentication -> {
-                    // Fetch token from authentication mechanism
                     String token = Optional.ofNullable(authentication)
                             .filter(auth -> auth instanceof JwtAuthenticationToken)
                             .map(auth ->
                                     ((JwtAuthenticationToken) auth).getToken().getTokenValue())
                             .orElse(null);
-                    if (token == null) {
+                    if (Objects.isNull(token)) {
                         log.debug("No token found in the security context. Proceeding with the original request.");
                         return next.exchange(request);
                     }
-                    // Add token to the request header
-                    ClientRequest newRequest = ClientRequest.from(request)
+                    return next.exchange(ClientRequest.from(request)
                             .headers(headers -> headers.setBearerAuth(token))
-                            .build();
-                    // Proceed with the modified request
-                    return next.exchange(newRequest);
+                            .build());
                 })
                 .switchIfEmpty(next.exchange(request));
     }

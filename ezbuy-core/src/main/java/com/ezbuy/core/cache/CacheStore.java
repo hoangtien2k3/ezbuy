@@ -51,9 +51,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class CacheStore implements ApplicationContextAware {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(CacheStore.class);
 
     /** Stores the caches mapped by their names. */

@@ -51,8 +51,7 @@ public class Translator {
      * @param localeContextResolver
      *            the locale context resolver for resolving locales
      */
-    public Translator(
-            ReloadableResourceBundleMessageSource messageSource, LocaleContextResolver localeContextResolver) {
+    public Translator(ReloadableResourceBundleMessageSource messageSource, LocaleContextResolver localeContextResolver) {
         Translator.messageSource = messageSource;
         Translator.localeContextResolver = localeContextResolver;
     }
@@ -70,7 +69,6 @@ public class Translator {
         if (msgCode == null) {
             return "";
         }
-
         return messageSource.getMessage(msgCode, params, defaultLocale);
     }
 
@@ -97,8 +95,7 @@ public class Translator {
         } else {
             locale = localeContextResolver.resolveLocaleContext(exchange).getLocale();
         }
-        return messageSource.getMessage(
-                msgCode, params, locale == null ? Objects.requireNonNull(defaultLocale) : locale);
+        return messageSource.getMessage(msgCode, params, locale == null ? Objects.requireNonNull(defaultLocale) : locale);
     }
 
     /**
@@ -124,8 +121,7 @@ public class Translator {
         } else {
             locale = localeContextResolver.resolveLocaleContext(exchange).getLocale();
         }
-        return Mono.fromSupplier(() -> messageSource.getMessage(
-                        msgCode, params, locale == null ? Objects.requireNonNull(defaultLocale) : locale))
+        return Mono.fromSupplier(() -> messageSource.getMessage(msgCode, params, locale == null ? Objects.requireNonNull(defaultLocale) : locale))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 

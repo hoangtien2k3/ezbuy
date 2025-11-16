@@ -19,14 +19,15 @@ import brave.Span;
 import brave.Tracer;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.util.DataUtil;
+
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.PostConstruct;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -48,11 +49,6 @@ import reactor.util.context.Context;
  * logging.
  * </p>
  *
- * <p>
- * The performance logging can be configured through the {@code detailException}
- * property, which determines whether to log detailed exceptions.
- * </p>
- *
  * @author hoangtien2k3
  */
 @Component
@@ -63,21 +59,18 @@ public class LoggerAspectUtils {
 
     private final Tracer tracer;
 
-    @Value("${debug.detailException:true}")
-    private boolean detailException;
-
     /**
      * Constructs a new instance of {@code LoggerAspectUtils}.
      *
-     * @param tracer
-     *            the tracer used for logging and tracing operations.
+     * @param tracer the tracer used for logging and tracing operations.
      */
     public LoggerAspectUtils(Tracer tracer) {
         this.tracer = tracer;
     }
 
     @PostConstruct
-    private void init() {}
+    private void init() {
+    }
 
     /**
      * <p>
@@ -86,13 +79,11 @@ public class LoggerAspectUtils {
      * performance data, including execution time.
      * </p>
      *
-     * @param joinPoint
-     *            a {@link org.aspectj.lang.ProceedingJoinPoint} object representing
-     *            the intercepted method call
+     * @param joinPoint a {@link org.aspectj.lang.ProceedingJoinPoint} object representing
+     *                  the intercepted method call
      * @return a {@link java.lang.Object} representing the result of the method
-     *         execution
-     * @throws java.lang.Throwable
-     *             if any error occurs during the execution of the method
+     * execution
+     * @throws java.lang.Throwable if any error occurs during the execution of the method
      */
     public Mono<Object> logAround(ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
@@ -123,30 +114,10 @@ public class LoggerAspectUtils {
         Span newSpan = tracer.nextSpan().name(name);
         var result = joinPoint.proceed();
         if (result instanceof Mono<?> monoResult) {
-            return logMonoResult(
-                    joinPoint,
-                    start,
-                    monoResult.cast(Object.class),
-                    newSpan,
-                    name,
-                    logType,
-                    actionType,
-                    logOutput,
-                    logInput,
-                    title);
+            return logMonoResult(joinPoint, start, monoResult.cast(Object.class), newSpan, name, logType, actionType, logOutput, logInput, title);
         }
         if (result instanceof Flux<?> fluxResult) {
-            return logFluxResult(
-                            joinPoint,
-                            start,
-                            fluxResult.cast(Object.class),
-                            newSpan,
-                            name,
-                            logType,
-                            actionType,
-                            logOutput,
-                            logInput,
-                            title)
+            return logFluxResult(joinPoint, start, fluxResult.cast(Object.class), newSpan, name, logType, actionType, logOutput, logInput, title)
                     .collectList()
                     .map(list -> list);
         } else {
@@ -160,27 +131,17 @@ public class LoggerAspectUtils {
      * and output details as well as performance metrics.
      * </p>
      *
-     * @param joinPoint
-     *            a {@link ProceedingJoinPoint} object representing the intercepted
-     *            method call
-     * @param start
-     *            the start time of the method execution in milliseconds
-     * @param result
-     *            the {@link Mono} result from the method execution
-     * @param newSpan
-     *            the {@link Span} representing the trace span for the execution
-     * @param name
-     *            the name of the method being executed
-     * @param logType
-     *            the type of logging to be used
-     * @param actionType
-     *            the action type for the logging
-     * @param logOutput
-     *            flag indicating whether to log output
-     * @param logInput
-     *            flag indicating whether to log input
-     * @param title
-     *            a title for the log entry
+     * @param joinPoint  a {@link ProceedingJoinPoint} object representing the intercepted
+     *                   method call
+     * @param start      the start time of the method execution in milliseconds
+     * @param result     the {@link Mono} result from the method execution
+     * @param newSpan    the {@link Span} representing the trace span for the execution
+     * @param name       the name of the method being executed
+     * @param logType    the type of logging to be used
+     * @param actionType the action type for the logging
+     * @param logOutput  flag indicating whether to log output
+     * @param logInput   flag indicating whether to log input
+     * @param title      a title for the log entry
      * @return a {@link Mono} containing the logged result
      */
     private Mono<Object> logMonoResult(
@@ -211,9 +172,7 @@ public class LoggerAspectUtils {
                     return context;
                 })
                 .doOnError(o -> {
-                    if (detailException) log.error(" ", o);
-                    else log.error(o.toString());
-
+                    log.error(o.toString());
                     if (o instanceof BusinessException) {
                         logPerf(contextRef, newSpan, name, start, "0", o, logType, actionType, null, title);
                     } else {
@@ -228,27 +187,17 @@ public class LoggerAspectUtils {
      * completion and error details along with performance metrics.
      * </p>
      *
-     * @param joinPoint
-     *            a {@link ProceedingJoinPoint} object representing the intercepted
-     *            method call
-     * @param start
-     *            the start time of the method execution in milliseconds
-     * @param result
-     *            the {@link Flux} result from the method execution
-     * @param newSpan
-     *            the {@link Span} representing the trace span for the execution
-     * @param name
-     *            the name of the method being executed
-     * @param logType
-     *            the type of logging to be used
-     * @param actionType
-     *            the action type for the logging
-     * @param logOutput
-     *            flag indicating whether to log output
-     * @param logInput
-     *            flag indicating whether to log input
-     * @param title
-     *            a title for the log entry
+     * @param joinPoint  a {@link ProceedingJoinPoint} object representing the intercepted
+     *                   method call
+     * @param start      the start time of the method execution in milliseconds
+     * @param result     the {@link Flux} result from the method execution
+     * @param newSpan    the {@link Span} representing the trace span for the execution
+     * @param name       the name of the method being executed
+     * @param logType    the type of logging to be used
+     * @param actionType the action type for the logging
+     * @param logOutput  flag indicating whether to log output
+     * @param logInput   flag indicating whether to log input
+     * @param title      a title for the log entry
      * @return a {@link Flux} containing the logged result
      */
     private Flux<Object> logFluxResult(
@@ -269,23 +218,11 @@ public class LoggerAspectUtils {
         }
         return result.doOnNext(output -> {
                     if (logOutput) {
-                        logPerf(
-                                contextRef,
-                                newSpan,
-                                name,
-                                start,
-                                "OUTPUT",
-                                null,
-                                logType,
-                                actionType,
-                                new Object[] {output},
-                                title);
+                        logPerf(contextRef, newSpan, name, start, "OUTPUT", null, logType, actionType, new Object[]{output}, title);
                     }
                 })
-                .doOnError(error ->
-                        logPerf(contextRef, newSpan, name, start, "0", error, logType, actionType, null, title))
-                .doFinally(signalType ->
-                        logPerf(contextRef, newSpan, name, start, "1", null, logType, actionType, null, title))
+                .doOnError(error -> logPerf(contextRef, newSpan, name, start, "0", error, logType, actionType, null, title))
+                .doFinally(signalType -> logPerf(contextRef, newSpan, name, start, "1", null, logType, actionType, null, title))
                 .contextWrite(context -> contextRef.updateAndGet(ctx -> context));
     }
 
@@ -295,19 +232,13 @@ public class LoggerAspectUtils {
      * duration and the result of the method call.
      * </p>
      *
-     * @param contextRef
-     *            an {@link AtomicReference} containing the current context
-     * @param newSpan
-     *            the {@link Span} representing the trace span for the execution
-     * @param name
-     *            the name of the method being executed
-     * @param start
-     *            the start time of the method execution in milliseconds
-     * @param result
-     *            a string indicating the result status ("0" for success, "1" for
-     *            failure)
-     * @param data
-     *            the output object from the method execution, may be {@code null}
+     * @param contextRef an {@link AtomicReference} containing the current context
+     * @param newSpan    the {@link Span} representing the trace span for the execution
+     * @param name       the name of the method being executed
+     * @param start      the start time of the method execution in milliseconds
+     * @param result     a string indicating the result status ("0" for success, "1" for
+     *                   failure)
+     * @param data       the output object from the method execution, may be {@code null}
      */
     private void logPerf(
             AtomicReference<Context> contextRef,
@@ -335,16 +266,7 @@ public class LoggerAspectUtils {
                 dataInfo = data.toString();
             }
         }
-        logPerf.info(
-                "{} | {} | {} | {} | {} | {} | {} | {}",
-                title,
-                name,
-                duration,
-                result,
-                logType,
-                actionType,
-                contextInfo,
-                dataInfo);
+        logPerf.info("{} | {} | {} | {} | {} | {} | {} | {}", title, name, duration, result, logType, actionType, contextInfo, dataInfo);
     }
 
     /**
@@ -354,27 +276,17 @@ public class LoggerAspectUtils {
      * the execution duration exceeds a specified threshold.
      * </p>
      *
-     * @param contextRef
-     *            an {@link AtomicReference} containing the current context
-     * @param newSpan
-     *            the {@link Span} representing the trace span for the execution
-     * @param name
-     *            the name of the method being executed
-     * @param startTime
-     *            the start time of the method execution in milliseconds
-     * @param result
-     *            a string indicating the result status ("0" for success, "1" for
-     *            failure)
-     * @param obj
-     *            the output object from the method execution, may be {@code null}
-     * @param logType
-     *            the type of logging to be used
-     * @param actionType
-     *            the action type for the logging
-     * @param args
-     *            the input arguments for the method execution
-     * @param title
-     *            a title for the log entry
+     * @param contextRef an {@link AtomicReference} containing the current context
+     * @param newSpan    the {@link Span} representing the trace span for the execution
+     * @param name       the name of the method being executed
+     * @param startTime  the start time of the method execution in milliseconds
+     * @param result     a string indicating the result status ("0" for success, "1" for
+     *                   failure)
+     * @param obj        the output object from the method execution, may be {@code null}
+     * @param logType    the type of logging to be used
+     * @param actionType the action type for the logging
+     * @param args       the input arguments for the method execution
+     * @param title      a title for the log entry
      */
     private void logPerf(
             AtomicReference<Context> contextRef,
@@ -390,19 +302,7 @@ public class LoggerAspectUtils {
         newSpan.finish();
         long endTime = System.currentTimeMillis();
         if (endTime - startTime > 50) {
-            LoggerQueue.getInstance()
-                    .addQueue(
-                            contextRef,
-                            newSpan,
-                            name,
-                            startTime,
-                            endTime,
-                            result,
-                            obj,
-                            logType,
-                            actionType,
-                            args,
-                            title);
+            LoggerQueue.getInstance().addQueue(contextRef, newSpan, name, startTime, endTime, result, obj, logType, actionType, args, title);
         }
     }
 }

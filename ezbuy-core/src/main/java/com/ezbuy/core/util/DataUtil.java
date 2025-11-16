@@ -54,15 +54,8 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import reactor.core.publisher.Mono;
 
-/**
- * Utility class for data manipulation and processing. This class contains
- * static methods for various data-related operations.
- */
 public class DataUtil {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(DataUtil.class);
 
     /**

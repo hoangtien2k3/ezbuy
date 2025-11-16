@@ -15,7 +15,8 @@
  */
 package com.ezbuy.core.filter.properties;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * <p>
@@ -32,7 +33,8 @@ import lombok.Data;
  *
  * @author hoangtien2k3
  */
-@Data
+@Getter
+@Setter
 public class KeyCloakProperties {
 
     /**

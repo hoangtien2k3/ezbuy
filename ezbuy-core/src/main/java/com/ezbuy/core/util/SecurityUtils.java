@@ -31,12 +31,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.oauth2.jwt.Jwt;
 import reactor.core.publisher.Mono;
 
-/**
- * Utility class for security-related operations. Provides methods to extract
- * the current user, generate HMAC, and check authorization.
- *
- * @author hoangtien2k3
- */
 public class SecurityUtils {
 
     /**

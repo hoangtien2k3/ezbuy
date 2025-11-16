@@ -16,6 +16,7 @@
 package com.ezbuy.core.filter.properties;
 
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * <p>
@@ -33,6 +34,7 @@ import lombok.Getter;
  * @author hoangtien2k3
  */
 @Getter
+@Setter
 public class PoolProperties {
 
     /**

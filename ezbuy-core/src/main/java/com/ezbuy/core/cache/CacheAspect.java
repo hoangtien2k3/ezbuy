@@ -47,9 +47,6 @@ import reactor.core.publisher.Signal;
 @Configuration
 public class CacheAspect {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(CacheAspect.class);
 
     @Pointcut("@annotation(com.ezbuy.core.cache.LocalCache)")

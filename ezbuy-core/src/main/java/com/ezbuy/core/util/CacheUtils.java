@@ -27,10 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 import reactor.util.annotation.NonNull;
 
-/**
- * Utility class for data manipulation and processing. This class contains
- * static methods for various data-related operations.
- */
 public class CacheUtils {
 
     private static final String FIXED_KEY = "FIXED_KEY";

@@ -31,9 +31,6 @@ import org.springframework.util.MultiValueMap;
  */
 public class TruncateUtils {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(TruncateUtils.class);
 
     /**

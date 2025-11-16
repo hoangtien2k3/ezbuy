@@ -16,10 +16,10 @@
 package com.ezbuy.core.exception;
 
 import com.ezbuy.core.util.Translator;
-import lombok.Getter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * <p>
@@ -63,7 +63,8 @@ import java.util.Objects;
  * @version 1.2.6
  * @author hoangtien2k3
  */
-@Getter
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class BusinessException extends RuntimeException {
 
     /** Error code associated with the exception */
@@ -109,23 +110,7 @@ public class BusinessException extends RuntimeException {
      */
     public BusinessException(String errorCode, String message, String... paramsMsg) {
         this.errorCode = errorCode;
-        this.paramsMsg = Arrays.stream(paramsMsg).map(Translator::toLocaleVi).toArray(String[]::new);
-        this.message = Translator.toLocaleVi(message, this.paramsMsg);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BusinessException that)) return false;
-        return Objects.equals(getErrorCode(), that.getErrorCode())
-                && Objects.equals(getMessage(), that.getMessage())
-                && Arrays.equals(getParamsMsg(), that.getParamsMsg());
-    }
-
-    @Override
-    public int hashCode() {
-        int result = Objects.hash(getErrorCode(), getMessage());
-        result = 31 * result + Arrays.hashCode(getParamsMsg());
-        return result;
+        this.paramsMsg = Arrays.stream(paramsMsg).map(Translator::toLocale).toArray(String[]::new);
+        this.message = Translator.toLocale(message, this.paramsMsg);
     }
 }

@@ -17,6 +17,9 @@ package com.ezbuy.core.config;
 
 import com.ezbuy.core.model.WhiteList;
 import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +37,8 @@ import org.springframework.stereotype.Component;
  * Java compiler, for creating instances.
  * </p>
  */
+@Setter
+@Getter
 @Component
 @ConfigurationProperties(prefix = "application")
 public class WhiteListProperties {
@@ -42,22 +47,6 @@ public class WhiteListProperties {
      * A list of whitelisted entities. This property holds a collection of
      * {@link WhiteList} objects that define the entries allowed in the
      * application's whitelist.
-     *
-     * @return a {@link List} of {@link WhiteList} objects.
      */
     private List<WhiteList> whiteList;
-
-    public WhiteListProperties() {}
-
-    public WhiteListProperties(List<WhiteList> whiteList) {
-        this.whiteList = whiteList;
-    }
-
-    public List<WhiteList> getWhiteList() {
-        return whiteList;
-    }
-
-    public void setWhiteList(List<WhiteList> whiteList) {
-        this.whiteList = whiteList;
-    }
 }

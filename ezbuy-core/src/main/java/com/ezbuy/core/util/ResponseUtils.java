@@ -22,10 +22,6 @@ import java.util.Optional;
 import org.springframework.http.ResponseEntity;
 import reactor.core.publisher.Mono;
 
-/**
- * Utility class for handling responses in the application. This class provides
- * static methods to create and manipulate response objects.
- */
 public class ResponseUtils {
 
     /**

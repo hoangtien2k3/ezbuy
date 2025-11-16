@@ -17,7 +17,8 @@ package com.ezbuy.core.filter.properties;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.logging.LoggingMeterRegistry;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * <p>
@@ -34,7 +35,8 @@ import lombok.Data;
  *
  * @author hoangtien2k3
  */
-@Data
+@Getter
+@Setter
 public class MonitoringProperties {
 
     /**

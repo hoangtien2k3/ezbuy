@@ -27,19 +27,8 @@ import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.core.io.buffer.NettyDataBufferFactory;
 import org.springframework.http.MediaType;
 
-/**
- * Utility class for logging request and response data buffers. Provides methods
- * to log the content of DataBuffer objects. Supports various media types for
- * logging.
- *
- * @since 1.3.0
- * @author hoangtien2k3
- */
 public class LogUtils {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(LogUtils.class);
 
     /**

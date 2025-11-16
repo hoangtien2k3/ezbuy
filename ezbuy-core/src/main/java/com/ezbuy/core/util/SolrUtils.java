@@ -26,15 +26,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Utility class for building Solr query strings. This class supports adding
- * standard Solr query parameters such as start, rows, q, and sort.
- */
 public class SolrUtils {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(SolrUtils.class);
 
     private Map<String, String> queryParams = new HashMap<>();

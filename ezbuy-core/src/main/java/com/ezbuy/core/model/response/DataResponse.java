@@ -18,7 +18,6 @@ package com.ezbuy.core.model.response;
 import com.ezbuy.core.constants.MessageConstant;
 import com.ezbuy.core.util.Translator;
 import java.io.Serializable;
-import java.util.Objects;
 
 import lombok.Builder;
 import lombok.Data;
@@ -66,19 +65,5 @@ public class DataResponse<T> implements Serializable {
 
     public DataResponse(String message) {
         this.message = Translator.toLocale(message);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DataResponse<?> that)) return false;
-        return Objects.equals(getErrorCode(), that.getErrorCode())
-                && Objects.equals(getMessage(), that.getMessage())
-                && Objects.equals(getData(), that.getData());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getErrorCode(), getMessage(), getData());
     }
 }

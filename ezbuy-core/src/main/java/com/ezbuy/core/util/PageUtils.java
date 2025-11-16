@@ -15,10 +15,6 @@
  */
 package com.ezbuy.core.util;
 
-/**
- * Utility class for data manipulation and processing. This class contains
- * static methods for various data-related operations.
- */
 public class PageUtils {
 
     /**

@@ -23,6 +23,8 @@ import com.ezbuy.core.util.LogUtils;
 import io.netty.buffer.UnpooledByteBufAllocator;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+
+import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
@@ -39,7 +41,6 @@ import org.springframework.http.client.reactive.ClientHttpResponse;
 import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
@@ -70,19 +71,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class ResponseLogFilter implements WebFilter, Ordered {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(ResponseLogFilter.class);
-
-    private final ExchangeStrategies exchangeStrategies = ExchangeStrategies.builder()
-            .codecs(cl -> cl.defaultCodecs().maxInMemorySize(50 * 1024 * 1024))
-            .build();
-
-    /**
-     * Constructs a new instance of {@code ResponseLogFilter}.
-     */
-    public ResponseLogFilter() {}
 
     /**
      * Converts an InputStream to a byte array.
@@ -129,12 +118,16 @@ public class ResponseLogFilter implements WebFilter, Ordered {
                 if (LogUtils.legalLogMediaTypes.contains(contentType)) {
                     if (body instanceof Mono) {
                         final Mono<DataBuffer> monoBody = Mono.from(body);
-                        return super.writeWith(
-                                monoBody.publishOn(single()).map(buffer -> logRequestBody(buffer, exchange)));
+                        return super.writeWith(monoBody
+                                .publishOn(single())
+                                .map(buffer -> logRequestBody(buffer, exchange))
+                        );
                     } else if (body instanceof Flux) {
                         final Flux<DataBuffer> monoBody = Flux.from(body);
-                        return super.writeWith(
-                                monoBody.publishOn(single()).map(buffer -> logRequestBody(buffer, exchange)));
+                        return super.writeWith(monoBody
+                                .publishOn(single())
+                                .map(buffer -> logRequestBody(buffer, exchange))
+                        );
                     }
                 }
                 return super.writeWith(body);
@@ -186,34 +179,12 @@ public class ResponseLogFilter implements WebFilter, Ordered {
      * stream representation of the response body along with the headers, status
      * code, and cookies.
      */
+    @AllArgsConstructor
     public static class ResponseAdapter implements ClientHttpResponse {
         private final Flux<DataBuffer> flux;
         private final HttpHeaders headers;
         private final HttpStatus statusCode;
         private final MultiValueMap<String, ResponseCookie> cookies;
-
-        /**
-         * Constructs a ResponseAdapter with the specified parameters.
-         *
-         * @param body
-         *            the response body as a Publisher
-         * @param headers
-         *            the response headers
-         * @param statusCode
-         *            the HTTP status code
-         * @param cookies
-         *            the response cookies
-         */
-        public ResponseAdapter(
-                Publisher<? extends DataBuffer> body,
-                HttpHeaders headers,
-                HttpStatus statusCode,
-                MultiValueMap<String, ResponseCookie> cookies) {
-            this.headers = headers;
-            this.statusCode = statusCode;
-            this.cookies = cookies;
-            flux = Flux.from(body);
-        }
 
         /**
          * Returns the response body as a Flux of DataBuffer.

@@ -21,7 +21,10 @@ import com.ezbuy.core.model.GatewayContext;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
+import java.util.Objects;
+
+import com.ezbuy.core.util.DataUtil;
+import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,29 +72,14 @@ import reactor.core.scheduler.Schedulers;
  *
  * @author hoangtien2k3
  */
+@AllArgsConstructor
 @Component
 public class GatewayContextFilter implements WebFilter, Ordered {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(GatewayContextFilter.class);
 
     private final HttpLogProperties httpLogProperties;
     private final CodecConfigurer codecConfigurer;
-
-    /**
-     * Constructs a new instance of {@code GatewayContextFilter}.
-     *
-     * @param httpLogProperties
-     *            the properties for logging HTTP requests and responses.
-     * @param codecConfigurer
-     *            the codec configurer for configuring message codecs.
-     */
-    public GatewayContextFilter(HttpLogProperties httpLogProperties, CodecConfigurer codecConfigurer) {
-        this.httpLogProperties = httpLogProperties;
-        this.codecConfigurer = codecConfigurer;
-    }
 
     /**
      * {@inheritDoc}
@@ -132,10 +120,10 @@ public class GatewayContextFilter implements WebFilter, Ordered {
                 || (!enableRequest && !enableResponse)) {
             return chain.filter(exchange);
         }
-        GatewayContext gatewayContext = new GatewayContext();
-        gatewayContext.setReadRequestData(httpLogProperties.getRequest().isEnable());
-        gatewayContext.setReadResponseData(httpLogProperties.getResponse().isEnable());
         HttpHeaders headers = request.getHeaders();
+        GatewayContext gatewayContext = new GatewayContext();
+        gatewayContext.setReadRequestData(enableRequest);
+        gatewayContext.setReadResponseData(enableResponse);
         gatewayContext.setRequestHeaders(headers);
         gatewayContext.setStartTime(System.currentTimeMillis());
         if (!gatewayContext.getReadRequestData()) {
@@ -196,20 +184,16 @@ public class GatewayContextFilter implements WebFilter, Ordered {
                     /*
                      * formData is empty just return
                      */
-                    if (null == formData || formData.isEmpty()) {
+                    if (DataUtil.isNullOrEmpty(formData)) {
                         return chain.filter(exchange);
                     }
 
                     // Repackage form data without blocking calls
                     return Flux.fromIterable(formData.entrySet())
-                            .flatMap(entry -> {
-                                String entryKey = entry.getKey();
-                                List<String> entryValue = entry.getValue();
-
-                                return Flux.fromIterable(entryValue)
-                                        .publishOn(Schedulers.boundedElastic())
-                                        .map(value -> entryKey + "=" + URLEncoder.encode(value, charset));
-                            })
+                            .flatMap(entry -> Flux.fromIterable(entry.getValue())
+                                    .publishOn(Schedulers.boundedElastic())
+                                    .map(value -> entry.getKey() + "=" + URLEncoder.encode(value, charset))
+                            )
                             .collectList()
                             .map(encodedEntries -> String.join("&", encodedEntries))
                             .flatMap(formDataBodyString -> {
@@ -228,10 +212,8 @@ public class GatewayContextFilter implements WebFilter, Ordered {
                                 /*
                                  * use BodyInserter to InsertFormData Body
                                  */
-                                BodyInserter<String, ReactiveHttpOutputMessage> bodyInserter =
-                                        BodyInserters.fromValue(formDataBodyString);
-                                CachedBodyOutputMessage cachedBodyOutputMessage =
-                                        new CachedBodyOutputMessage(exchange, httpHeaders);
+                                BodyInserter<String, ReactiveHttpOutputMessage> bodyInserter = BodyInserters.fromValue(formDataBodyString);
+                                CachedBodyOutputMessage cachedBodyOutputMessage = new CachedBodyOutputMessage(exchange, httpHeaders);
                                 log.debug("[GatewayContext] Rewrite Form Data :{}", formDataBodyString);
 
                                 return bodyInserter
@@ -278,31 +260,34 @@ public class GatewayContextFilter implements WebFilter, Ordered {
      *         processing.
      */
     private Mono<Void> readBody(ServerWebExchange exchange, WebFilterChain chain, GatewayContext gatewayContext) {
-        return DataBufferUtils.join(exchange.getRequest().getBody()).flatMap(dataBuffer -> {
-            DataBufferUtils.retain(dataBuffer);
-            Flux<DataBuffer> cachedFlux = Flux.defer(() -> Flux.just(DataBufferUtils.retain(dataBuffer)));
-
-            /*
-             * repackage ServerHttpRequest
-             */
-            ServerHttpRequest mutatedRequest = new ServerHttpRequestDecorator(exchange.getRequest()) {
-                @NotNull
-                @Override
-                public Flux<DataBuffer> getBody() {
-                    return cachedFlux;
-                }
-            };
-            ServerWebExchange mutatedExchange =
-                    exchange.mutate().request(mutatedRequest).build();
-            return ServerRequest.create(mutatedExchange, codecConfigurer.getReaders())
-                    .bodyToMono(String.class)
-                    .doOnNext(objectValue -> {
-                        if (objectValue != null)
-                            objectValue = objectValue.replaceAll("\r", "").replaceAll("\n", "");
-                        gatewayContext.setRequestBody(objectValue);
-                        log.debug("[GatewayContext]Read JsonBody Success");
-                    })
-                    .then(chain.filter(mutatedExchange));
-        });
+        return DataBufferUtils.join(exchange.getRequest().getBody())
+                .flatMap(dataBuffer -> {
+                    /*
+                     * repackage ServerHttpRequest
+                     */
+                    ServerHttpRequest mutatedRequest = new ServerHttpRequestDecorator(exchange.getRequest()) {
+                        @NotNull
+                        @Override
+                        public Flux<DataBuffer> getBody() {
+                            return Flux.defer(() -> {
+                                DataBufferUtils.retain(dataBuffer);
+                                return Flux.just(dataBuffer);
+                            });
+                        }
+                    };
+                    ServerWebExchange mutatedExchange = exchange.mutate()
+                            .request(mutatedRequest)
+                            .build();
+                    return ServerRequest.create(mutatedExchange, codecConfigurer.getReaders())
+                            .bodyToMono(String.class)
+                            .doOnNext(objectValue -> {
+                                if (Objects.nonNull(objectValue)) {
+                                    objectValue = objectValue.replaceAll("\r", "").replaceAll("\n", "");
+                                }
+                                gatewayContext.setRequestBody(objectValue);
+                                log.debug("[GatewayContext]Read JsonBody Success");
+                            })
+                            .then(chain.filter(mutatedExchange));
+                });
     }
 }

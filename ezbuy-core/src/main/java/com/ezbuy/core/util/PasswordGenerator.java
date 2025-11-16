@@ -20,12 +20,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.RandomStringUtils;
 
-/**
- * Utility class for generating random passwords. Provides methods to generate
- * passwords with a mix of upper case letters, lower case letters, and numbers.
- *
- * @author hoangtien2k3
- */
 public class PasswordGenerator {
 
     /**

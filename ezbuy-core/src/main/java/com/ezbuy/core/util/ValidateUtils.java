@@ -31,9 +31,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ValidateUtils {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(ValidateUtils.class);
 
     /**

@@ -34,9 +34,6 @@ import org.slf4j.LoggerFactory;
  */
 public class CustomizeRemovalListener implements RemovalListener<Object, Object> {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(CustomizeRemovalListener.class);
 
     /** The method to be invoked upon eviction */

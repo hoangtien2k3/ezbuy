@@ -88,9 +88,7 @@ public abstract class SagaProcess {
                     if (stepResult.isSuccess()) {
                         synchronousSink.next(true); // Step succeeded
                     } else {
-                        synchronousSink.error(
-                                new BusinessException(CommonErrorCode.BAD_REQUEST, stepResult.getMessage())); // Handle
-                        // failure
+                        synchronousSink.error(new BusinessException(CommonErrorCode.BAD_REQUEST, stepResult.getMessage())); // Handle
                     }
                 })
                 .subscribeOn(Schedulers.boundedElastic()) // Run on a bounded elastic scheduler

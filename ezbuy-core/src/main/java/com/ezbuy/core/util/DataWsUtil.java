@@ -35,15 +35,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
-/**
- * Utility class for data manipulation and processing. This class contains
- * static methods for various data-related operations.
- */
 public class DataWsUtil {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(DataWsUtil.class);
 
     /**

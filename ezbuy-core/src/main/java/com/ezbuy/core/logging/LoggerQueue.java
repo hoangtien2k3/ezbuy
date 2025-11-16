@@ -16,12 +16,12 @@
 package com.ezbuy.core.logging;
 
 import brave.Span;
-import com.ezbuy.core.model.logging.LoggerDTO;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.ezbuy.core.logging.logging.LoggerDTO;
 import lombok.Getter;
 import reactor.util.context.Context;
 

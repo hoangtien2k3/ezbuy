@@ -26,6 +26,8 @@ import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -46,25 +48,13 @@ import reactor.core.publisher.Mono;
  *
  * @author hoangtien2k3
  */
+@AllArgsConstructor
 @RestControllerAdvice
 public class ExceptionResponseConfig {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(ExceptionResponseConfig.class);
 
     private final Tracer tracer;
-
-    /**
-     * Constructs a new instance of {@code ExceptionResponseConfig}.
-     *
-     * @param tracer
-     *            the Tracer instance used for tracing exceptions.
-     */
-    public ExceptionResponseConfig(Tracer tracer) {
-        this.tracer = tracer;
-    }
 
     /**
      * <p>
@@ -105,7 +95,8 @@ public class ExceptionResponseConfig {
         log.error("R2dbc trace-id {} , error ", traceId, ex);
         return Mono.just(new ResponseEntity<>(
                 new TraceErrorResponse<>(CommonErrorCode.SQL_ERROR, "Server error", null, traceId),
-                HttpStatus.INTERNAL_SERVER_ERROR));
+                HttpStatus.INTERNAL_SERVER_ERROR)
+        );
     }
 
     /**
@@ -126,7 +117,8 @@ public class ExceptionResponseConfig {
         log.error("Access denied trace-id {} , error ", traceId, ex);
         return Mono.just(new ResponseEntity<>(
                 new TraceErrorResponse<>(CommonErrorCode.ACCESS_DENIED, "Access denied", null, traceId),
-                HttpStatus.FORBIDDEN));
+                HttpStatus.FORBIDDEN)
+        );
     }
 
     /**
@@ -145,9 +137,9 @@ public class ExceptionResponseConfig {
         String traceId = Objects.requireNonNull(tracer.currentSpan()).context().traceId();
         log.error("DataBuffer limit trace-id {} , error ", traceId, ex);
         return Mono.just(new ResponseEntity<>(
-                new TraceErrorResponse<>(
-                        CommonErrorCode.BAD_REQUEST, Translator.toLocale("request.databuffer.limit"), null, traceId),
-                HttpStatus.BAD_REQUEST));
+                new TraceErrorResponse<>(CommonErrorCode.BAD_REQUEST, Translator.toLocale("request.databuffer.limit"), null, traceId),
+                HttpStatus.BAD_REQUEST)
+        );
     }
 
     /**
@@ -191,7 +183,7 @@ public class ExceptionResponseConfig {
         String traceId = Objects.requireNonNull(tracer.currentSpan()).context().traceId();
         List<String> errors = ex.getBindingResult().getFieldErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .map(Translator::toLocaleVi)
+                .map(Translator::toLocale)
                 .collect(Collectors.toList());
 
         String errorValue = String.join(", ", errors);
@@ -199,14 +191,16 @@ public class ExceptionResponseConfig {
             return Mono.just(new ResponseEntity<>(
                     new TraceErrorResponse<>(
                             CommonErrorCode.INVALID_PARAMS,
-                            Translator.toLocaleVi("params.invalid.format"),
+                            Translator.toLocale("params.invalid.format"),
                             null,
                             traceId),
-                    HttpStatus.BAD_REQUEST));
+                    HttpStatus.BAD_REQUEST)
+            );
         }
         return Mono.just(new ResponseEntity<>(
                 new TraceErrorResponse<>(CommonErrorCode.INVALID_PARAMS, errorValue, null, traceId),
-                HttpStatus.BAD_REQUEST));
+                HttpStatus.BAD_REQUEST)
+        );
     }
 
     /**
@@ -233,7 +227,6 @@ public class ExceptionResponseConfig {
                 httpStatus = HttpStatus.FORBIDDEN;
             }
         }
-        return Mono.just(new ResponseEntity<>(
-                new TraceErrorResponse<>(ex.getErrorCode(), ex.getMessage(), null, traceId), httpStatus));
+        return Mono.just(new ResponseEntity<>(new TraceErrorResponse<>(ex.getErrorCode(), ex.getMessage(), null, traceId), httpStatus));
     }
 }

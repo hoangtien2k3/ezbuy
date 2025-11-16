@@ -27,6 +27,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import javax.activation.MimetypesFileTypeMap;
+
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -36,29 +38,15 @@ import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-/**
- * Utility class for data manipulation and processing. This class contains
- * static methods for various data-related operations.
- */
+@Getter
 @Component
-@ConditionalOnProperty(value = "minio.enabled", havingValue = "true", matchIfMissing = false)
+@ConditionalOnProperty(value = "minio.enabled", havingValue = "true")
 public class MinioUtils {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(MinioUtils.class);
 
     private final MinioProperties minioProperties;
     private final MinioClient minioClient;
-
-    public MinioProperties getMinioProperties() {
-        return this.minioProperties;
-    }
-
-    public MinioClient getMinioClient() {
-        return this.minioClient;
-    }
 
     public String getBucket() {
         return this.minioProperties.getBucket();
@@ -96,8 +84,7 @@ public class MinioUtils {
      * Constant
      * <code>DOCX_CONTENT_TYPE="application/vnd.openxmlformats-officedo"{trunked}</code>
      */
-    public static final String DOCX_CONTENT_TYPE =
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    public static final String DOCX_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
     /** Constant <code>TEXT_CONTENT_TYPE="text/plain"</code> */
     public static final String TEXT_CONTENT_TYPE = "text/plain";

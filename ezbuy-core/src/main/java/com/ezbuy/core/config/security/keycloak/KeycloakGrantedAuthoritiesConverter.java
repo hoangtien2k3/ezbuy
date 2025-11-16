@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.core.GrantedAuthority;
@@ -56,38 +58,26 @@ import org.springframework.util.ObjectUtils;
  *
  * @author hoangtien2k3
  */
+@AllArgsConstructor
 public class KeycloakGrantedAuthoritiesConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
 
     private static final String ROLES = "roles";
     private static final String CLAIM_REALM_ACCESS = "realm_access";
     private static final String RESOURCE_ACCESS = "resource_access";
 
-    private final Converter<Jwt, Collection<GrantedAuthority>> defaultAuthoritiesConverter =
-            new JwtGrantedAuthoritiesConverter();
+    private final Converter<Jwt, Collection<GrantedAuthority>> defaultAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
 
     private final String clientId;
-
-    /**
-     * Constructs a new instance of {@code KeycloakGrantedAuthoritiesConverter}.
-     *
-     * @param clientId
-     *            the client ID used to identify the Keycloak client.
-     */
-    public KeycloakGrantedAuthoritiesConverter(String clientId) {
-        this.clientId = clientId;
-    }
 
     /** {@inheritDoc} */
     @Override
     public Collection<GrantedAuthority> convert(@NotNull Jwt jwt) {
         var realmRoles = realmRoles(jwt);
         var clientRoles = clientRoles(jwt, clientId);
-
         Collection<GrantedAuthority> authorities = Stream.concat(realmRoles.stream(), clientRoles.stream())
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toSet());
         authorities.addAll(defaultGrantedAuthorities(jwt));
-
         return authorities;
     }
 

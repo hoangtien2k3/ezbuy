@@ -85,7 +85,6 @@ public class GatewayPluginProperties implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         if (!CollectionUtils.isEmpty(hideHeaderList)) {
-            // Convert all headers in hideHeaderList to lowercase
             hideHeaderList = hideHeaderList.stream().map(String::toLowerCase).collect(Collectors.toList());
         }
     }

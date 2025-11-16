@@ -90,13 +90,11 @@ public class ModelMapperFactory {
      */
     private static ModelMapper createModelMapper() {
         ModelMapper modelMapper = new ModelMapper();
-
         modelMapper
                 .getConfiguration()
                 .setMatchingStrategy(MatchingStrategies.STRICT) // Use strict matching strategy
                 .setFieldMatchingEnabled(true) // Enable field matching
                 .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE); // Allow access to private fields
-
         return modelMapper;
     }
 

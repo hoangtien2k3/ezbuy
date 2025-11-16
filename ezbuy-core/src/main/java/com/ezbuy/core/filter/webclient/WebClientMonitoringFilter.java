@@ -17,7 +17,10 @@ package com.ezbuy.core.filter.webclient;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
+
 import java.util.concurrent.TimeUnit;
+
+import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,28 +47,14 @@ import reactor.core.publisher.Mono;
  *
  * @author hoangtien2k3
  */
+@AllArgsConstructor
 public class WebClientMonitoringFilter implements ExchangeFilterFunction {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(WebClientMonitoringFilter.class);
 
-    /**
-     * the MeterRegistry used to record metrics for the monitored WebClient requests
-     */
+    private static final String METRICS_WEBCLIENT_START_TIME = WebClientMonitoringFilter.class.getName() + ".START_TIME";
+
     private final MeterRegistry meterRegistry;
-
-    /**
-     * Constant
-     * <code>METRICS_WEBCLIENT_START_TIME="WebClientMonitoringFilter.class.getName"{trunked}</code>
-     */
-    private static final String METRICS_WEBCLIENT_START_TIME =
-            WebClientMonitoringFilter.class.getName() + ".START_TIME";
-
-    public WebClientMonitoringFilter(MeterRegistry meterRegistry) {
-        this.meterRegistry = meterRegistry;
-    }
 
     /**
      * {@inheritDoc}
@@ -88,14 +77,14 @@ public class WebClientMonitoringFilter implements ExchangeFilterFunction {
                         ClientResponse clientResponse = signal.get();
                         Throwable throwable = signal.getThrowable();
                         if (throwable != null) {
-                            log.error(
-                                    "WebClient request to {} failed: {}", clientRequest.url(), throwable.getMessage());
+                            log.error("WebClient request to {} failed: {}", clientRequest.url(), throwable.getMessage());
                         } else {
                             assert clientResponse != null;
                             log.info(
                                     "WebClient request to {} completed with status code: {}",
                                     clientRequest.url(),
-                                    clientResponse.statusCode());
+                                    clientResponse.statusCode()
+                            );
                         }
                         // record the execution time
                         long duration = System.nanoTime() - startTime;
@@ -107,7 +96,8 @@ public class WebClientMonitoringFilter implements ExchangeFilterFunction {
                         log.info(
                                 "Monitoring WebClient API {}: {} s",
                                 clientRequest.url(),
-                                (double) duration / Math.pow(10, 9));
+                                (double) duration / Math.pow(10, 9)
+                        );
                     }
                 })
                 .contextWrite((contextView) -> contextView.put(METRICS_WEBCLIENT_START_TIME, System.nanoTime()));

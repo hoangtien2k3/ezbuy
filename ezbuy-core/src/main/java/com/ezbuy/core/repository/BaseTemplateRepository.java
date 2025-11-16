@@ -83,8 +83,7 @@ public class BaseTemplateRepository {
      *         mapped to the specified type
      */
     protected <T> Flux<T> listQuery(String sql, Map<String, Object> params, Class<T> type) {
-        DatabaseClient.GenericExecuteSpec spec =
-                entityTemplate.getDatabaseClient().sql(sql);
+        DatabaseClient.GenericExecuteSpec spec = entityTemplate.getDatabaseClient().sql(sql);
         if (!DataUtil.isNullOrEmpty(params)) {
             for (String param : params.keySet()) {
                 spec = spec.bind(param, params.get(param));

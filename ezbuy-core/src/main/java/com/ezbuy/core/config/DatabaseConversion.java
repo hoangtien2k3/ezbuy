@@ -62,9 +62,6 @@ import reactor.core.publisher.Mono;
 @Component
 public class DatabaseConversion {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(DatabaseConversion.class);
 
     /**

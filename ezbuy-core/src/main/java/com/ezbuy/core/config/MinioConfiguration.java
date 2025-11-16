@@ -16,6 +16,7 @@
 package com.ezbuy.core.config;
 
 import io.minio.MinioClient;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -37,25 +38,13 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author hoangtien2k3
  */
+@AllArgsConstructor
 @Configuration
 public class MinioConfiguration {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(MinioConfiguration.class);
 
     private final MinioProperties minioProperties;
-
-    /**
-     * Constructs a new instance of {@code MinioConfiguration}.
-     *
-     * @param minioProperties
-     *            the properties used to configure MinIO connection settings.
-     */
-    public MinioConfiguration(MinioProperties minioProperties) {
-        this.minioProperties = minioProperties;
-    }
 
     /**
      * <p>

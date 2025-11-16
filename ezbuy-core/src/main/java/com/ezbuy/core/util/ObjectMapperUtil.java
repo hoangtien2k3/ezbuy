@@ -29,20 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-/**
- * Utility class for handling JSON serialization and deserialization using
- * Jackson. Provides methods to convert objects to JSON strings and vice versa.
- * Also supports conversion of lists and byte arrays to objects.
- *
- * @since 1.3.0
- * @author hoangtien2k3
- */
 @Component
 public class ObjectMapperUtil {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(ObjectMapperUtil.class);
 
     private static final ObjectMapper objectMapper = new ObjectMapper();

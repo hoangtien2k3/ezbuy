@@ -29,9 +29,6 @@ import org.slf4j.LoggerFactory;
  */
 public class StreamUtil {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(StreamUtil.class);
 
     /**

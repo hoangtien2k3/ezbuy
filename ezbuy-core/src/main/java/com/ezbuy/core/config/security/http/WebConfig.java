@@ -19,6 +19,8 @@ import com.ezbuy.core.config.WhiteListProperties;
 import com.ezbuy.core.model.WhiteList;
 import com.ezbuy.core.util.DataUtil;
 import java.util.List;
+
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -59,28 +61,16 @@ import reactor.core.publisher.Mono;
  *
  * @author hoangtien2k3
  */
+@AllArgsConstructor
 @Configuration
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
 @EnableConfigurationProperties(WhiteListProperties.class)
 public class WebConfig {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(WebConfig.class);
 
     private final WhiteListProperties whiteListProperties;
-
-    /**
-     * Constructs a new instance of {@code WebConfig}.
-     *
-     * @param whiteListProperties
-     *            the properties containing whitelisted entities.
-     */
-    public WebConfig(WhiteListProperties whiteListProperties) {
-        this.whiteListProperties = whiteListProperties;
-    }
 
     /**
      * <p>

@@ -13,30 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ezbuy.core.model.logging;
+package com.ezbuy.core.logging.logging;
 
+import brave.Span;
+import java.util.concurrent.atomic.AtomicReference;
+
+import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
+import reactor.util.context.Context;
 
-/**
- * Record representing the configuration for HTTP log requests.
- *
- * @author hoangtien2k3
- */
 @Getter
-public class HttpLogRequest {
-
-    private final boolean enable;
-
-    /**
-     * <p>
-     * Constructor for HttpLogRequest.
-     * </p>
-     */
-    public HttpLogRequest() {
-        this.enable = true;
-    }
-
-    public HttpLogRequest(boolean enable) {
-        this.enable = enable;
-    }
+@Setter
+@Builder
+public class LoggerDTO {
+    private AtomicReference<Context> contextRef;
+    private Span newSpan;
+    private String service;
+    private Long startTime;
+    private Long endTime;
+    private String result;
+    private Object response;
+    private String logType;
+    private String actionType;
+    private Object[] args;
+    private String title;
 }

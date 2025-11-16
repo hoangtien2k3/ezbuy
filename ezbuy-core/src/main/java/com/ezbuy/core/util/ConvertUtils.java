@@ -19,10 +19,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 
-/**
- * Utility class providing methods for string manipulation, number conversion,
- * and comparison operations.
- */
 public class ConvertUtils {
 
     /**

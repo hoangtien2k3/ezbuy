@@ -20,9 +20,8 @@ import io.netty.handler.timeout.ReadTimeoutException;
 
 import java.util.List;
 
-import jdk.jfr.DataAmount;
-import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.http.HttpMethod;
 
 /**
@@ -41,28 +40,29 @@ import org.springframework.http.HttpMethod;
  *
  * @author hoangtien2k3
  */
-@Data
+@Getter
+@Setter
 public class RetryProperties {
 
     /**
      * a boolean indicating whether retries are enabled
      */
-    private final boolean isEnable;
+    private boolean isEnable;
 
     /**
      * the number of retry attempts
      */
-    private final int count;
+    private int count;
 
     /**
      * a list of HTTP methods to which retries apply
      */
-    private final List<HttpMethod> methods;
+    private List<HttpMethod> methods;
 
     /**
      * a list of exception classes that will trigger a retry
      */
-    private final List<Class<? extends Exception>> exceptions;
+    private List<Class<? extends Exception>> exceptions;
 
     /**
      * <p>
@@ -81,8 +81,7 @@ public class RetryProperties {
             boolean isEnable,
             int count,
             List<HttpMethod> methods,
-            List<Class<? extends Exception>> exceptions
-    ) {
+            List<Class<? extends Exception>> exceptions) {
         this.isEnable = isEnable;
         this.count = count;
         this.methods = methods;

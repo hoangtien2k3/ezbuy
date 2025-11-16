@@ -62,13 +62,15 @@ public class LoggerAspect {
 
     /**
      * <p>
-     * Pointcut definition for methods in the controller, service, repository, and
+     * Pointcut definition for methods in the application, infrastructure, web, domain
      * client packages that should be logged for performance metrics.
      * </p>
      */
-    @Pointcut("execution(* com.ezbuy.core.*.controller..*(..)) || " + "execution(* com.ezbuy.core.*.service..*(..)) || "
-            + "execution(* com.ezbuy.core.*.repository..*(..)) || " + "execution(* com.ezbuy.core.*.client..*(..)) && "
-            + "!execution(* org.springframework.boot.actuate..*(..))")
+    @Pointcut("execution(* com.ezbuy.core.*.application..*(..)) || " +
+            "execution(* com.ezbuy.core.*.web..*(..)) || " +
+            "execution(* com.ezbuy.core.*.infrastructure..*(..)) || " +
+            "execution(* com.ezbuy.core.*.domain..*(..)) && " +
+            "!execution(* org.springframework.boot.actuate..*(..))")
     public void performancePointCut() {}
 
     /**

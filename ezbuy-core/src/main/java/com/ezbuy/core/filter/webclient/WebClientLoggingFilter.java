@@ -16,6 +16,8 @@
 package com.ezbuy.core.filter.webclient;
 
 import java.util.List;
+
+import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,24 +45,12 @@ import reactor.core.publisher.Mono;
  *
  * @author hoangtien2k3
  */
+@AllArgsConstructor
 public class WebClientLoggingFilter implements ExchangeFilterFunction {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(WebClientLoggingFilter.class);
 
-    /**
-     * A list of header names that should be obfuscated in the logs.
-     */
     private final List<String> obfuscateHeader;
-
-    public WebClientLoggingFilter(List<String> obfuscateHeader) {
-        this.obfuscateHeader = obfuscateHeader;
-    }
-
-    /** Constant <code>OBFUSCATE_HEADER="xxxxx"</code> */
-    private static final String OBFUSCATE_HEADER = "xxxxx";
 
     /**
      * {@inheritDoc}
@@ -77,12 +67,14 @@ public class WebClientLoggingFilter implements ExchangeFilterFunction {
     public Mono<ClientResponse> filter(ClientRequest request, @NotNull ExchangeFunction next) {
         log.info("Start Call API - Method: {} {}", request.method(), request.url());
         if (request.headers().getContentLength() > 0) {
-            log.info("body {}", request.body());
+            log.info("Request body {}", request.body());
         }
         if (log.isDebugEnabled()) {
             request.headers()
                     .forEach((name, values) -> values.forEach(value -> log.debug(
-                            "Request header: {}={}", name, obfuscateHeader.contains(name) ? OBFUSCATE_HEADER : value)));
+                                    "Request header: {}={}", name, obfuscateHeader.contains(name) ? "xxxxx" : value)
+                            )
+                    );
         }
         return next.exchange(request).flatMap(clientResponse -> {
             if (log.isDebugEnabled()) {
@@ -92,7 +84,8 @@ public class WebClientLoggingFilter implements ExchangeFilterFunction {
                         .forEach((name, values) -> values.forEach(value -> log.debug(
                                 "Response header: {}={}",
                                 name,
-                                obfuscateHeader.contains(name) ? OBFUSCATE_HEADER : value)));
+                                obfuscateHeader.contains(name) ? "xxxxx" : value))
+                        );
             }
             return Mono.just(clientResponse);
         });

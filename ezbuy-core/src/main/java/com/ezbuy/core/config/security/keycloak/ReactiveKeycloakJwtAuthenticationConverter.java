@@ -37,8 +37,7 @@ import reactor.core.publisher.Mono;
  * @see org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverter
  * @author hoangtien2k3
  */
-public final class ReactiveKeycloakJwtAuthenticationConverter
-        implements Converter<Jwt, Mono<AbstractAuthenticationToken>> {
+public final class ReactiveKeycloakJwtAuthenticationConverter implements Converter<Jwt, Mono<AbstractAuthenticationToken>> {
 
     private static final String USERNAME_CLAIM = "preferred_username";
     private final Converter<Jwt, Flux<GrantedAuthority>> jwtGrantedAuthoritiesConverter;

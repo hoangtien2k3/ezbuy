@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+
+import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,27 +81,16 @@ import reactor.util.context.Context;
  *
  * @author hoangtien2k3
  */
+@AllArgsConstructor
 @Component
 public class PerformanceLogFilter implements WebFilter, Ordered {
 
-    private final Tracer tracer;
     private static final Logger logPerf = LoggerFactory.getLogger("perfLogger");
     private static final Logger reqResLog = LoggerFactory.getLogger("reqResLogger");
     private static final int MAX_BYTE = 800; // Max byte allow to print
-    private final Environment environment;
 
-    /**
-     * Constructs a new instance of {@code PerformanceLogFilter}.
-     *
-     * @param tracer
-     *            the tracer used for tracing operations.
-     * @param environment
-     *            the environment information for the application.
-     */
-    public PerformanceLogFilter(Tracer tracer, Environment environment) {
-        this.tracer = tracer;
-        this.environment = environment;
-    }
+    private final Tracer tracer;
+    private final Environment environment;
 
     /**
      * {@inheritDoc}
@@ -110,24 +101,24 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, @NotNull WebFilterChain chain) {
         long startMillis = System.currentTimeMillis();
-        String name =
-                exchange.getRequest().getPath().pathWithinApplication().value().substring(1);
-        Span newSpan = tracer.nextSpan().name(name);
-
-        if (exchange.getRequest().getPath().pathWithinApplication().value().contains("actuator"))
+        String path = exchange.getRequest().getPath().pathWithinApplication().value();
+        String name = path.startsWith("/") ? path.substring(1) : path;
+        if (path.contains("actuator")) {
             return chain.filter(exchange);
+        }
+        Span newSpan = tracer.nextSpan().name(name);
         return chain.filter(exchange)
                 .doOnSuccess(o -> logPerf(exchange, newSpan, name, startMillis, "Success", null))
-                .doOnError(o -> logPerf(exchange, newSpan, name, startMillis, "Failed", o))
+                .doOnError(err -> logPerf(exchange, newSpan, name, startMillis, "Failed", err))
                 .contextWrite(context -> {
                     setTraceIdFromContext(newSpan.context().traceIdString());
                     return context;
                 })
-                .then(Mono.fromRunnable(() -> {
+                .doFinally(signalType -> {
                     if (!List.of(environment.getActiveProfiles()).contains("prod")) {
-                        this.logReqResponse(exchange);
+                        logReqResponse(exchange);
                     }
-                }));
+                });
     }
 
     /**

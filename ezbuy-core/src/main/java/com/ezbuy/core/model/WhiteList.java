@@ -26,7 +26,4 @@ import java.util.List;
  * @param methods methods the list of HTTP methods allowed for the URI
  * @author hoangtien2k3
  */
-public record WhiteList(
-        String uri,
-        List<String> methods
-) { }
+public record WhiteList(String uri, List<String> methods) { }

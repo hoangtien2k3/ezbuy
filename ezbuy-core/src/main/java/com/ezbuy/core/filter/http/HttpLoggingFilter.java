@@ -27,6 +27,9 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
@@ -56,25 +59,13 @@ import reactor.core.publisher.Mono;
  *
  * @author hoangtien2k3
  */
+@AllArgsConstructor
 @Component
 public class HttpLoggingFilter implements WebFilter, Ordered {
 
-    /**
-     * A static logger instance for logging messages
-     */
     private static final Logger log = LoggerFactory.getLogger(HttpLoggingFilter.class);
 
     private final HttpLogProperties httpLogProperties;
-
-    /**
-     * Constructs a new instance of {@code HttpLoggingFilter}.
-     *
-     * @param httpLogProperties
-     *            the properties for logging HTTP requests and responses.
-     */
-    public HttpLoggingFilter(HttpLogProperties httpLogProperties) {
-        this.httpLogProperties = httpLogProperties;
-    }
 
     /**
      * {@inheritDoc}
@@ -240,11 +231,9 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
      */
     private void logResponse(ServerWebExchange exchange, List<String> logs) {
         ServerHttpResponse response = exchange.getResponse();
-        logs.add(String.format(
-                "%s",
-                response.getStatusCode() != null ? response.getStatusCode().value() : "No Status"));
+        logs.add(String.format("%s", Objects.nonNull(response.getStatusCode()) ? response.getStatusCode().value() : "No Status"));
         GatewayContext gatewayContext = exchange.getAttribute(GatewayContext.CACHE_GATEWAY_CONTEXT);
-        if (gatewayContext != null && gatewayContext.getReadResponseData()) {
+        if (Objects.nonNull(gatewayContext) && gatewayContext.getReadResponseData()) {
             String body = TruncateUtils.truncateBody(gatewayContext.getResponseBody());
             logs.add(String.format("%s", TruncateUtils.truncate(body, MAX_BYTE)));
         }
@@ -261,14 +250,25 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
      */
     private DataBuffer logResponseBody(DataBuffer buffer, ServerWebExchange exchange) {
         StringBuilder msg = new StringBuilder();
-        int capacity = buffer.capacity();
-        if (capacity < Constants.LoggingTitle.BODY_SIZE_RESPONSE_MAX) {
-            msg.append(String.format("%s", StandardCharsets.UTF_8.decode(buffer.asByteBuffer())));
-        } else {
-            msg.append(String.format("%s", "response too log to log"));
+        try {
+            int readable = Math.min(buffer.readableByteCount(), Constants.LoggingTitle.BODY_SIZE_RESPONSE_MAX);
+            if (readable > 0) {
+                byte[] bytes = new byte[readable];
+                buffer.read(bytes);
+                String cleaned = new String(bytes, StandardCharsets.UTF_8)
+                        .replace("\r", "")
+                        .replace("\n", "")
+                        .replaceAll("\\s+", "");
+                msg.append(cleaned);
+            } else {
+                msg.append("response too long to log");
+            }
+        } catch (Exception ex) {
+            log.error("Convert response body to string error", ex);
+            msg.append("response read error");
         }
         GatewayContext gatewayContext = exchange.getAttribute(GatewayContext.CACHE_GATEWAY_CONTEXT);
-        if (gatewayContext != null) {
+        if (Objects.nonNull(gatewayContext)) {
             gatewayContext.setResponseBody(msg);
         }
         return buffer;
@@ -288,12 +288,14 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
         msg.append(Constants.LoggingTitle.REQUEST_BODY);
         String message = "body request too long to log";
         try {
-            int capacity = dataBuffer.capacity();
-            if (capacity < Constants.LoggingTitle.BODY_SIZE_REQUEST_MAX) {
-                message = StandardCharsets.UTF_8
-                        .decode(dataBuffer.toByteBuffer())
-                        .toString()
-                        .replaceAll("\\s", "");
+            int readable = Math.min(dataBuffer.readableByteCount(), Constants.LoggingTitle.BODY_SIZE_REQUEST_MAX);
+            if (readable > 0) {
+                byte[] bytes = new byte[readable];
+                dataBuffer.read(bytes);
+                message = new String(bytes, StandardCharsets.UTF_8)
+                        .replace("\r", "")
+                        .replace("\n", "")
+                        .replaceAll("\\s+", "");
             }
         } catch (Exception ex) {
             log.error("Convert body request to string error ", ex);
@@ -310,8 +312,7 @@ public class HttpLoggingFilter implements WebFilter, Ordered {
      */
     private String truncateBody(List<String> messageList) {
         StringBuilder response = new StringBuilder();
-        messageList.forEach(item ->
-                response.append(TruncateUtils.truncateBody(item, MAX_BYTE)).append(","));
+        messageList.forEach(item -> response.append(TruncateUtils.truncateBody(item, MAX_BYTE)).append(","));
         return response.toString();
     }
 }
