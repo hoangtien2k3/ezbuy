@@ -39,16 +39,13 @@ public class TimeoutProperties {
     /**
      * the read timeout value in milliseconds
      */
-    private final int read;
+    private int read;
 
     /**
      * the connection timeout value in milliseconds
      */
-    private final int connection;
+    private int connection;
 
-    /**
-     * Default constructor that initializes timeout values.
-     */
     public TimeoutProperties() {
         this(180000, 500); // Default read timeout: 3 minutes, connection timeout: 0.5 seconds
     }

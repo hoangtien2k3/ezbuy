@@ -24,6 +24,8 @@ spring:
     allow-bean-definition-overriding: true
   messages:
     basename: i18n/messages
+  jackson:
+    property-naming-strategy: SNAKE_CASE
   http:
     codecs:
       max-in-memory-size: 100MB
@@ -52,13 +54,6 @@ spring:
           jwk-set-uri: ${keycloak.server-url}/realms/${keycloak.realm}/protocol/openid-connect/certs
       keycloak:
         client-id: ${keycloak.client-id}
-
-  plugin:
-    config:
-      readRequestData: true
-      readResponseData: true
-      logRequest: true
-      logResponse: true
 ---
 client:
   keycloak:
@@ -76,7 +71,7 @@ client:
       max-pending-acquire: 100
     timeout:
       read: 60000
-      write: 1000
+      connection: 1000
   setting:
     address: http://localhost:8081/
     name: settingServiceClient

@@ -18,6 +18,7 @@ package com.ezbuy.core.filter.properties;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.stereotype.Component;
 
 /**
@@ -45,12 +46,14 @@ public class HttpLogProperties {
     /**
      * Properties related to HTTP request logging.
      */
-    private final HttpLogRequest request = new HttpLogRequest();
+    @NestedConfigurationProperty
+    private HttpLogRequest request = new HttpLogRequest();
 
     /**
      * Properties related to HTTP response logging.
      */
-    private final HttpLogResponse response = new HttpLogResponse();
+    @NestedConfigurationProperty
+    private HttpLogResponse response = new HttpLogResponse();
 
     @Setter
     @Getter

@@ -100,19 +100,10 @@ public final class Constants {
      * Contains constants related to SOAP headers.
      */
     public interface SoapHeaderConstant {
-        /** The key for the B3 Trace ID in the SOAP header. */
         String X_B3_TRACEID = "X-B3-TRACEID";
-
-        /** The value for the B3 Trace ID retrieved from the MDC context. */
         String X_B3_TRACEID_VALUE_SOAP = MDC.get("X-B3-TraceId");
-
-        /** The content type for XML with UTF-8 charset. */
         String TYPE_XML_CHARSET_UTF8 = "text/xml; charset=utf-8";
-
-        /** The general content type for XML. */
         String TYPE_XML = "text/xml";
-
-        /** Placeholder constant, purpose to be defined later. */
         String XYZ = "xyz";
     }
 
@@ -120,10 +111,7 @@ public final class Constants {
      * Contains common HTTP header types.
      */
     public interface HeaderType {
-        /** The HTTP header key for content type. */
         String CONTENT_TYPE = "Content-Type";
-
-        /** The HTTP header key for API key. */
         String X_API_KEY = "x-api-key";
     }
 
@@ -131,16 +119,9 @@ public final class Constants {
      * Contains date and time format patterns.
      */
     public interface DateTimePattern {
-        /** Date format for day/month/year. */
         String DMY = "dd/MM/yyyy";
-
-        /** Date and time format for day/month/year with hours, minutes, and seconds. */
         String DMY_HMS = "dd/MM/yyyy HH:mm:ss";
-
-        /** ISO 8601 format for local date and time. */
         String LOCAL_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
-
-        /** Date format for year/month/day. */
         String YYYYMMDD = "yyyy-MM-dd";
     }
 
@@ -148,10 +129,7 @@ public final class Constants {
      * Contains activation status constants.
      */
     public interface Activation {
-        /** Constant representing the active status. */
         Integer ACTIVE = 1;
-
-        /** Constant representing the inactive status. */
         Integer INACTIVE = 0;
     }
 
@@ -159,13 +137,8 @@ public final class Constants {
      * Contains security-related constants.
      */
     public interface Security {
-        /** The HTTP header for authorization. */
         String AUTHORIZATION = "Authorization";
-
-        /** The prefix for Bearer tokens. */
         String BEARER = "Bearer";
-
-        /** The default registration ID for OpenID Connect. */
         String DEFAULT_REGISTRATION_ID = "oidc";
     }
 
@@ -173,36 +146,18 @@ public final class Constants {
      * Contains properties related to token information.
      */
     public interface TokenProperties {
-        /** Property for the preferred username in the token. */
         String USERNAME = "preferred_username";
-
-        /** Subject identifier for the user in the token. */
         String ID = "sub";
-
-        /** Property for the full name of the user in the token. */
         String NAME = "name";
-
-        /** Property for the email of the user in the token. */
         String EMAIL = "email";
-
-        /** Property for the individual ID in the token. */
-        String INDIVIDUAL_ID = "individual_id";
-
-        /** Property for the organization ID in the token. */
-        String ORGANIZATION_ID = "organization_id";
     }
 
     /**
      * Contains error constants for Keycloak.
      */
     public interface KeyCloakError {
-        /** Error code for invalid grants. */
         String INVALID_GRANT = "INVALID_GRANT";
-
-        /** Error code for disabled users or clients. */
         String DISABLED = "DISABLED";
-
-        /** Error code for invalid requests or data. */
         String INVALID = "INVALID";
     }
 
@@ -210,22 +165,11 @@ public final class Constants {
      * Contains XML-related constants.
      */
     public interface XmlConst {
-        /** Opening tag for the return element in XML. */
         String TAG_OPEN_RETURN = "<return>";
-
-        /** Closing tag for the return element in XML. */
         String TAG_CLOSE_RETURN = "</return>";
-
-        /** String for the less than symbol encoded in XML. */
         String AND_LT_SEMICOLON = "&lt;";
-
-        /** String for the greater than symbol encoded in XML. */
         String AND_GT_SEMICOLON = "&gt;";
-
-        /** Less than character in XML. */
         String LT_CHARACTER = "<";
-
-        /** Greater than character in XML. */
         String GT_CHARACTER = ">";
     }
 
@@ -233,28 +177,13 @@ public final class Constants {
      * Contains logging-related titles and constants.
      */
     public interface LoggingTitle {
-        /** Title for the request log section. */
         String REQUEST = "-- REQUEST --";
-
-        /** Title for the request header log section. */
         String REQUEST_HEADER = "-- REQUEST HEADER --";
-
-        /** Title for the request parameter log section. */
         String REQUEST_PARAM = "-- REQUEST PARAM --";
-
-        /** Title for the request body log section. */
         String REQUEST_BODY = "-- REQUEST BODY --";
-
-        /** Title for the response log section. */
         String RESPONSE = "-- RESPONSE --";
-
-        /** Prefix for logging entries. */
         String PREFIX = "|>";
-
-        /** Maximum size for request body logs. */
         Integer BODY_SIZE_REQUEST_MAX = 1000;
-
-        /** Maximum size for response body logs. */
         Integer BODY_SIZE_RESPONSE_MAX = 1000;
     }
 
@@ -262,22 +191,11 @@ public final class Constants {
      * Contains constants for sorting.
      */
     public interface Sorting {
-        /** Operator used to split sorting criteria. */
         String SPLIT_OPERATOR = ",";
-
-        /** Operator indicating descending sort order. */
         String MINUS_OPERATOR = "-";
-
-        /** Operator indicating ascending sort order. */
         String PLUS_OPERATOR = "+";
-
-        /** Constant representing descending sort order. */
         String DESC = "desc";
-
-        /** Constant representing ascending sort order. */
         String ASC = "asc";
-
-        /** Format for displaying field names in sorting. */
         String FILED_DISPLAY = "$1_$2";
     }
 
@@ -289,11 +207,8 @@ public final class Constants {
      * </p>
      */
     public interface STATUS {
-        /** Represents an active status. */
         Integer ACTIVE = 1;
-        /** Represents an inactive status. */
         Integer INACTIVE = 0;
-        /** Represents a deleted status. */
         Integer DELETE = -1;
     }
 
@@ -305,9 +220,7 @@ public final class Constants {
      * </p>
      */
     public interface STATE {
-        /** Represents an active state. */
         Integer ACTIVE = 1;
-        /** Represents an inactive state. */
         Integer INACTIVE = 0;
     }
 
@@ -338,7 +251,6 @@ public final class Constants {
      * </p>
      */
     public interface POOL {
-        /** Name of the REST client pool for HTTPS proxy. */
         String REST_CLIENT_POLL = "Rest-client-Pool";
     }
 }

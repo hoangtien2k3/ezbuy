@@ -64,11 +64,6 @@ public class RetryProperties {
      */
     private List<Class<? extends Exception>> exceptions;
 
-    /**
-     * <p>
-     * Constructor for RetryProperties.
-     * </p>
-     */
     public RetryProperties() {
         this(true,   // Default to enabling retries
                 2,           // Default number of retry attempts

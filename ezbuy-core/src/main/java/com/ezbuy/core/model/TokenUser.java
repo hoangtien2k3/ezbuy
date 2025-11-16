@@ -15,8 +15,6 @@
  */
 package com.ezbuy.core.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,16 +39,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties
 public class TokenUser {
     private String id;
     private String name;
     private String username;
     private String email;
-
-    @JsonProperty("individual_id")
-    private String individualId;
-
-    @JsonProperty("organization_id")
-    private String organizationId;
 }

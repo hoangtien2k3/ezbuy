@@ -16,7 +16,8 @@
 package com.ezbuy.core.filter.properties;
 
 import com.ezbuy.core.constants.Constants;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -40,18 +41,19 @@ import java.util.List;
  *
  * @author hoangtien2k3
  */
-@Data
+@Getter
+@Setter
 public class ClientLogProperties {
 
     /**
      * Indicates whether client logging is enabled or disabled.
      */
-    private final boolean enable;
+    private boolean enable;
 
     /**
      * A list of headers that should be obfuscated in the logs.
      */
-    private final List<String> obfuscateHeaders;
+    private List<String> obfuscateHeaders;
 
     /**
      * Default constructor that initializes the ClientLogProperties with default

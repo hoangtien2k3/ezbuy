@@ -88,7 +88,6 @@ public class SecurityUtils {
                 .id((String) claims.get(Constants.TokenProperties.ID))
                 .email((String) claims.get(Constants.TokenProperties.EMAIL))
                 .name((String) claims.get(Constants.TokenProperties.NAME))
-                .organizationId(DataUtil.safeToString(claims.get(Constants.TokenProperties.ORGANIZATION_ID)))
                 .build();
     }
 

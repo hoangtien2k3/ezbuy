@@ -42,18 +42,13 @@ public class MonitoringProperties {
     /**
      * a flag indicating whether monitoring is enabled
      */
-    private final boolean isEnable;
+    private boolean isEnable;
 
     /**
      * the MeterRegistry instance used for collecting and reporting metrics
      */
-    private final MeterRegistry meterRegistry;
+    private MeterRegistry meterRegistry;
 
-    /**
-     * <p>
-     * Constructor for MonitoringProperties.
-     * </p>
-     */
     public MonitoringProperties() {
         this(true, new LoggingMeterRegistry());
     }

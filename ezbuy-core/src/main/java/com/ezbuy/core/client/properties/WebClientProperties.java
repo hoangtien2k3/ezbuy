@@ -25,6 +25,7 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 
 /**
@@ -69,42 +70,49 @@ public class WebClientProperties {
      * Connection pool settings to control resource allocation for HTTP connections,
      * allowing for efficient management of multiple requests.
      */
+    @NestedConfigurationProperty
     private PoolProperties pool = new PoolProperties();
 
     /**
      * Timeout settings for various stages of the HTTP request lifecycle, helping
      * prevent stalled connections and ensuring timely responses.
      */
+    @NestedConfigurationProperty
     private TimeoutProperties timeout = new TimeoutProperties();
 
     /**
      * Retry settings to handle network or server errors by attempting the request
      * multiple times under defined conditions.
      */
+    @NestedConfigurationProperty
     private RetryProperties retry = new RetryProperties();
 
     /**
      * Logging settings to configure request and response logging levels, enabling
      * better tracking of HTTP communication details for debugging.
      */
+    @NestedConfigurationProperty
     private ClientLogProperties log = new ClientLogProperties();
 
     /**
      * Monitoring settings for tracking WebClient performance metrics, such as
      * request durations and error rates, for observability purposes.
      */
+    @NestedConfigurationProperty
     private MonitoringProperties monitoring = new MonitoringProperties();
 
     /**
      * Proxy configuration for requests, allowing routing through an intermediary
      * server, often required in restricted networks or for security purposes.
      */
+    @NestedConfigurationProperty
     private ProxyProperties proxy = new ProxyProperties();
 
     /**
      * A list of custom filters to modify or inspect each request and response
      * processed by the WebClient, allowing for additional processing or logging.
      */
+    @NestedConfigurationProperty
     private List<ExchangeFilterFunction> customFilters;
 
     /**

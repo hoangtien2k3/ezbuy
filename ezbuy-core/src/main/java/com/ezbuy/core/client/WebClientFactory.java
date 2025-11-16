@@ -175,11 +175,8 @@ public class WebClientFactory implements InitializingBean {
                 .build();
 
         HttpClient httpClient = HttpClient.create(connectionProvider)
-                .option(
-                        ChannelOption.CONNECT_TIMEOUT_MILLIS,
-                        webClientProperties.getTimeout().getConnection())
-                .responseTimeout(
-                        Duration.ofMillis(webClientProperties.getTimeout().getRead()))
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, webClientProperties.getTimeout().getConnection())
+                .responseTimeout(Duration.ofMillis(webClientProperties.getTimeout().getRead()))
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .option(EpollChannelOption.TCP_KEEPIDLE, 300)
                 .option(EpollChannelOption.TCP_KEEPINTVL, 60)
@@ -192,8 +189,9 @@ public class WebClientFactory implements InitializingBean {
                 })
                 .build();
 
-        Builder exchangeStrategies =
-                WebClient.builder().baseUrl(webClientProperties.getAddress()).exchangeStrategies(strategies);
+        Builder exchangeStrategies = WebClient.builder()
+                .baseUrl(webClientProperties.getAddress())
+                .exchangeStrategies(strategies);
         if (!DataUtil.isNullOrEmpty(webClientProperties.getUsername())) {
             exchangeStrategies.defaultHeader(
                     HttpHeaders.AUTHORIZATION,
@@ -271,8 +269,7 @@ public class WebClientFactory implements InitializingBean {
                 return httpClient;
             }
             httpClient = httpClient
-                    .proxy(proxy ->
-                            proxy.type(ProxyProvider.Proxy.HTTP).host(httpsHost).port(httpsPort))
+                    .proxy(proxy -> proxy.type(ProxyProvider.Proxy.HTTP).host(httpsHost).port(httpsPort))
                     .secure(t -> t.sslContext(sslContext));
         }
         return httpClient;
@@ -289,7 +286,7 @@ public class WebClientFactory implements InitializingBean {
      * @return {@code true} if the properties are valid; {@code false} otherwise
      */
     private boolean isValidProperties(WebClientProperties webClientProperties) {
-        return !DataUtil.isNullOrEmpty(webClientProperties.getName())
-                && !DataUtil.isNullOrEmpty(webClientProperties.getAddress());
+        return !DataUtil.isNullOrEmpty(webClientProperties.getName()) &&
+                !DataUtil.isNullOrEmpty(webClientProperties.getAddress());
     }
 }

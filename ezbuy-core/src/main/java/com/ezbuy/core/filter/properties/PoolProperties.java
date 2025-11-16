@@ -40,18 +40,13 @@ public class PoolProperties {
     /**
      * the maximum number of connections in the pool
      */
-    private final Integer maxSize;
+    private Integer maxSize;
 
     /**
      * the maximum number of pending requests to acquire a connection
      */
-    private final Integer maxPendingAcquire;
+    private Integer maxPendingAcquire;
 
-    /**
-     * <p>
-     * Constructor for PoolProperties.
-     * </p>
-     */
     public PoolProperties() {
         this(2000, 2000);
     }
