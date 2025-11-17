@@ -13,6 +13,7 @@ dependencies {
     api libs.org.springframework.boot.spring.boot.starter.aop
     api libs.org.springframework.boot.spring.boot.starter.oauth2.client
     api libs.org.springframework.boot.spring.boot.starter.oauth2.resource.server
+    api libs.org.springframework.boot.spring.boot.starter.data.r2dbc
     api libs.io.micrometer.micrometer.tracing.bridge.brave
     api libs.io.micrometer.micrometer.core
     api libs.io.projectreactor.addons.reactor.extra
@@ -21,7 +22,6 @@ dependencies {
     api libs.javax.xml.bind.jaxb.api
     api libs.javax.annotation.javax.annotation.api
     api libs.com.github.ben.manes.caffeine.caffeine
-    api libs.org.springframework.boot.spring.boot.starter.data.r2dbc
     api libs.io.r2dbc.r2dbc.pool
     api libs.org.modelmapper.modelmapper
 }

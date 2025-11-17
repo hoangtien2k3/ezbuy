@@ -3,11 +3,14 @@ package com.ezbuy.auth.application.service.impl;
 import com.ezbuy.auth.application.dto.request.ChangePasswordRequest;
 import com.ezbuy.auth.application.dto.request.ConfirmOTPRequest;
 import com.ezbuy.auth.application.dto.request.CreateAccount;
+import com.ezbuy.auth.application.dto.request.CreateNotificationDTO;
 import com.ezbuy.auth.application.dto.request.ForgotPasswordRequest;
 import com.ezbuy.auth.application.dto.request.GetActionLoginReportRequest;
 import com.ezbuy.auth.application.dto.request.LoginRequest;
 import com.ezbuy.auth.application.dto.request.LogoutRequest;
+import com.ezbuy.auth.application.dto.request.NotiContentDTO;
 import com.ezbuy.auth.application.dto.request.ProviderLogin;
+import com.ezbuy.auth.application.dto.request.ReceiverDataDTO;
 import com.ezbuy.auth.application.dto.request.RefreshTokenRequest;
 import com.ezbuy.auth.application.dto.request.ResetPasswordRequest;
 import com.ezbuy.auth.application.dto.request.SignupRequest;
@@ -33,9 +36,6 @@ import com.ezbuy.auth.infrastructure.client.KeyCloakClient;
 import com.ezbuy.auth.infrastructure.client.NotiServiceClient;
 import com.ezbuy.auth.infrastructure.config.KeycloakProvider;
 import com.ezbuy.auth.application.service.AuthService;
-import com.ezbuy.notimodel.dto.request.CreateNotificationDTO;
-import com.ezbuy.notimodel.dto.request.NotiContentDTO;
-import com.ezbuy.notimodel.dto.request.ReceiverDataDTO;
 import com.ezbuy.core.config.CipherManager;
 import com.ezbuy.core.constants.CommonErrorCode;
 import com.ezbuy.core.constants.Constants;
@@ -555,8 +555,7 @@ public class AuthServiceImpl implements AuthService {
                         return Mono.error(new BusinessException(ErrorCode.OtpErrorCode.OTP_NOT_MATCH, "otp.not.match"));
                     }
                     if (isExistedEmail(email)) {
-                        return Mono.error(
-                                new BusinessException(ErrorCode.AuthErrorCode.USER_EXISTED, "signup.email.exist"));
+                        return Mono.error(new BusinessException(ErrorCode.AuthErrorCode.USER_EXISTED, "signup.email.exist"));
                     }
                     return createUserInKeyCloak(email, password, email, system);
                 });
@@ -565,8 +564,7 @@ public class AuthServiceImpl implements AuthService {
     private Mono<IndividualEntity> createUserInKeyCloak(String username, String password, String email, String system) {
         String userId = createUserKeycloak(username, password, email);
         String hashedPassword = cipherManager.encrypt(password, publicKey);
-        int pwdChanged =
-                AuthConstants.System.EZBUY.equals(system) ? AuthConstants.STATUS_ACTIVE : AuthConstants.STATUS_INACTIVE;
+        int pwdChanged = AuthConstants.System.EZBUY.equals(system) ? AuthConstants.STATUS_ACTIVE : AuthConstants.STATUS_INACTIVE;
         UserCredentialEntity userCredential = UserCredentialEntity.builder()
                 .id(String.valueOf(UUID.randomUUID()))
                 .userId(userId)
@@ -654,10 +652,8 @@ public class AuthServiceImpl implements AuthService {
         }
         return actionLogRepository
                 .countLoginInOneDay(request.getDateReport(), AuthConstants.LOGIN)
-                .switchIfEmpty(
-                        Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "action-log.login.not.found")))
-                .flatMap(rs -> Mono.just(
-                        GetActionLoginReportResponse.builder().loginCount(rs).build()));
+                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "action-log.login.not.found")))
+                .flatMap(rs -> Mono.just(GetActionLoginReportResponse.builder().loginCount(rs).build()));
     }
 
     @Override
@@ -673,8 +669,7 @@ public class AuthServiceImpl implements AuthService {
             if (Boolean.FALSE.equals(result)) {
                 return Mono.error(new BusinessException(ErrorCode.OtpErrorCode.OTP_NOT_MATCH, "otp.not.match"));
             }
-            return Mono.just(
-                    new DataResponse<>("success", Map.of("message", Translator.toLocaleVi("otp.success.match"))));
+            return Mono.just(new DataResponse<>("success", Map.of("message", "otp.success.match")));
         });
     }
 
@@ -698,13 +693,11 @@ public class AuthServiceImpl implements AuthService {
                     .updateBy(AuthConstants.RoleName.SYSTEM)
                     .newOtp(true)
                     .build();
-            var disableOtpMono =
-                    AppUtils.insertData(otpRepository.disableOtp(email, type, AuthConstants.RoleName.SYSTEM));
+            var disableOtpMono = AppUtils.insertData(otpRepository.disableOtp(email, type, AuthConstants.RoleName.SYSTEM));
             var saveOtpMono = AppUtils.insertData(otpRepository.save(otp));
             return Mono.zip(disableOtpMono, saveOtpMono)
                     .map(tuple -> new DataResponse<>("success", otpValue))
-                    .onErrorResume(throwable -> Mono.error(
-                            new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, throwable.getMessage())));
+                    .onErrorResume(throwable -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, throwable.getMessage())));
         });
     }
 

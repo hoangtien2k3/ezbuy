@@ -1,9 +1,8 @@
 rootProject.name = 'ezbuy'
 include(':ezbuy-auth')
-include(':ezbuy-cart-model')
-include(':ezbuy-cart-service')
+include(':ezbuy-cart')
 include(':ezbuy-core')
-include(':ezbuy-gateway-service')
+include(':ezbuy-gateway')
 include(':ezbuy-noti-model')
 include(':ezbuy-noti-send-service')
 include(':ezbuy-noti-service')

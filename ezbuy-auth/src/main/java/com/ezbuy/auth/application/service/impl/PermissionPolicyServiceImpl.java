@@ -42,21 +42,17 @@ public class PermissionPolicyServiceImpl implements PermissionPolicyService {
             String filter, Integer state, Integer pageIndex, Integer pagesize, String sort) {
         int size = DataUtil.safeToInt(pagesize, 0);
         if (size == 0) {
-            return Mono.error(
-                    new BusinessException(CommonErrorCode.INVALID_PARAMS, MessageUtils.getMessage("size.invalid")));
+            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, MessageUtils.getMessage("size.invalid")));
         }
         if (size < 0 || size > 100) {
-            return Mono.error(
-                    new BusinessException(CommonErrorCode.INVALID_PARAMS, MessageUtils.getMessage("size.exceed", 100)));
+            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, MessageUtils.getMessage("size.exceed", 100)));
         }
         int page = DataUtil.safeToInt(pageIndex, 0);
         if (page == 0) {
-            return Mono.error(
-                    new BusinessException(CommonErrorCode.INVALID_PARAMS, MessageUtils.getMessage("page.invalid")));
+            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, MessageUtils.getMessage("page.invalid")));
         }
         if (page < 0) {
-            return Mono.error(
-                    new BusinessException(CommonErrorCode.INVALID_PARAMS, MessageUtils.getMessage("page.exceed", 1)));
+            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, MessageUtils.getMessage("page.exceed", 1)));
         }
         int offset = PageUtils.getOffset(page, size);
         Mono<Integer> countTotal = authServiceCustom.countPermissionPolicyDetail(filter, state, sort);
@@ -95,7 +91,6 @@ public class PermissionPolicyServiceImpl implements PermissionPolicyService {
                             CommonErrorCode.NOT_FOUND, MessageUtils.getMessage("data.not.found"))));
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
-            Mono.error(new BusinessException(HttpStatus.BAD_REQUEST.toString(), ex.getMessage()));
         }
         return Mono.just(DataResponse.failed(false));
     }
@@ -103,30 +98,22 @@ public class PermissionPolicyServiceImpl implements PermissionPolicyService {
     @Override
     public Mono<DataResponse<Boolean>> addOrUpdatePermissionPolicy(CreateIndPermistionRequest request) {
         if (DataUtil.isNullOrEmpty(request.getGroupPermissionName())) {
-            Mono.error(new BusinessException(
-                    HttpStatus.BAD_REQUEST.toString(), MessageUtils.getMessage("input.not.null", "Tên nhóm quyền")));
+            return Mono.error(new BusinessException(HttpStatus.BAD_REQUEST.toString(), MessageUtils.getMessage("input.not.null", "Tên nhóm quyền")));
         }
         if (DataUtil.isNullOrEmpty(request.getGroupPermissionCode())) {
-            Mono.error(new BusinessException(
-                    HttpStatus.BAD_REQUEST.toString(), MessageUtils.getMessage("input.not.null", "Mã nhóm quyền")));
+            return Mono.error(new BusinessException(HttpStatus.BAD_REQUEST.toString(), MessageUtils.getMessage("input.not.null", "Mã nhóm quyền")));
         }
         if (!request.getGroupPermissionCode().matches("^[a-z0-9_]{3,50}$")) {
-            Mono.error(new BusinessException(
-                    HttpStatus.BAD_REQUEST.toString(),
-                    MessageUtils.getMessage("input.invalid.format", "Mã nhóm quyền")));
+            return Mono.error(new BusinessException(HttpStatus.BAD_REQUEST.toString(), MessageUtils.getMessage("input.invalid.format", "Mã nhóm quyền")));
         }
         if (DataUtil.isNullOrEmpty(request.getState())) {
-            Mono.error(new BusinessException(
-                    HttpStatus.BAD_REQUEST.toString(), MessageUtils.getMessage("input.not.null", "Loại nhóm quyền")));
+            return Mono.error(new BusinessException(HttpStatus.BAD_REQUEST.toString(), MessageUtils.getMessage("input.not.null", "Loại nhóm quyền")));
         }
         if (!State.statusOf(request.getState())) {
-            Mono.error(new BusinessException(
-                    HttpStatus.BAD_REQUEST.toString(), MessageUtils.getMessage("input.invalid", "Loại nhóm quyền")));
+            return Mono.error(new BusinessException(HttpStatus.BAD_REQUEST.toString(), MessageUtils.getMessage("input.invalid", "Loại nhóm quyền")));
         }
         if (request.getDescription().length() > 500) {
-            Mono.error(new BusinessException(
-                    HttpStatus.BAD_REQUEST.toString(),
-                    MessageUtils.getMessage("input.length.exceed", "Description", "500")));
+            return Mono.error(new BusinessException(HttpStatus.BAD_REQUEST.toString(), MessageUtils.getMessage("input.length.exceed", "Description", "500")));
         }
         addOrUpdateIndividualPermission(request);
         return Mono.just(DataResponse.success(true));
@@ -165,16 +152,14 @@ public class PermissionPolicyServiceImpl implements PermissionPolicyService {
     private void addOrUpdateIndividualPermission(CreateIndPermistionRequest request) {
         List<String> actions = Arrays.asList("CREATE", "UPDATE");
         if (!DataUtil.isNullOrEmpty(request.getAction()) || !actions.contains(request.getAction())) {
-            Mono.error(new BusinessException(
-                    HttpStatus.BAD_REQUEST.toString(), MessageUtils.getMessage("input.invalid", "Action")));
+            Mono.error(new BusinessException(HttpStatus.BAD_REQUEST.toString(), MessageUtils.getMessage("input.invalid", "Action")));
         }
         PermissionPolicyEntity permissionPolicy = PermissionPolicyEntity.builder()
-                .id(
-                        "CREATE".equals(request.getAction())
-                                ? UUID.randomUUID().toString()
-                                : request.getIndividualPermissionsId().toString())
+                .id("CREATE".equals(request.getAction())
+                        ? UUID.randomUUID().toString()
+                        : request.getIndividualPermissionsId().toString())
                 .type(request.getType())
-                // .value(request.getValue())
+                .value(request.getValue())
                 .code(request.getGroupPermissionCode())
                 .createAt(LocalDateTime.now())
                 .createBy(SecurityUtils.getCurrentUser()

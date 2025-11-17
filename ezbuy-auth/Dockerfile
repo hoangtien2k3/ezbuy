@@ -6,7 +6,7 @@ RUN java -Djarmode=layertools -jar application.jar extract
 FROM  amazoncorretto:21.0.3
 LABEL com.ezbuy.auth.version="1.0.0"
 LABEL version="1.0.0"
-LABEL description="auth service"
+LABEL description="Ezbuy Auth Service"
 LABEL author="Ezbuy Flatform"
 WORKDIR application
 

@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.keycloak.representations.idm.UserRepresentation;
-import org.springframework.core.io.Resource;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -24,8 +23,6 @@ public interface UserService {
     Mono<Optional<UserProfileEntity>> getUserById(String id);
 
     Mono<QueryUserResponse> queryUserProfile(QueryUserRequest request);
-
-    Mono<Resource> exportUser(QueryUserRequest request);
 
     Mono<UserProfileDTO> getUserProfile(String id);
 

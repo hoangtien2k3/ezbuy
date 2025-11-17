@@ -10,9 +10,4 @@ import lombok.RequiredArgsConstructor;
 public class ReceiverDataDTO {
     private String userId;
     private String email;
-
-    public ReceiverDataDTO(String userId, String email) {
-        this.userId = userId;
-        this.email = userId;
-    }
 }

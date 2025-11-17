@@ -1,7 +1,7 @@
 package com.ezbuy.auth.infrastructure.client.impl;
 
+import com.ezbuy.auth.application.dto.request.CreateNotificationDTO;
 import com.ezbuy.auth.infrastructure.client.NotiServiceClient;
-import com.ezbuy.notimodel.dto.request.CreateNotificationDTO;
 import com.ezbuy.core.client.BaseRestClient;
 import com.ezbuy.core.model.response.DataResponse;
 
@@ -30,6 +30,12 @@ public class NotiServiceClientImpl implements NotiServiceClient {
 
     @Override
     public Mono<Optional<DataResponse<Object>>> insertTransmission(CreateNotificationDTO createNotificationDTO) {
-        return baseRestClient.post(notiServiceClient, "/v1/transmission/create-noti", null, createNotificationDTO, BaseRestClient.typeOf());
+        return baseRestClient.post(
+                notiServiceClient,
+                "/v1/transmission/create-noti",
+                null,
+                createNotificationDTO,
+                BaseRestClient.typeOf()
+        );
     }
 }

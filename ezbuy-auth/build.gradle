@@ -10,16 +10,11 @@ description = 'ezbuy-auth'
 
 dependencies {
     implementation project(':ezbuy-core')
-    implementation project(':ezbuy-noti-model')
-    implementation project(':ezbuy-setting-model')
-    implementation libs.com.google.code.gson.gson
     implementation libs.org.apache.mina.mina.core
     implementation libs.org.apache.poi.poi
+    implementation libs.org.apache.poi.poi.ooxml
     implementation libs.org.keycloak.keycloak.admin.client
     implementation libs.org.keycloak.bom.keycloak.adapter.bom
-    implementation libs.org.apache.poi.poi.ooxml
-    implementation libs.org.apache.commons.commons.compress
-    implementation libs.commons.io.commons.io
     implementation libs.org.springdoc.springdoc.openapi.starter.webflux.api
     implementation libs.org.springframework.cloud.spring.cloud.starter.consul.discovery
     implementation platform(libs.org.springframework.cloud.spring.cloud.dependencies)
@@ -49,6 +44,6 @@ jib {
                     '-XX:ShenandoahUncommitDelay=1000',
                     '-XX:ShenandoahGuaranteedGCInterval=10000']
 //        jvmFlags = ['-Xms512mb', '-Xdebug',
-//                    '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5005']
+//                    '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8089']
     }
 }

@@ -1,6 +1,0 @@
-dependencies {
-    api project(':ezbuy-setting-model')
-    api project(':ezbuy-order-model')
-}
-
-description = 'ezbuy-cart-model'

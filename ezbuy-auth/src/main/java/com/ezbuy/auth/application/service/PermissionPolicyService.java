@@ -28,5 +28,6 @@ public interface PermissionPolicyService {
             String policyId,
             IndividualOrganizationPermissionsEntity individualOrganizationPermissions,
             LocalDateTime now,
-            TokenUser currentUser);
+            TokenUser currentUser
+    );
 }

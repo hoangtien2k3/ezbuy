@@ -39,9 +39,7 @@ public class ActionLogServiceImpl implements ActionLogService {
         validate(request);
         request.setPageIndex(DataUtil.safeToInt(request.getPageIndex(), 1));
         request.setPageSize(DataUtil.safeToInt(request.getPageSize(), 10));
-        return Mono.zip(
-                        actionLogRepositoryTemplate.search(request).collectList(),
-                        actionLogRepositoryTemplate.count(request))
+        return Mono.zip(actionLogRepositoryTemplate.search(request).collectList(), actionLogRepositoryTemplate.count(request))
                 .flatMap(tuple -> {
                     PaginationDTO paginationDTO = PaginationDTO.builder()
                             .pageIndex(request.getPageIndex())
@@ -126,8 +124,7 @@ public class ActionLogServiceImpl implements ActionLogService {
             style.setAlignment(HorizontalAlignment.LEFT);
             for (ActionLogEntity actionLog : actionLogList) {
                 Row row = sheet.createRow(rowCount++);
-                writeRow(row, centerStyle, style, 0,
-                        Arrays.asList(
+                writeRow(row, centerStyle, style, Arrays.asList(
                                 String.valueOf(index++),
                                 actionLog.getUsername(),
                                 actionLog.getIp(),
@@ -142,8 +139,8 @@ public class ActionLogServiceImpl implements ActionLogService {
         }
     }
 
-    private void writeRow(Row row, CellStyle centerStyle, CellStyle cellStyle, int startIndex, List<String> rowData) {
-        int cellIndex = startIndex;
+    private void writeRow(Row row, CellStyle centerStyle, CellStyle cellStyle, List<String> rowData) {
+        int cellIndex = 0;
         for (String data : rowData) {
             Cell cell = row.createCell(cellIndex++);
             cell.setCellValue(data);

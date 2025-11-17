@@ -1,6 +1,6 @@
 package com.ezbuy.auth.infrastructure.client;
 
-import com.ezbuy.notimodel.dto.request.CreateNotificationDTO;
+import com.ezbuy.auth.application.dto.request.CreateNotificationDTO;
 import com.ezbuy.core.model.response.DataResponse;
 import java.util.Optional;
 import reactor.core.publisher.Mono;

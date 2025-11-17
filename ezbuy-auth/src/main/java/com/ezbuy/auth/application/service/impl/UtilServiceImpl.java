@@ -16,10 +16,12 @@ import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.model.TokenUser;
 import com.ezbuy.core.model.response.DataResponse;
 import com.ezbuy.core.util.DataUtil;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.representations.idm.RoleRepresentation;
@@ -54,19 +56,13 @@ public class UtilServiceImpl implements UtilService {
                                 roleRepresentation.setComposite(Boolean.FALSE);
                                 roleRepresentation.setClientRole(Boolean.TRUE);
                                 roleRepresentation.setContainerId(request.getClientId());
-                                return keyCloakClient
-                                        .addRoleForUserInClientId(
-                                                request.getClientId(),
-                                                token,
-                                                roleRepresentation,
-                                                orgIndIdDTO.getUserId())
+                                return keyCloakClient.addRoleForUserInClientId(request.getClientId(), token, roleRepresentation, orgIndIdDTO.getUserId())
                                         .flatMap(result -> {
                                             List<EmployeePermissionRequest> employeePermissionRequests =
                                                     getEmployeePermissionRequests(request);
                                             IndividualEntity individual = new IndividualEntity();
                                             individual.setId(orgIndIdDTO.getIndividualId());
-                                            return indOrgPermissionRepo
-                                                    .checkExistRoleInHub(
+                                            return indOrgPermissionRepo.checkExistRoleInHub(
                                                             orgIndIdDTO.getIndividualId(),
                                                             request.getRoleName(),
                                                             request.getClientId(),
@@ -79,14 +75,10 @@ public class UtilServiceImpl implements UtilService {
                                                             return Mono.just(true);
                                                         }
                                                         // save 2 table
-                                                        return createEmployeePermission(
-                                                                employeePermissionRequests,
-                                                                individual,
-                                                                orgIndIdDTO.getOrgId());
+                                                        return createEmployeePermission(employeePermissionRequests, individual, orgIndIdDTO.getOrgId());
                                                     });
                                         });
-                            })
-                            .collectList();
+                            }).collectList();
                 })
                 .flatMap(rs -> Mono.just(DataResponse.success("success: " + rs.size())));
     }
@@ -104,8 +96,10 @@ public class UtilServiceImpl implements UtilService {
     }
 
     private Mono<String> getAccessToken() {
-        return Mono.fromCallable(
-                () -> keycloakProvider.getInstance().tokenManager().getAccessTokenString());
+        return Mono.fromCallable(() -> keycloakProvider
+                .getInstance()
+                .tokenManager()
+                .getAccessTokenString());
     }
 
     public Mono<List<PermissionPolicyEntity>> createEmployeePermission(
@@ -137,7 +131,8 @@ public class UtilServiceImpl implements UtilService {
                                                 employeePr.getPolicyId(),
                                                 individualOrg,
                                                 LocalDateTime.now(),
-                                                tokenUser));
+                                                tokenUser)
+                                        );
                             }
                             individualOrg.setId(rs.getFirst());
                             return permissionPolicyService.createPermissionPolicy(
@@ -148,7 +143,6 @@ public class UtilServiceImpl implements UtilService {
                                     individualOrg,
                                     LocalDateTime.now(),
                                     tokenUser);
-                        }))
-                .collectList();
+                        })).collectList();
     }
 }

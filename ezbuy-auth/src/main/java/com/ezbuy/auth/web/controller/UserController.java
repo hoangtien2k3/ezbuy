@@ -16,9 +16,6 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.representations.idm.UserRepresentation;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -69,14 +66,6 @@ public class UserController {
     public Mono<ResponseEntity<DataResponse<QueryUserResponse>>> getUserProfiles(QueryUserRequest request) {
         return userService.queryUserProfile(request)
                 .map(rs -> ResponseEntity.ok(DataResponse.success(rs)));
-    }
-
-    @GetMapping("/export")
-    public Mono<ResponseEntity<Resource>> exportUserProfiles(QueryUserRequest request) {
-        return userService.exportUser(request).map(resource -> ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + resource.getFilename())
-                .body(resource));
     }
 
     @GetMapping("/{id}")

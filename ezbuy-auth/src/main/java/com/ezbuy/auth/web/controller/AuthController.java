@@ -73,9 +73,9 @@ public class AuthController {
 
     @GetMapping("/org-permissions")
     public Mono<ResponseEntity<DataResponse<List<Permission>>>> getOrgPermission(
-            @RequestParam(name = "clientId", defaultValue = "ezbuyClient") String clientId,
-            @RequestParam(name = "organizationId", required = false) String organizationId,
-            @RequestParam(name = "idNo", required = false) String idNo) {
+            @RequestParam(name = "client_id", defaultValue = "ezbuy-client") String clientId,
+            @RequestParam(name = "organization_id", required = false) String organizationId,
+            @RequestParam(name = "id_no", required = false) String idNo) {
         return authService
                 .getOrgPermission(clientId, idNo, organizationId)
                 .map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));

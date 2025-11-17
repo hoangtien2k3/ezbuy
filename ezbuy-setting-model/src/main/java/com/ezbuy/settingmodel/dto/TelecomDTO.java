@@ -9,7 +9,6 @@ import lombok.experimental.SuperBuilder;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-// @MappedSuperclass
 @SuperBuilder
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TelecomDTO {
