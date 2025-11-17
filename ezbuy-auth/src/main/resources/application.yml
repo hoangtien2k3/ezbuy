@@ -4,7 +4,7 @@ server:
 spring:
   cloud:
     consul:
-      host: localhost
+      host: "${CONSUL_HOST:localhost}"
       port: 8500
       discovery:
         heartbeat:
@@ -30,9 +30,9 @@ spring:
     codecs:
       max-in-memory-size: 100MB
   r2dbc:
-    url: r2dbc:postgresql://localhost:5434/auth
-    username: admin
-    password: admin
+    url: "${R2DBC_URL:r2dbc:postgresql://localhost:5434/auth}"
+    username: "${R2DBC_USERNAME:admin}"
+    password: "${R2DBC_PASSWORD:admin}"
     pool:
       max-size: 10
       initial-size: 5
@@ -57,14 +57,14 @@ spring:
 ---
 client:
   keycloak:
-    address: http://localhost:8080/realms/ezbuy-server/protocol/openid-connect
+    address: "${CLIENT_KEYCLOAK_ADDRESS:${keycloak.server-url}/realms/${keycloak.realm}/protocol/openid-connect}"
     name: keycloak
     keycloak-auth:
-      client-id: ezbuy-client
-      client-secret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
+      client-id: "${CLIENT_KEYCLOAK_CLIENT_ID:ezbuy-client}"
+      client-secret: "${CLIENT_KEYCLOAK_CLIENT_SECRET:mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw}"
   notification:
     internal-oauth: true
-    address: http://localhost:7777/v1/noti/transmission
+    address: "${NOTI_SERVICE_URL:http://localhost:7777/v1/noti/transmission}"
     name: notiServiceClient
     pool:
       max-size: 100
@@ -73,7 +73,7 @@ client:
       read: 60000
       connection: 1000
   setting:
-    address: http://localhost:8081/
+    address: "${SETTING_SERVICE_URL:http://localhost:8081/}"
     name: settingServiceClient
 ---
 application:
@@ -140,26 +140,26 @@ application:
         - POST
 ---
 keycloak:
-  client-id: ezbuy-client
-  client-secret: 5dnfDh6XitmAMc7vQUNxGkJw0HF4e9tI
-  realm: ezbuy-server
-  server-url: http://localhost:8080
-  grant-type: password #client_credentials
-  host: localhost
+  client-id: "${KEYCLOAK_CLIENT_ID:ezbuy-client}"
+  client-secret: "${KEYCLOAK_CLIENT_SECRET:5dnfDh6XitmAMc7vQUNxGkJw0HF4e9tI}"
+  realm: "${KEYCLOAK_REALM:ezbuy-server}"
+  server-url: "${KEYCLOAK_SERVER_URL:http://localhost:8080}"
+  grant-type: "${KEYCLOAK_GRANT_TYPE:password}" #client_credentials
+  host: "${KEYCLOAK_HOST:localhost}"
 ---
 minio:
   enabled: true
-  bucket: ezbuy-bucket
-  base-url: http://localhost:9000
-  public-url: http://localhost:9000
-  access-key: q875aHMpdL6IJ3n9ruil
-  secret-key: Q43tehRDv55Sw67ktA0pQdztEbtQjvinLOk6zwB3
+  bucket: "${MINIO_BUCKET:ezbuy-bucket}"
+  base-url: "${MINIO_BASE_URL:http://localhost:9000}"
+  public-url: "${MINIO_PUBLIC_URL:http://localhost:9000}"
+  access-key: "${MINIO_ACCESS_KEY:q875aHMpdL6IJ3n9ruil}"
+  secret-key: "${MINIO_SECRET_KEY:Q43tehRDv55Sw67ktA0pQdztEbtQjvinLOk6zwB3}"
 ---
 hashing-password:
-  public-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4qGLPEGMdbDlYrc+Ud3w8Y2CobSLKAIfSBsX6bcV3bCxKZI8scW2gfr8ZMMXOxgQ0nXpIOQ0p0fb/hVHXMEnTu4Z5UEsF76eDfA80VPd96ujiZWyWYAeyIUelqPEZIWxM4MlBOPJDcCVDtwLKIoMbvVnXoHyjmOq93mHOoii24a2m0qt6jrvAYOvjNUijtofgjewYds/h74LfphDY/hNRq+4M6lI4RMZ4HiRn06P+GnvnwkxA3JL1bVRRqZ3gxB0VWiIj7I5likqnJfWnqn43mrMxfSdNI+6MpgR7L6djFOnjZiNP5bb6a3F17hwBeeLBTPs+akem/shlfoGYIbJOwIDAQAB
+  public-key: "${HASHING_PASSWORD_PUBLIC_KEY:MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4qGLPEGMdbDlYrc+Ud3w8Y2CobSLKAIfSBsX6bcV3bCxKZI8scW2gfr8ZMMXOxgQ0nXpIOQ0p0fb/hVHXMEnTu4Z5UEsF76eDfA80VPd96ujiZWyWYAeyIUelqPEZIWxM4MlBOPJDcCVDtwLKIoMbvVnXoHyjmOq93mHOoii24a2m0qt6jrvAYOvjNUijtofgjewYds/h74LfphDY/hNRq+4M6lI4RMZ4HiRn06P+GnvnwkxA3JL1bVRRqZ3gxB0VWiIj7I5likqnJfWnqn43mrMxfSdNI+6MpgR7L6djFOnjZiNP5bb6a3F17hwBeeLBTPs+akem/shlfoGYIbJOwIDAQAB}"
 ---
 frontend-cors:
-  ezbuy: http://localhost:3000
+  ezbuy: "${FRONTEND_CORS_EZBUY:http://localhost:3000}"
 ---
 springdoc:
   api-docs:

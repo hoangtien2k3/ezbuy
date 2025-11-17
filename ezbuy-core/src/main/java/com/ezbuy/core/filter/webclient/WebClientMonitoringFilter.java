@@ -80,24 +80,15 @@ public class WebClientMonitoringFilter implements ExchangeFilterFunction {
                             log.error("WebClient request to {} failed: {}", clientRequest.url(), throwable.getMessage());
                         } else {
                             assert clientResponse != null;
-                            log.info(
-                                    "WebClient request to {} completed with status code: {}",
-                                    clientRequest.url(),
-                                    clientResponse.statusCode()
-                            );
+                            log.info("WebClient request to {} completed with status code: [status={}]", clientRequest.url(), clientResponse.statusCode());
                         }
-                        // record the execution time
                         long duration = System.nanoTime() - startTime;
                         Timer.builder("http.client.requests")
                                 .description("Timer for WebClient operations")
                                 .publishPercentiles(0.95, 0.99)
                                 .register(meterRegistry)
                                 .record(duration, TimeUnit.NANOSECONDS);
-                        log.info(
-                                "Monitoring WebClient API {}: {} s",
-                                clientRequest.url(),
-                                (double) duration / Math.pow(10, 9)
-                        );
+                        log.info("Monitoring WebClient API {}: - [duration={}s]", clientRequest.url(), (double) duration / Math.pow(10, 9));
                     }
                 })
                 .contextWrite((contextView) -> contextView.put(METRICS_WEBCLIENT_START_TIME, System.nanoTime()));

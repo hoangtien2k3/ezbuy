@@ -149,7 +149,7 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
         String requestId = exchange.getRequest().getHeaders().getFirst("Request-Id");
         MDC.put(CommonConstant.REQUEST_ID, !DataUtil.isNullOrEmpty(requestId) ? requestId : "-");
 
-        logPerf.info("{} {} {} A2 {}", name, duration, result, o == null ? "-" : o.getMessage());
+        logPerf.info("[name={}] [duration={}ms] [result={}] [step=A2] [message={}]", name, duration, result, Objects.isNull(o) ? "-" : o.getMessage());
     }
 
     /**
@@ -182,7 +182,7 @@ public class PerformanceLogFilter implements WebFilter, Ordered {
             else MDC.put(CommonConstant.MSISDN_TOKEN, "-");
         }
 
-        logPerf.info("{} {} {} A2 {}", name, duration, result, o == null ? "-" : o.getMessage());
+        logPerf.info("[action={}] [duration={}ms] [result={}] [step=A2] [message={}]", name, duration, result, o == null ? "-" : o.getMessage());
     }
 
     /**
