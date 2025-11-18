@@ -15,8 +15,6 @@
  */
 package com.ezbuy.core.client;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import com.ezbuy.core.client.properties.WebClientProperties;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.filter.properties.ProxyProperties;
@@ -30,6 +28,8 @@ import io.netty.channel.epoll.EpollChannelOption;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Base64;
 import java.util.List;
@@ -44,10 +44,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction;
-import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClient.Builder;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.resources.ConnectionProvider;
 import reactor.netty.transport.ProxyProvider;
@@ -169,6 +167,8 @@ public class WebClientFactory implements InitializingBean {
             log.error("Failed to setup a webClientProperties {}", webClientProperties.getName());
             return null;
         }
+
+        // --- HTTP CLIENT ---
         ConnectionProvider connectionProvider = ConnectionProvider.builder(webClientProperties.getName() + "Pool")
                 .maxConnections(webClientProperties.getPool().getMaxSize())
                 .pendingAcquireMaxCount(webClientProperties.getPool().getMaxPendingAcquire())
@@ -182,6 +182,12 @@ public class WebClientFactory implements InitializingBean {
                 .option(EpollChannelOption.TCP_KEEPINTVL, 60)
                 .option(EpollChannelOption.TCP_KEEPCNT, 8);
 
+        // --- PROXY ---
+        if (webClientProperties.getProxy().isEnable()) {
+            httpClient = configProxy(httpClient, webClientProperties.getProxy());
+        }
+
+        // --- CODECS ---
         ExchangeStrategies strategies = ExchangeStrategies.builder()
                 .codecs(configurer -> {
                     configurer.registerDefaults(true);
@@ -189,47 +195,37 @@ public class WebClientFactory implements InitializingBean {
                 })
                 .build();
 
-        Builder exchangeStrategies = WebClient.builder()
+        WebClient.Builder exchangeStrategies = WebClient.builder()
                 .baseUrl(webClientProperties.getAddress())
                 .exchangeStrategies(strategies);
+        // --- BASIC AUTH ---
         if (!DataUtil.isNullOrEmpty(webClientProperties.getUsername())) {
-            exchangeStrategies.defaultHeader(
-                    HttpHeaders.AUTHORIZATION,
-                    Constants.Security.BEARER + " "
-                            + Base64.getEncoder()
-                                    .encodeToString((webClientProperties.getUsername() + ":"
-                                                    + webClientProperties.getPassword())
-                                            .getBytes(UTF_8)));
+            String username = webClientProperties.getUsername();
+            String password = webClientProperties.getPassword();
+            String authorization = Base64.getEncoder()
+                    .encodeToString((username + ":" + password).getBytes(StandardCharsets.UTF_8));
+            exchangeStrategies.defaultHeader(HttpHeaders.AUTHORIZATION, Constants.Security.BEARER + " " + authorization);
         }
+        // --- FILTERS ---
         if (webClientProperties.getLog().isEnable()) {
-            exchangeStrategies.filter(
-                    new WebClientLoggingFilter(webClientProperties.getLog().getObfuscateHeaders()));
+            exchangeStrategies.filter(new WebClientLoggingFilter(webClientProperties.getLog().getObfuscateHeaders()));
         }
         if (webClientProperties.getRetry().isEnable()) {
             exchangeStrategies.filter(new WebClientRetryHandler(webClientProperties.getRetry()));
         }
         if (webClientProperties.getMonitoring().isEnable()) {
-            exchangeStrategies.filter(new WebClientMonitoringFilter(
-                    webClientProperties.getMonitoring().getMeterRegistry()));
-        }
-        if (webClientProperties.getProxy().isEnable()) {
-            httpClient = configProxy(httpClient, webClientProperties.getProxy());
+            exchangeStrategies.filter(new WebClientMonitoringFilter(webClientProperties.getMonitoring().getMeterRegistry()));
         }
         if (webClientProperties.isInternalOauth()) {
-            ServerOAuth2AuthorizedClientExchangeFilterFunction oauth2 =
-                    new ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);
+            ServerOAuth2AuthorizedClientExchangeFilterFunction oauth2 = new ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);
             oauth2.setDefaultClientRegistrationId(Constants.Security.DEFAULT_REGISTRATION_ID);
             exchangeStrategies.filter(oauth2);
         }
         if (webClientProperties.isTokenRelay()) {
             exchangeStrategies.filter(new TokenRelayFilter());
         }
-
-        List<ExchangeFilterFunction> customFilters = webClientProperties.getCustomFilters();
-        if (customFilters != null) {
-            for (ExchangeFilterFunction filter : customFilters) {
-                exchangeStrategies.filter(filter);
-            }
+        if (webClientProperties.getCustomFilters() != null) {
+            webClientProperties.getCustomFilters().forEach(exchangeStrategies::filter);
         }
         log.info("Success setup client properties {}", webClientProperties.getName());
         var clientConnector = new ReactorClientHttpConnector(httpClient);
@@ -256,8 +252,11 @@ public class WebClientFactory implements InitializingBean {
         var httpsHost = proxyConfig.getHttpsHost();
         var httpsPort = proxyConfig.getHttpsPort();
         if (!DataUtil.isNullOrEmpty(httpHost) && !DataUtil.isNullOrEmpty(httpPort)) {
-            httpClient = httpClient.proxy(
-                    proxy -> proxy.type(ProxyProvider.Proxy.HTTP).host(httpHost).port(httpPort));
+            httpClient = httpClient.proxy(proxy -> proxy
+                    .type(ProxyProvider.Proxy.HTTP)
+                    .host(httpHost)
+                    .port(httpPort)
+            );
         }
         if (!DataUtil.isNullOrEmpty(httpsHost) && !DataUtil.isNullOrEmpty(httpsPort)) {
             SslContext sslContext;
