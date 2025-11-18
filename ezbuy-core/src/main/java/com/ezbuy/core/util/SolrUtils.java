@@ -15,7 +15,6 @@
  */
 package com.ezbuy.core.util;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -98,12 +97,7 @@ public class SolrUtils {
      * @return the encoded value, or {@code null} if an encoding error occurs
      */
     private String encodeValue(String value) {
-        try {
-            return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException e) {
-            log.error("Exception when encoding value: " + value, e);
-            return null;
-        }
+        return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
 
     /**

@@ -21,6 +21,7 @@ import com.ezbuy.core.exception.BusinessException;
 import io.minio.*;
 import io.minio.errors.*;
 import io.minio.http.Method;
+
 import java.io.*;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -55,23 +56,27 @@ public class MinioUtils {
     /**
      * Constructs a new instance of {@code MinioUtils}.
      *
-     * @param minioProperties
-     *            the properties used to configure MinIO connection settings.
-     * @param minioClient
-     *            the MinioClient instance for interacting with the MinIO service.
+     * @param minioProperties the properties used to configure MinIO connection settings.
+     * @param minioClient     the MinioClient instance for interacting with the MinIO service.
      */
     public MinioUtils(MinioProperties minioProperties, MinioClient minioClient) {
         this.minioProperties = minioProperties;
         this.minioClient = minioClient;
     }
 
-    /** Constant <code>IMAGE_PNG_CONTENT_TYPE="image/png"</code> */
+    /**
+     * Constant <code>IMAGE_PNG_CONTENT_TYPE="image/png"</code>
+     */
     public static final String IMAGE_PNG_CONTENT_TYPE = "image/png";
 
-    /** Constant <code>IMAGE_JPEG_CONTENT_TYPE="image/jpeg"</code> */
+    /**
+     * Constant <code>IMAGE_JPEG_CONTENT_TYPE="image/jpeg"</code>
+     */
     public static final String IMAGE_JPEG_CONTENT_TYPE = "image/jpeg";
 
-    /** Constant <code>PDF_CONTENT_TYPE="application/pdf"</code> */
+    /**
+     * Constant <code>PDF_CONTENT_TYPE="application/pdf"</code>
+     */
     public static final String PDF_CONTENT_TYPE = "application/pdf";
 
     /**
@@ -86,55 +91,82 @@ public class MinioUtils {
      */
     public static final String DOCX_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
-    /** Constant <code>TEXT_CONTENT_TYPE="text/plain"</code> */
+    /**
+     * Constant <code>TEXT_CONTENT_TYPE="text/plain"</code>
+     */
     public static final String TEXT_CONTENT_TYPE = "text/plain";
 
-    /** Constant <code>VIDEO_CONTENT_TYPE="video/mp4"</code> */
+    /**
+     * Constant <code>VIDEO_CONTENT_TYPE="video/mp4"</code>
+     */
     public static final String VIDEO_CONTENT_TYPE = "video/mp4";
 
-    /** Constant <code>IMAGE_FOLDER="images/"</code> */
+    /**
+     * Constant <code>IMAGE_FOLDER="images/"</code>
+     */
     public static final String IMAGE_FOLDER = "images/";
 
-    /** Constant <code>PDF_FOLDER="pdf/"</code> */
+    /**
+     * Constant <code>PDF_FOLDER="pdf/"</code>
+     */
     public static final String PDF_FOLDER = "pdf/";
 
-    /** Constant <code>EXCEL_FOLDER="excel/"</code> */
+    /**
+     * Constant <code>EXCEL_FOLDER="excel/"</code>
+     */
     public static final String EXCEL_FOLDER = "excel/";
 
-    /** Constant <code>WORD_FOLDER="word/"</code> */
+    /**
+     * Constant <code>WORD_FOLDER="word/"</code>
+     */
     public static final String WORD_FOLDER = "word/";
 
-    /** Constant <code>TEXT_FOLDER="text/"</code> */
+    /**
+     * Constant <code>TEXT_FOLDER="text/"</code>
+     */
     public static final String TEXT_FOLDER = "text/";
 
-    /** Constant <code>VIDEO_FOLDER="videos/"</code> */
+    /**
+     * Constant <code>VIDEO_FOLDER="videos/"</code>
+     */
     public static final String VIDEO_FOLDER = "videos/";
 
-    /** Constant <code>PNG_END=".png"</code> */
+    /**
+     * Constant <code>PNG_END=".png"</code>
+     */
     public static final String PNG_END = ".png";
 
-    /** Constant <code>JPEG_END=".jpeg"</code> */
+    /**
+     * Constant <code>JPEG_END=".jpeg"</code>
+     */
     public static final String JPEG_END = ".jpeg";
 
-    /** Constant <code>PDF_END=".pdf"</code> */
+    /**
+     * Constant <code>PDF_END=".pdf"</code>
+     */
     public static final String PDF_END = ".pdf";
 
-    /** Constant <code>EXCEL_END=".xlsx"</code> */
+    /**
+     * Constant <code>EXCEL_END=".xlsx"</code>
+     */
     public static final String EXCEL_END = ".xlsx";
 
-    /** Constant <code>WORD_END=".docx"</code> */
+    /**
+     * Constant <code>WORD_END=".docx"</code>
+     */
     public static final String WORD_END = ".docx";
 
-    /** Constant <code>TEXT_END=".txt"</code> */
+    /**
+     * Constant <code>TEXT_END=".txt"</code>
+     */
     public static final String TEXT_END = ".txt";
 
-    /** Constant <code>VIDEO_END=".mp4"</code> */
+    /**
+     * Constant <code>VIDEO_END=".mp4"</code>
+     */
     public static final String VIDEO_END = ".mp4";
 
-    /** Constant <code>FOLDER_MAP</code> */
     public static final Map<String, String> FOLDER_MAP;
-
-    private static final String UPLOAD_SUCCESS_LOG = "Upload file successfully";
 
     static {
         FOLDER_MAP = Map.of(
@@ -165,12 +197,11 @@ public class MinioUtils {
      * the default bucket from `this.minioProperties` is used.
      * </p>
      *
-     * @param data
-     *            The Base64-encoded media data. It must be in the format:
-     *            `"data:[media-type];base64,[encoded-data]"`. If `data` is a URL
-     *            (starting with "http://" or "https://"), it is returned as is.
+     * @param data The Base64-encoded media data. It must be in the format:
+     *             `"data:[media-type];base64,[encoded-data]"`. If `data` is a URL
+     *             (starting with "http://" or "https://"), it is returned as is.
      * @return A `Mono<String>` containing the public URL of the uploaded media
-     *         file. If `data` is already a URL, it is returned immediately.
+     * file. If `data` is already a URL, it is returned immediately.
      */
     public Mono<String> uploadMedia(String data) {
         return this.uploadMediaMinio(data, this.minioProperties.getBucket());
@@ -186,16 +217,14 @@ public class MinioUtils {
      * the default bucket from `this.minioProperties` is used.
      * </p>
      *
-     * @param data
-     *            The Base64-encoded media data. It must be in the format:
-     *            `"data:[media-type];base64,[encoded-data]"`. If `data` is a URL
-     *            (starting with "http://" or "https://"), it is returned as is.
-     * @param bucketName
-     *            The name of the MinIO bucket where the file should be stored. If
-     *            `null` or empty, the default bucket from `this.minioProperties` is
-     *            used.
+     * @param data       The Base64-encoded media data. It must be in the format:
+     *                   `"data:[media-type];base64,[encoded-data]"`. If `data` is a URL
+     *                   (starting with "http://" or "https://"), it is returned as is.
+     * @param bucketName The name of the MinIO bucket where the file should be stored. If
+     *                   `null` or empty, the default bucket from `this.minioProperties` is
+     *                   used.
      * @return A `Mono<String>` containing the public URL of the uploaded media
-     *         file. If `data` is already a URL, it is returned immediately.
+     * file. If `data` is already a URL, it is returned immediately.
      */
     public Mono<String> uploadMedia(String data, String bucketName) {
         return this.uploadMediaMinio(data, bucketName);
@@ -237,21 +266,6 @@ public class MinioUtils {
         return uploadFile(bytes, bucket, path).thenReturn(returnUrl);
     }
 
-    /**
-     * <p>
-     * isBucketExist.
-     * </p>
-     *
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @return a {@link reactor.core.publisher.Mono} object
-     */
-    public Mono<Boolean> isBucketExist(String bucketName) {
-        return Mono.fromCallable(() -> this.minioClient.bucketExists(
-                        BucketExistsArgs.builder().bucket(bucketName).build()))
-                .subscribeOn(Schedulers.boundedElastic());
-    }
-
     private void makeBucketSync(String bucketName) {
         try {
             log.info("Start making bucket with name {}", bucketName);
@@ -268,8 +282,7 @@ public class MinioUtils {
      * makeBucket.
      * </p>
      *
-     * @param bucketName
-     *            a {@link java.lang.String} object
+     * @param bucketName a {@link java.lang.String} object
      * @return a {@link reactor.core.publisher.Mono} object
      */
     public Mono<Void> makeBucket(String bucketName) {
@@ -280,7 +293,7 @@ public class MinioUtils {
         try {
             log.info("Start making folder with name {}", folderName);
             this.minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(folderName + "/").stream(
-                            new ByteArrayInputStream(new byte[] {}), 0, -1)
+                            new ByteArrayInputStream(new byte[]{}), 0, -1)
                     .build());
             log.info("Make folder successfully");
         } catch (Exception e) {
@@ -293,29 +306,30 @@ public class MinioUtils {
      * makeFolder.
      * </p>
      *
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @param folderName
-     *            a {@link java.lang.String} object
+     * @param bucketName a {@link java.lang.String} object
+     * @param folderName a {@link java.lang.String} object
      * @return a {@link reactor.core.publisher.Mono} object
      */
     public Mono<Void> makeFolder(String bucketName, String folderName) {
         return Mono.fromRunnable(() -> this.makeFolderSync(bucketName, folderName));
     }
 
-    private String uploadFileToFolderSync(
-            InputStream inputStream, String bucketName, String folderName, String contentType) {
+    private String uploadFileToFolderSync(InputStream inputStream,
+                                          String bucketName,
+                                          String folderName,
+                                          String contentType) {
         try {
-            byte[] buffer = new byte[inputStream.available()];
-            inputStream.read(buffer);
-            String objectName = UUID.randomUUID().toString().replace("-", ""); // dungbd5 remove dash
+            byte[] buffer = inputStream.readAllBytes();
+            String objectName = UUID.randomUUID().toString().replace("-", "");
             String object = handleObjectName(contentType, objectName, folderName);
             log.info("Start upload file {} ", object);
-            this.minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(object).stream(
-                            new ByteArrayInputStream(buffer), buffer.length, -1)
+            this.minioClient.putObject(PutObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(object)
+                    .stream(new ByteArrayInputStream(buffer), buffer.length, -1)
                     .contentType(contentType)
                     .build());
-            log.info(UPLOAD_SUCCESS_LOG);
+            log.info("Upload file successfully {} ", object);
             return this.minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
                     .method(Method.GET)
                     .bucket(bucketName)
@@ -332,14 +346,10 @@ public class MinioUtils {
      * uploadFile.
      * </p>
      *
-     * @param inputStream
-     *            a {@link java.io.InputStream} object
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @param folderName
-     *            a {@link java.lang.String} object
-     * @param contentType
-     *            a {@link java.lang.String} object
+     * @param inputStream a {@link java.io.InputStream} object
+     * @param bucketName  a {@link java.lang.String} object
+     * @param folderName  a {@link java.lang.String} object
+     * @param contentType a {@link java.lang.String} object
      * @return a {@link reactor.core.publisher.Mono} object
      */
     public Mono<String> uploadFile(InputStream inputStream, String bucketName, String folderName, String contentType) {
@@ -363,11 +373,13 @@ public class MinioUtils {
     private void uploadSync(byte[] data, String bucketName, String fileName, String filePath, String contentType) {
         try {
             log.info("Start uploading {} ", fileName);
-            this.minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(filePath).stream(
-                            new ByteArrayInputStream(data), data.length, -1)
+            this.minioClient.putObject(PutObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(filePath).stream(new ByteArrayInputStream(data), data.length, -1)
                     .contentType(contentType)
-                    .build());
-            log.info(UPLOAD_SUCCESS_LOG);
+                    .build()
+            );
+            log.info("Upload file successfully {} ", fileName);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);
@@ -379,16 +391,11 @@ public class MinioUtils {
      * upload.
      * </p>
      *
-     * @param data
-     *            an array of {@link byte} objects
-     * @param fileName
-     *            a {@link java.lang.String} object
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @param folderName
-     *            a {@link java.lang.String} object
-     * @param contentType
-     *            a {@link java.lang.String} object
+     * @param data        an array of {@link byte} objects
+     * @param fileName    a {@link java.lang.String} object
+     * @param bucketName  a {@link java.lang.String} object
+     * @param folderName  a {@link java.lang.String} object
+     * @param contentType a {@link java.lang.String} object
      * @return a {@link reactor.core.publisher.Mono} object
      */
     public Mono<String> upload(byte[] data, String fileName, String bucketName, String folderName, String contentType) {
@@ -399,11 +406,12 @@ public class MinioUtils {
 
     private String updateObjectSync(String bucket, String object, byte[] bytes) {
         try {
-            log.info("Start update object {}", object);
-            this.minioClient.putObject(PutObjectArgs.builder().bucket(bucket).object(object).stream(
-                            new ByteArrayInputStream(bytes), bytes.length, -1)
+            this.minioClient.putObject(PutObjectArgs.builder()
+                    .bucket(bucket)
+                    .object(object)
+                    .stream(new ByteArrayInputStream(bytes), bytes.length, -1)
                     .build());
-            log.info(UPLOAD_SUCCESS_LOG);
+            log.info("Upload file successfully {}", object);
             return object;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -416,12 +424,9 @@ public class MinioUtils {
      * updateObject.
      * </p>
      *
-     * @param bucket
-     *            a {@link java.lang.String} object
-     * @param object
-     *            a {@link java.lang.String} object
-     * @param bytes
-     *            an array of {@link byte} objects
+     * @param bucket a {@link java.lang.String} object
+     * @param object a {@link java.lang.String} object
+     * @param bytes  an array of {@link byte} objects
      * @return a {@link reactor.core.publisher.Mono} object
      */
     public Mono<String> updateObject(String bucket, String object, byte[] bytes) {
@@ -434,14 +439,10 @@ public class MinioUtils {
      * uploadFiles.
      * </p>
      *
-     * @param inputStreamList
-     *            a {@link java.util.List} object
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @param folderName
-     *            a {@link java.lang.String} object
-     * @param contentType
-     *            a {@link java.lang.String} object
+     * @param inputStreamList a {@link java.util.List} object
+     * @param bucketName      a {@link java.lang.String} object
+     * @param folderName      a {@link java.lang.String} object
+     * @param contentType     a {@link java.lang.String} object
      * @return a {@link reactor.core.publisher.Flux} object
      */
     public Flux<String> uploadFiles(
@@ -456,7 +457,11 @@ public class MinioUtils {
 
     private void downloadSync(String bucket, String object, FluxSink<String> stringFluxSink) {
         try (InputStream inputStream = this.minioClient.getObject(
-                GetObjectArgs.builder().bucket(bucket).object(object).build())) {
+                GetObjectArgs.builder()
+                        .bucket(bucket)
+                        .object(object)
+                        .build())
+        ) {
             log.info("bucket,object: {} {}", bucket, object);
             BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
             String line;
@@ -475,14 +480,12 @@ public class MinioUtils {
      * downloadFileByFilePath.
      * </p>
      *
-     * @param bucket
-     *            a {@link java.lang.String} object
-     * @param object
-     *            a {@link java.lang.String} object
+     * @param bucket a {@link java.lang.String} object
+     * @param object a {@link java.lang.String} object
      * @return a {@link reactor.core.publisher.Flux} object
      */
     public Flux<String> downloadFileByFilePath(String bucket, String object) {
-        return Flux.create(stringFluxSink -> downloadSync(bucket, object, stringFluxSink));
+        return Flux.create(fluxSink -> downloadSync(bucket, object, fluxSink));
     }
 
     private void downloadFileSync(String bucketName, String objectName, String fileName) {
@@ -504,12 +507,9 @@ public class MinioUtils {
      * downloadFile.
      * </p>
      *
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @param objectName
-     *            a {@link java.lang.String} object
-     * @param fileName
-     *            a {@link java.lang.String} object
+     * @param bucketName a {@link java.lang.String} object
+     * @param objectName a {@link java.lang.String} object
+     * @param fileName   a {@link java.lang.String} object
      * @return a {@link reactor.core.publisher.Mono} object
      */
     public Mono<Void> downloadFile(String bucketName, String objectName, String fileName) {
@@ -521,12 +521,9 @@ public class MinioUtils {
      * downloadFileBlock.
      * </p>
      *
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @param objectName
-     *            a {@link java.lang.String} object
-     * @param fileName
-     *            a {@link java.lang.String} object
+     * @param bucketName a {@link java.lang.String} object
+     * @param objectName a {@link java.lang.String} object
+     * @param fileName   a {@link java.lang.String} object
      */
     public void downloadFileBlock(String bucketName, String objectName, String fileName) {
         try {
@@ -536,18 +533,17 @@ public class MinioUtils {
                     .filename(fileName)
                     .build());
         } catch (Exception e) {
-            log.error("dowload file error ", e);
+            log.error("Download file error ", e);
         }
     }
 
     private ObjectWriteResponse copyObjectSync(String bucketName, String objectName) {
         try {
-            log.info("Start downloading object {}", objectName);
             ObjectWriteResponse o = this.minioClient.copyObject(CopyObjectArgs.builder()
                     .bucket(bucketName)
                     .object(objectName)
                     .build());
-            log.info("Download file successfully");
+            log.info("Download file successfully {}", objectName);
             return o;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -560,19 +556,17 @@ public class MinioUtils {
      * copyObject.
      * </p>
      *
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @param objectName
-     *            a {@link java.lang.String} object
+     * @param bucketName a {@link java.lang.String} object
+     * @param objectName a {@link java.lang.String} object
      * @return a {@link reactor.core.publisher.Mono} object
      */
     public Mono<ObjectWriteResponse> copyObject(String bucketName, String objectName) {
-        return Mono.fromCallable(() -> copyObjectSync(bucketName, objectName)).subscribeOn(Schedulers.boundedElastic());
+        return Mono.fromCallable(() -> copyObjectSync(bucketName, objectName))
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
     private ObjectWriteResponse copyObjectSync(String bucketName, String sourceObject, String destinationObject) {
         try {
-            log.info("Copy object from {} to {} ", sourceObject, destinationObject);
             ObjectWriteResponse o = this.minioClient.copyObject(CopyObjectArgs.builder()
                     .bucket(bucketName)
                     .object(destinationObject)
@@ -581,7 +575,7 @@ public class MinioUtils {
                             .object(sourceObject)
                             .build())
                     .build());
-            log.info("Copy object successfully");
+            log.info("Copy object successfully {} to {} ", sourceObject, destinationObject);
             return o;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -594,12 +588,9 @@ public class MinioUtils {
      * copyObject.
      * </p>
      *
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @param sourceObject
-     *            a {@link java.lang.String} object
-     * @param destinationObject
-     *            a {@link java.lang.String} object
+     * @param bucketName        a {@link java.lang.String} object
+     * @param sourceObject      a {@link java.lang.String} object
+     * @param destinationObject a {@link java.lang.String} object
      * @return a {@link reactor.core.publisher.Mono} object
      */
     public Mono<ObjectWriteResponse> copyObject(String bucketName, String sourceObject, String destinationObject) {
@@ -612,10 +603,8 @@ public class MinioUtils {
      * getObjectUrl.
      * </p>
      *
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @param objectName
-     *            a {@link java.lang.String} object
+     * @param bucketName a {@link java.lang.String} object
+     * @param objectName a {@link java.lang.String} object
      * @return a {@link reactor.core.publisher.Mono} object
      */
     public Mono<String> getObjectUrl(String bucketName, String objectName) {
@@ -634,32 +623,29 @@ public class MinioUtils {
      * updateFile.
      * </p>
      *
-     * @param filePath
-     *            a {@link java.lang.String} object
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @param objectName
-     *            a {@link java.lang.String} object
-     * @param contentType
-     *            a {@link java.lang.String} object
+     * @param filePath    a {@link java.lang.String} object
+     * @param bucketName  a {@link java.lang.String} object
+     * @param objectName  a {@link java.lang.String} object
+     * @param contentType a {@link java.lang.String} object
      * @return a {@link reactor.core.publisher.Mono} object
      */
     public Mono<Void> updateFile(String filePath, String bucketName, String objectName, String contentType) {
-        return Mono.fromRunnable(() -> {
+        return Mono.fromCallable(() -> {
             try (InputStream in = new FileInputStream(filePath)) {
-                byte[] imageBuffer = new byte[in.available()];
-                in.read(imageBuffer);
-                log.info("Start updating file with object name{}", objectName);
-                this.minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(objectName).stream(
-                                new ByteArrayInputStream(imageBuffer), imageBuffer.length, -1)
+                byte[] imageBuffer = in.readAllBytes();
+                this.minioClient.putObject(PutObjectArgs.builder()
+                        .bucket(bucketName)
+                        .object(objectName)
+                        .stream(new ByteArrayInputStream(imageBuffer), imageBuffer.length, -1)
                         .contentType(contentType)
                         .build());
-                log.info("Update file successfully ");
+                log.info("Update file successfully {}", objectName);
+                return Void.TYPE;
             } catch (Exception e) {
                 log.error("update File error ", e);
                 throw new RuntimeException(e);
             }
-        });
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
     /**
@@ -667,8 +653,7 @@ public class MinioUtils {
      * getObjectUrl.
      * </p>
      *
-     * @param objectName
-     *            a {@link java.lang.String} object
+     * @param objectName a {@link java.lang.String} object
      * @return a {@link java.lang.String} object
      */
     public String getObjectUrl(String objectName) {
@@ -680,12 +665,9 @@ public class MinioUtils {
      * handleObjectName.
      * </p>
      *
-     * @param contentType
-     *            a {@link java.lang.String} object
-     * @param objectName
-     *            a {@link java.lang.String} object
-     * @param folderName
-     *            a {@link java.lang.String} object
+     * @param contentType a {@link java.lang.String} object
+     * @param objectName  a {@link java.lang.String} object
+     * @param folderName  a {@link java.lang.String} object
      * @return a {@link java.lang.String} object
      */
     public String handleObjectName(String contentType, String objectName, String folderName) {
@@ -697,7 +679,6 @@ public class MinioUtils {
             case DOCX_CONTENT_TYPE -> objectName = WORD_FOLDER + objectName + WORD_END;
             case TEXT_CONTENT_TYPE -> objectName = TEXT_FOLDER + objectName + TEXT_END;
             case VIDEO_CONTENT_TYPE -> objectName = VIDEO_FOLDER + objectName + VIDEO_END;
-            default -> objectName = objectName;
         }
         if (folderName != null && !folderName.isEmpty()) {
             objectName = folderName + "/" + objectName;
@@ -724,10 +705,8 @@ public class MinioUtils {
      * getPrivateObjectUrl.
      * </p>
      *
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @param objectName
-     *            a {@link java.lang.String} object
+     * @param bucketName a {@link java.lang.String} object
+     * @param objectName a {@link java.lang.String} object
      * @return a {@link reactor.core.publisher.Mono} object
      */
     public Mono<String> getPrivateObjectUrl(String bucketName, String objectName) {
@@ -753,16 +732,12 @@ public class MinioUtils {
      * removeObject.
      * </p>
      *
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @param objectName
-     *            a {@link java.lang.String} object
+     * @param bucketName a {@link java.lang.String} object
+     * @param objectName a {@link java.lang.String} object
      * @return a {@link reactor.core.publisher.Mono} object
      */
     public Mono<Void> removeObject(String bucketName, String objectName) {
-        return Mono.fromRunnable(() -> {
-            removeObjectSync(bucketName, objectName);
-        });
+        return Mono.fromRunnable(() -> removeObjectSync(bucketName, objectName));
     }
 
     /**
@@ -770,54 +745,38 @@ public class MinioUtils {
      * getPrivateObjectUrl.
      * </p>
      *
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @param objectName
-     *            a {@link java.lang.String} object
-     * @param timeout
-     *            a int
-     * @param timeUnit
-     *            a {@link java.util.concurrent.TimeUnit} object
+     * @param bucketName a {@link java.lang.String} object
+     * @param objectName a {@link java.lang.String} object
+     * @param timeout    a int
+     * @param timeUnit   a {@link java.util.concurrent.TimeUnit} object
      * @return a {@link reactor.core.publisher.Mono} object
      */
-    public Mono<String> getPrivateObjectUrl(String bucketName, String objectName, int timeout, TimeUnit timeUnit) {
-        return Mono.fromCallable(() -> this.minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
-                .method(Method.GET)
-                .bucket(bucketName)
-                .object(objectName)
-                .expiry(timeout, timeUnit)
-                .build()));
-    }
-
-    /**
-     * <p>
-     * validateBucketExisted.
-     * </p>
-     *
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @return a {@link reactor.core.publisher.Mono} object
-     */
-    public Mono<Void> validateBucketExisted(String bucketName) {
-        return isBucketExist(bucketName).flatMap(isBucketExist -> {
-            if (!isBucketExist) {
-                return makeBucket(bucketName);
-            }
-            return Mono.just(1).then();
-        });
+    public Mono<String> getPrivateObjectUrl(String bucketName,
+                                            String objectName,
+                                            int timeout,
+                                            TimeUnit timeUnit) {
+        return Mono.fromCallable(() -> this.minioClient.getPresignedObjectUrl(
+                        GetPresignedObjectUrlArgs.builder()
+                                .method(Method.GET)
+                                .bucket(bucketName)
+                                .object(objectName)
+                                .expiry(timeout, timeUnit)
+                                .build()
+                )
+        );
     }
 
     private void uploadFileNoNameSync(
             InputStream inputStream, String bucketName, String objectName, String contentType) {
         try {
-            byte[] buffer = new byte[inputStream.available()];
-            inputStream.read(buffer);
-            log.info("start uploadFileNoRename {}", objectName);
-            this.minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(objectName).stream(
-                            new ByteArrayInputStream(buffer), buffer.length, -1)
+            byte[] buffer = inputStream.readAllBytes();
+            this.minioClient.putObject(PutObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(objectName)
+                    .stream(new ByteArrayInputStream(buffer), buffer.length, -1)
                     .contentType(contentType)
                     .build());
-            log.info(UPLOAD_SUCCESS_LOG);
+            log.info("Upload file successfully {} ", objectName);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);
@@ -829,35 +788,34 @@ public class MinioUtils {
      * uploadFileNoRename.
      * </p>
      *
-     * @param inputStream
-     *            a {@link java.io.InputStream} object
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @param contentType
-     *            a {@link java.lang.String} object
-     * @param objectName
-     *            a {@link java.lang.String} object
+     * @param inputStream a {@link java.io.InputStream} object
+     * @param bucketName  a {@link java.lang.String} object
+     * @param contentType a {@link java.lang.String} object
+     * @param objectName  a {@link java.lang.String} object
      * @return a {@link reactor.core.publisher.Mono} object
-     * @throws java.lang.Exception
-     *             if any.
      */
-    public Mono<String> uploadFileNoRename(
-            InputStream inputStream, String bucketName, String contentType, String objectName) throws Exception {
+    public Mono<String> uploadFileNoRename(InputStream inputStream,
+                                           String bucketName,
+                                           String contentType,
+                                           String objectName) {
         return validateBucketExisted(bucketName)
                 .then(Mono.fromRunnable(() -> uploadFileNoNameSync(inputStream, bucketName, objectName, contentType)))
                 .then(getObjectUrl(bucketName, objectName));
     }
 
-    private void uploadFileSync(InputStream inputStream, String bucketName, String object, String contentType) {
+    private void uploadFileSync(InputStream inputStream,
+                                String bucketName,
+                                String object,
+                                String contentType) {
         try {
-            byte[] buffer = new byte[inputStream.available()];
-            inputStream.read(buffer);
-            log.info("Start uploading object " + object);
-            this.minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(object).stream(
-                            new ByteArrayInputStream(buffer), buffer.length, -1)
+            byte[] buffer = inputStream.readAllBytes();
+            this.minioClient.putObject(PutObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(object)
+                    .stream(new ByteArrayInputStream(buffer), buffer.length, -1)
                     .contentType(contentType)
                     .build());
-            log.info(UPLOAD_SUCCESS_LOG);
+            log.info("Upload file successfully {}", object);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);
@@ -869,33 +827,27 @@ public class MinioUtils {
      * uploadFile.
      * </p>
      *
-     * @param inputStream
-     *            a {@link java.io.InputStream} object
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @param contentType
-     *            a {@link java.lang.String} object
+     * @param inputStream a {@link java.io.InputStream} object
+     * @param bucketName  a {@link java.lang.String} object
+     * @param contentType a {@link java.lang.String} object
      * @return a {@link reactor.core.publisher.Mono} object
-     * @throws java.lang.Exception
-     *             if any.
      */
-    public Mono<String> uploadFile(InputStream inputStream, String bucketName, String contentType) throws Exception {
+    public Mono<String> uploadFile(InputStream inputStream, String bucketName, String contentType) {
         String objectName = UUID.randomUUID().toString().replace("-", "");
         String object = handleObjectName(contentType, objectName, null);
         return validateBucketExisted(bucketName)
-                .then(Mono.fromRunnable(() -> {
-                    uploadFileSync(inputStream, bucketName, object, contentType);
-                }))
+                .then(Mono.fromRunnable(() -> uploadFileSync(inputStream, bucketName, object, contentType)))
                 .then(getObjectUrl(bucketName, object));
     }
 
     private void uploadFileSync(String filePath, byte[] file, String bucket) {
         try {
-            log.info("Start uploadFile{} ", filePath);
-            this.minioClient.putObject(PutObjectArgs.builder().bucket(bucket).object(filePath).stream(
-                            new ByteArrayInputStream(file), file.length, -1)
+            this.minioClient.putObject(PutObjectArgs.builder()
+                    .bucket(bucket)
+                    .object(filePath)
+                    .stream(new ByteArrayInputStream(file), file.length, -1)
                     .build());
-            log.info(UPLOAD_SUCCESS_LOG);
+            log.info("Upload file successfully {} ", filePath);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, e.getMessage());
@@ -907,12 +859,9 @@ public class MinioUtils {
      * uploadFile.
      * </p>
      *
-     * @param filePath
-     *            a {@link java.lang.String} object
-     * @param file
-     *            an array of {@link byte} objects
-     * @param bucket
-     *            a {@link java.lang.String} object
+     * @param filePath a {@link java.lang.String} object
+     * @param file     an array of {@link byte} objects
+     * @param bucket   a {@link java.lang.String} object
      * @return a {@link reactor.core.publisher.Mono} object
      */
     public Mono<String> uploadFile(String filePath, byte[] file, String bucket) {
@@ -926,45 +875,43 @@ public class MinioUtils {
      * uploadFileReturnObjectName.
      * </p>
      *
-     * @param inputStream
-     *            a {@link java.io.InputStream} object
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @param contentType
-     *            a {@link java.lang.String} object
+     * @param inputStream a {@link java.io.InputStream} object
+     * @param bucketName  a {@link java.lang.String} object
+     * @param contentType a {@link java.lang.String} object
      * @return a {@link reactor.core.publisher.Mono} object
-     * @throws java.lang.RuntimeException
-     *             if any.
+     * @throws java.lang.RuntimeException if any.
      */
-    public Mono<String> uploadFileReturnObjectName(InputStream inputStream, String bucketName, String contentType)
-            throws RuntimeException {
+    public Mono<String> uploadFileReturnObjectName(InputStream inputStream,
+                                                   String bucketName,
+                                                   String contentType) throws RuntimeException {
         String objectName = UUID.randomUUID().toString().replace("-", "");
         String object = handleObjectName(contentType, objectName, null);
         return validateBucketExisted(bucketName)
-                .then(Mono.fromRunnable(() -> {
+                .then(Mono.fromCallable(() -> {
                     try {
-                        byte[] buffer = new byte[inputStream.available()];
-                        inputStream.read(buffer);
-                        log.info("Start uploading object {}", object);
-                        this.minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(object).stream(
-                                        new ByteArrayInputStream(buffer), buffer.length, -1)
+                        byte[] buffer = inputStream.readAllBytes();
+                        this.minioClient.putObject(PutObjectArgs.builder()
+                                .bucket(bucketName)
+                                .object(object)
+                                .stream(new ByteArrayInputStream(buffer), buffer.length, -1)
                                 .contentType(contentType)
-                                .build());
-                        log.info("Upload file successfully");
+                                .build()
+                        );
+                        log.info("Upload file successfully {}", object);
+                        return object;
                     } catch (Exception e) {
                         log.error("Upload file error ", e);
                         throw new RuntimeException(e);
                     }
                 }))
-                .then(Mono.just(object));
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
     private void removeObjectByUrlSync(String url) {
         try {
             String[] splits = url.split("/");
-            String bucketName = "";
-            String objectName = "";
-            // if start with http
+            String bucketName;
+            String objectName;
             if (url.startsWith("http")) {
                 bucketName = splits[3];
             } else {
@@ -974,16 +921,16 @@ public class MinioUtils {
                     bucketName = splits[0];
                 }
             }
-            if ("".equals(bucketName)) throw new RuntimeException("Bucket not valid");
+            if (bucketName.isEmpty())
+                throw new RuntimeException("Bucket not valid");
             int indexOfObjName = url.indexOf(bucketName) + bucketName.length() + 1;
             if (indexOfObjName > (url.length() - 1)) throw new RuntimeException("Object not valid");
             objectName = url.substring(indexOfObjName);
-            log.info("Start remove object with bucket name = " + bucketName + " and object name = " + objectName);
             this.minioClient.removeObject(RemoveObjectArgs.builder()
                     .bucket(bucketName)
                     .object(objectName)
                     .build());
-            log.info("Finish remove object with bucket name = " + bucketName + " and object name = " + objectName);
+            log.info("Finish remove object with bucket name = {} and object name = {}", bucketName, objectName);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);
@@ -995,28 +942,22 @@ public class MinioUtils {
      * removeObject.
      * </p>
      *
-     * @param url
-     *            a {@link java.lang.String} object
+     * @param url a {@link java.lang.String} object
      * @return a {@link reactor.core.publisher.Mono} object
-     * @throws java.lang.Exception
-     *             if any.
      */
-    public Mono<Void> removeObject(String url) throws Exception {
+    public Mono<Void> removeObject(String url) {
         return Mono.fromRunnable(() -> removeObjectByUrlSync(url));
     }
 
     private String uploadFileSync(byte[] bytes, String bucketName, String object, String contentType) {
         try {
-            log.info("Start uploadFile {} ", object);
-            MimetypesFileTypeMap mtft = new MimetypesFileTypeMap();
-            this.minioClient.putObject(
-                    PutObjectArgs.builder()
-                            .bucket(bucketName)
-                            .object(object)
-                            .contentType(mtft.getContentType(object))
-                            .stream(new ByteArrayInputStream(bytes), bytes.length, -1)
-                            .build());
-            log.info(UPLOAD_SUCCESS_LOG);
+            this.minioClient.putObject(PutObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(object)
+                    .contentType(contentType)
+                    .stream(new ByteArrayInputStream(bytes), bytes.length, -1)
+                    .build());
+            log.info("Upload file successfully {} ", object);
             return object;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -1029,23 +970,18 @@ public class MinioUtils {
      * uploadFile.
      * </p>
      *
-     * @param bytes
-     *            an array of {@link byte} objects
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @param object
-     *            a {@link java.lang.String} object
+     * @param bytes      an array of {@link byte} objects
+     * @param bucketName a {@link java.lang.String} object
+     * @param object     a {@link java.lang.String} object
      * @return a {@link reactor.core.publisher.Mono} object
      */
     public Mono<String> uploadFile(byte[] bytes, String bucketName, String object) {
         return isBucketExist(bucketName).flatMap(existed -> {
             if (existed) {
                 return Mono.fromCallable(() -> {
-                            MimetypesFileTypeMap mtft = new MimetypesFileTypeMap();
-                            String contentType = mtft.getContentType(object);
-                            return uploadFileSync(bytes, bucketName, object, contentType);
-                        })
-                        .subscribeOn(Schedulers.boundedElastic());
+                    String contentType = new MimetypesFileTypeMap().getContentType(object);
+                    return uploadFileSync(bytes, bucketName, object, contentType);
+                }).subscribeOn(Schedulers.boundedElastic());
             } else {
                 return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "minio.bucket.not-existed"));
             }
@@ -1057,15 +993,14 @@ public class MinioUtils {
      * createBucketIfNotExist.
      * </p>
      *
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @param objectLock
-     *            a boolean
+     * @param bucketName a {@link java.lang.String} object
+     * @param objectLock a boolean
      */
     public void createBucketIfNotExist(String bucketName, boolean objectLock) {
         try {
-            boolean isExist = this.minioClient.bucketExists(
-                    BucketExistsArgs.builder().bucket(bucketName).build());
+            boolean isExist = this.minioClient.bucketExists(BucketExistsArgs.builder()
+                    .bucket(bucketName)
+                    .build());
             if (!isExist) {
                 this.minioClient.makeBucket(MakeBucketArgs.builder()
                         .bucket(bucketName)
@@ -1082,10 +1017,8 @@ public class MinioUtils {
      * getObjectNameFromUrl.
      * </p>
      *
-     * @param folderContent
-     *            a {@link java.lang.String} object
-     * @param url
-     *            a {@link java.lang.String} object
+     * @param folderContent a {@link java.lang.String} object
+     * @param url           a {@link java.lang.String} object
      * @return a {@link java.lang.String} object
      */
     public static String getObjectNameFromUrl(String folderContent, String url) {
@@ -1098,10 +1031,8 @@ public class MinioUtils {
      * getBase64FromUrl.
      * </p>
      *
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @param url
-     *            a {@link java.lang.String} object
+     * @param bucketName a {@link java.lang.String} object
+     * @param url        a {@link java.lang.String} object
      * @return a {@link java.lang.String} object
      */
     public String getBase64FromUrl(String bucketName, String url) {
@@ -1110,8 +1041,7 @@ public class MinioUtils {
                     .bucket(bucketName)
                     .object(url.substring(url.lastIndexOf('/') + 1))
                     .build());
-            byte[] bytes = objectData.readAllBytes();
-            return Base64.getEncoder().encodeToString(bytes);
+            return Base64.getEncoder().encodeToString(objectData.readAllBytes());
         } catch (Exception ex) {
             log.error("Bucket not exist", ex);
         }
@@ -1123,12 +1053,9 @@ public class MinioUtils {
      * uploadFileReturnObject.
      * </p>
      *
-     * @param inputStream
-     *            a {@link java.io.InputStream} object
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @param contentType
-     *            a {@link java.lang.String} object
+     * @param inputStream a {@link java.io.InputStream} object
+     * @param bucketName  a {@link java.lang.String} object
+     * @param contentType a {@link java.lang.String} object
      * @return a {@link reactor.core.publisher.Mono} object
      */
     public Mono<String> uploadFileReturnObject(InputStream inputStream, String bucketName, String contentType) {
@@ -1141,53 +1068,58 @@ public class MinioUtils {
 
     /**
      * <p>
-     * getUrlOfObject.
+     * getObject.
      * </p>
      *
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @param objectName
-     *            a {@link java.lang.String} object
-     * @return a {@link java.lang.String} object
+     * @param bucketName a {@link java.lang.String} object
+     * @param objectName a {@link java.lang.String} object
+     * @return a {@link java.io.InputStream} object
+     * @throws io.minio.errors.ServerException           if any.
+     * @throws io.minio.errors.InsufficientDataException if any.
+     * @throws io.minio.errors.ErrorResponseException    if any.
+     * @throws java.io.IOException                       if any.
+     * @throws java.security.NoSuchAlgorithmException    if any.
+     * @throws java.security.InvalidKeyException         if any.
+     * @throws io.minio.errors.InvalidResponseException  if any.
+     * @throws io.minio.errors.XmlParserException        if any.
+     * @throws io.minio.errors.InternalException         if any.
      */
-    public String getUrlOfObject(String bucketName, String objectName) {
-        return "/media/" + bucketName + "/" + objectName;
+    public InputStream getObject(String bucketName, String objectName)
+            throws ServerException, InsufficientDataException, ErrorResponseException, IOException,
+            NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException,
+            InternalException {
+        return this.minioClient.getObject(
+                GetObjectArgs.builder().bucket(bucketName).object(objectName).build());
     }
 
     /**
      * <p>
-     * getObject.
+     * validateBucketExisted.
      * </p>
      *
-     * @param bucketName
-     *            a {@link java.lang.String} object
-     * @param objectName
-     *            a {@link java.lang.String} object
-     * @return a {@link java.io.InputStream} object
-     * @throws io.minio.errors.ServerException
-     *             if any.
-     * @throws io.minio.errors.InsufficientDataException
-     *             if any.
-     * @throws io.minio.errors.ErrorResponseException
-     *             if any.
-     * @throws java.io.IOException
-     *             if any.
-     * @throws java.security.NoSuchAlgorithmException
-     *             if any.
-     * @throws java.security.InvalidKeyException
-     *             if any.
-     * @throws io.minio.errors.InvalidResponseException
-     *             if any.
-     * @throws io.minio.errors.XmlParserException
-     *             if any.
-     * @throws io.minio.errors.InternalException
-     *             if any.
+     * @param bucketName a {@link java.lang.String} object
+     * @return a {@link reactor.core.publisher.Mono} object
      */
-    public InputStream getObject(String bucketName, String objectName)
-            throws ServerException, InsufficientDataException, ErrorResponseException, IOException,
-                    NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException,
-                    InternalException {
-        return this.minioClient.getObject(
-                GetObjectArgs.builder().bucket(bucketName).object(objectName).build());
+    public Mono<Void> validateBucketExisted(String bucketName) {
+        return isBucketExist(bucketName).flatMap(isBucketExist -> {
+            if (!isBucketExist) {
+                return makeBucket(bucketName);
+            }
+            return Mono.just(1).then();
+        });
+    }
+
+    /**
+     * <p>
+     * isBucketExist.
+     * </p>
+     *
+     * @param bucketName a {@link java.lang.String} object
+     * @return a {@link reactor.core.publisher.Mono} object
+     */
+    public Mono<Boolean> isBucketExist(String bucketName) {
+        return Mono.fromCallable(() -> this.minioClient.bucketExists(
+                        BucketExistsArgs.builder().bucket(bucketName).build()))
+                .subscribeOn(Schedulers.boundedElastic());
     }
 }

@@ -412,12 +412,12 @@ public class DataUtil {
             return null;
         }
         try {
-            return (T) ObjectMapperFactory.getInstance().readValue(safeToString(content), clz);
+            return ObjectMapperFactory.getInstance().readValue(safeToString(content), clz);
         } catch (JsonProcessingException e) {
             log.error("Parse json error", e);
         }
         try {
-            return (T) clz.getDeclaredConstructor().newInstance();
+            return clz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             log.error("cast object error: ", e);
             @SuppressWarnings("unchecked")

@@ -45,9 +45,9 @@ public class CacheUtils {
      * @return a {@link java.util.function.Function} object
      */
     public static <T> Function<String, T> of(@NotNull Duration duration, @NotNull Function<String, T> fn) {
-        final LoadingCache<String, T> cache =
-                Caffeine.newBuilder().expireAfterWrite(duration).build(fn::apply);
-
+        final LoadingCache<String, T> cache = Caffeine.newBuilder()
+                .expireAfterWrite(duration)
+                .build(fn::apply);
         return cache::get;
     }
 
@@ -83,9 +83,12 @@ public class CacheUtils {
      * @return a {@link java.util.function.Function} object
      */
     public static <T> Function<String, Mono<T>> ofMono(Duration duration, Function<String, Mono<T>> fn) {
-        AsyncCache<String, T> cache =
-                Caffeine.newBuilder().expireAfterWrite(duration).buildAsync();
-        return key -> Mono.fromFuture(cache.get(key, k -> (T) fn.apply(k).toFuture()));
+        AsyncCache<String, T> cache = Caffeine.newBuilder().expireAfterWrite(duration).buildAsync();
+        return key -> Mono.fromFuture(cache.get(key, k -> {
+            @SuppressWarnings("unchecked")
+            T result = (T) fn.apply(k).toFuture();
+            return result;
+        }));
     }
 
     /**

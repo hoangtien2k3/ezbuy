@@ -21,7 +21,6 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 
 public class RequestUtils {
 
-    // Define constants for header names
     private static final String HEADER_X_ORIGINAL_FORWARDED_FOR = "x-original-forwarded-for";
     private static final String HEADER_X_FORWARDED_FOR = "x-forwarded-for";
     private static final String HEADER_PROXY_CLIENT_IP = "Proxy-Client-IP";

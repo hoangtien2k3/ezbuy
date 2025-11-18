@@ -153,25 +153,12 @@ public class DataWsUtil {
      *             if any.
      */
     public static void fixSecurityDocumentBuilder(DocumentBuilderFactory dbf) throws ParserConfigurationException {
-        String FEATURE = "http://apache.org/xml/features/disallow-doctype-decl";
+        String FEATURE = "https://apache.org/xml/features/disallow-doctype-decl";
         dbf.setFeature(FEATURE, true);
-        // If you can't completely disable DTDs, then at least do the following:
-        // Xerces 1 -
-        // http://xerces.apache.org/xerces-j/features.html#external-general-entities
-        // Xerces 2 -
-        // http://xerces.apache.org/xerces2-j/features.html#external-general-entities
-        FEATURE = "http://xml.org/sax/features/external-general-entities";
+        FEATURE = "https://xml.org/sax/features/external-general-entities";
         dbf.setFeature(FEATURE, false);
-        // Xerces 1 -
-        // http://xerces.apache.org/xerces-j/features.html#external-parameter-entities
-        // Xerces 2 -
-        // http://xerces.apache.org/xerces2-j/features.html#external-parameter-entities
-        FEATURE = "http://xml.org/sax/features/external-parameter-entities";
+        FEATURE = "https://xml.org/sax/features/external-parameter-entities";
         dbf.setFeature(FEATURE, false);
-        // and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and
-        // Entity Attacks"
-        // (see reference
-        // below)
         dbf.setXIncludeAware(false);
         dbf.setExpandEntityReferences(false);
     }
@@ -244,7 +231,6 @@ public class DataWsUtil {
             index = realData.indexOf(toKey) + toKey.length();
             realData = realData.substring(index);
         }
-
         return list;
     }
 }

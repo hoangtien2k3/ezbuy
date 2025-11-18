@@ -21,6 +21,7 @@ import com.ezbuy.core.model.GatewayContext;
 import com.ezbuy.core.util.DataUtil;
 import com.ezbuy.core.util.LogUtils;
 import io.netty.buffer.UnpooledByteBufAllocator;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
@@ -75,29 +76,27 @@ public class ResponseLogFilter implements WebFilter, Ordered {
     /**
      * Converts an InputStream to a byte array.
      *
-     * @param inStream
-     *            the InputStream to be converted
+     * @param inStream the InputStream to be converted
      * @return byte array containing the data from the InputStream
      */
     private static byte[] toByteArray(InputStream inStream) {
         ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
         byte[] buff = new byte[100];
         int rc;
-        byte[] in_b = new byte[] {};
+        byte[] in_b = new byte[]{};
         try {
             while ((rc = inStream.read(buff, 0, 100)) > 0) {
                 swapStream.write(buff, 0, rc);
             }
             in_b = swapStream.toByteArray();
         } catch (Exception ignore) {
-
         }
         return in_b;
     }
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * Filters the server exchange, logging the response body if it is of a legal
      * media type.
      */
@@ -106,7 +105,7 @@ public class ResponseLogFilter implements WebFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, @NotNull WebFilterChain chain) {
         GatewayContext gatewayContext = exchange.getAttribute(GatewayContext.CACHE_GATEWAY_CONTEXT);
         if (gatewayContext != null && !gatewayContext.getReadResponseData()) {
-            log.debug("[ResponseLogFilter]Properties Set Not To Read Response Data");
+            log.debug("[ResponseLogFilter] Properties Set Not To Read Response Data");
             return chain.filter(exchange);
         }
         ServerHttpResponseDecorator responseDecorator = new ServerHttpResponseDecorator(exchange.getResponse()) {
@@ -116,11 +115,15 @@ public class ResponseLogFilter implements WebFilter, Ordered {
                 final MediaType contentType = super.getHeaders().getContentType();
                 if (LogUtils.legalLogMediaTypes.contains(contentType)) {
                     if (body instanceof Mono) {
-                        final Mono<DataBuffer> monoBody = Mono.from(body);
-                        return super.writeWith(monoBody.publishOn(single()).map(buffer -> logRequestBody(buffer, exchange)));
+                        return super.writeWith(Mono.from(body)
+                                .publishOn(single())
+                                .map(buffer -> logRequestBody(buffer, exchange))
+                        );
                     } else if (body instanceof Flux) {
-                        final Flux<DataBuffer> monoBody = Flux.from(body);
-                        return super.writeWith(monoBody.publishOn(single()).map(buffer -> logRequestBody(buffer, exchange)));
+                        return super.writeWith(Flux.from(body)
+                                .publishOn(single())
+                                .map(buffer -> logRequestBody(buffer, exchange))
+                        );
                     }
                 }
                 return super.writeWith(body);
@@ -139,10 +142,8 @@ public class ResponseLogFilter implements WebFilter, Ordered {
      * Logs the response body by converting it to a byte array and setting it in the
      * GatewayContext.
      *
-     * @param buffer
-     *            the DataBuffer containing the response body
-     * @param exchange
-     *            the current server exchange
+     * @param buffer   the DataBuffer containing the response body
+     * @param exchange the current server exchange
      * @return a wrapped DataBuffer containing the logged response body
      */
     private DataBuffer logRequestBody(DataBuffer buffer, ServerWebExchange exchange) {
@@ -159,7 +160,7 @@ public class ResponseLogFilter implements WebFilter, Ordered {
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * Returns the order value of this filter.
      */
     @Override

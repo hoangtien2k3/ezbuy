@@ -18,6 +18,7 @@ package com.ezbuy.core.filter.webclient;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import lombok.AllArgsConstructor;
@@ -51,9 +52,7 @@ import reactor.core.publisher.Mono;
 public class WebClientMonitoringFilter implements ExchangeFilterFunction {
 
     private static final Logger log = LoggerFactory.getLogger(WebClientMonitoringFilter.class);
-
     private static final String METRICS_WEBCLIENT_START_TIME = WebClientMonitoringFilter.class.getName() + ".START_TIME";
-
     private final MeterRegistry meterRegistry;
 
     /**
@@ -72,24 +71,40 @@ public class WebClientMonitoringFilter implements ExchangeFilterFunction {
         return exchangeFunction
                 .exchange(clientRequest)
                 .doOnEach(signal -> {
-                    if (!signal.isOnComplete()) {
-                        Long startTime = signal.getContextView().get(METRICS_WEBCLIENT_START_TIME);
-                        ClientResponse clientResponse = signal.get();
-                        Throwable throwable = signal.getThrowable();
-                        if (throwable != null) {
-                            log.error("WebClient request to {} failed: {}", clientRequest.url(), throwable.getMessage());
+                    Long startTime = signal.getContextView().get(METRICS_WEBCLIENT_START_TIME);
+                    if (signal.isOnNext()) {
+                        ClientResponse clientResponse = Objects.requireNonNull(signal.get(), "ClientResponse is null");
+                        if (clientResponse.statusCode().isError()) {
+                            log.info(
+                                    "WebClient request to {} returned error status code: [status={}]",
+                                    clientRequest.url(),
+                                    clientResponse.statusCode()
+                            );
                         } else {
-                            assert clientResponse != null;
-                            log.info("WebClient request to {} completed with status code: [status={}]", clientRequest.url(), clientResponse.statusCode());
+                            log.info(
+                                    "WebClient request to {} completed with status code: [status={}]",
+                                    clientRequest.url(),
+                                    clientResponse.statusCode()
+                            );
                         }
-                        long duration = System.nanoTime() - startTime;
-                        Timer.builder("http.client.requests")
-                                .description("Timer for WebClient operations")
-                                .publishPercentiles(0.95, 0.99)
-                                .register(meterRegistry)
-                                .record(duration, TimeUnit.NANOSECONDS);
-                        log.info("Monitoring WebClient API {}: - [duration={}s]", clientRequest.url(), (double) duration / Math.pow(10, 9));
                     }
+                    if (signal.isOnError()) {
+                        Throwable t = signal.getThrowable();
+                        log.error(
+                                "WebClient request to {} failed: {}",
+                                clientRequest.url(),
+                                t != null ? t.getMessage() : "unknown error"
+                        );
+                    }
+                    long duration = System.nanoTime() - startTime;
+                    Timer.builder("http.client.requests")
+                            .description("Timer for WebClient operations")
+                            .tag("method", clientRequest.method().name())
+                            .tag("uri", clientRequest.url().getPath())
+                            .publishPercentiles(0.90, 0.95, 0.99)
+                            .register(meterRegistry)
+                            .record(duration, TimeUnit.NANOSECONDS);
+                    log.info("Monitoring WebClient API {}: duration={}ms", clientRequest.url(), duration / 1_000_000.0);
                 })
                 .contextWrite((contextView) -> contextView.put(METRICS_WEBCLIENT_START_TIME, System.nanoTime()));
     }

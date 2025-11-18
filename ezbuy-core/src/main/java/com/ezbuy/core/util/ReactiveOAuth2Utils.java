@@ -41,16 +41,16 @@ public class ReactiveOAuth2Utils {
             ReactiveClientRegistrationRepository clientRegistrationRepository,
             ReactiveOAuth2AuthorizedClientService authorizedClientService) {
         ReactiveOAuth2AuthorizedClientProvider authorizedClientProvider =
-                ReactiveOAuth2AuthorizedClientProviderBuilder.builder()
+                ReactiveOAuth2AuthorizedClientProviderBuilder
+                        .builder()
                         .clientCredentials()
                         .build();
-
         AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager authorizedClientManager =
                 new AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager(
-                        clientRegistrationRepository, authorizedClientService);
-
+                        clientRegistrationRepository,
+                        authorizedClientService
+                );
         authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
-
         return authorizedClientManager;
     }
 }
