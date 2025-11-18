@@ -63,12 +63,10 @@ public class ResponseUtils {
      */
     public static Mono<Object> getResponse(Optional<DataResponse> response, String extraInfo) {
         return getResponseWithoutData(response, extraInfo)
-                .switchIfEmpty(Mono.error(new BusinessException(
-                        CommonErrorCode.INTERNAL_SERVER_ERROR, extraInfo + " data is null " + response)))
+                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, extraInfo + " data is null " + response)))
                 .flatMap(data -> {
                     if (data == null) {
-                        return Mono.error(new BusinessException(
-                                CommonErrorCode.INTERNAL_SERVER_ERROR, extraInfo + " data is null " + response));
+                        return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, extraInfo + " data is null " + response));
                     }
                     return Mono.just(data);
                 });
@@ -87,8 +85,7 @@ public class ResponseUtils {
      */
     public static Mono<Object> getResponseWithoutData(Optional<DataResponse> response, String extraInfo) {
         if (response.isEmpty()) {
-            return Mono.error(
-                    new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, extraInfo + " response empty"));
+            return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, extraInfo + " response empty"));
         }
         var data = response.get();
         if (data.getErrorCode() != null) {
