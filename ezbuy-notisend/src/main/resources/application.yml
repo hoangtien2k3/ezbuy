@@ -1,0 +1,96 @@
+server:
+  port: 8888
+---
+spring:
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        heartbeat:
+          enabled: false
+        prefer-ip-address: true
+        instance-id: ${spring.application.name}-${random.uuid}
+        health-check-path: /actuator/health
+        health-check-interval: 60s
+        service-name: ${spring.application.name}
+        register-health-check: true
+---
+spring:
+  application:
+    name: noti-send
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+  messages:
+    basename: i18n/messages
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5434/notification
+    username: admin
+    password: admin
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: hoangtien2k3qx1@gmail.com
+    password: ypfg qjuq posp fcsh
+    protocol: smtp
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            token-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/token
+        registration:
+          oidc:
+            client-id: ${keycloak.clientId}
+            client-secret: ${keycloak.clientSecret}
+            authorization-grant-type: password #client_credentials
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/certs
+      keycloak:
+        client-id: ${keycloak.clientId}
+---
+keycloak:
+  clientId: ezbuy-client
+  clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
+  realm: ezbuy-server
+  serverUrl: http://localhost:8080
+  host: localhost
+---
+# web client config
+client:
+  auth:
+    internal-oauth: true
+    address: http://localhost/v1
+    name: auth
+    pool:
+      max-size: 100
+      max-pending-acquire: 100
+    timeout:
+      read: 60000
+      connection: 1000
+---
+application:
+  whiteList:
+    - uri: /actuator/health
+      methods:
+        - GET
+---
+config:
+  resendCount: 2
+  limit: 800
+---
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

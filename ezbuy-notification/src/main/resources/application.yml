@@ -1,0 +1,97 @@
+server:
+  port: 7777
+---
+spring:
+  cloud:
+    consul:
+      host: "${CONSUL_HOST:localhost}"
+      port: 8500
+      discovery:
+        heartbeat:
+          enabled: false
+        prefer-ip-address: true
+        instance-id: ${spring.application.name}-${random.uuid}
+        health-check-path: /actuator/health
+        health-check-interval: 60s
+        service-name: ${spring.application.name}
+        register-health-check: true
+---
+spring:
+  application:
+    name: noti-service
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+  messages:
+    basename: i18n/messages
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  r2dbc:
+    url: "${R2DBC_URL:r2dbc:postgresql://localhost:5434/notification}"
+    username: "${R2DBC_USERNAME:admin}"
+    password: "${R2DBC_PASSWORD:admin}"
+    pool:
+      max-size: 10
+      initial-size: 5
+      max-idle-time: 30m
+      max-create-connection-time: 30s
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: hoangtien2k3qx1@gmail.com
+    password: ypfg qjuq posp fcsh
+    protocol: smtp
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            token-uri: ${keycloak.server-url}/realms/${keycloak.realm}/protocol/openid-connect/token
+        registration:
+          oidc:
+            client-id: ${keycloak.client-id}
+            client-secret: ${keycloak.client-secret}
+            authorization-grant-type: ${keycloak.grant-type}
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${keycloak.server-url}/realms/${keycloak.realm}/protocol/openid-connect/certs
+      keycloak:
+        client-id: ${keycloak.client-id}
+---
+keycloak:
+  client-id: "${KEYCLOAK_CLIENT_ID:ezbuy-client}"
+  client-secret: "${KEYCLOAK_CLIENT_SECRET:5dnfDh6XitmAMc7vQUNxGkJw0HF4e9tI}"
+  realm: "${KEYCLOAK_REALM:ezbuy-server}"
+  server-url: "${KEYCLOAK_SERVER_URL:http://localhost:8080}"
+  grant-type: "${KEYCLOAK_GRANT_TYPE:password}" #client_credentials
+  host: "${KEYCLOAK_HOST:localhost}"
+---
+client:
+  auth:
+    internal-oauth: true
+    address: "${AUTH_SERVICE_URL:http://localhost:8089/v1}"
+    name: auth
+    pool:
+      max-size: 100
+      max-pending-acquire: 100
+    timeout:
+      read: 60000
+      connection: 1000
+---
+application:
+  whiteList:
+    - uri: /actuator/health
+      methods:
+        - GET
+---
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

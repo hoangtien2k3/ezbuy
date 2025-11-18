@@ -1,6 +1,5 @@
 dependencies {
     implementation libs.io.github.hoangtien2k3.reactify.core
-    implementation project(':ezbuy-noti-model')
 }
 
 description = 'ezbuy-rating-model'
