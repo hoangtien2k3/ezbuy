@@ -18,6 +18,7 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 public class PriceServiceImpl implements PriceService {
+
     private final ProductClient productClient;
 
     @Override
@@ -36,8 +37,7 @@ public class PriceServiceImpl implements PriceService {
                 return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.item.id.null"));
             }
             if (quantity == null || quantity < 1) {
-                return Mono.error(
-                        new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.item.quantity.invalid"));
+                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.item.quantity.invalid"));
             }
             if (price == null) {
                 missingPriceProductIdsMap.merge(templateId, quantity, Integer::sum);
@@ -55,7 +55,9 @@ public class PriceServiceImpl implements PriceService {
     }
 
     private Mono<ProductPrice> calculateWithMissingPriceProducts(
-            Map<String, Integer> missingPriceProductIdsMap, Long currentTotalPrice) {
+            Map<String, Integer> missingPriceProductIdsMap,
+            Long currentTotalPrice
+    ) {
         return productClient
                 .getExProductPrices(missingPriceProductIdsMap.keySet())
                 .flatMap(rs -> {

@@ -6,5 +6,6 @@ import java.util.Set;
 import reactor.core.publisher.Flux;
 
 public interface ProductClient {
+
     Flux<IdentityProductPrice> getExProductPrices(Set<String> templateIds);
 }

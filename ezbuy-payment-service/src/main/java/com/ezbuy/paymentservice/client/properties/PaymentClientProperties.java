@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 @Setter
 @Component("paymentClientProperties")
 @ConfigurationProperties(prefix = "client.payment", ignoreInvalidFields = true)
-@AllArgsConstructor
-@NoArgsConstructor
 public class PaymentClientProperties extends WebClientProperties {
     private String merchantCode;
     private String transType;

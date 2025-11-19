@@ -6,24 +6,24 @@ import com.ezbuy.paymentservice.client.ProductClient;
 import com.ezbuy.core.client.BaseRestClient;
 
 import java.util.*;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
-@Slf4j
 @Service
 @DependsOn("webClientFactory")
-@RequiredArgsConstructor
 public class ProductClientImpl implements ProductClient {
 
-    @Qualifier("productClient")
     private final WebClient webClient;
-
     private final BaseRestClient baseRestClient;
+
+    public ProductClientImpl(@Qualifier("productClient") WebClient webClient,
+                             BaseRestClient baseRestClient) {
+        this.webClient = webClient;
+        this.baseRestClient = baseRestClient;
+    }
 
     @Override
     public Flux<IdentityProductPrice> getExProductPrices(Set<String> templateIds) {
@@ -31,9 +31,6 @@ public class ProductClientImpl implements ProductClient {
                 .get()
                 .uri(ClientUris.Product.GET_PRODUCT_PRICES)
                 .retrieve()
-                .bodyToFlux(IdentityProductPrice.class)
-                .doOnError(err -> {
-                    log.error("getExProductPrices error ", err);
-                });
+                .bodyToFlux(IdentityProductPrice.class);
     }
 }

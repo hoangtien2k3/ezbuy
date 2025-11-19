@@ -15,9 +15,12 @@
  */
 package com.ezbuy.core.client;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.ResolvableType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -313,7 +316,14 @@ public interface BaseRestClient {
      * @return a {@link ParameterizedTypeReference} instance representing the runtime type of {@code <T>}
      */
     static <T> ParameterizedTypeReference<T> typeOf() {
-        return new ParameterizedTypeReference<>() {
-        };
+        return new ParameterizedTypeReference<>() {};
+    }
+
+    static <T> ParameterizedTypeReference<T> typeOf(Class<T> clazz) {
+        return new ParameterizedTypeReference<T>() {};
+    }
+
+    static <T> ParameterizedTypeReference<List<T>> listOf(Class<T> clazz) {
+        return new ParameterizedTypeReference<>() {};
     }
 }

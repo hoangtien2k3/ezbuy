@@ -1,11 +1,9 @@
 package com.ezbuy.paymentservice.controller;
 
-import com.ezbuy.paymentmodel.constants.UrlPaths;
 import com.ezbuy.paymentmodel.dto.request.ProductPriceRequest;
 import com.ezbuy.paymentservice.service.PriceService;
 import com.ezbuy.core.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-@Slf4j
-@RestController
-@RequestMapping(UrlPaths.Price.PREFIX)
 @RequiredArgsConstructor
+@RestController
+@RequestMapping("/v1/price")
 public class PriceController {
+    
     private final PriceService priceService;
 
     @PostMapping("/calculate")

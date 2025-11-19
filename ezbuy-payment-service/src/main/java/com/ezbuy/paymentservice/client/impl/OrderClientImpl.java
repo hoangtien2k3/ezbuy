@@ -1,13 +1,9 @@
 package com.ezbuy.paymentservice.client.impl;
 
 import com.ezbuy.ordermodel.dto.request.UpdateOrderStateForOrderRequest;
-import com.ezbuy.paymentmodel.constants.ClientUris;
 import com.ezbuy.paymentservice.client.OrderClient;
-import com.ezbuy.paymentservice.client.properties.OrderClientProperties;
 import com.ezbuy.core.client.BaseRestClient;
-import com.ezbuy.core.constants.MessageConstant;
 import com.ezbuy.core.model.response.DataResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
@@ -18,34 +14,27 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Service
 @DependsOn("webClientFactory")
-@RequiredArgsConstructor
 public class OrderClientImpl implements OrderClient {
 
-    @Qualifier("orderClient")
     private final WebClient orderClient;
-
     private final BaseRestClient baseRestClient;
-    private final OrderClientProperties orderProperties;
+
+    public OrderClientImpl(@Qualifier("orderClient") WebClient orderClient,
+                           BaseRestClient baseRestClient) {
+        this.orderClient = orderClient;
+        this.baseRestClient = baseRestClient;
+    }
 
     @Override
     public Mono<DataResponse> updateStatusOrder(String orderCode, Integer orderState) {
-        UpdateOrderStateForOrderRequest updateOrderStateForOrderRequest = new UpdateOrderStateForOrderRequest();
-        updateOrderStateForOrderRequest.setOrderCode(orderCode);
-        updateOrderStateForOrderRequest.setPaymentStatus(orderState);
+        UpdateOrderStateForOrderRequest orderStatus = new UpdateOrderStateForOrderRequest();
+        orderStatus.setOrderCode(orderCode);
+        orderStatus.setPaymentStatus(orderState);
         return baseRestClient
-                .post(
-                        orderClient,
-                        ClientUris.Order.UPDATE_PAYMENT_RESULT,
-                        null,
-                        updateOrderStateForOrderRequest,
-                        DataResponse.class)
+                .post(orderClient, "/v1/order/payment-result", null, orderStatus, DataResponse.class)
                 .map(response -> {
-                    log.info("CM response ", response);
-                    return new DataResponse<>(MessageConstant.SUCCESS, null);
-                })
-                .onErrorResume(throwable -> {
-                    log.error("call api updateOrderState error: {}", throwable);
-                    return Mono.just(new DataResponse<>(MessageConstant.SUCCESS, null));
+                    log.info("Update order status response: {}", response);
+                    return new DataResponse<>("success", response);
                 });
     }
 }
