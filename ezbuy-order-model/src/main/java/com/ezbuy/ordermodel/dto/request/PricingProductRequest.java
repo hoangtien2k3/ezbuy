@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@XmlAccessorType(XmlAccessType.FIELD)
+
 @XmlRootElement
 public class PricingProductRequest {
     private String organizationId;

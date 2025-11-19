@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@XmlAccessorType(XmlAccessType.FIELD)
+
 @XmlRootElement(name = "return")
 public class GetListProductOfferingRecordResponse {
     @XmlElement(name = "responseCode")

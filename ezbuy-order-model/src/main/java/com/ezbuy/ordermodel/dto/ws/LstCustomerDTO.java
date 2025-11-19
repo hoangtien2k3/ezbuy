@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@XmlAccessorType(XmlAccessType.FIELD)
+
 @XmlRootElement(name = "lstCustomerDTO")
 public class LstCustomerDTO {
 

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@XmlAccessorType(XmlAccessType.FIELD)
+
 public class ApiUtils {
     private SortOrder sortOrder;
     private String sortField;

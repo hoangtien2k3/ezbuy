@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@XmlAccessorType(XmlAccessType.FIELD)
+
 public class PriceExtDTO {
 
     @JsonIgnore

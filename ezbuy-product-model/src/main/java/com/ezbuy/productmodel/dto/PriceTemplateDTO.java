@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@XmlAccessorType(XmlAccessType.FIELD)
+
 public class PriceTemplateDTO extends BaseProductSpecDTO {
     @JsonIgnore
     private boolean booleanLimited;

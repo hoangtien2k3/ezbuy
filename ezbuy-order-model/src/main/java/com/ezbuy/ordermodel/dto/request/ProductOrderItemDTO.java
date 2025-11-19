@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@XmlAccessorType(XmlAccessType.FIELD)
+
 public class ProductOrderItemDTO {
 
     private ProductDTO product;

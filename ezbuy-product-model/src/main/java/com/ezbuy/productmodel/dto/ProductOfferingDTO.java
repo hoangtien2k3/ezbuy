@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@XmlAccessorType(XmlAccessType.FIELD)
+
 @JsonIgnoreProperties
 public class ProductOfferingDTO {
     String code;

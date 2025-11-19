@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@XmlAccessorType(XmlAccessType.FIELD)
+
 public class GroupsDTO extends BaseDTO {
     protected String address;
     protected String areaCode;

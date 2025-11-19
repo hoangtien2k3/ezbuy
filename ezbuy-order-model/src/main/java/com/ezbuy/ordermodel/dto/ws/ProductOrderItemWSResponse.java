@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@XmlAccessorType(XmlAccessType.FIELD)
+
 public class ProductOrderItemWSResponse {
     private List<ProductWSResponse> product;
     private ProductOfferingRefRequest productOffering;

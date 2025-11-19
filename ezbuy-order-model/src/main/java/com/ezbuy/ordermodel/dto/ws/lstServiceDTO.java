@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@XmlAccessorType(XmlAccessType.FIELD)
+
 @XmlRootElement(name = "lstService")
 public class lstServiceDTO {
     private String serviceType; // DS ma dich vu (service_alias ben bccs_product.telecom_service, vi dụ: M, F)

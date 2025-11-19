@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@XmlAccessorType(XmlAccessType.FIELD)
+
 public class SubAttDetailDTO extends BaseDTO {
     protected String attDetailCode;
     protected String attDetailName;
