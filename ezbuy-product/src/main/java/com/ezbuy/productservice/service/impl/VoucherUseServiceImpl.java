@@ -189,7 +189,7 @@ public class VoucherUseServiceImpl implements VoucherUseService {
                                                         "voucher.error.voucher.not.exist"));
                                             }
                                             return Mono.just(
-                                                    new DataResponse<>(null, Translator.toLocaleVi("success"), true));
+                                                    new DataResponse<>(null, "success", true));
                                         })
                                         .onErrorResume(throwable -> Mono.error(new BusinessException(
                                                 CommonErrorCode.INTERNAL_SERVER_ERROR,

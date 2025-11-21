@@ -1,6 +1,6 @@
 package com.ezbuy.paymentservice.controller;
 
-import com.ezbuy.paymentmodel.dto.request.ProductPriceRequest;
+import com.ezbuy.paymentservice.model.dto.request.ProductPriceRequest;
 import com.ezbuy.paymentservice.service.PriceService;
 import com.ezbuy.core.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;

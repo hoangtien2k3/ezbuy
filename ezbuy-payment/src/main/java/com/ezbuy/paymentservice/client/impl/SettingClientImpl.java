@@ -1,13 +1,13 @@
 package com.ezbuy.paymentservice.client.impl;
 
 import com.ezbuy.paymentservice.client.SettingClient;
-import com.ezbuy.settingmodel.model.OptionSetValue;
 import com.ezbuy.core.client.BaseRestClient;
 import com.ezbuy.core.util.DataUtil;
 
 import java.util.Collections;
 import java.util.List;
 
+import com.ezbuy.paymentservice.model.dto.OptionSetValue;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;

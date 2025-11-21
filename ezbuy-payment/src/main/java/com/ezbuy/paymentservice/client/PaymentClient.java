@@ -1,8 +1,9 @@
 package com.ezbuy.paymentservice.client;
 
-import com.ezbuy.paymentmodel.dto.request.UpdateOrderStatePayRequest;
-import com.ezbuy.paymentmodel.dto.response.MyPaymentDTO;
 import java.util.Optional;
+
+import com.ezbuy.paymentservice.model.dto.request.UpdateOrderStatePayRequest;
+import com.ezbuy.paymentservice.model.dto.response.MyPaymentDTO;
 import reactor.core.publisher.Mono;
 
 public interface PaymentClient {

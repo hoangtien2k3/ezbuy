@@ -1,9 +1,9 @@
 package com.ezbuy.paymentservice.controller;
 
-import com.ezbuy.ordermodel.dto.request.SyncOrderStateRequest;
-import com.ezbuy.paymentmodel.dto.request.PaymentResultRequest;
-import com.ezbuy.paymentmodel.dto.request.ProductPaymentRequest;
-import com.ezbuy.paymentmodel.dto.request.UpdateOrderStateRequest;
+import com.ezbuy.paymentservice.model.dto.request.PaymentResultRequest;
+import com.ezbuy.paymentservice.model.dto.request.ProductPaymentRequest;
+import com.ezbuy.paymentservice.model.dto.request.SyncOrderStateRequest;
+import com.ezbuy.paymentservice.model.dto.request.UpdateOrderStateRequest;
 import com.ezbuy.paymentservice.service.PaymentService;
 import com.ezbuy.core.model.response.DataResponse;
 import java.security.SignatureException;
@@ -29,11 +29,7 @@ public class PaymentController {
     }
 
     @PostMapping("/payment-result")
-    @RequestMapping(
-            path = "/payment-result",
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE
-    )
+    @RequestMapping(path = "/payment-result", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public Mono<ResponseEntity<DataResponse>> getResultFromMyPayment(PaymentResultRequest request) {
         return paymentService.getResultFromVnPay(request).map(ResponseEntity::ok);
     }

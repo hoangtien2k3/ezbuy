@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 public class WebClientFactoryConfig {
-    private final AuthClientProperties authClientProperties;
     private final OrderClientProperties orderClientProperties;
     private final PaymentClientProperties paymentClientProperties;
     private final ProductClientProperties productClientProperties;
@@ -19,7 +18,6 @@ public class WebClientFactoryConfig {
     @Bean(name = "webClientFactory")
     public WebClientFactory webClientFactory() {
         return new WebClientFactory(List.of(
-                authClientProperties,
                 orderClientProperties,
                 paymentClientProperties,
                 productClientProperties,

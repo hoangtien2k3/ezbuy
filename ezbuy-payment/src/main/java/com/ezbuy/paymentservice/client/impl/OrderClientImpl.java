@@ -1,17 +1,15 @@
 package com.ezbuy.paymentservice.client.impl;
 
-import com.ezbuy.ordermodel.dto.request.UpdateOrderStateForOrderRequest;
 import com.ezbuy.paymentservice.client.OrderClient;
 import com.ezbuy.core.client.BaseRestClient;
 import com.ezbuy.core.model.response.DataResponse;
-import lombok.extern.slf4j.Slf4j;
+import com.ezbuy.paymentservice.model.dto.request.UpdateOrderStateForOrderRequest;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-@Slf4j
 @Service
 @DependsOn("webClientFactory")
 public class OrderClientImpl implements OrderClient {
@@ -32,9 +30,6 @@ public class OrderClientImpl implements OrderClient {
         orderStatus.setPaymentStatus(orderState);
         return baseRestClient
                 .post(orderClient, "/v1/order/payment-result", null, orderStatus, DataResponse.class)
-                .map(response -> {
-                    log.info("Update order status response: {}", response);
-                    return new DataResponse<>("success", response);
-                });
+                .map(response -> new DataResponse<>("success", response));
     }
 }

@@ -1,8 +1,8 @@
 package com.ezbuy.paymentservice.service.impl;
 
-import com.ezbuy.ordermodel.dto.OrderFieldConfigDTO;
-import com.ezbuy.ordermodel.dto.request.GetOrderFieldConfigRequest;
-import com.ezbuy.ordermodel.model.OrderFieldConfig;
+import com.ezbuy.paymentservice.model.dto.GetOrderFieldConfigRequest;
+import com.ezbuy.paymentservice.model.dto.OrderFieldConfig;
+import com.ezbuy.paymentservice.model.dto.OrderFieldConfigDTO;
 import com.ezbuy.paymentservice.repository.OrderFieldConfigRepository;
 import com.ezbuy.paymentservice.service.OrderFieldConfigService;
 import com.ezbuy.core.constants.CommonErrorCode;
@@ -10,10 +10,10 @@ import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.factory.ObjectMapperFactory;
 import com.ezbuy.core.model.response.DataResponse;
 import com.ezbuy.core.util.DataUtil;
-import com.ezbuy.core.util.Translator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -41,7 +41,8 @@ public class OrderFieldConfigServiceImpl implements OrderFieldConfigService {
                     }
                     Map<String, String> rsConfigMap = new HashMap<>();
                     for (OrderFieldConfig config : configs) {
-                        Map<String, String> configMap = ObjectMapperFactory.getInstance().convertValue(config, Map.class);
+                        @SuppressWarnings("unchecked")
+                        Map<String, String> configMap = (Map<String, String>) ObjectMapperFactory.getInstance().convertValue(config, Map.class);
                         for (Map.Entry<String, String> entry : configMap.entrySet()) {
                             String key = entry.getKey();
                             Set<String> uncheckPropertySet = Set.of("id", "status", "createTime", "createBy", "updateTime", "updateBy");
@@ -60,9 +61,8 @@ public class OrderFieldConfigServiceImpl implements OrderFieldConfigService {
                             }
                         }
                     }
-                    OrderFieldConfigDTO rsConfig = ObjectMapperFactory.getInstance()
-                            .convertValue(rsConfigMap, OrderFieldConfigDTO.class);
-                    return Mono.just(new DataResponse<>("", Translator.toLocale("success"), rsConfig));
+                    OrderFieldConfigDTO rsConfig = ObjectMapperFactory.getInstance().convertValue(rsConfigMap, OrderFieldConfigDTO.class);
+                    return Mono.just(new DataResponse<>("","success", rsConfig));
                 });
     }
 }

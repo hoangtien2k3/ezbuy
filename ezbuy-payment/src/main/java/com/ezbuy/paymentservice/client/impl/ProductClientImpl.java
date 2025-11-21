@@ -1,11 +1,12 @@
 package com.ezbuy.paymentservice.client.impl;
 
-import com.ezbuy.paymentmodel.constants.ClientUris;
-import com.ezbuy.paymentmodel.dto.response.IdentityProductPrice;
 import com.ezbuy.paymentservice.client.ProductClient;
 import com.ezbuy.core.client.BaseRestClient;
 
 import java.util.*;
+
+import com.ezbuy.paymentservice.constants.ClientUris;
+import com.ezbuy.paymentservice.model.dto.response.IdentityProductPrice;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;

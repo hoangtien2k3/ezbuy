@@ -61,7 +61,7 @@ public class SettingClientImpl implements SettingClient {
                 .map(rs -> {
                     DataResponse<?> response = (DataResponse<?>) rs.orElse(null);
                     String data = (response != null) ? (String) response.getData() : null;
-                    return new DataResponse<>(Translator.toLocaleVi("success"), data);
+                    return new DataResponse<>("success", data);
                 });
     }
 }

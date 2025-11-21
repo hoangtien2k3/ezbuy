@@ -3,12 +3,10 @@ package com.ezbuy.paymentservice.repoTemplate.impl;
 import static org.springframework.data.relational.core.query.Criteria.where;
 import static org.springframework.data.relational.core.query.Query.query;
 
-import com.ezbuy.ordermodel.constants.Constants;
-import com.ezbuy.paymentmodel.constants.OrderState;
-import com.ezbuy.paymentmodel.dto.RequestBankingSyncDTO;
-import com.ezbuy.paymentmodel.dto.UpdateOrderStateDTO;
-import com.ezbuy.paymentmodel.dto.request.UpdateOrderStateRequest;
-import com.ezbuy.paymentmodel.model.RequestBanking;
+import com.ezbuy.paymentservice.model.dto.RequestBankingSyncDTO;
+import com.ezbuy.paymentservice.model.dto.UpdateOrderStateDTO;
+import com.ezbuy.paymentservice.model.dto.request.UpdateOrderStateRequest;
+import com.ezbuy.paymentservice.model.entity.RequestBanking;
 import com.ezbuy.paymentservice.repoTemplate.RequestBankingRepositoryTemplate;
 import io.r2dbc.spi.Statement;
 import java.util.List;
@@ -24,6 +22,9 @@ import reactor.core.publisher.Flux;
 public class RequestBankingRepositoryTemplateImpl implements RequestBankingRepositoryTemplate {
 
     private final R2dbcEntityTemplate template;
+
+    private final String SYSTEM = "system";
+    private final Integer COMPLETED = 1;
 
     @Override
     public Flux<RequestBanking> getRequestBankingByListOrderCode(UpdateOrderStateRequest request) {
@@ -62,9 +63,9 @@ public class RequestBankingRepositoryTemplateImpl implements RequestBankingRepos
         return template.getDatabaseClient().inConnectionMany(connection -> {
             Statement statement = connection.createStatement(updateQuery);
             for (String key : request.keySet()) {
-                statement.bind(0, OrderState.COMPLETED.getValue())
+                statement.bind(0, COMPLETED)
                         .bind(1, request.get(key))
-                        .bind(2, Constants.Actor.SYSTEM)
+                        .bind(2, SYSTEM)
                         .bind(3, key)
                         .add();
             }
@@ -86,7 +87,7 @@ public class RequestBankingRepositoryTemplateImpl implements RequestBankingRepos
             Statement statement = connection.createStatement(updateQuery);
             requestBankingSyncDTOList.forEach(requestBankingSyncDTO -> {
                 statement.bind(0, requestBankingSyncDTO.getVtTransactionId())
-                        .bind(1, Constants.Actor.SYSTEM)
+                        .bind(1, SYSTEM)
                         .bind(2, requestBankingSyncDTO.getPaymentStatus())
                         .bind(3, requestBankingSyncDTO.getUpdateState())
                         .bind(4, requestBankingSyncDTO.getId())

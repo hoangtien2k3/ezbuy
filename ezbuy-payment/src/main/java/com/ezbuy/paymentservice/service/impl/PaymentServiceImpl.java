@@ -1,25 +1,28 @@
 package com.ezbuy.paymentservice.service.impl;
 
-import com.ezbuy.ordermodel.constants.Constants;
-import com.ezbuy.ordermodel.dto.request.SyncOrderStateRequest;
-import com.ezbuy.paymentmodel.constants.OrderState;
-import com.ezbuy.paymentmodel.constants.PaymentConstants;
-import com.ezbuy.paymentmodel.constants.PaymentState;
-import com.ezbuy.paymentmodel.dto.ConfigPaymentDTO;
-import com.ezbuy.paymentmodel.dto.RequestBankingSyncDTO;
-import com.ezbuy.paymentmodel.dto.UpdateOrderStateDTO;
-import com.ezbuy.paymentmodel.dto.request.*;
-import com.ezbuy.paymentmodel.dto.response.ProductPaymentResponse;
-import com.ezbuy.paymentmodel.dto.response.SearchPaymentState;
-import com.ezbuy.paymentmodel.model.RequestBanking;
+import com.ezbuy.paymentservice.constants.OrderState;
+import com.ezbuy.paymentservice.constants.PaymentConstants;
+import com.ezbuy.paymentservice.constants.PaymentState;
+import com.ezbuy.paymentservice.model.dto.ConfigPaymentDTO;
+import com.ezbuy.paymentservice.model.dto.OptionSetValue;
+import com.ezbuy.paymentservice.model.dto.RequestBankingSyncDTO;
+import com.ezbuy.paymentservice.model.dto.UpdateOrderStateDTO;
+import com.ezbuy.paymentservice.model.dto.request.PaymentOrderDetailDTO;
+import com.ezbuy.paymentservice.model.dto.request.PaymentResultRequest;
+import com.ezbuy.paymentservice.model.dto.request.SyncOrderStateRequest;
+import com.ezbuy.paymentservice.model.dto.request.UpdateOrderStatePayRequest;
+import com.ezbuy.paymentservice.model.dto.request.UpdateOrderStateRequest;
+import com.ezbuy.paymentservice.model.dto.response.ProductPaymentResponse;
+import com.ezbuy.paymentservice.model.dto.response.SearchPaymentState;
+import com.ezbuy.paymentservice.model.entity.RequestBanking;
 import com.ezbuy.paymentservice.client.*;
 import com.ezbuy.paymentservice.client.OrderClient;
 import com.ezbuy.paymentservice.client.PaymentClient;
 import com.ezbuy.paymentservice.client.properties.PaymentClientProperties;
+import com.ezbuy.paymentservice.model.dto.request.ProductPaymentRequest;
 import com.ezbuy.paymentservice.repoTemplate.RequestBankingRepositoryTemplate;
 import com.ezbuy.paymentservice.repository.RequestBankingRepository;
 import com.ezbuy.paymentservice.service.PaymentService;
-import com.ezbuy.settingmodel.model.OptionSetValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ezbuy.core.constants.CommonErrorCode;
 import com.ezbuy.core.exception.BusinessException;
@@ -36,20 +39,23 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
+    private final Logger log = LoggerFactory.getLogger(PaymentServiceImpl.class);
+
     private static final String ERROR_CODE = "00";
     private static final Integer PAYMENT_STATUS = 1;
+    private static final Integer STATE_FAIL = 0;
 
     private final PaymentClientProperties paymentProperties;
     private final RequestBankingRepository requestBankingRepository;
@@ -89,9 +95,6 @@ public class PaymentServiceImpl implements PaymentService {
                     }
                 }
             }
-
-            String cancelUrl = request.getCancelUrl();
-            String returnUrl = request.getReturnUrl();
 
             var getListPaymentOptionSet = settingClient.findByOptionSetCode(PaymentConstants.OptionSet.MERCHANT_CODE_PAYGATE);
             String finalMerchantCode = merchantCode;
@@ -144,14 +147,14 @@ public class PaymentServiceImpl implements PaymentService {
                                 checksum,
                                 id.toString(),
                                 String.valueOf(totalFee).replace(",", ""),
-                                cancelUrl,
-                                returnUrl,
+                                request.getCancelUrl(),
+                                request.getReturnUrl(),
                                 isCombo,
                                 lstPaymentDetail);
                         ProductPaymentResponse productPaymentResponse = new ProductPaymentResponse();
                         productPaymentResponse.setCheckoutLink(checkoutLink);
                         productPaymentResponse.setRequestBankingId(id.toString());
-                        return Mono.just(new DataResponse<>(Translator.toLocaleVi("success"), productPaymentResponse));
+                        return Mono.just(new DataResponse<>("success", productPaymentResponse));
                     });
         });
     }
@@ -201,34 +204,29 @@ public class PaymentServiceImpl implements PaymentService {
                             return Mono.error(
                                     new BusinessException(CommonErrorCode.INVALID_PARAMS, "trans_amount.invalid"));
                         }
-                        // update: neu payment_status = 1 => xu ly don hang, neu != 1 => cap nhat
-                        // request_banking state = -1
                         if (!PaymentConstants.PaymentStatus.STATUS_ACTIVE.equals(request.getPayment_status())) {
                             log.info("payment_status != 1");
                             return AppUtils.insertData(requestBankingRepository.updateRequestBankingById(
-                                            request.getOrder_code(), request.getVt_transaction_id(), Constants.RequestBanking.STATE_FAIL))
+                                            request.getOrder_code(), request.getVt_transaction_id(), STATE_FAIL))
                                     .flatMap(rs -> {
                                         if (Boolean.FALSE.equals(rs)) {
                                             return Mono.error(new BusinessException(
                                                     CommonErrorCode.INTERNAL_SERVER_ERROR, "request_banking.update.failed"));
                                         }
-                                        return Mono.just(new DataResponse<>(
-                                                Translator.toLocaleVi("success"), request.getVt_transaction_id()));
+                                        return Mono.just(new DataResponse<>("success", request.getVt_transaction_id()));
                                     });
                         }
                         return AppUtils.insertData(requestBankingRepository.updateRequestBankingById(
-                                        request.getOrder_code(), request.getVt_transaction_id(), Constants.RequestBanking.STATE_DONE))
+                                        request.getOrder_code(),
+                                        request.getVt_transaction_id(),
+                                        PaymentState.DONE.getValue()))
                                 .flatMap(rs -> {
                                     if (Boolean.FALSE.equals(rs)) {
-                                        return Mono.error(new BusinessException(
-                                                CommonErrorCode.INTERNAL_SERVER_ERROR, "request_banking.update.failed"));
+                                        return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "request_banking.update.failed"));
                                     }
                                     log.info("Before call order-service for updateStateOrder");
-                                    // update: updateStatusOrder truyen orderState = request.payment_status
-                                    AppUtils.runHiddenStream(orderClient.updateStatusOrder(
-                                            requestBanking.getOrderId(), request.getPayment_status()));
-                                    return Mono.just(new DataResponse<>(
-                                            Translator.toLocaleVi("success"), request.getVt_transaction_id()));
+                                    AppUtils.runHiddenStream(orderClient.updateStatusOrder(requestBanking.getOrderId(), request.getPayment_status()));
+                                    return Mono.just(new DataResponse<>("success", request.getVt_transaction_id()));
                                 });
                     });
         });
@@ -265,7 +263,7 @@ public class PaymentServiceImpl implements PaymentService {
                                                 return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "order.state.internal"));
                                             }
                                             return Mono.just(new DataResponse<>(
-                                                    Translator.toLocaleVi("success"),
+                                                    "success",
                                                     request.getUpdateOrderStateDTOList().size())
                                             );
                                         });
@@ -303,7 +301,7 @@ public class PaymentServiceImpl implements PaymentService {
                     })
                     .collectList();
             return Mono.zip(updateRequestBanking, updateOrderState)
-                    .flatMap(update -> Mono.just(new DataResponse<>(Translator.toLocaleVi("success"), update.getT1().toString())));
+                    .flatMap(update -> Mono.just(new DataResponse<>("success", update.getT1().toString())));
         });
     }
 

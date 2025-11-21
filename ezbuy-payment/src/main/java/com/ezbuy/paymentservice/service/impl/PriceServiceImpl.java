@@ -1,9 +1,9 @@
 package com.ezbuy.paymentservice.service.impl;
 
-import com.ezbuy.paymentmodel.dto.request.ProductItem;
-import com.ezbuy.paymentmodel.dto.request.ProductPriceRequest;
-import com.ezbuy.paymentmodel.dto.response.ProductPrice;
 import com.ezbuy.paymentservice.client.ProductClient;
+import com.ezbuy.paymentservice.model.dto.request.ProductItem;
+import com.ezbuy.paymentservice.model.dto.request.ProductPriceRequest;
+import com.ezbuy.paymentservice.model.dto.response.ProductPrice;
 import com.ezbuy.paymentservice.service.PriceService;
 import com.ezbuy.core.constants.CommonErrorCode;
 import com.ezbuy.core.exception.BusinessException;
@@ -56,16 +56,14 @@ public class PriceServiceImpl implements PriceService {
 
     private Mono<ProductPrice> calculateWithMissingPriceProducts(
             Map<String, Integer> missingPriceProductIdsMap,
-            Long currentTotalPrice
-    ) {
+            Long currentTotalPrice) {
         return productClient
                 .getExProductPrices(missingPriceProductIdsMap.keySet())
                 .flatMap(rs -> {
                     Long productPrice = rs.getPrice();
                     Integer quantity = missingPriceProductIdsMap.get(rs.getTemplateId());
                     if (productPrice == null) {
-                        return Mono.error(new BusinessException(
-                                CommonErrorCode.INTERNAL_SERVER_ERROR, "call.product.service.error"));
+                        return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "call.product.service.error"));
                     }
                     return Mono.just(productPrice * quantity);
                 })

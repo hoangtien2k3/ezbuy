@@ -1,7 +1,8 @@
 package com.ezbuy.paymentservice.repository;
 
-import com.ezbuy.ordermodel.model.OrderFieldConfig;
 import java.util.List;
+
+import com.ezbuy.paymentservice.model.dto.OrderFieldConfig;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Flux;

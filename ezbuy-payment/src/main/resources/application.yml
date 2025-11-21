@@ -4,7 +4,7 @@ server:
 spring:
   cloud:
     consul:
-      host: localhost
+      host: "${CONSUL_HOST:localhost}"
       port: 8500
       discovery:
         heartbeat:
@@ -24,50 +24,38 @@ spring:
     allow-bean-definition-overriding: true
   messages:
     basename: i18n/messages
+  jackson:
+    property-naming-strategy: SNAKE_CASE
   http:
     codecs:
       max-in-memory-size: 100MB
   r2dbc:
-    url: r2dbc:postgresql://localhost:5434/payment
-    username: admin
-    password: admin
+    url: "${R2DBC_URL:r2dbc:postgresql://localhost:5434/payment}"
+    username: "${R2DBC_USERNAME:admin}"
+    password: "${R2DBC_PASSWORD:admin}"
     pool:
       max-size: 10
       initial-size: 5
+      max-idle-time: 30m
+      max-create-connection-time: 30s
   security:
     oauth2:
       client:
         provider:
           oidc:
-            token-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/token
+            token-uri: ${keycloak.server-url}/realms/${keycloak.realm}/protocol/openid-connect/token
         registration:
           oidc:
-            client-id: ${keycloak.clientId}
-            client-secret: ${keycloak.clientSecret}
-            authorization-grant-type: ${keycloak.grantType} #password || #client_credentials
+            client-id: ${keycloak.client-id}
+            client-secret: ${keycloak.client-secret}
+            authorization-grant-type: ${keycloak.grant-type}
       resourceserver:
         jwt:
-          jwk-set-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/certs
+          jwk-set-uri: ${keycloak.server-url}/realms/${keycloak.realm}/protocol/openid-connect/certs
       keycloak:
-        client-id: ${keycloak.clientId}
+        client-id: ${keycloak.client-id}
 ---
 client:
-  keycloak:
-    address: http://localhost:8080/realms/ezbuy-server/protocol/openid-connect
-    name: keycloak
-    auth:
-      client-id: ezbuy-client
-      client-secret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
-  notification:
-    internal-oauth: true
-    address: http://localhost:7777/v1/transmission
-    name: notiServiceClient
-    pool:
-      max-size: 100
-      max-pending-acquire: 100
-    timeout:
-      read: 60000
-      write: 1000
   product:
     address: http://localhost:8083
     name: productClient
@@ -75,13 +63,9 @@ client:
     internal-oauth: true
     address: http://localhost:8081
     name: orderClient
-  auth:
-    internal-oauth: true
-    address: http://localhost:8089
-    name: authClient
   payment:
     address: http://localhost:8088
-    merchantCode: PORTAL_SME_CA
+    merchantCode: EZBUY_ECOMMERCE
     accessCode: 54c08f1d6d0a9a797247ffe5df853421a817acd363e6d2ee1fd1ebeb341f09c39
     hashCode: e0476743357d9e62ce711dbebb52f22343c48085af2e5083805a74ad05a529c4c
     templateCheckoutLink: http://localhost:8080/checkout?merchant_code={0}&check_sum={1}&order_code={2}&trans_amount={3}&cancel_url={4}&return_url={5}&is_combo={6}
@@ -92,17 +76,12 @@ client:
     address: http://localhost:8957/
     name: settingClient
 ---
-# unauthenticated endpoints config
 application:
   http-logging:
     request:
       enable: true
-      header: true
-      param: true
-      body: true
     response:
       enable: true
-      body: true
   whiteList:
     - uri: /v1/auth/swagger-ui.html
       methods:
@@ -116,118 +95,25 @@ application:
     - uri: /v1/auth/swagger-resources
       methods:
         - GET
-    - uri: /v1/auth/webjars
-      methods:
-        - GET
-    - uri: /actuator/health
-      methods:
-        - GET
-    - uri: /v1/auth/generate-otp
-      methods:
-        - POST
-    - uri: /v1/auth/confirm-otp
-      methods:
-        - POST
-    - uri: /v1/auth/login
-      methods:
-        - POST
-    - uri: /v1/auth/refresh
-      methods:
-        - POST
-    - uri: /v1/auth/signup
-      methods:
-        - POST
-    - uri: /v1/auth/forgot-password
-      methods:
-        - POST
-    - uri: /v1/auth/reset-password
-      methods:
-        - POST
-    - uri: /**
-      methods:
-        - OPTIONS
-    - uri: /v1/auth/get-all
-      methods:
-        - GET
-    - uri: /v1/auth/confirm-create
-      methods:
-        - POST
-    - uri: /v1/user/contacts
-      methods:
-        - GET
-    - uri: /v1/auth/provider-code
-      methods:
-        - POST
-    - uri: /v1/auth/client-code
-      methods:
-        - POST
-    - uri: /v1/auth/logout
-      methods:
-        - POST
-    - uri: /v1/identify/trusted-idNo-organization
-    - uri: /v1/sync-data/organization
-      methods:
-        - POST
-    - uri: /v1/sync-data/individual
-      methods:
-        - POST
-    - uri: /v1/sync-data/organization_unit
-      methods:
-        - POST
-    - uri: /actuator/health
-      methods:
-        - POST
-    - uri: /v1/organization/unit/root-unit
-      methods:
-        - GET
-    - uri: /v1/organization/unit/code/**
-      methods:
-        - GET
-    - uri: /v1/individual-unit-position/**
-      methods:
-        - GET
-    - uri: /v1/organization/unit/sub/**
-      methods:
-        - GET
-    - uri: /v1/organization/organization-unit/get-business-type
-      methods:
-        - GET
-    - uri: /v1/individual/current
-      methods:
-        - GET
-    - uri: /v1/permission-policy
-      methods:
-        - GET
-    - uri: /v1/auth/receive-sign-result
-      methods:
-        - POST
   data:
-    sync-data:
+    sync-payment:
       limit: 500
 ---
-#keycloak client config
 keycloak:
-  clientId: ezbuy-client
-  clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
-  realm: ezbuy-server
-  serverUrl: http://localhost:8080
-  grantType: password
-  host: localhost
+  client-id: "${KEYCLOAK_CLIENT_ID:ezbuy-client}"
+  client-secret: "${KEYCLOAK_CLIENT_SECRET:5dnfDh6XitmAMc7vQUNxGkJw0HF4e9tI}"
+  realm: "${KEYCLOAK_REALM:ezbuy-server}"
+  server-url: "${KEYCLOAK_SERVER_URL:http://localhost:8080}"
+  grant-type: "${KEYCLOAK_GRANT_TYPE:password}" #client_credentials
+  host: "${KEYCLOAK_HOST:localhost}"
 ---
-# minio server config
 minio:
-  bucket: ezbuy-bucket
   enabled: true
-  baseUrl: http://localhost:9000
-  publicUrl: http://localhost:9000/ezbuy-bucket
-  accessKey: 4DoaZ0KdzpXdDlVK104t
-  secretKey: nuRiQUIJNVygMOHhmtR4LT1etAa7F8PQOsRGP5oj
-  private:
-    bucket: ezbuy-private
----
-#config hash password
-hashing-password:
-  public-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4qGLPEGMdbDlYrc+Ud3w8Y2CobSLKAIfSBsX6bcV3bCxKZI8scW2gfr8ZMMXOxgQ0nXpIOQ0p0fb/hVHXMEnTu4Z5UEsF76eDfA80VPd96ujiZWyWYAeyIUelqPEZIWxM4MlBOPJDcCVDtwLKIoMbvVnXoHyjmOq93mHOoii24a2m0qt6jrvAYOvjNUijtofgjewYds/h74LfphDY/hNRq+4M6lI4RMZ4HiRn06P+GnvnwkxA3JL1bVRRqZ3gxB0VWiIj7I5likqnJfWnqn43mrMxfSdNI+6MpgR7L6djFOnjZiNP5bb6a3F17hwBeeLBTPs+akem/shlfoGYIbJOwIDAQAB
+  bucket: "${MINIO_BUCKET:ezbuy-bucket}"
+  base-url: "${MINIO_BASE_URL:http://localhost:9000}"
+  public-url: "${MINIO_PUBLIC_URL:http://localhost:9000}"
+  access-key: "${MINIO_ACCESS_KEY:q875aHMpdL6IJ3n9ruil}"
+  secret-key: "${MINIO_SECRET_KEY:Q43tehRDv55Sw67ktA0pQdztEbtQjvinLOk6zwB3}"
 ---
 springdoc:
   api-docs:

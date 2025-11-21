@@ -1,11 +1,10 @@
 package com.ezbuy.paymentservice.repository;
 
-import com.ezbuy.ordermodel.dto.OrderSyncDTO;
-import com.ezbuy.ordermodel.model.Order;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.ezbuy.paymentservice.model.OrderSyncDTO;
+import com.ezbuy.paymentservice.model.dto.Order;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Flux;

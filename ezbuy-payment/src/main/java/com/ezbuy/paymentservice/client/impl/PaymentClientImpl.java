@@ -1,13 +1,13 @@
 package com.ezbuy.paymentservice.client.impl;
 
-import com.ezbuy.paymentmodel.dto.request.UpdateOrderStatePayRequest;
-import com.ezbuy.paymentmodel.dto.response.MyPaymentDTO;
 import com.ezbuy.paymentservice.client.PaymentClient;
 import com.ezbuy.core.client.BaseRestClient;
 import com.ezbuy.core.util.DataUtil;
 import java.util.Collections;
 import java.util.Optional;
 
+import com.ezbuy.paymentservice.model.dto.request.UpdateOrderStatePayRequest;
+import com.ezbuy.paymentservice.model.dto.response.MyPaymentDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;

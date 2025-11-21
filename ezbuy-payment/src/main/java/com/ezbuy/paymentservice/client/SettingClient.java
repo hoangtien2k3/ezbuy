@@ -1,7 +1,8 @@
 package com.ezbuy.paymentservice.client;
 
-import com.ezbuy.settingmodel.model.OptionSetValue;
 import java.util.List;
+
+import com.ezbuy.paymentservice.model.dto.OptionSetValue;
 import reactor.core.publisher.Mono;
 
 public interface SettingClient {

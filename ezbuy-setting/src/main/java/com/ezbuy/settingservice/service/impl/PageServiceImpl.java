@@ -64,7 +64,7 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
         }
         return this.pageRepository.getPageByPageLink(code.trim()).collectList().flatMap(pages -> {
             if (DataUtil.isNullOrEmpty(pages)) {
-                return Mono.just(new DataResponse<>(Translator.toLocaleVi("success"), null));
+                return Mono.just(new DataResponse<>("success", null));
             }
             return this.contentDisplayRepository
                     .getContentDisplayByPage(pages.getFirst().getId())
@@ -89,7 +89,7 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
                                 .contentDisplayList(contentDisplayDTOList)
                                 .title(pages.getFirst().getTitle())
                                 .build();
-                        return Mono.just(new DataResponse<>(Translator.toLocaleVi("success"), pageDTO));
+                        return Mono.just(new DataResponse<>("success", pageDTO));
                     });
         });
     }
