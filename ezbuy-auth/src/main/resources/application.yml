@@ -30,7 +30,7 @@ spring:
     codecs:
       max-in-memory-size: 100MB
   r2dbc:
-    url: "${R2DBC_URL:r2dbc:postgresql://localhost:5434/auth}"
+    url: "${R2DBC_URL:r2dbc:postgresql://localhost:5432/auth}"
     username: "${R2DBC_USERNAME:admin}"
     password: "${R2DBC_PASSWORD:admin}"
     pool:

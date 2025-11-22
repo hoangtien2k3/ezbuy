@@ -30,7 +30,7 @@ spring:
     codecs:
       max-in-memory-size: 100MB
   r2dbc:
-    url: "${R2DBC_URL:r2dbc:postgresql://localhost:5434/setting}"
+    url: "${R2DBC_URL:r2dbc:postgresql://localhost:5432/setting}"
     username: "${R2DBC_USERNAME:admin}"
     password: "${R2DBC_PASSWORD:admin}"
     pool:
@@ -61,14 +61,6 @@ spring:
   elasticsearch:
     uris: http://localhost:9200
 ---
-keycloak:
-  client-id: "${KEYCLOAK_CLIENT_ID:ezbuy-client}"
-  client-secret: "${KEYCLOAK_CLIENT_SECRET:5dnfDh6XitmAMc7vQUNxGkJw0HF4e9tI}"
-  realm: "${KEYCLOAK_REALM:ezbuy-server}"
-  server-url: "${KEYCLOAK_SERVER_URL:http://localhost:8080}"
-  grant-type: "${KEYCLOAK_GRANT_TYPE:password}" #client_credentials
-  host: "${KEYCLOAK_HOST:localhost}"
----
 client:
   elasticsearch:
     address: "${CLIENT_ELASTICSEARCH_ADDRESS:http://localhost:9200}"
@@ -81,6 +73,11 @@ application:
         score: 1
       - name: services
         score: 4
+  http-logging:
+    request:
+      enable: true
+    response:
+      enable: true
   whiteList:
     - uri: /actuator/health
       methods:
@@ -91,6 +88,14 @@ application:
     - uri: /v1/search-services
       methods:
         - GET
+---
+keycloak:
+  client-id: "${KEYCLOAK_CLIENT_ID:ezbuy-client}"
+  client-secret: "${KEYCLOAK_CLIENT_SECRET:5dnfDh6XitmAMc7vQUNxGkJw0HF4e9tI}"
+  realm: "${KEYCLOAK_REALM:ezbuy-server}"
+  server-url: "${KEYCLOAK_SERVER_URL:http://localhost:8080}"
+  grant-type: "${KEYCLOAK_GRANT_TYPE:password}" #client_credentials
+  host: "${KEYCLOAK_HOST:localhost}"
 ---
 springdoc:
   api-docs:

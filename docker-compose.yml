@@ -2,50 +2,47 @@ version: '3.9'
 
 services:
   postgres:
-    image: postgres:${POSTGRES_VERSION}
+    image: postgres:16.3
     container_name: postgres
     build: ./docker/postgres
-    hostname: ${POSTGRES_HOSTNAME}
-    restart: always
+    hostname: postgres
+    restart: unless-stopped
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "5432:5432"
     volumes:
       - ./docker/postgres/postgresql.conf.sample:/usr/share/postgresql/postgresql.conf.sample
-      - ./postgres_init.sql:/docker-entrypoint-initdb.d/postgres_init.sql
+      - ./docker/postgres/postgres_init.sql:/docker-entrypoint-initdb.d/postgres_init.sql
       - postgres:/var/lib/postgresql/data
     command: postgres -c 'max_connections=500'
     environment:
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
     networks:
       - ezbuy-network
 
   keycloak:
-    image: keycloak/keycloak:${KEYCLOAK_VERSION}
+    image: keycloak/keycloak:25.0.2
     container_name: keycloak
     command: start-dev
-    restart: always
+    restart: unless-stopped
     depends_on:
       - postgres
     ports:
-      - "${KEYCLOAK_PORT}:8080"
+      - "8080:8080"
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
-      KC_DB_USERNAME: ${POSTGRES_USER}
-      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
-      # KC_DB: h2
+      KC_DB_USERNAME: admin
+      KC_DB_PASSWORD: admin
       KC_HOSTNAME: localhost
       KC_HOSTNAME_PORT: 8080
       KC_HOSTNAME_STRICT: false
       KC_HOSTNAME_STRICT_HTTPS: false
-      # KC_PROXY_ADDRESS_FORWARDING: true
       KC_LOG_LEVEL: info
       KC_METRICS_ENABLED: true
       KC_HEALTH_ENABLED: true
-      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-      # KC_HTTP_ENABLED: true
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
       KC_HTTP_PORT: 8080
       KC_HTTPS_PORT: 8443
     volumes:
@@ -56,7 +53,7 @@ services:
       - ezbuy-network
 
   minio:
-    image: minio/minio:${MINIO_VERSION}
+    image: minio/minio:RELEASE.2024-08-03T04-33-23Z
     container_name: minio
     env_file: .env
     restart: unless-stopped
@@ -64,8 +61,8 @@ services:
       - "9000:9000"
       - "9001:9001"
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: tienha@!@#
     volumes:
       - minio:/data:rw
     command: [ "server", "--address", ":9000", "--console-address", ":9001", "/data" ]
@@ -77,12 +74,11 @@ services:
     networks:
       - ezbuy-network
 
-  #elasticsearch
   elasticsearch:
     build:
       context: ./docker/elasticsearch/
       args:
-        ELASTIC_VERSION: ${ELASTIC_VERSION}
+        ELASTIC_VERSION: 8.15.0
     container_name: elasticsearch
     volumes:
       - ./docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
@@ -93,18 +89,17 @@ services:
     environment:
       node.name: elasticsearch
       ES_JAVA_OPTS: -Xms512m -Xmx512m
-      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      ELASTIC_PASSWORD: tienha@!@#
       discovery.type: single-node
     restart: unless-stopped
     networks:
       - ezbuy-network
 
-  #logstash
   logstash:
     build:
       context: ./docker/logstash/
       args:
-        ELASTIC_VERSION: ${ELASTIC_VERSION}
+        ELASTIC_VERSION: 8.15.0
     container_name: logstash
     volumes:
       - ./docker/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
@@ -116,40 +111,35 @@ services:
       - "9600:9600"
     environment:
       LS_JAVA_OPTS: -Xms256m -Xmx256m
-      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
+      LOGSTASH_INTERNAL_PASSWORD: tienha@!@#
     depends_on:
       - elasticsearch
     restart: unless-stopped
     networks:
       - ezbuy-network
 
-  #kibana
   kibana:
     build:
       context: ./docker/kibana/
       args:
-        ELASTIC_VERSION: ${ELASTIC_VERSION}
+        ELASTIC_VERSION: 8.15.0
     container_name: kibana
     volumes:
       - ./docker/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
     ports:
       - "5601:5601"
     environment:
-      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+      KIBANA_SYSTEM_PASSWORD: tienha@!@#
     depends_on:
       - elasticsearch
     restart: unless-stopped
     networks:
       - ezbuy-network
 
-  ###########################
-  #portainer -> mini docker
-  ###########################
-  #portainer
   portainer:
     image: portainer/portainer-ce:2.27.1
     container_name: portainer
-    restart: always
+    restart: unless-stopped
     ports:
       - "9999:9000"
     volumes:
@@ -158,19 +148,15 @@ services:
     networks:
       - ezbuy-network
 
-  ###########################
-  #consul -> discovery
-  ###########################
   consul:
     image: consul:1.15.4
     container_name: consul
-    restart: always
+    restart: unless-stopped
     ports:
       - "8500:8500"
       - "8600:8600/udp"
     command: "consul agent -dev -client=0.0.0.0"
 
-# networks:
 networks:
   ezbuy-network:
     driver: bridge
@@ -179,7 +165,6 @@ networks:
 #  proxy:
 #    external: true
 
-# volumes:
 volumes:
   postgres:
   pgadmin:

@@ -27,7 +27,7 @@ spring:
   jackson:
     property-naming-strategy: SNAKE_CASE
   r2dbc:
-    url: "${R2DBC_URL:r2dbc:postgresql://localhost:5434/notification}"
+    url: "${R2DBC_URL:r2dbc:postgresql://localhost:5432/notification}"
     username: "${R2DBC_USERNAME:admin}"
     password: "${R2DBC_PASSWORD:admin}"
     pool:
@@ -61,6 +61,17 @@ spring:
       keycloak:
         client-id: ${keycloak.client-id}
 ---
+application:
+  http-logging:
+    request:
+      enable: true
+    response:
+      enable: true
+  whiteList:
+    - uri: /actuator/health
+      methods:
+        - GET
+---
 keycloak:
   client-id: "${KEYCLOAK_CLIENT_ID:ezbuy-client}"
   client-secret: "${KEYCLOAK_CLIENT_SECRET:5dnfDh6XitmAMc7vQUNxGkJw0HF4e9tI}"
@@ -80,12 +91,6 @@ client:
     timeout:
       read: 60000
       connection: 1000
----
-application:
-  whiteList:
-    - uri: /actuator/health
-      methods:
-        - GET
 ---
 config:
   resend-count: 2

@@ -27,7 +27,7 @@ spring:
   jackson:
     property-naming-strategy: SNAKE_CASE
   r2dbc:
-    url: "${R2DBC_URL:r2dbc:postgresql://localhost:5434/cart}"
+    url: "${R2DBC_URL:r2dbc:postgresql://localhost:5432/cart}"
     username: "${R2DBC_USERNAME:admin}"
     password: "${R2DBC_PASSWORD:admin}"
     pool:

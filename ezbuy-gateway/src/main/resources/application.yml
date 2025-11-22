@@ -6,7 +6,7 @@ spring:
     name: gateway-service
   cloud:
     consul:
-      host: localhost
+      host: "${CONSUL_HOST:localhost}"
       port: 8500
       discovery:
         register: true
@@ -18,7 +18,7 @@ spring:
             cors-configurations:
               '[/**]':
                 allowed-origin-patterns:
-                  - "http://localhost:*"
+                  - "${CORS_ALLOWED_ORIGINS:http://localhost:*}"
                 allowed-methods:
                   - GET
                   - POST
@@ -34,9 +34,7 @@ spring:
               enabled: true
               lower-case-service-id: true
           routes:
-            # ============================
             # AUTH-SERVICE
-            # ============================
             - id: AUTH-SERVICE
               uri: lb://AUTH-SERVICE
               predicates:
@@ -50,9 +48,7 @@ spring:
                       first-backoff: 500ms
                       max-backoff: 2s
                       factor: 2
-            # ============================
             # CART-SERVICE
-            # ============================
             - id: CART-SERVICE
               uri: lb://CART-SERVICE
               predicates:
@@ -66,9 +62,7 @@ spring:
                       first-backoff: 500ms
                       max-backoff: 2s
                       factor: 2
-            # ============================
             # NOTI-SERVICE
-            # ============================
             - id: NOTI-SERVICE
               uri: lb://NOTI-SERVICE
               predicates:
@@ -82,9 +76,7 @@ spring:
                       first-backoff: 500ms
                       max-backoff: 2s
                       factor: 2
-            # ============================
             # ORDER-SERVICE
-            # ============================
             - id: ORDER-SERVICE
               uri: lb://ORDER-SERVICE
               predicates:
@@ -98,9 +90,7 @@ spring:
                       first-backoff: 500ms
                       max-backoff: 2s
                       factor: 2
-            # ============================
             # PAYMENT-SERVICE
-            # ============================
             - id: PAYMENT-SERVICE
               uri: lb://PAYMENT-SERVICE
               predicates:
@@ -114,9 +104,7 @@ spring:
                       first-backoff: 500ms
                       max-backoff: 2s
                       factor: 2
-            # ============================
             # PRODUCT-SERVICE
-            # ============================
             - id: PRODUCT-SERVICE
               uri: lb://PRODUCT-SERVICE
               predicates:
@@ -130,9 +118,7 @@ spring:
                       first-backoff: 500ms
                       max-backoff: 2s
                       factor: 2
-            # ============================
             # RATING-SERVICE
-            # ============================
             - id: RATING-SERVICE
               uri: lb://RATING-SERVICE
               predicates:
@@ -146,9 +132,7 @@ spring:
                       first-backoff: 500ms
                       max-backoff: 2s
                       factor: 2
-            # ============================
             # SEARCH-SERVICE
-            # ============================
             - id: SEARCH-SERVICE
               uri: lb://SEARCH-SERVICE
               predicates:
@@ -162,9 +146,7 @@ spring:
                       first-backoff: 500ms
                       max-backoff: 2s
                       factor: 2
-            # ============================
             # SETTING-SERVICE
-            # ============================
             - id: SETTING-SERVICE
               uri: lb://SETTING-SERVICE
               predicates:
@@ -178,9 +160,7 @@ spring:
                       first-backoff: 500ms
                       max-backoff: 2s
                       factor: 2
-            # ============================
             # TRIGGER-SERVICE
-            # ============================
             - id: TRIGGER-SERVICE
               uri: lb://TRIGGER-SERVICE
               predicates:
