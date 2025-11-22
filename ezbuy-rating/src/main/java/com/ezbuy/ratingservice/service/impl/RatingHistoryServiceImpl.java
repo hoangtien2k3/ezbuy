@@ -3,7 +3,7 @@ package com.ezbuy.ratingservice.service.impl;
 import com.ezbuy.ratingservice.model.entity.RatingHistory;
 import com.ezbuy.ratingservice.repository.RatingHistoryRepository;
 import com.ezbuy.ratingservice.service.RatingHistoryService;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.util.SecurityUtils;
 import java.time.LocalDateTime;
@@ -29,7 +29,7 @@ public class RatingHistoryServiceImpl extends BaseServiceHandler implements Rati
             String state) {
         var getSysDate = ratingHistoryRepository.getSysDate();
         return Mono.zip(SecurityUtils.getCurrentUser().switchIfEmpty(
-                    Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))), getSysDate)
+                    Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "user.null"))), getSysDate)
                 .flatMap(tuple -> {
                     LocalDateTime now = tuple.getT2();
                     RatingHistory ratingHistory = RatingHistory.builder()

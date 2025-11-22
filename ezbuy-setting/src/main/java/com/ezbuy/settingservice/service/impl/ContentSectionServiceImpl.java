@@ -12,7 +12,7 @@ import com.ezbuy.settingservice.model.dto.response.SearchContentSectionResponse;
 import com.ezbuy.settingservice.repository.ContentSectionRepository;
 import com.ezbuy.settingservice.repositoryTemplate.ContentSectionRepositoryTemplate;
 import com.ezbuy.settingservice.service.ContentSectionService;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.factory.ObjectMapperFactory;
@@ -45,10 +45,10 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
         int pageIndex = DataUtil.safeToInt(request.getPageIndex(), 1);
         int pageSize = DataUtil.safeToInt(request.getPageSize(), 10);
         if (pageIndex < 1) {
-            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "pageIndex.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "pageIndex.invalid"));
         }
         if (pageSize > 100) {
-            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "pageSize.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "pageSize.invalid"));
         }
         request.setPageIndex(pageIndex);
         request.setPageSize(pageSize);
@@ -75,7 +75,7 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
                 .flatMap(contentSectionList -> {
                     if (DataUtil.isNullOrEmpty(contentSectionList)) {
                         return Mono.error(
-                                new BusinessException(CommonErrorCode.INVALID_PARAMS, "content.section.null"));
+                                new BusinessException(ErrorCode.INVALID_PARAMS, "content.section.null"));
                     } else {
                         return Mono.just(contentSectionList.getFirst());
                     }
@@ -94,7 +94,7 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
         return contentSectionRepository
                 .getById(id)
                 .switchIfEmpty(
-                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content.section.not.found")))
+                        Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "content.section.not.found")))
                 .map(marketPage -> new DataResponse<>("success", marketPage));
     }
 
@@ -107,7 +107,7 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
         String contentSectionId = UUID.randomUUID().toString();
         return validateContentSection(request, true).flatMap(validate -> SecurityUtils.getCurrentUser()
                 .switchIfEmpty(
-                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content.section.not.found")))
+                        Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "content.section.not.found")))
                 .flatMap(tokenUser -> {
                     ContentSection contentSection = ContentSection.builder()
                             .id(contentSectionId)
@@ -132,7 +132,7 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
                             .doOnError(throwable -> {
                                 log.error(throwable.getMessage());
                                 throw new BusinessException(
-                                        CommonErrorCode.BAD_REQUEST, "Create.content.Section.error");
+                                        ErrorCode.BAD_REQUEST, "Create.content.Section.error");
                             })
                             .flatMap(result -> Mono.just(new DataResponse<>("success", result)));
                 }));
@@ -143,14 +143,14 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
         return contentSectionRepository
                 .getById(DataUtil.safeTrim(id))
                 .switchIfEmpty(
-                        Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "Content.Section.notfound")))
+                        Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "Content.Section.notfound")))
                 .flatMap(contentSection -> {
                     contentSection.setStatus(Constants.STATUS.INACTIVE);
                     return contentSectionRepository.updateStatus(Constants.STATUS.INACTIVE, contentSection.getId());
                 })
                 .doOnError(throwable -> {
                     log.error(throwable.getMessage());
-                    throw new BusinessException(CommonErrorCode.BAD_REQUEST, "Content.Section.notfound");
+                    throw new BusinessException(ErrorCode.BAD_REQUEST, "Content.Section.notfound");
                 })
                 .switchIfEmpty(Mono.just(Boolean.TRUE));
     }
@@ -162,7 +162,7 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
         String parentId = DataUtil.isNullOrEmpty(request.getParentId()) ? null : request.getParentId();
         return validateContentSection(request, false).flatMap(validate -> SecurityUtils.getCurrentUser()
                 .switchIfEmpty(
-                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content.section.not.found")))
+                        Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "content.section.not.found")))
                 .flatMap(tokenUser -> contentSectionRepository
                         .updateCS(
                                 request.getSectionId(),
@@ -179,24 +179,24 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
     private Mono<Boolean> validateContentSection(ContentSectionRequest contentSectionRequest, boolean isInsert) {
         if (DataUtil.isNullOrEmpty(contentSectionRequest.getSectionId())) {
             return Mono.error(
-                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "content.section.section.id.not.empty"));
+                    new BusinessException(ErrorCode.INVALID_PARAMS, "content.section.section.id.not.empty"));
         }
         if (DataUtil.isNullOrEmpty(contentSectionRequest.getName())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "content.section.name.not.empty"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "content.section.name.not.empty"));
         }
         if (DataUtil.isNullOrEmpty(contentSectionRequest.getStatus())) {
             return Mono.error(
-                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "content.section.status.not.empty"));
+                    new BusinessException(ErrorCode.INVALID_PARAMS, "content.section.status.not.empty"));
         }
         if (contentSectionRequest.getDisplayOrder() == null) {
             return Mono.error(
-                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "content.section.display.order.not.empty"));
+                    new BusinessException(ErrorCode.INVALID_PARAMS, "content.section.display.order.not.empty"));
         }
         if (!DataUtil.isNullOrEmpty(contentSectionRequest.getParentId())) {
             return contentSectionRepository
                     .getActiveById(contentSectionRequest.getParentId())
                     .switchIfEmpty(Mono.error(new BusinessException(
-                            CommonErrorCode.INVALID_PARAMS, "content.section.parent.id.empty.or.inactive")))
+                            ErrorCode.INVALID_PARAMS, "content.section.parent.id.empty.or.inactive")))
                     .flatMap(data -> contentSectionRepository
                             .getAllActiveContentSectionsByParentId(contentSectionRequest.getParentId())
                             .collectList()
@@ -215,7 +215,7 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
                                                 Objects.equals(cs.getDisplayOrder(), contentSection.getDisplayOrder()));
                                 if (displayOrderExists) {
                                     return Mono.error(new BusinessException(
-                                            CommonErrorCode.INVALID_PARAMS, "content.section.display.order.exist"));
+                                            ErrorCode.INVALID_PARAMS, "content.section.display.order.exist"));
                                 }
                                 return Mono.just(true);
                             }));
@@ -233,7 +233,7 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
                 .getByServiceId(lstServiceId)
                 .collectList()
                 .switchIfEmpty(
-                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content.section.not.found")))
+                        Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "content.section.not.found")))
                 .map(contentSection -> new DataResponse<>("success", contentSection));
     }
 
@@ -244,7 +244,7 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
                 .getByAlias(lstAlias)
                 .collectList()
                 .switchIfEmpty(
-                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content.section.not.found")))
+                        Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "content.section.not.found")))
                 .map(contentSection -> new DataResponse<>("success", contentSection));
     }
 
@@ -253,7 +253,7 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
                 .getBySectionId(lstSectionId)
                 .collectList()
                 .switchIfEmpty(
-                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content.section.not.found")))
+                        Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "content.section.not.found")))
                 .map(contentSection -> new DataResponse<>("success", contentSection));
     }
 

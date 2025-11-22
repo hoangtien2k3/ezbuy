@@ -3,7 +3,7 @@ package com.ezbuy.auth.service.impl;
 import com.ezbuy.auth.model.entity.UserCredentialEntity;
 import com.ezbuy.auth.repository.UserCredentialRepository;
 import com.ezbuy.auth.service.UserCredentialService;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.util.SecurityUtils;
 import java.util.Optional;
@@ -24,7 +24,7 @@ public class UserCredentialServiceImpl implements UserCredentialService {
         return userCredentialRepository
                 .findByUserId(userId)
                 .flatMap(userCredential -> Mono.just(Optional.ofNullable(userCredential)))
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "query.user.not.found")));
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "query.user.not.found")));
     }
 
     @Override
@@ -36,8 +36,8 @@ public class UserCredentialServiceImpl implements UserCredentialService {
                             .findByUsername(username)
                             .flatMap(userCredential -> Mono.just(Optional.ofNullable(userCredential)))
                             .switchIfEmpty(Mono.error(
-                                    new BusinessException(CommonErrorCode.NOT_FOUND, "query.user.not.found")));
+                                    new BusinessException(ErrorCode.NOT_FOUND, "query.user.not.found")));
                 })
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.ACCESS_DENIED, "token.error")));
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.ACCESS_DENIED, "token.error")));
     }
 }

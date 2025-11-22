@@ -21,33 +21,19 @@ package com.ezbuy.core.constants;
  * should not be instantiated.
  * </p>
  */
-public class CommonErrorCode {
-
+public class ErrorCode {
     public static final String BAD_REQUEST = "bad_request";
-
     public static final String NOT_FOUND = "not_found";
-
     public static final String INVALID_PARAMS = "invalid_params";
-
     public static final String EXIST_DATA = "exist_data";
-
     public static final String NOT_EXIST_DATA = "not_exist_data";
-
     public static final String INTERNAL_SERVER_ERROR = "internal_error";
-
     public static final String UN_AUTHORIZATION = "un_auth";
-
     public static final String NO_PERMISSION = "no_permission";
-
     public static final String ACCESS_DENIED = "access_denied";
-
     public static final String PARSE_TOKEN_ERROR = "parse_token_failed";
-
     public static final String SQL_ERROR = "sql";
-
     public static final String SUCCESS = "success";
-
     public static final String UN_DESERIALIZE = "un_deserialize";
-
     public static final String HASHING_PASSWORD_FAULT = "hashing_password_fault";
 }

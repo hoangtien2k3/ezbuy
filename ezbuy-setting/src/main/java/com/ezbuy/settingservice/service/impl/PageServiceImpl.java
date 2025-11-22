@@ -14,13 +14,12 @@ import com.ezbuy.settingservice.model.dto.response.SearchingPageResponse;
 import com.ezbuy.settingservice.constant.SettingConstant;
 import com.ezbuy.settingservice.repository.ContentDisplayRepository;
 import com.ezbuy.settingservice.repository.OptionSetValueRepository;
-import com.ezbuy.settingservice.repository.PageComponentRepository;
 import com.ezbuy.settingservice.repository.PageRepository;
 import com.ezbuy.settingservice.repositoryTemplate.ContentDisplayRepositoryTemplate;
 import com.ezbuy.settingservice.repositoryTemplate.PageRepositoryTemplate;
 import com.ezbuy.settingservice.service.PageService;
 import com.ezbuy.core.cache.LocalCache;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.factory.ModelMapperFactory;
 import com.ezbuy.core.factory.ObjectMapperFactory;
@@ -65,7 +64,7 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
     public Mono<DataResponse<PageDTO>> getPage(String code) {
         String safeTrim = DataUtil.safeTrim(code);
         if (DataUtil.isNullOrEmpty(safeTrim)) {
-            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "params.invalid.code"));
+            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "params.invalid.code"));
         }
         return this.pageRepository.getPageByPageLink(code.trim()).collectList().flatMap(pages -> {
             if (DataUtil.isNullOrEmpty(pages)) {
@@ -127,7 +126,7 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
     public Mono<PageDTO> getDetailPage(String pageId) {
         Mono<Page> pageMono = pageRepository.findById(pageId);
         Mono<PageDTO> pageDTOMono = pageMono.map(p -> ModelMapperFactory.getInstance().map(p, PageDTO.class))
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "page.not.found")));
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "page.not.found")));
 
         Mono<List<ContentDisplayDTO>> listMono = contentDisplayRepositoryTemplate.getAllByPageId(pageId);
         return Mono.zip(pageDTOMono, listMono).map(zip -> {
@@ -145,7 +144,7 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
         }
         LocalDateTime now = LocalDateTime.now();
         return SecurityUtils.getCurrentUser()
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null")))
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "user.null")))
                 .flatMap(tokenUser -> {
                     String pageId = UUID.randomUUID().toString();
                     String code = DataUtil.safeTrim(request.getCode());
@@ -163,7 +162,7 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
                     return validateRequest(null, request)
                             .then(pageRepository.save(page))
                             .switchIfEmpty(Mono.error(
-                                    new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "page.insert.failed")))
+                                    new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "page.insert.failed")))
                             .flatMap(p ->
                                     saveContentDisplay(request.getComponents(), tokenUser.getUsername(), now, pageId))
                             .thenReturn(new DataResponse<>("cuccess", page));
@@ -177,7 +176,7 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
                 .any(page -> !Objects.equals(page.getId(), id))
                 .flatMap(aBoolean -> {
                     if (aBoolean) {
-                        return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "page.title.duplicate"));
+                        return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "page.title.duplicate"));
                     }
                     return Mono.empty();
                 });
@@ -189,7 +188,7 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
                 .any(page -> !Objects.equals(page.getId(), id))
                 .flatMap(match -> {
                     if (match) {
-                        return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "page.code.duplicate"));
+                        return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "page.code.duplicate"));
                     }
                     return Mono.empty();
                 });
@@ -232,7 +231,7 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
             for (ContentDisplayRequest content : request) {
                 if (!DataUtil.isNullOrEmpty(content.getImage()) && !DataUtil.isNullOrEmpty(content.getImageBase64())) {
                     if (!Base64.isBase64(content.getImageBase64())) {
-                        throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "");
+                        throw new BusinessException(ErrorCode.INVALID_PARAMS, "");
                     }
                     String filePath = SettingConstant.MINIO_FOLDER.BACKGROUND_FOLDER + SettingConstant.FILE_SEPARATOR
                             + UUID.randomUUID() + "-" + FilenameUtils.getName(content.getImage());
@@ -243,7 +242,7 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
                 if (!DataUtil.isNullOrEmpty(content.getBackgroundImage())
                         && !DataUtil.isNullOrEmpty(content.getBackgroundBase64())) {
                     if (!Base64.isBase64(content.getBackgroundBase64())) {
-                        throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "");
+                        throw new BusinessException(ErrorCode.INVALID_PARAMS, "");
                     }
                     String filePath = SettingConstant.MINIO_FOLDER.BACKGROUND_FOLDER + SettingConstant.FILE_SEPARATOR
                             + UUID.randomUUID() + "-" + FilenameUtils.getName(content.getBackgroundImage());
@@ -252,7 +251,7 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
                 }
                 if (!DataUtil.isNullOrEmpty(content.getIcon()) && !DataUtil.isNullOrEmpty(content.getIconBase64())) {
                     if (!Base64.isBase64(content.getIconBase64())) {
-                        throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "");
+                        throw new BusinessException(ErrorCode.INVALID_PARAMS, "");
                     }
                     String filePath = SettingConstant.MINIO_FOLDER.ICON_FOLDER + SettingConstant.FILE_SEPARATOR
                             + UUID.randomUUID() + "-" + FilenameUtils.getName(content.getIcon());
@@ -270,7 +269,7 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
     @Transactional
     public Mono<DataResponse<Page>> editPage(PageCreatingRequest request) {
         if (DataUtil.isNullOrEmpty(request.getId())) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "page.id.not.empty");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "page.id.not.empty");
         }
         if (!DataUtil.isNullOrEmpty(request.getComponents())) {
             validateImagePageRequest(request.getComponents());
@@ -278,10 +277,10 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
 
         LocalDateTime now = LocalDateTime.now();
         return SecurityUtils.getCurrentUser()
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null")))
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "user.null")))
                 .flatMap(tokenUser -> pageRepository
                         .findById(request.getId())
-                        .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "page.not.found")))
+                        .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "page.not.found")))
                         .flatMap(page -> validateRequest(page.getId(), request).thenReturn(page))
                         .flatMap(page ->
                                 deleteOldDetails(page, tokenUser.getId()).thenReturn(page))
@@ -463,18 +462,18 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
     public Mono<DataResponse<PageDTO>> changeStatus(ChangePageStatusRequest request) {
         String pageId = DataUtil.safeTrim(request.getPageId());
         Integer status = request.getStatus();
-        return Mono.zip(SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
+        return Mono.zip(SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "user.null"))),
                         pageRepository.findById(pageId)
-                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "page.not.found"))))
+                                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "page.not.found"))))
                 .flatMap(zip -> {
                     Page page = zip.getT2();
                     TokenUser tokenUser = zip.getT1();
                     if (page.getStatus().equals(status)) {
                         if (status.equals(SettingConstant.PAGE_STATUS.LOCK)) {
-                            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "page.status.locked"));
+                            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "page.status.locked"));
                         } else {
                             return Mono.error(
-                                    new BusinessException(CommonErrorCode.BAD_REQUEST, "page.status.unlocked"));
+                                    new BusinessException(ErrorCode.BAD_REQUEST, "page.status.unlocked"));
                         }
                     }
 

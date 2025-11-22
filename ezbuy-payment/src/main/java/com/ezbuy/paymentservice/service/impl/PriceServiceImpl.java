@@ -5,7 +5,7 @@ import com.ezbuy.paymentservice.model.dto.request.ProductItem;
 import com.ezbuy.paymentservice.model.dto.request.ProductPriceRequest;
 import com.ezbuy.paymentservice.model.dto.response.ProductPrice;
 import com.ezbuy.paymentservice.service.PriceService;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.util.DataUtil;
 import java.util.HashMap;
@@ -26,7 +26,7 @@ public class PriceServiceImpl implements PriceService {
         long totalPrice = 0L;
         List<ProductItem> productItems = productPriceRequest.getProductItems();
         if (productItems == null || productItems.isEmpty()) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.item.null"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "product.item.null"));
         }
         Map<String, Integer> missingPriceProductIdsMap = new HashMap<>();
         for (ProductItem productItem : productItems) {
@@ -34,15 +34,15 @@ public class PriceServiceImpl implements PriceService {
             Long price = productItem.getPrice();
             Integer quantity = productItem.getQuantity();
             if (DataUtil.isNullOrEmpty(templateId)) {
-                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.item.id.null"));
+                return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "product.item.id.null"));
             }
             if (quantity == null || quantity < 1) {
-                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.item.quantity.invalid"));
+                return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "product.item.quantity.invalid"));
             }
             if (price == null) {
                 missingPriceProductIdsMap.merge(templateId, quantity, Integer::sum);
             } else if (price < 0) {
-                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.item.price.invalid"));
+                return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "product.item.price.invalid"));
             } else {
                 totalPrice += price * quantity;
             }
@@ -63,7 +63,7 @@ public class PriceServiceImpl implements PriceService {
                     Long productPrice = rs.getPrice();
                     Integer quantity = missingPriceProductIdsMap.get(rs.getTemplateId());
                     if (productPrice == null) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "call.product.service.error"));
+                        return Mono.error(new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "call.product.service.error"));
                     }
                     return Mono.just(productPrice * quantity);
                 })

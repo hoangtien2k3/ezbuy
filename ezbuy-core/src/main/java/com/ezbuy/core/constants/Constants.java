@@ -39,8 +39,7 @@ public final class Constants {
      * characters, and whitespace.
      * </p>
      */
-    public static final String NAME_PATTERN =
-            "^[a-zA-ZàáãạảăắằẳẵặâấầẩẫậèéẹẻẽêềếểễệđìíĩỉịòóõọỏôốồổỗộơớờởỡợùúũụủưứừửữựỳỵỷỹýÀÁÃẠẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẺẼÊỀẾỂỄỆĐÌÍĨỈỊÒÓÕỌỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝ\\s]+$";
+    public static final String NAME_PATTERN = "^[a-zA-ZàáãạảăắằẳẵặâấầẩẫậèéẹẻẽêềếểễệđìíĩỉịòóõọỏôốồổỗộơớờởỡợùúũụủưứừửữựỳỵỷỹýÀÁÃẠẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẺẼÊỀẾỂỄỆĐÌÍĨỈỊÒÓÕỌỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝ\\s]+$";
 
     /**
      * Regular expression pattern for validating email addresses.
@@ -63,8 +62,7 @@ public final class Constants {
     public static final String USERNAME_PATTERN = "^[A-Za-z0-9_-]+$";
 
     /** Constant <code>IMAGE_EXTENSION_LIST</code> */
-    public static final List<String> IMAGE_EXTENSION_LIST =
-            Arrays.asList("jpg", "jpeg", "png", "gif", "bmp", "tiff", "tif", "svg", "raw", "psd", "ai", "eps");
+    public static final List<String> IMAGE_EXTENSION_LIST = Arrays.asList("jpg", "jpeg", "png", "gif", "bmp", "tiff", "tif", "svg", "raw", "psd", "ai", "eps");
 
     /** Constant <code>MAX_FILE_SIZE_MB=3</code> */
     public static final int MAX_FILE_SIZE_MB = 3;
@@ -80,10 +78,10 @@ public final class Constants {
             MediaType.TEXT_XML,
             MediaType.APPLICATION_XML,
             MediaType.APPLICATION_JSON,
-            MediaType.APPLICATION_JSON_UTF8,
             MediaType.TEXT_PLAIN,
             MediaType.TEXT_XML,
-            MediaType.MULTIPART_FORM_DATA);
+            MediaType.MULTIPART_FORM_DATA
+    );
 
     private static final List<String> SENSITIVE_HEADERS = Arrays.asList("authorization", "proxy-authorization");
 

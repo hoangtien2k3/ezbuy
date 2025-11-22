@@ -12,7 +12,7 @@ import com.ezbuy.settingservice.repository.NewsInfoRepository;
 import com.ezbuy.settingservice.repositoryTemplate.NewsInfoRepositoryTemplate;
 import com.ezbuy.settingservice.service.NewsInfoService;
 import com.ezbuy.core.config.properties.MinioProperties;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.model.response.DataResponse;
@@ -51,7 +51,7 @@ public class NewsInfoServiceImpl extends BaseServiceHandler implements NewsInfoS
         Integer displayOrder = request.getDisplayOrder();
         var getSysDate = newsInfoRepository.getSysDate();
         return Mono.zip(
-                        SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
+                        SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "user.null"))),
                         validateExistNewsInfo(code, displayOrder, request.getGroupNewsId()),
                         getSysDate,
                         minioUtils.uploadMedia(request.getNavigatorUrl()))
@@ -81,7 +81,7 @@ public class NewsInfoServiceImpl extends BaseServiceHandler implements NewsInfoS
                     return newsInfoRepository
                             .save(newsInfo)
                             .switchIfEmpty(Mono.error(new BusinessException(
-                                    CommonErrorCode.INTERNAL_SERVER_ERROR, "news.info.insert.failed")))
+                                    ErrorCode.INTERNAL_SERVER_ERROR, "news.info.insert.failed")))
                             .flatMap(x -> Mono.just(new DataResponse<>("success", newsInfo)));
                 });
     }
@@ -89,31 +89,31 @@ public class NewsInfoServiceImpl extends BaseServiceHandler implements NewsInfoS
     public void validateInput(CreateNewsInfoRequest request) {
         String code = DataUtil.safeTrim(request.getCode());
         if (DataUtil.isNullOrEmpty(code)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.news.info.code.empty");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "create.news.info.code.empty");
         }
         if (code.length() > 200) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.news.info.code.max.length");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "create.news.info.code.max.length");
         }
         String title = DataUtil.safeTrim(request.getTitle());
         if (DataUtil.isNullOrEmpty(title)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.news.info.name");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "create.news.info.name");
         }
         if (title.length() > 200) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.news.info.name.max.length");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "create.news.info.name.max.length");
         }
         Integer displayOrder = request.getDisplayOrder();
         if (displayOrder == null) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.news.info.order");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "create.news.info.order");
         }
         if (displayOrder < 1) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.news.info.order.min");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "create.news.info.order.min");
         }
         Integer status = request.getStatus();
         if (status == null) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.service.status.null");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "create.service.status.null");
         }
         if (!Constants.Activation.ACTIVE.equals(status) && !Constants.Activation.INACTIVE.equals(status)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.service.status.error");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "create.service.status.error");
         }
     }
 
@@ -124,11 +124,11 @@ public class NewsInfoServiceImpl extends BaseServiceHandler implements NewsInfoS
                     NewsInfo newsInfoByCode = tuple.getT1();
                     if (newsInfoByCode.getCode() != null) {
                         return Mono.error(
-                                new BusinessException(CommonErrorCode.NOT_FOUND, "create.news.info.code.is.exists"));
+                                new BusinessException(ErrorCode.NOT_FOUND, "create.news.info.code.is.exists"));
                     }
                     NewsInfo newsInfoByDisplayOrder = tuple.getT2();
                     if (newsInfoByDisplayOrder.getDisplayOrder() != null) {
-                        return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "create.news.info.order.is.exits"));
+                        return Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "create.news.info.order.is.exits"));
                     }
                     return Mono.just(true);
                 });
@@ -140,14 +140,14 @@ public class NewsInfoServiceImpl extends BaseServiceHandler implements NewsInfoS
         validateInput(request);
         String newsInfoId = DataUtil.safeTrim(id);
         if (DataUtil.isNullOrEmpty(newsInfoId)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "news.info.id.not.empty");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "news.info.id.not.empty");
         }
         return Mono.zip(
                         SecurityUtils.getCurrentUser()
                                 .switchIfEmpty(
-                                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
+                                        Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "user.null"))),
                         newsInfoRepository.getById(newsInfoId)
-                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "news.info.not.found"))))
+                                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "news.info.not.found"))))
                 .flatMap(tuple -> {
                     NewsInfo newsInfo = tuple.getT2();
                     Mono<Boolean> checkExistGroupCode = Mono.just(true);
@@ -203,11 +203,11 @@ public class NewsInfoServiceImpl extends BaseServiceHandler implements NewsInfoS
         request.setPageSize(pageSize);
         if ((Objects.isNull(request.getFromDate()) && Objects.nonNull(request.getToDate()))
                 || (Objects.nonNull(request.getFromDate()) && Objects.isNull(request.getToDate()))) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.date.request.invalid");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "params.date.request.invalid");
         }
         if (!Objects.isNull(request.getFromDate())) {
             if (request.getFromDate().isAfter(request.getToDate())) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.from-date.larger.to-date");
+                throw new BusinessException(ErrorCode.INVALID_PARAMS, "params.from-date.larger.to-date");
             }
         }
         Flux<NewsInfoDTO> NewsInfo = newsInfoRepositoryTemplate.findNewsInfo(request);

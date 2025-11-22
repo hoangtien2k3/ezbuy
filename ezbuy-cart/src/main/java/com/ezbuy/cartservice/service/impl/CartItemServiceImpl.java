@@ -1,6 +1,6 @@
 package com.ezbuy.cartservice.service.impl;
 
-import static com.ezbuy.core.constants.CommonErrorCode.SUCCESS;
+import static com.ezbuy.core.constants.ErrorCode.SUCCESS;
 import static com.ezbuy.core.constants.Regex.PRODUCT_ID;
 
 import com.ezbuy.cartservice.domain.dto.CartItemProductDTO;
@@ -21,7 +21,7 @@ import com.ezbuy.cartservice.repository.CartItemRepository;
 import com.ezbuy.cartservice.repository.CartRepository;
 import com.ezbuy.cartservice.service.CartItemService;
 
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.model.response.DataResponse;
 import com.ezbuy.core.util.*;
@@ -54,13 +54,13 @@ public class CartItemServiceImpl implements CartItemService {
         if (DataUtil.isNullOrEmpty(cartItemId)) {
             return SecurityUtils.getCurrentUser().flatMap(tokenUser -> cartRepository
                     .findByUserId(tokenUser.getId())
-                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "query.cart.item.not.found")))
+                    .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "query.cart.item.not.found")))
                     .flatMap(cart -> {
                         String cartId = String.valueOf(cart.getId());
                         return cartItemRepository
                                 .findByCartId(cartId)
                                 .flatMap(cartItem -> Mono.just(Optional.ofNullable(cartItem)))
-                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "query.cart.item.not.found")))
+                                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "query.cart.item.not.found")))
                                 .flatMap(deletes -> {
                                     cartItemRepository
                                             .deleteAllByCartId(cartId, tokenUser.getUsername())
@@ -72,7 +72,7 @@ public class CartItemServiceImpl implements CartItemService {
         } else {
             return SecurityUtils.getCurrentUser().flatMap(tokenUser -> cartItemRepository
                     .findById(cartItemId)
-                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "query.cart.item.not.found")))
+                    .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "query.cart.item.not.found")))
                     .flatMap(cartItem -> {
                         String cartId = cartItem.getCartId();
 
@@ -80,7 +80,7 @@ public class CartItemServiceImpl implements CartItemService {
                                 .findById(cartId)
                                 .flatMap(cart -> Mono.just(Optional.ofNullable(cart)))
                                 .switchIfEmpty(
-                                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "query.cart.null")))
+                                        Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "query.cart.null")))
                                 .flatMap(delete -> {
                                     cartItemRepository
                                             .deleteCartItem(cartItemId, tokenUser.getUsername())
@@ -194,20 +194,20 @@ public class CartItemServiceImpl implements CartItemService {
     private void listProductIdValidate(Product product) {
         for (String validateProductId : product.getListProductId()) {
             if (!validateProductId.matches(PRODUCT_ID)) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "productId.regex");
+                throw new BusinessException(ErrorCode.INVALID_PARAMS, "productId.regex");
             }
             if (validateProductId.length() > 255) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "productId.max.length");
+                throw new BusinessException(ErrorCode.INVALID_PARAMS, "productId.max.length");
             }
         }
         if (!product.getTelecomServiceId().matches(PRODUCT_ID)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "telecom.id.regex");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "telecom.id.regex");
         }
         if (product.getTelecomServiceId().length() > 255) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "telecom.max.length");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "telecom.max.length");
         }
         if (product.getTelecomServiceAlias().length() > 255) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "telecom.alias.max.length");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "telecom.alias.max.length");
         }
     }
 
@@ -215,27 +215,27 @@ public class CartItemServiceImpl implements CartItemService {
     public Mono<DataResponse<CartItem>> updateQuantity(String cartItemId, Long quantity) {
         String cartItemIdTrim = DataUtil.safeTrim(cartItemId);
         if (DataUtil.isNullOrEmpty(cartItemIdTrim)) {
-            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "cartItem.not.null"));
+            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "cartItem.not.null"));
         }
         if (DataUtil.isNullOrEmpty(quantity)) {
-            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "quantity.not.null"));
+            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "quantity.not.null"));
         }
         if (!ValidateUtils.validateUUID(cartItemIdTrim)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.invalid.format"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "params.invalid.format"));
         }
         if (quantity <= 0L) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "quantity.more.0"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "quantity.more.0"));
         }
         if (quantity > 9223372036854775806L) {
-            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "long.max.length"));
+            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "long.max.length"));
         }
         return SecurityUtils.getCurrentUser()
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null")))
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "user.null")))
                 .flatMap(tokenUser -> cartItemRepository
                         .findById(cartItemIdTrim)
                         .flatMap(cart -> Mono.just(Optional.ofNullable(cart)))
                         .switchIfEmpty(Mono.error(
-                                new BusinessException(CommonErrorCode.NOT_FOUND, "query.cartItem.not.found")))
+                                new BusinessException(ErrorCode.NOT_FOUND, "query.cartItem.not.found")))
                         .flatMap(cartItem -> {
                             String id = cartItem.get().getId();
                             AppUtils.runHiddenStream(
@@ -248,10 +248,10 @@ public class CartItemServiceImpl implements CartItemService {
     @Override
     public Mono<DataResponse<PageCart>> getListCartItem(Integer pageSize, Integer pageIndex) {
         if (pageIndex < 1) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocale("params.pageIndex.invalid")));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, Translator.toLocale("params.pageIndex.invalid")));
         }
         if (pageSize < 1) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, Translator.toLocale("params.pageSize.invalid")));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, Translator.toLocale("params.pageSize.invalid")));
         }
         String query = """
             SELECT b.*
@@ -273,7 +273,7 @@ public class CartItemServiceImpl implements CartItemService {
         return SecurityUtils.getCurrentUser().flatMap(tokenUser -> cartRepository
                 .findByUserId(tokenUser.getId())
                 .flatMap(Mono::just)
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "query.cart.not.found")))
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "query.cart.not.found")))
                 .flatMap(cart -> {
                     String cartId = cart.getId();
                     var cartItemList = template.getDatabaseClient()
@@ -315,13 +315,13 @@ public class CartItemServiceImpl implements CartItemService {
     @Override
     public Mono<DataResponse<Object>> deleteListItem(DeleteUserProductCartDTO deleteUserProductCartDTO) {
         if (DataUtil.isNullOrEmpty(deleteUserProductCartDTO.getUserId())) {
-            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "user.input.notnull"));
+            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "user.input.notnull"));
         }
         if (!DataUtil.isUUID(DataUtil.safeTrim(deleteUserProductCartDTO.getUserId()))) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.invalid.format"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "params.invalid.format"));
         }
         if (DataUtil.isNullOrEmpty(deleteUserProductCartDTO.getListProductId())) {
-            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "list.productId.notnull"));
+            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "list.productId.notnull"));
         }
         List<String> trimmedProductIds = deleteUserProductCartDTO.getListProductId().stream()
                 .map(DataUtil::safeTrim)
@@ -360,7 +360,7 @@ public class CartItemServiceImpl implements CartItemService {
                     List<ProductOfferTemplateDTO> productInfoDetailList = productInfoData.getData();
                     if (DataUtil.isNullOrEmpty(productInfoDetailList)) {
                         return Mono.error(new BusinessException(
-                                CommonErrorCode.NOT_FOUND, Translator.toLocale("resource.not.found")));
+                                ErrorCode.NOT_FOUND, Translator.toLocale("resource.not.found")));
                     }
                     Map<String, List<CartItemProductDTO>> mapByServiceId =
                             getMapCartItemProductDTOByTelecomService(productInfoDetailList, itemList);
@@ -395,7 +395,7 @@ public class CartItemServiceImpl implements CartItemService {
                                     new PageCart(rspList, totalCount, 0L, pagination))));
                 })
                 .switchIfEmpty(Mono.just(new DataResponse<>(
-                        CommonErrorCode.NOT_FOUND, Translator.toLocale("resource.not.found"), null)));
+                        ErrorCode.NOT_FOUND, Translator.toLocale("resource.not.found"), null)));
     }
 
     private Map<String, List<CartItemProductDTO>> getMapCartItemProductDTOByTelecomService(

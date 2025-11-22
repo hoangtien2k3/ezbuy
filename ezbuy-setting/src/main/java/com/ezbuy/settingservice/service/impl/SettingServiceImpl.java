@@ -9,7 +9,7 @@ import com.ezbuy.settingservice.repository.SettingRepository;
 import com.ezbuy.settingservice.repositoryTemplate.SettingRepositoryTemplate;
 import com.ezbuy.settingservice.service.SettingService;
 import com.ezbuy.core.cache.LocalCache;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.model.TokenUser;
@@ -53,22 +53,22 @@ public class SettingServiceImpl implements SettingService {
         LocalDate toDate = request.getToDate();
 
         if (pageIndex < 1) {
-            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "params.pageIndex.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "params.pageIndex.invalid"));
         }
         if (pageSize > 100) {
-            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "params.pageSize.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "params.pageSize.invalid"));
         }
         request.setPageIndex(pageIndex);
         request.setPageSize(pageSize);
         if (request.getCode().length() > 200) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "setting.validate.code.max.length");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "setting.validate.code.max.length");
         }
         if ((Objects.isNull(fromDate) && Objects.nonNull(toDate))
                 || (Objects.nonNull(fromDate) && Objects.isNull(toDate))) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.date.request.invalid");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "params.date.request.invalid");
         }
         if (!Objects.isNull(fromDate) && fromDate.isAfter(toDate)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.from-date.larger.to-date");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "params.from-date.larger.to-date");
         }
 
         return Mono.zip(settingRepositoryTemplate.searchSettingByRequest(request).collectList(),
@@ -118,7 +118,7 @@ public class SettingServiceImpl implements SettingService {
                             .build();
                     return AppUtils.insertData(settingRepository.save(newSetting))
                             .switchIfEmpty(Mono.error(new BusinessException(
-                                    CommonErrorCode.INTERNAL_SERVER_ERROR, "setting.insert.failed")))
+                                    ErrorCode.INTERNAL_SERVER_ERROR, "setting.insert.failed")))
                             .flatMap(x -> Mono.just(new DataResponse<>("cuccess", newSetting)));
                 });
     }
@@ -141,7 +141,7 @@ public class SettingServiceImpl implements SettingService {
                                 data.getT1().getUsername())
                         .defaultIfEmpty(new Setting())
                         .switchIfEmpty(Mono.error(
-                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "setting.update.failed")))
+                                new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "setting.update.failed")))
                         .flatMap(x -> Mono.just(new DataResponse<>("cuccess", null))));
     }
 
@@ -149,13 +149,13 @@ public class SettingServiceImpl implements SettingService {
     public Mono<DataResponse<Setting>> deleteSetting(String id) {
         String settingId = DataUtil.safeTrim(id);
         if (DataUtil.isNullOrEmpty(settingId)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "setting.validate.id.null");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "setting.validate.id.null");
         }
         return Mono.zip(
                         SecurityUtils.getCurrentUser().switchIfEmpty(Mono.just(new TokenUser())),
                         settingRepository
                                 .getById(id)
-                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "setting.validate.find.by.id.null"))))
+                                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "setting.validate.find.by.id.null"))))
                 .flatMap(tuple -> settingRepository
                         .updateStatus(
                                 settingId,
@@ -168,31 +168,31 @@ public class SettingServiceImpl implements SettingService {
     private void validateInput(CreateSettingRequest request) {
         String code = DataUtil.safeTrim(request.getCode());
         if (DataUtil.isNullOrEmpty(code)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "setting.validate.code.null");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "setting.validate.code.null");
         }
         if (code.length() > 200) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "setting.validate.code.max.length");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "setting.validate.code.max.length");
         }
         String description = DataUtil.safeTrim(request.getDescription());
         if (DataUtil.isNullOrEmpty(description)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "setting.validate.description.null");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "setting.validate.description.null");
         }
         if (description.length() > 1000) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "setting.validate.description.max.length");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "setting.validate.description.max.length");
         }
         String value = DataUtil.safeTrim(request.getValue());
         if (DataUtil.isNullOrEmpty(value)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "setting.validate.value.null");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "setting.validate.value.null");
         }
         if (value.length() > 2000) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "setting.validate.value.max.length");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "setting.validate.value.max.length");
         }
         Integer status = request.getStatus();
         if (status == null) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "setting.validate.status.null");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "setting.validate.status.null");
         }
         if (!Constants.Activation.ACTIVE.equals(status) && !Constants.Activation.INACTIVE.equals(status)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "setting.validate.status.error");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "setting.validate.status.error");
         }
     }
 
@@ -202,7 +202,7 @@ public class SettingServiceImpl implements SettingService {
                     || (!isInsert
                     && settingByCode.getCode() != null
                     && !DataUtil.safeEqual(settingByCode.getId(), id))) {
-                return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "setting.validate.code.is.exist"));
+                return Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "setting.validate.code.is.exist"));
             }
             return Mono.just(true);
         });

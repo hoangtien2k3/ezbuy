@@ -7,7 +7,7 @@ import com.ezbuy.settingservice.repository.ContentDisplayRepository;
 import com.ezbuy.settingservice.repository.NewsRepository;
 import com.ezbuy.settingservice.repository.ServicesRepository;
 import com.ezbuy.settingservice.service.GlobalSearchService;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.model.response.DataResponse;
 import com.ezbuy.core.util.DataUtil;
@@ -37,7 +37,7 @@ public class GlobalSearchServiceImpl implements GlobalSearchService {
             duration = request.getDuration() * 60;
         }
         if (request.getDuration() < 0) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "duration.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "duration.invalid"));
         }
 
         return Mono.from(contentDisplayRepository
@@ -61,7 +61,7 @@ public class GlobalSearchServiceImpl implements GlobalSearchService {
                         ServicesRepository servicesRepository = (ServicesRepository) servicesRepositoryBean;
                         return servicesRepository.saveAll(servicesList).collectList();
                     } catch (Exception ex) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "error"));
+                        return Mono.error(new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "error"));
                     }
                 })
                 .flatMap(rs -> Mono.just(new DataResponse<>("success", rs.size()))));
@@ -74,7 +74,7 @@ public class GlobalSearchServiceImpl implements GlobalSearchService {
             duration = request.getDuration() * 60;
         }
         if (request.getDuration() < 0) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "duration.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "duration.invalid"));
         }
 
         return Mono.from(contentDisplayRepository

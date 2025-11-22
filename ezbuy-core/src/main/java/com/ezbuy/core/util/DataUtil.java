@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.factory.ObjectMapperFactory;
 import java.io.StringReader;
@@ -744,7 +744,7 @@ public class DataUtil {
         if (pageSize == null)
             pageSize = defaultPageSize;
         else if (pageSize <= 0)
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.pageSize.invalid");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "params.pageSize.invalid");
         return pageSize;
     }
 
@@ -759,11 +759,11 @@ public class DataUtil {
      */
     public static int validatePageIndex(Integer pageIndex, Integer pageSize) {
         if (pageSize == null || pageSize <= 0)
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.pageSize.invalid");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "params.pageSize.invalid");
         if (pageIndex == null)
             return 0;
         if (pageIndex < 1)
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.pageIndex.invalid");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "params.pageIndex.invalid");
         return (pageIndex - 1) * pageSize;
     }
 

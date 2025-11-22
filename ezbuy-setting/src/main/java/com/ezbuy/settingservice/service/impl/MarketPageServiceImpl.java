@@ -1,6 +1,6 @@
 package com.ezbuy.settingservice.service.impl;
 
-import static com.ezbuy.core.constants.CommonErrorCode.SUCCESS;
+import static com.ezbuy.core.constants.ErrorCode.SUCCESS;
 
 import com.ezbuy.settingservice.model.dto.MarketPageDTO;
 import com.ezbuy.settingservice.model.dto.PaginationDTO;
@@ -12,7 +12,7 @@ import com.ezbuy.settingservice.repository.MarketPageRepository;
 import com.ezbuy.settingservice.repositoryTemplate.MarketPageRepositoryTemplate;
 import com.ezbuy.settingservice.service.MarketPageService;
 import com.ezbuy.settingservice.service.TelecomService;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.model.TokenUser;
 import com.ezbuy.core.model.response.DataResponse;
@@ -48,7 +48,7 @@ public class MarketPageServiceImpl extends BaseServiceHandler implements MarketP
                     if (!marketPages.isEmpty()) {
                         return telecomService
                                 .getByOriginId(telecomServiceId, serviceAlias)
-                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "market.page.error.service.not.found")))
+                                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "market.page.error.service.not.found")))
                                 .map(listDataResponse -> true);
                     }
                     return Mono.just(true);
@@ -63,7 +63,7 @@ public class MarketPageServiceImpl extends BaseServiceHandler implements MarketP
                     if (!marketPages.isEmpty()) {
                         return telecomService
                                 .getByServiceAlias(serviceAlias)
-                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "market.page.error.service.not.found")))
+                                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "market.page.error.service.not.found")))
                                 .map(listDataResponse -> true);
                     }
                     return Mono.just(true);
@@ -76,10 +76,10 @@ public class MarketPageServiceImpl extends BaseServiceHandler implements MarketP
         int pageIndex = DataUtil.safeToInt(request.getPageIndex(), 1);
         int pageSize = DataUtil.safeToInt(request.getPageSize(), 10);
         if (pageIndex < 1) {
-            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "pageIndex.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "pageIndex.invalid"));
         }
         if (pageSize > 100) {
-            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "pageSize.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "pageSize.invalid"));
         }
         request.setPageIndex(pageIndex);
         request.setPageSize(pageSize);
@@ -108,7 +108,7 @@ public class MarketPageServiceImpl extends BaseServiceHandler implements MarketP
     public Mono<DataResponse<MarketPage>> getMarketPage(String id) {
         return marketPageRepository
                 .getById(id)
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "market.page.not.found")))
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "market.page.not.found")))
                 .map(marketPage -> new DataResponse<>("success", marketPage));
     }
 
@@ -151,12 +151,12 @@ public class MarketPageServiceImpl extends BaseServiceHandler implements MarketP
     public Mono<DataResponse<MarketPage>> updateMarketPage(MarketPageRequest request) {
         String id = request.getId();
         if (DataUtil.isNullOrEmpty(id)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.page.id.not.empty");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "market.page.id.not.empty");
         }
         return Mono.zip(
                         SecurityUtils.getCurrentUser()
                                 .switchIfEmpty(Mono.error(
-                                        new BusinessException(CommonErrorCode.NOT_FOUND, "market.page.not.found"))),
+                                        new BusinessException(ErrorCode.NOT_FOUND, "market.page.not.found"))),
                         marketPageRepository.getById(id))
                 .flatMap(zip -> {
                     TokenUser tokenUser = zip.getT1();
@@ -195,7 +195,7 @@ public class MarketPageServiceImpl extends BaseServiceHandler implements MarketP
         return marketPageRepository
                 .getByServiceId(lstServiceId)
                 .collectList()
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "market.page.not.found")))
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "market.page.not.found")))
                 .map(marketPage -> new DataResponse<>("success", marketPage));
     }
 
@@ -204,7 +204,7 @@ public class MarketPageServiceImpl extends BaseServiceHandler implements MarketP
         return marketPageRepository
                 .getByServiceAlias(lstAlias)
                 .collectList()
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "market.page.not.found")))
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "market.page.not.found")))
                 .map(marketPage -> new DataResponse<>("success", marketPage));
     }
 }

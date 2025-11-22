@@ -10,7 +10,7 @@ import com.ezbuy.auth.model.entity.UserProfileEntity;
 import com.ezbuy.auth.config.KeycloakProvider;
 import com.ezbuy.auth.repository.UserRepository;
 import com.ezbuy.auth.service.UserService;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.constants.Regex;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.util.DataUtil;
@@ -46,16 +46,16 @@ public class UserServiceImpl implements UserService {
         return SecurityUtils.getCurrentUser().flatMap(currentUser -> userRepository
                 .findById(currentUser.getId())
                 .flatMap(user -> Mono.just(Optional.ofNullable(user)))
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "query.user.not.found"))));
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "query.user.not.found"))));
     }
 
     @Override
     public Mono<UserProfileEntity> update(UpdateUserRequest u) {
         if (!ValidateUtils.validateRegex(DataUtil.safeTrim(u.getPhone()), Regex.PHONE_REGEX)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "user.phone.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "user.phone.invalid"));
         }
         if (!ValidateUtils.validateRegex(DataUtil.safeTrim(u.getTaxCode()), Regex.TAX_CODE_REGEX)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "user.taxCode.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "user.taxCode.invalid"));
         }
         return Mono.zip(SecurityUtils.getCurrentUser(), userRepository.currentTimeDb())
                 .flatMap(currentUser -> userRepository
@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
                         })
                         .flatMap(userRepository::save))
                 .switchIfEmpty(
-                        Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "query.user.not.found")));
+                        Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "query.user.not.found")));
     }
 
     @Override
@@ -87,7 +87,7 @@ public class UserServiceImpl implements UserService {
         }
         Set<UUID> unixUserIds = new HashSet<>(userIds);
         if (unixUserIds.size() > 100) {
-            return Flux.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "array.limit"));
+            return Flux.error(new BusinessException(ErrorCode.INVALID_PARAMS, "array.limit"));
         }
         UsersResource usersResource = kcProvider.getRealmResource().users();
         return Flux.fromIterable(unixUserIds).map(userId -> mappingUserContract(userId, usersResource));
@@ -109,7 +109,7 @@ public class UserServiceImpl implements UserService {
         return userRepository
                 .findById(id)
                 .flatMap(user -> Mono.just(Optional.ofNullable(user)))
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "query.user.not.found")));
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "query.user.not.found")));
     }
 
     /**
@@ -123,12 +123,12 @@ public class UserServiceImpl implements UserService {
     public Mono<QueryUserResponse> queryUserProfile(QueryUserRequest request) {
         int size = DataUtil.safeToInt(request.getPageSize(), 20);
         if (size <= 0 || size > 500) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "size.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "size.invalid"));
         }
 
         int page = DataUtil.safeToInt(request.getPageIndex(), 1);
         if (page <= 0) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "page.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "page.invalid"));
         }
 
         String sort = DataUtil.safeToString(request.getSort(), "-createAt");

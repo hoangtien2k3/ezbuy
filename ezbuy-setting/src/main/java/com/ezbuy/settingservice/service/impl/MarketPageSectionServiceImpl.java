@@ -1,6 +1,6 @@
 package com.ezbuy.settingservice.service.impl;
 
-import static com.ezbuy.core.constants.CommonErrorCode.SUCCESS;
+import static com.ezbuy.core.constants.ErrorCode.SUCCESS;
 
 import com.ezbuy.settingservice.model.dto.PaginationDTO;
 import com.ezbuy.settingservice.model.dto.request.SearchMarketPageSectionRequest;
@@ -12,7 +12,7 @@ import com.ezbuy.settingservice.repository.MarketPageSectionRepository;
 import com.ezbuy.settingservice.repository.MarketSectionRepository;
 import com.ezbuy.settingservice.repositoryTemplate.MarketPageSectionRepositoryTemplate;
 import com.ezbuy.settingservice.service.MarketPageSectionService;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.model.TokenUser;
 import com.ezbuy.core.model.response.DataResponse;
@@ -92,10 +92,10 @@ public class MarketPageSectionServiceImpl extends BaseServiceHandler implements 
     @Transactional
     public Mono<DataResponse<MarketPageSection>> updateMarketPageSection(String id, MarketPageSectionRequest request) {
         if (DataUtil.isNullOrEmpty(id)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.page.id.not.empty");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "market.page.id.not.empty");
         }
         return Mono.zip(
-                        SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "market.page.not.found"))),
+                        SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "market.page.not.found"))),
                         marketPageSectionRepository.getById(id))
                 .flatMap(zip -> {
                     LocalDateTime now = LocalDateTime.now();
@@ -118,10 +118,10 @@ public class MarketPageSectionServiceImpl extends BaseServiceHandler implements 
         return marketPageRepository
                 .findMarketPageById(pageId, status)
                 .switchIfEmpty(Mono.error(new BusinessException(
-                        CommonErrorCode.BAD_REQUEST, "market.page.error.pageId.not.found")))
+                        ErrorCode.BAD_REQUEST, "market.page.error.pageId.not.found")))
                 .flatMap(marketPages -> {
                     if (DataUtil.isNullOrEmpty(marketPages)) {
-                        Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "market.page.error.service.not.found"));
+                        Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "market.page.error.service.not.found"));
                     }
                     return Mono.just(true);
                 });
@@ -131,10 +131,10 @@ public class MarketPageSectionServiceImpl extends BaseServiceHandler implements 
         return marketSectionRepository
                 .findMarketSectionById(sectionId, status)
                 .switchIfEmpty(Mono.error(new BusinessException(
-                        CommonErrorCode.BAD_REQUEST, "market.page.error.sectionId.not.found")))
+                        ErrorCode.BAD_REQUEST, "market.page.error.sectionId.not.found")))
                 .flatMap(marketPages -> {
                     if (DataUtil.isNullOrEmpty(marketPages)) {
-                        Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "market.page.error.service.not.found"));
+                        Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "market.page.error.service.not.found"));
                     }
                     return Mono.just(true);
                 });

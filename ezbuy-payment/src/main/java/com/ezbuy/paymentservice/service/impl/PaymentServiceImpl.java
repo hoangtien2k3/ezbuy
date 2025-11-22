@@ -24,7 +24,7 @@ import com.ezbuy.paymentservice.repoTemplate.RequestBankingRepositoryTemplate;
 import com.ezbuy.paymentservice.repository.RequestBankingRepository;
 import com.ezbuy.paymentservice.service.PaymentService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.factory.ObjectMapperFactory;
 import com.ezbuy.core.model.response.DataResponse;
@@ -186,23 +186,23 @@ public class PaymentServiceImpl implements PaymentService {
 
             String checkSum = createChecksum(data, hashCode);
             if (!checkSum.equals(request.getCheck_sum())) {
-                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "check_sum.invalid"));
+                return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "check_sum.invalid"));
             }
 
             return requestBankingRepository
                     .findRequestBankingByIdAndStatus(request.getOrder_code())
                     .switchIfEmpty(Mono.error(
-                            new BusinessException(CommonErrorCode.INVALID_PARAMS, "request.banking.not.exist")))
+                            new BusinessException(ErrorCode.INVALID_PARAMS, "request.banking.not.exist")))
                     .flatMap(requestBanking -> {
                         if (requestBanking.getState() >= PAYMENT_STATUS) {
                             log.info(
                                     "Đơn hàng đã được thực hiện từ trước. Trạng thái là: {}",
                                     requestBanking.getState());
-                            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "state.invalid"));
+                            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "state.invalid"));
                         }
                         if (!request.getTrans_amount().equals(requestBanking.getTotalFee())) {
                             return Mono.error(
-                                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "trans_amount.invalid"));
+                                    new BusinessException(ErrorCode.INVALID_PARAMS, "trans_amount.invalid"));
                         }
                         if (!PaymentConstants.PaymentStatus.STATUS_ACTIVE.equals(request.getPayment_status())) {
                             log.info("payment_status != 1");
@@ -211,7 +211,7 @@ public class PaymentServiceImpl implements PaymentService {
                                     .flatMap(rs -> {
                                         if (Boolean.FALSE.equals(rs)) {
                                             return Mono.error(new BusinessException(
-                                                    CommonErrorCode.INTERNAL_SERVER_ERROR, "request_banking.update.failed"));
+                                                    ErrorCode.INTERNAL_SERVER_ERROR, "request_banking.update.failed"));
                                         }
                                         return Mono.just(new DataResponse<>("success", request.getVt_transaction_id()));
                                     });
@@ -222,7 +222,7 @@ public class PaymentServiceImpl implements PaymentService {
                                         PaymentState.DONE.getValue()))
                                 .flatMap(rs -> {
                                     if (Boolean.FALSE.equals(rs)) {
-                                        return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "request_banking.update.failed"));
+                                        return Mono.error(new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "request_banking.update.failed"));
                                     }
                                     log.info("Before call order-service for updateStateOrder");
                                     AppUtils.runHiddenStream(orderClient.updateStatusOrder(requestBanking.getOrderId(), request.getPayment_status()));
@@ -241,10 +241,10 @@ public class PaymentServiceImpl implements PaymentService {
                         .collectList())
                 .flatMap(requestBankings -> {
                     if (DataUtil.isNullOrEmpty(requestBankings)) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.code.not_exist"));
+                        return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "order.code.not_exist"));
                     }
                     if (request.getUpdateOrderStateDTOList().size() > requestBankings.size()) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.code.not_exist"));
+                        return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "order.code.not_exist"));
                     }
                     return settingClient
                             .findByOptionSetCode(PaymentConstants.OptionSet.MERCHANT_CODE_PAYGATE)
@@ -252,7 +252,7 @@ public class PaymentServiceImpl implements PaymentService {
                                 return buildOrderIdUpdateStateMap(requestBankings, lstSetting)
                                         .flatMap(orderIdUpdateStateMap -> {
                                             if (DataUtil.isNullOrEmpty(orderIdUpdateStateMap)) {
-                                                return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "order.state.internal"));
+                                                return Mono.error(new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "order.state.internal"));
                                             }
                                             return AppUtils.insertData(requestBankingRepositoryTemplate
                                                     .updateRequestBankingBatch(orderIdUpdateStateMap)
@@ -260,7 +260,7 @@ public class PaymentServiceImpl implements PaymentService {
                                         })
                                         .flatMap(updateRequestBanking -> {
                                             if (DataUtil.isNullOrEmpty(updateRequestBanking) || Boolean.FALSE.equals(updateRequestBanking)) {
-                                                return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "order.state.internal"));
+                                                return Mono.error(new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "order.state.internal"));
                                             }
                                             return Mono.just(new DataResponse<>(
                                                     "success",
@@ -279,7 +279,7 @@ public class PaymentServiceImpl implements PaymentService {
             endDate = endDate.plusDays(1);
         }
         if (startDate != null && endDate != null && !startDate.isBefore(endDate)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.start.time.before.end.time"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "order.start.time.before.end.time"));
         }
         request.setStartDate(startDate);
         request.setEndDate(endDate);
@@ -322,34 +322,34 @@ public class PaymentServiceImpl implements PaymentService {
 
     private Mono<Boolean> validateRequest(ProductPaymentRequest request) {
         if (DataUtil.isNullOrEmpty(request.getReturnUrl())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "link.return.null"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "link.return.null"));
         }
         if (DataUtil.isNullOrEmpty(request.getCancelUrl())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "link.cancel.null"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "link.cancel.null"));
         }
         if (DataUtil.isNullOrEmpty(request.getOrderCode())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.code.null"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "order.code.null"));
         }
         if (DataUtil.isNullOrEmpty(request.getTotalFee())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.total.fee.null"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "order.total.fee.null"));
         }
         if (DataUtil.isNullOrEmpty(request.getOrderType())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.type.null"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "order.type.null"));
         }
         if (request.getOrderCode().length() > 36) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.code.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "order.code.invalid"));
         }
         if (!ValidateUtils.validateLink(request.getReturnUrl())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "link.return.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "link.return.invalid"));
         }
         if (!ValidateUtils.validateLink(request.getCancelUrl())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "link.cancel.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "link.cancel.invalid"));
         }
         if (request.getTotalFee() <= 0) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "total.fee.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "total.fee.invalid"));
         }
         if (!PaymentConstants.OrderType.ALLOW_ORDER_TYPES.contains(request.getOrderType())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "payment.order.type.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "payment.order.type.invalid"));
         }
         return Mono.just(true);
     }
@@ -357,51 +357,51 @@ public class PaymentServiceImpl implements PaymentService {
     private Mono<Boolean> validatePaymentResultRequest(PaymentResultRequest request) {
         log.info("Request recv from Bank {}", request);
         if (DataUtil.isNullOrEmpty(request.getCheck_sum())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "check_sum.null"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "check_sum.null"));
         }
         if (DataUtil.isNullOrEmpty(request.getError_code())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "error_code.null"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "error_code.null"));
         }
         if (DataUtil.isNullOrEmpty(request.getMerchant_code())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "merchant_code.null"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "merchant_code.null"));
         }
         if (DataUtil.isNullOrEmpty(request.getOrder_code())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order_code.null"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "order_code.null"));
         }
         if (DataUtil.isNullOrEmpty(request.getPayment_status())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "payment_status.null"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "payment_status.null"));
         }
         if (DataUtil.isNullOrEmpty(request.getTrans_amount())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "trans_amount.null"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "trans_amount.null"));
         }
         if (DataUtil.isNullOrEmpty(request.getVt_transaction_id())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "vt_transaction_id.null"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "vt_transaction_id.null"));
         }
         if (!ERROR_CODE.equals(request.getError_code())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "error_code.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "error_code.invalid"));
         }
         if (request.getTrans_amount() <= 0) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "trans_amount.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "trans_amount.invalid"));
         }
         return Mono.just(true);
     }
 
     private Mono<Boolean> validateUpdateOrderStateRequest(UpdateOrderStateRequest request) {
         if (request.getUpdateOrderStateDTOList().isEmpty()) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.state.request.null"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "order.state.request.null"));
         }
         for (UpdateOrderStateDTO updateOrderStateDTO : request.getUpdateOrderStateDTOList()) {
             if (DataUtil.isNullOrEmpty(updateOrderStateDTO.getOrderCode())) {
-                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.code.null"));
+                return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "order.code.null"));
             }
             if (DataUtil.isNullOrEmpty(updateOrderStateDTO.getOrderType())) {
-                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.type.null"));
+                return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "order.type.null"));
             }
             if (DataUtil.isNullOrEmpty(updateOrderStateDTO.getOrderState())) {
-                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.state.null"));
+                return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "order.state.null"));
             }
             if (updateOrderStateDTO.getOrderState() != OrderState.COMPLETED.getValue()) {
-                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.state.invalid"));
+                return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "order.state.invalid"));
             }
         }
         return Mono.just(true);

@@ -26,7 +26,6 @@ import com.ezbuy.auth.repository.OrganizationRepo;
 import com.ezbuy.auth.repository.OtpRepository;
 import com.ezbuy.auth.repository.UserCredentialRepo;
 import com.ezbuy.auth.constants.AuthConstants;
-import com.ezbuy.auth.constants.ErrorCode;
 import com.ezbuy.auth.model.dto.AccessToken;
 import com.ezbuy.auth.model.dto.KeycloakErrorResponse;
 import com.ezbuy.auth.model.dto.response.GetActionLoginReportResponse;
@@ -37,7 +36,7 @@ import com.ezbuy.auth.client.NotiServiceClient;
 import com.ezbuy.auth.config.KeycloakProvider;
 import com.ezbuy.auth.service.AuthService;
 import com.ezbuy.core.config.CipherManager;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.constants.Regex;
 import com.ezbuy.core.exception.BusinessException;
@@ -132,13 +131,13 @@ public class AuthServiceImpl implements AuthService {
     public Mono<List<Permission>> getOrgPermission(String clientId, String idNo, String orgId) {
         return SecurityUtils.getCurrentUser().flatMap(currentUser -> {
             if (DataUtil.isNullOrEmpty(idNo) && DataUtil.isNullOrEmpty(orgId)) {
-                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "org.define.not.exist"));
+                return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "org.define.not.exist"));
             }
             if (DataUtil.isNullOrEmpty(orgId) && !DataUtil.isNullOrEmpty(idNo)) {
                 return organizationRepo
                         .findOrganizationByIdentify(AuthConstants.TenantType.ORGANIZATION, idNo)
                         .flatMap(orgIdDb -> getPermission(clientId, orgIdDb, currentUser.getId()))
-                        .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "id.no.not.existed")));
+                        .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "id.no.not.existed")));
             } else {
                 return getPermission(clientId, orgId, currentUser.getId());
             }
@@ -154,7 +153,7 @@ public class AuthServiceImpl implements AuthService {
             }
             return kcProvider
                     .getClient(clientId)
-                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "client.not.existed")))
+                    .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "client.not.existed")))
                     .flatMap(client -> {
                         PolicyEvaluationRequest policyEvaluationRequest = new PolicyEvaluationRequest();
                         policyEvaluationRequest.setUserId(userId);
@@ -217,10 +216,10 @@ public class AuthServiceImpl implements AuthService {
         String requestEmail = DataUtil.safeTrim(signupRequest.getEmail());
         if (!ValidateUtils.validateRegex(requestEmail, Regex.EMAIL_REGEX)) {
             return Mono.error(
-                    new BusinessException(CommonErrorCode.INVALID_PARAMS, AuthConstants.Message.EMAIL_INVALID));
+                    new BusinessException(ErrorCode.INVALID_PARAMS, AuthConstants.Message.EMAIL_INVALID));
         }
         if (isExistedEmail(requestEmail)) {
-            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "signup.email.exist"));
+            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "signup.email.exist"));
         }
         String otpValue = generateOtpValue();
         CreateNotificationDTO createNotificationDTO = createNotificationDTO(
@@ -269,10 +268,10 @@ public class AuthServiceImpl implements AuthService {
     public Mono<UserOtpEntity> forgotPassword(ForgotPasswordRequest forgotPasswordRequest) {
         String userName = DataUtil.safeTrim(forgotPasswordRequest.getUsername());
         if (DataUtil.isNullOrEmpty(userName)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "individual.not.found"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "individual.not.found"));
         }
         if (!isExistedUsername(userName)) {
-            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "forgot.pass.email"));
+            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "forgot.pass.email"));
         }
         String otpValue = generateOtpValue();
         List<UserRepresentation> listUser = kcProvider.getRealmResource().users().search(userName, true);
@@ -307,7 +306,7 @@ public class AuthServiceImpl implements AuthService {
                     return insertTransmission(createNotificationDTO, otpBuild);
                 })
                 .onErrorResume(throwable ->
-                        Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "noti.service.error")));
+                        Mono.error(new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "noti.service.error")));
     }
 
     private Mono<UserOtpEntity> insertTransmission(CreateNotificationDTO createNotificationDTO, UserOtpEntity userOtp) {
@@ -315,16 +314,16 @@ public class AuthServiceImpl implements AuthService {
                 .insertTransmission(createNotificationDTO)
                 .flatMap(objects -> {
                     if (objects.isPresent()
-                            && ErrorCode.ResponseErrorCode.ERROR_CODE_SUCCESS.equals(
+                            && com.ezbuy.auth.constants.ErrorCode.ResponseErrorCode.ERROR_CODE_SUCCESS.equals(
                                     objects.get().getErrorCode())
                             && !DataUtil.isNullOrEmpty(objects.get().getMessage())) {
                         return Mono.just(userOtp);
                     }
                     return Mono.error(new BusinessException(
-                            CommonErrorCode.INVALID_PARAMS,
+                            ErrorCode.INVALID_PARAMS,
                             (objects.isPresent()) ? objects.get().getMessage() : "params.invalid"));
                 })
-                .onErrorResume(throwable -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "noti.service.error")));
+                .onErrorResume(throwable -> Mono.error(new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "noti.service.error")));
     }
 
     private Mono<UserOtpEntity> generateOtpAndSave(UserOtpEntity otp) {
@@ -391,26 +390,26 @@ public class AuthServiceImpl implements AuthService {
         String requestEmail = DataUtil.safeTrim(resetPasswordRequest.getEmail());
         String requestOtp = DataUtil.safeTrim(resetPasswordRequest.getOtp());
         if (!Regex.OTP_REGEX.matches(requestOtp)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "dto.otp.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "dto.otp.invalid"));
         }
         if (!Regex.PASSWORD_REGEX.matches(resetPasswordRequest.getPassword())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "dto.password.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "dto.password.invalid"));
         }
         if (!Regex.UTF8_REGEX.matches(resetPasswordRequest.getPassword())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "dto.password.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "dto.password.invalid"));
         }
 
         List<UserRepresentation> listUser =
                 kcProvider.getRealmResource().users().search(requestEmail, true);
         if (DataUtil.isNullOrEmpty(listUser)) {
-            return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.not.found"));
+            return Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "user.not.found"));
         }
         UserRepresentation user = listUser.getFirst();
         return otpRepository
                 .confirmOtp(user.getEmail(), AuthConstants.Otp.FORGOT_PASSWORD, requestOtp, 1)
                 .flatMap(result -> {
                     if (Boolean.FALSE.equals(result)) {
-                        return Mono.error(new BusinessException(ErrorCode.OtpErrorCode.OTP_NOT_MATCH, "otp.not.match"));
+                        return Mono.error(new BusinessException(com.ezbuy.auth.constants.ErrorCode.OtpErrorCode.OTP_NOT_MATCH, "otp.not.match"));
                     }
                     UsersResource usersResource = kcProvider.getRealmResource().users();
                     UserResource userResource = usersResource.get(user.getId());
@@ -450,7 +449,7 @@ public class AuthServiceImpl implements AuthService {
                             user.getEmail(), AuthConstants.Otp.FORGOT_PASSWORD, AuthConstants.RoleName.SYSTEM));
                     return Mono.zip(saveUserCredential, saveDisableOtp)
                             .switchIfEmpty(Mono.error(new BusinessException(
-                                    CommonErrorCode.INTERNAL_SERVER_ERROR, "update.user-credential-or-user-otp.error")))
+                                    ErrorCode.INTERNAL_SERVER_ERROR, "update.user-credential-or-user-otp.error")))
                             .flatMap(tuple -> {
                                 AppUtils.runHiddenStream(saveLog(
                                         user.getId(),
@@ -460,7 +459,7 @@ public class AuthServiceImpl implements AuthService {
                                 return Mono.just(new DataResponse<>("reset.password.success", null));
                             });
                 })
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "otp.not.found")));
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "otp.not.found")));
     }
 
     @Override
@@ -480,7 +479,7 @@ public class AuthServiceImpl implements AuthService {
                                 return individualRepository.save(individual);
                             })
                             .switchIfEmpty(Mono.error(new BusinessException(
-                                    CommonErrorCode.NOT_FOUND, Translator.toLocaleVi("individual.not.exits"))));
+                                    ErrorCode.NOT_FOUND, Translator.toLocaleVi("individual.not.exits"))));
                     // update user credential
                     Mono<UserCredentialEntity> updateCredential = userCredentialRepo
                             .getUserCredentialByUserName(tokenUser.getUsername(), Constants.STATUS.ACTIVE)
@@ -512,7 +511,7 @@ public class AuthServiceImpl implements AuthService {
                             .getToken(loginRequest)
                             .thenReturn(tokenUser)
                             .onErrorMap(throwable -> new BusinessException(
-                                    CommonErrorCode.BAD_REQUEST,
+                                    ErrorCode.BAD_REQUEST,
                                     Translator.toLocaleVi("change-pass.old-password.invalid")));
                     // zip mono
                     return Mono.zip(updateIndividual, getTokenInfo, updateCredential)
@@ -543,19 +542,19 @@ public class AuthServiceImpl implements AuthService {
         String password = createAccount.getPassword();
         String system = createAccount.getSystem();
         if (!ValidateUtils.validateRegex(email, Regex.EMAIL_REGEX)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "dto.email.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "dto.email.invalid"));
         }
         if (!password.matches(Regex.PASSWORD_REGEX)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "dto.password.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "dto.password.invalid"));
         }
         return otpRepository
                 .confirmOtp(email, AuthConstants.Otp.REGISTER, otp, 1)
                 .flatMap(isConfirmOtp -> {
                     if (!isConfirmOtp) {
-                        return Mono.error(new BusinessException(ErrorCode.OtpErrorCode.OTP_NOT_MATCH, "otp.not.match"));
+                        return Mono.error(new BusinessException(com.ezbuy.auth.constants.ErrorCode.OtpErrorCode.OTP_NOT_MATCH, "otp.not.match"));
                     }
                     if (isExistedEmail(email)) {
-                        return Mono.error(new BusinessException(ErrorCode.AuthErrorCode.USER_EXISTED, "signup.email.exist"));
+                        return Mono.error(new BusinessException(com.ezbuy.auth.constants.ErrorCode.AuthErrorCode.USER_EXISTED, "signup.email.exist"));
                     }
                     return createUserInKeyCloak(email, password, email, system);
                 });
@@ -619,14 +618,14 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public Mono<GetTwoWayPasswordResponse> getTwoWayPassword(String username) {
         if (DataUtil.isNullOrEmpty(username)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "username.required"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "username.required"));
         }
         return userCredentialRepo
                 .getUserCredentialByUserName(username, Constants.STATUS.ACTIVE)
                 .collectList()
                 .flatMap(rs -> {
                     if (rs.isEmpty()) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "user.not.found"));
+                        return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "user.not.found"));
                     }
                     return Mono.just(GetTwoWayPasswordResponse.builder()
                             .password(rs.getFirst().getHashPwd())
@@ -648,11 +647,11 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public Mono<GetActionLoginReportResponse> getActionLoginReport(GetActionLoginReportRequest request) {
         if (DataUtil.isNullOrEmpty(request.getDateReport())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "dateReport.not.empty"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "dateReport.not.empty"));
         }
         return actionLogRepository
                 .countLoginInOneDay(request.getDateReport(), AuthConstants.LOGIN)
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "action-log.login.not.found")))
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "action-log.login.not.found")))
                 .flatMap(rs -> Mono.just(GetActionLoginReportResponse.builder().loginCount(rs).build()));
     }
 
@@ -661,13 +660,13 @@ public class AuthServiceImpl implements AuthService {
             ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange) {
         String otp = DataUtil.safeTrim(confirmOTPRequest.getOtp());
         if (DataUtil.isNullOrEmpty(otp)) {
-            return Mono.error(new BusinessException(ErrorCode.OtpErrorCode.OTP_EMPTY, "dto.otp.not.empty"));
+            return Mono.error(new BusinessException(com.ezbuy.auth.constants.ErrorCode.OtpErrorCode.OTP_EMPTY, "dto.otp.not.empty"));
         }
         String email = DataUtil.safeTrim(confirmOTPRequest.getEmail());
         String type = DataUtil.safeTrim(confirmOTPRequest.getType());
         return otpRepository.confirmOtp(email, type, otp, 1).flatMap(result -> {
             if (Boolean.FALSE.equals(result)) {
-                return Mono.error(new BusinessException(ErrorCode.OtpErrorCode.OTP_NOT_MATCH, "otp.not.match"));
+                return Mono.error(new BusinessException(com.ezbuy.auth.constants.ErrorCode.OtpErrorCode.OTP_NOT_MATCH, "otp.not.match"));
             }
             return Mono.just(new DataResponse<>("success", Map.of("message", "otp.success.match")));
         });
@@ -697,7 +696,7 @@ public class AuthServiceImpl implements AuthService {
             var saveOtpMono = AppUtils.insertData(otpRepository.save(otp));
             return Mono.zip(disableOtpMono, saveOtpMono)
                     .map(tuple -> new DataResponse<>("success", otpValue))
-                    .onErrorResume(throwable -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, throwable.getMessage())));
+                    .onErrorResume(throwable -> Mono.error(new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, throwable.getMessage())));
         });
     }
 
@@ -715,20 +714,20 @@ public class AuthServiceImpl implements AuthService {
         String body = err.getResponseBodyAsString();
         KeycloakErrorResponse errorResponse = objectMapperUtil.convertStringToObject(body, KeycloakErrorResponse.class);
         if (Objects.isNull(errorResponse)) {
-            return new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "token.error");
+            return new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "token.error");
         }
         String errorCode = errorResponse.getError();
         String errorDescription = errorResponse.getErrorDescription();
         if (Constants.KeyCloakError.INVALID_GRANT.equalsIgnoreCase(errorCode)) {
             String upperCaseDescription = Objects.isNull(errorDescription) ? "" : errorDescription.toUpperCase();
             if (Constants.KeyCloakError.DISABLED.contains(upperCaseDescription)) {
-                return new BusinessException(ErrorCode.AuthErrorCode.USER_DISABLED, "user.disabled");
+                return new BusinessException(com.ezbuy.auth.constants.ErrorCode.AuthErrorCode.USER_DISABLED, "user.disabled");
             }
             if (Constants.KeyCloakError.INVALID.contains(upperCaseDescription)) {
-                return new BusinessException(ErrorCode.AuthErrorCode.INVALID, "user.invalid");
+                return new BusinessException(com.ezbuy.auth.constants.ErrorCode.AuthErrorCode.INVALID, "user.invalid");
             }
         }
-        return new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorDescription);
+        return new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, errorDescription);
     }
 
 }

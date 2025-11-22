@@ -16,7 +16,7 @@
 package com.ezbuy.core.client.impl;
 
 import com.ezbuy.core.client.BaseSoapClient;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.util.DataUtil;
@@ -149,7 +149,7 @@ public class BaseSoapClientImpl<T> implements BaseSoapClient<T> {
      */
     private static Mono<Throwable> handleErrorResponse(ClientResponse response) {
         return response.bodyToMono(String.class)
-                .flatMap(errorBody -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody)));
+                .flatMap(errorBody -> Mono.error(new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, errorBody)));
     }
 
     /**

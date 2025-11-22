@@ -19,7 +19,7 @@ import com.ezbuy.settingservice.model.entity.UploadImages;
 import com.ezbuy.settingservice.repository.UploadImagesRepository;
 import com.ezbuy.settingservice.repositoryTemplate.UploadImageRepositoryTemplate;
 import com.ezbuy.settingservice.service.UploadImagesService;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.model.TokenUser;
 import com.ezbuy.core.model.response.DataResponse;
@@ -54,14 +54,14 @@ public class UploadImagesImpl implements UploadImagesService {
     @Override
     public Mono<DataResponse<List<UploadImagesDTO>>> uploadFile(UploadImageRequest request) {
         if (DataUtil.isNullOrEmpty(request.getImages())) {
-            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "params.invalid.code"));
+            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "params.invalid.code"));
         }
         // Check for duplicate image names
         Set<String> counter = new HashSet<>();
         for (var fileDTO : request.getImages()) {
             if (!counter.add(fileDTO.getName())) {
                 return Mono.error(new BusinessException(
-                        CommonErrorCode.BAD_REQUEST, Translator.toLocaleVi("upload.image.existed", fileDTO.getName())));
+                        ErrorCode.BAD_REQUEST, Translator.toLocaleVi("upload.image.existed", fileDTO.getName())));
             }
         }
 
@@ -73,7 +73,7 @@ public class UploadImagesImpl implements UploadImagesService {
             parentInfoMono = uploadImagesRepository
                     .findById(request.getParentId())
                     .switchIfEmpty(Mono.error(
-                            new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.root.folder.notfound")));
+                            new BusinessException(ErrorCode.BAD_REQUEST, "upload.root.folder.notfound")));
         }
 
         return Mono.zip(SecurityUtils.getCurrentUser(), parentInfoMono)
@@ -129,7 +129,7 @@ public class UploadImagesImpl implements UploadImagesService {
                 .collectList()
                 .flatMap(sameName -> {
                     if (!sameName.isEmpty()) {
-                        return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, Translator.toLocaleVi("upload.image.existed", fileName)));
+                        return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, Translator.toLocaleVi("upload.image.existed", fileName)));
                     }
                     return Mono.just(true);
                 });
@@ -138,7 +138,7 @@ public class UploadImagesImpl implements UploadImagesService {
     private void validateFileSize(byte[] bytes) {
         int fileSizeMB = bytes.length / (1024 * 1024);
         if (fileSizeMB >= 10) {
-            throw new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.size.limit");
+            throw new BusinessException(ErrorCode.BAD_REQUEST, "upload.size.limit");
         }
     }
 
@@ -147,7 +147,7 @@ public class UploadImagesImpl implements UploadImagesService {
         validateFileSize(file);
         return uploadImagesRepository
                 .findById(fileDTO.getId())
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.image.notfound")))
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "upload.image.notfound")))
                 .flatMap(oldInfo -> validateDuplicateName(oldInfo.getParentId(), DataUtil.safeTrim(fileDTO.getName()), oldInfo.getId())
                         .thenReturn(oldInfo))
                 .flatMap(oldInfo -> {
@@ -177,7 +177,7 @@ public class UploadImagesImpl implements UploadImagesService {
     @Override
     public Mono<DataResponse<UploadImagesDTO>> createFolder(CreateFileRequest request) {
         if (!request.getType().equals(Constants.UPLOAD_TYPE.FOLDER)) {
-            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.not.folder"));
+            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "upload.not.folder"));
         }
         Mono<DataResponse<UploadImagesDTO>> createFolder = Mono.zip(
                         SecurityUtils.getCurrentUser(),
@@ -185,7 +185,7 @@ public class UploadImagesImpl implements UploadImagesService {
                                 ? Mono.just(new UploadImages())
                                 : uploadImagesRepository
                                 .findById(request.getParentId())
-                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.root.folder.notfound"))))
+                                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "upload.root.folder.notfound"))))
                 .flatMap(zip -> {
                     TokenUser tokenUser = zip.getT1();
                     UploadImages parent = zip.getT2();
@@ -223,7 +223,7 @@ public class UploadImagesImpl implements UploadImagesService {
                 .collectList()
                 .flatMap(listByName -> {
                     if (!listByName.isEmpty()) {
-                        return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.folder.existed"));
+                        return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "upload.folder.existed"));
                     }
                     return createFolder;
                 });
@@ -241,7 +241,7 @@ public class UploadImagesImpl implements UploadImagesService {
     public Mono<DataResponse<?>> deleteFolder(DeleteFolderRequest request) {
         Mono<UploadImages> infoDeleteFolderMono = uploadImagesRepository
                 .findById(request.getId())
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.folder.notfound")))
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "upload.folder.notfound")))
                 .flatMap(uploadImg -> {
                     uploadImg.setStatus(Constants.UPLOAD_STATUS.INACTIVE);
                     return uploadImagesRepository.save(uploadImg);
@@ -290,20 +290,20 @@ public class UploadImagesImpl implements UploadImagesService {
     public Mono<DataResponse<UploadImagesDTO>> renameFolder(RenameFolderRequest request) {
         Mono<UploadImages> findFolder = uploadImagesRepository
                 .findById(request.getId().trim())
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.folder.notfound")));
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "upload.folder.notfound")));
 
         String folderName = DataUtil.safeTrim(request.getNewName());
         Flux<UploadImages> findSameName = uploadImagesRepository.findByName(folderName);
         return findFolder.flatMap(folder -> findSameName.collectList().flatMap(itemSameName -> {
                     for (UploadImages element : itemSameName) {
                         if (!Objects.equals(element.getId(), folder.getId())) {
-                            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.folder.existed"));
+                            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "upload.folder.existed"));
                         }
                     }
                     return Mono.zip(
                             SecurityUtils.getCurrentUser(),
                             Mono.just(folder),
-                            getPathByObjectId(folder.getParentId()).switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, ""))));
+                            getPathByObjectId(folder.getParentId()).switchIfEmpty(Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, ""))));
                 }))
                 .flatMap(zip -> {
                     TokenUser tokenUser = zip.getT1();
@@ -359,7 +359,7 @@ public class UploadImagesImpl implements UploadImagesService {
     private Mono<UploadImagesDTO> updateImage(UploadDTO uploadDTO) {
         return uploadImagesRepository
                 .findById(uploadDTO.getId().trim())
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.image.notfound")))
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "upload.image.notfound")))
                 .flatMap(imageInfo -> {
                     Mono<String> parentPathMono;
                     if (DataUtil.isNullOrEmpty(imageInfo.getParentId())) {
@@ -407,10 +407,10 @@ public class UploadImagesImpl implements UploadImagesService {
         int pageIndex = DataUtil.safeToInt(request.getPageIndex(), 1);
         int pageSize = DataUtil.safeToInt(request.getPageSize(), 10);
         if (pageIndex < 1) {
-            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "pageIndex.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "pageIndex.invalid"));
         }
         if (pageSize > 100) {
-            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "pageSize.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "pageSize.invalid"));
         }
         request.setPageIndex(pageIndex);
         request.setPageSize(pageSize);
@@ -438,7 +438,7 @@ public class UploadImagesImpl implements UploadImagesService {
     public Mono<DataResponse<UploadImagesDTO>> deleteImage(DeleteImageRequest request) {
         return uploadImagesRepository
                 .findById(DataUtil.safeTrim(request.getId()))
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.image.notfound")))
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "upload.image.notfound")))
                 .doOnNext(uploadImg -> minioUtils
                         .removeObject(minioUtils.getMinioProperties().getBucket(), uploadImg.getPath())
                         .subscribe())
@@ -454,7 +454,7 @@ public class UploadImagesImpl implements UploadImagesService {
     public Mono<DataResponse<UploadImagesDTO>> getInfo(String id) {
         return uploadImagesRepository
                 .findById(id)
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.folder.notfound")))
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "upload.folder.notfound")))
                 .flatMap(uploadImg -> {
                     UploadImagesDTO dto = mapToDto(uploadImg);
                     return uploadImagesRepository

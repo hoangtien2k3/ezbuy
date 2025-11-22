@@ -6,7 +6,7 @@ import com.ezbuy.ratingservice.repository.RatingCountRepository;
 import com.ezbuy.ratingservice.service.RatingCountService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.factory.ObjectMapperFactory;
@@ -38,13 +38,13 @@ public class RatingCountServiceImpl extends BaseServiceHandler implements Rating
             String ratingTypeCode, String targetId, Long newRatingPoint, Long oldRatingPoint) {
         Mono<RatingCount> ratingCount = ratingCountRepository.getRatingCountByTypeAndTargetId(ratingTypeCode, targetId);
         return ratingCount
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "find.rating.count.error")))
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "find.rating.count.error")))
                 .flatMap(count -> {
                     String detail = count.getDetail();
                     try {
                         List<RatingDetailDTO> lstDetail = ObjectMapperFactory.getInstance().readValue(detail, new TypeReference<>() {});
                         if (DataUtil.isNullOrEmpty(lstDetail)) {
-                            return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "detail.not.found"));
+                            return Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "detail.not.found"));
                         }
                         float totalRate = 0;
                         Long numberRate = 0L;
@@ -67,11 +67,11 @@ public class RatingCountServiceImpl extends BaseServiceHandler implements Rating
                         return ratingCountRepository
                                 .save(count)
                                 .switchIfEmpty(Mono.error(new BusinessException(
-                                        CommonErrorCode.NOT_FOUND, Translator.toLocaleVi("update.rating.count.error"))))
+                                        ErrorCode.NOT_FOUND, Translator.toLocaleVi("update.rating.count.error"))))
                                 .flatMap(Mono::just);
                     } catch (JsonProcessingException e) {
                         log.error(e.getMessage(), e);
-                        return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "read.value.detail.error"));
+                        return Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "read.value.detail.error"));
                     }
                 });
     }
@@ -86,7 +86,7 @@ public class RatingCountServiceImpl extends BaseServiceHandler implements Rating
                     try {
                         List<RatingDetailDTO> lstDetail = ObjectMapperFactory.getInstance().readValue(detail, new TypeReference<>() {});
                         if (DataUtil.isNullOrEmpty(lstDetail)) {
-                            return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "detail.not.found"));
+                            return Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "detail.not.found"));
                         }
                         float totalRate = 0;
                         Long numberRate = 0L;
@@ -111,7 +111,7 @@ public class RatingCountServiceImpl extends BaseServiceHandler implements Rating
                         return ratingCountRepository.save(count);
                     } catch (JsonProcessingException e) {
                         log.error(e.getMessage(), e);
-                        return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "read.value.detail.error"));
+                        return Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "read.value.detail.error"));
                     }
                 })
                 .switchIfEmpty(createRatingCount(ratingPoint, ratingTypeCode, targetId));

@@ -15,7 +15,7 @@
  */
 package com.ezbuy.core.config.exception;
 
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.model.response.TraceErrorResponse;
 import com.ezbuy.core.util.DataUtil;
@@ -73,7 +73,7 @@ public class ExceptionResponseConfig {
         String traceId = Objects.requireNonNull(tracer.currentSpan()).context().traceId();
         log.error("Runtime exception trace-id {} , error ", traceId, ex);
         return Mono.just(new ResponseEntity<>(
-                new TraceErrorResponse<>(CommonErrorCode.INTERNAL_SERVER_ERROR, "Server error", null, traceId),
+                new TraceErrorResponse<>(ErrorCode.INTERNAL_SERVER_ERROR, "Server error", null, traceId),
                 HttpStatus.INTERNAL_SERVER_ERROR));
     }
 
@@ -94,7 +94,7 @@ public class ExceptionResponseConfig {
         String traceId = Objects.requireNonNull(tracer.currentSpan()).context().traceId();
         log.error("R2dbc trace-id {} , error ", traceId, ex);
         return Mono.just(new ResponseEntity<>(
-                new TraceErrorResponse<>(CommonErrorCode.SQL_ERROR, "Server error", null, traceId),
+                new TraceErrorResponse<>(ErrorCode.SQL_ERROR, "Server error", null, traceId),
                 HttpStatus.INTERNAL_SERVER_ERROR)
         );
     }
@@ -116,7 +116,7 @@ public class ExceptionResponseConfig {
         String traceId = Objects.requireNonNull(tracer.currentSpan()).context().traceId();
         log.error("Access denied trace-id {} , error ", traceId, ex);
         return Mono.just(new ResponseEntity<>(
-                new TraceErrorResponse<>(CommonErrorCode.ACCESS_DENIED, "Access denied", null, traceId),
+                new TraceErrorResponse<>(ErrorCode.ACCESS_DENIED, "Access denied", null, traceId),
                 HttpStatus.FORBIDDEN)
         );
     }
@@ -137,7 +137,7 @@ public class ExceptionResponseConfig {
         String traceId = Objects.requireNonNull(tracer.currentSpan()).context().traceId();
         log.error("DataBuffer limit trace-id {} , error ", traceId, ex);
         return Mono.just(new ResponseEntity<>(
-                new TraceErrorResponse<>(CommonErrorCode.BAD_REQUEST, Translator.toLocale("request.databuffer.limit"), null, traceId),
+                new TraceErrorResponse<>(ErrorCode.BAD_REQUEST, Translator.toLocale("request.databuffer.limit"), null, traceId),
                 HttpStatus.BAD_REQUEST)
         );
     }
@@ -160,7 +160,7 @@ public class ExceptionResponseConfig {
         String traceId = Objects.requireNonNull(tracer.currentSpan()).context().traceId();
         log.error("Request Input invalid format trace-id {} , error ", traceId, ex);
         return Mono.just(new ResponseEntity<>(
-                new TraceErrorResponse<>(CommonErrorCode.INVALID_PARAMS, ex.getReason(), null, traceId),
+                new TraceErrorResponse<>(ErrorCode.INVALID_PARAMS, ex.getReason(), null, traceId),
                 HttpStatus.BAD_REQUEST));
     }
 
@@ -190,7 +190,7 @@ public class ExceptionResponseConfig {
         if (errorValue.contains("Failed to convert property value")) {
             return Mono.just(new ResponseEntity<>(
                     new TraceErrorResponse<>(
-                            CommonErrorCode.INVALID_PARAMS,
+                            ErrorCode.INVALID_PARAMS,
                             Translator.toLocale("params.invalid.format"),
                             null,
                             traceId),
@@ -198,7 +198,7 @@ public class ExceptionResponseConfig {
             );
         }
         return Mono.just(new ResponseEntity<>(
-                new TraceErrorResponse<>(CommonErrorCode.INVALID_PARAMS, errorValue, null, traceId),
+                new TraceErrorResponse<>(ErrorCode.INVALID_PARAMS, errorValue, null, traceId),
                 HttpStatus.BAD_REQUEST)
         );
     }
@@ -221,9 +221,9 @@ public class ExceptionResponseConfig {
         String errorCode = ex.getErrorCode();
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
         if (!DataUtil.isNullOrEmpty(errorCode)) {
-            if (errorCode.equals(CommonErrorCode.NOT_FOUND)) {
+            if (errorCode.equals(ErrorCode.NOT_FOUND)) {
                 httpStatus = HttpStatus.NOT_FOUND;
-            } else if (errorCode.equals(CommonErrorCode.NO_PERMISSION)) {
+            } else if (errorCode.equals(ErrorCode.NO_PERMISSION)) {
                 httpStatus = HttpStatus.FORBIDDEN;
             }
         }

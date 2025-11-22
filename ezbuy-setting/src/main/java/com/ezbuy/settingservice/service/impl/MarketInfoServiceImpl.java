@@ -11,7 +11,7 @@ import com.ezbuy.settingservice.repositoryTemplate.MarketInfoRepositoryTemplate;
 import com.ezbuy.settingservice.service.MarketInfoService;
 import com.ezbuy.settingservice.service.TelecomService;
 import com.ezbuy.core.config.properties.MinioProperties;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.model.TokenUser;
@@ -49,10 +49,10 @@ public class MarketInfoServiceImpl implements MarketInfoService {
         int pageIndex = DataUtil.safeToInt(request.getPageIndex(), 1);
         int pageSize = DataUtil.safeToInt(request.getPageSize(), 10);
         if (pageIndex < 1) {
-            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "pageIndex.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "pageIndex.invalid"));
         }
         if (pageSize > 100) {
-            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "pageSize.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "pageSize.invalid"));
         }
         request.setPageIndex(pageIndex);
         request.setPageSize(pageSize);
@@ -93,7 +93,7 @@ public class MarketInfoServiceImpl implements MarketInfoService {
     public Mono<DataResponse<MarketInfo>> getMarketInfo(String id) {
         return marketInfoRepository
                 .getById(id)
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "market.info.not.found")))
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "market.info.not.found")))
                 .map(marketInfoDTO -> new DataResponse<>("success", marketInfoDTO));
     }
 
@@ -105,7 +105,7 @@ public class MarketInfoServiceImpl implements MarketInfoService {
         return Mono.zip(
                         SecurityUtils.getCurrentUser()
                                 .switchIfEmpty(Mono.error(
-                                        new BusinessException(CommonErrorCode.NOT_FOUND, "market.info.not.found"))),
+                                        new BusinessException(ErrorCode.NOT_FOUND, "market.info.not.found"))),
                         validateDuplicateMarketOrder(marketOrder),
                         validateDuplicateServiceId(request.getServiceId(), request.getServiceAlias()), // bo sung them
                         minioUtils.uploadMedia(request.getImage()))
@@ -137,9 +137,9 @@ public class MarketInfoServiceImpl implements MarketInfoService {
     @Transactional
     public Mono<DataResponse<MarketInfo>> updateMarketInfo(String id, MarketInfoRequest request) {
         if (DataUtil.isNullOrEmpty(id)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.info.id.not.empty");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "market.info.id.not.empty");
         }
-        return Mono.zip(SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "market.info.not.found"))),
+        return Mono.zip(SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "market.info.not.found"))),
                         minioUtils.uploadMedia(request.getImage()),
                         marketInfoRepository.getById(id))
                 .flatMap(zip -> {
@@ -190,7 +190,7 @@ public class MarketInfoServiceImpl implements MarketInfoService {
                 .flatMap(marketInfo -> {
                     if (marketInfo.getId() != null) {
                         return Mono.error(new BusinessException(
-                                CommonErrorCode.BAD_REQUEST,
+                                ErrorCode.BAD_REQUEST,
                                 Translator.toLocaleVi("market.info.telecom.market.order.existed", marketOrder)));
                     }
                     return Mono.just(true);
@@ -206,13 +206,13 @@ public class MarketInfoServiceImpl implements MarketInfoService {
                         return telecomService
                                 .getByOriginId(telecomServiceId, serviceAlias)
                                 .switchIfEmpty(Mono.error(new BusinessException(
-                                        CommonErrorCode.BAD_REQUEST, "market.info.telecom.service.id")))
+                                        ErrorCode.BAD_REQUEST, "market.info.telecom.service.id")))
                                 .flatMap(result -> {
                                     String resultFinal = serviceAlias;
                                     if (!DataUtil.isNullOrEmpty(result.getData())) {
                                         resultFinal = result.getData().getFirst().getName();
                                     }
-                                    return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "market.info.telecom.service.id.existed", resultFinal));
+                                    return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "market.info.telecom.service.id.existed", resultFinal));
                                 });
                     }
                     return Mono.just(true);
@@ -227,9 +227,9 @@ public class MarketInfoServiceImpl implements MarketInfoService {
                     if (!marketInfoDTOS.isEmpty()) {
                         return telecomService
                                 .getByServiceAlias(serviceAlias)
-                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "market.info.telecom.service.id")))
+                                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "market.info.telecom.service.id")))
                                 .flatMap(result -> Mono.error(new BusinessException(
-                                        CommonErrorCode.BAD_REQUEST, "market.info.telecom.service.id.existed", result.getData().getFirst().getName())));
+                                        ErrorCode.BAD_REQUEST, "market.info.telecom.service.id.existed", result.getData().getFirst().getName())));
                     }
                     return Mono.just(true);
                 });
@@ -247,7 +247,7 @@ public class MarketInfoServiceImpl implements MarketInfoService {
         return marketInfoRepository
                 .getByServiceId(lstServiceId)
                 .collectList()
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "market.info.not.found")))
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "market.info.not.found")))
                 .map(marketInfoDTO -> new DataResponse<>("success", marketInfoDTO));
     }
 
@@ -256,7 +256,7 @@ public class MarketInfoServiceImpl implements MarketInfoService {
         return marketInfoRepository
                 .getByServiceAlias(lstAlias)
                 .collectList()
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "market.info.not.found")))
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "market.info.not.found")))
                 .map(marketInfoDTO -> new DataResponse<>("success", marketInfoDTO));
     }
 }

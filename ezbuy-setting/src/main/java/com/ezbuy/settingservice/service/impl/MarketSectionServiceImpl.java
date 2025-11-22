@@ -16,7 +16,7 @@ import com.ezbuy.settingservice.repository.ServiceMediaRepository;
 import com.ezbuy.settingservice.repositoryTemplate.MarketSectionRepositoryTemplate;
 import com.ezbuy.settingservice.service.MarketSectionService;
 import com.ezbuy.core.config.properties.MinioProperties;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.model.TokenUser;
@@ -54,7 +54,7 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
     @Override
     public Flux<MarketSection> getMarketSection(String pageCode, String serviceId) {
         if (DataUtil.isNullOrEmpty(pageCode) || DataUtil.isNullOrEmpty(serviceId)) {
-            return Flux.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "params.invalid"));
+            return Flux.error(new BusinessException(ErrorCode.BAD_REQUEST, "params.invalid"));
         }
         return this.marketSectionRepository.getMarketSection(pageCode, serviceId);
     }
@@ -62,7 +62,7 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
     @Override
     public Flux<MarketSection> getMarketSectionV2(String pageCode, String serviceAlias) {
         if (DataUtil.isNullOrEmpty(pageCode) || DataUtil.isNullOrEmpty(serviceAlias)) {
-            return Flux.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "params.invalid"));
+            return Flux.error(new BusinessException(ErrorCode.BAD_REQUEST, "params.invalid"));
         }
         return this.marketSectionRepository.getMarketSectionV2(pageCode, serviceAlias);
     }
@@ -80,10 +80,10 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
         request.setPageSize(pageSize);
         if ((Objects.isNull(request.getFromDate()) && Objects.nonNull(request.getToDate()))
                 || (Objects.nonNull(request.getFromDate()) && Objects.isNull(request.getToDate()))) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.date.request.invalid");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "params.date.request.invalid");
         }
         if (!Objects.isNull(request.getFromDate()) && request.getFromDate().isAfter(request.getToDate())) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.from-date.larger.to-date");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "params.from-date.larger.to-date");
         }
         Flux<MarketSection> pages = marketSectionRepositoryTemplate.queryMarketSections(request);
         Mono<Long> countMono = marketSectionRepositoryTemplate.countMarketSections(request);
@@ -105,7 +105,7 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
     public Mono<MarketSectionDTO> findMarketSectionById(String id) {
         return marketSectionRepository
                 .findMarketSectionById(id, null)
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "data.not.found")))
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "data.not.found")))
                 .map(marketSection -> {
                     MarketSectionDTO dto = new MarketSectionDTO();
                     BeanUtils.copyProperties(marketSection, dto);
@@ -116,35 +116,35 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
     private void validateInput(CreateMarketSectionRequest request) {
         String type = DataUtil.safeTrim(request.getType());
         if (DataUtil.isNullOrEmpty(type)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.section.validate.type.null");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "market.section.validate.type.null");
         }
         if (!SettingConstant.TEAMPLATE_TYPE.contains(type)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.section.error.type.invalid");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "market.section.error.type.invalid");
         }
         if (type.length() > 100) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.section.validate.type.max.length");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "market.section.validate.type.max.length");
         }
         String code = DataUtil.safeTrim(request.getCode());
         if (DataUtil.isNullOrEmpty(code)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.section.validate.code.null");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "market.section.validate.code.null");
         }
         if (code.length() > 100) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.section.validate.code.max.length");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "market.section.validate.code.max.length");
         }
         Long displayOrder = request.getDisplayOrder();
         if (displayOrder == null) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.section.validate.display.null");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "market.section.validate.display.null");
         }
         Integer status = request.getStatus();
         if (status == null) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.section.validate.status.null");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "market.section.validate.status.null");
         }
         if (!Constants.Activation.ACTIVE.equals(status) && !Constants.Activation.INACTIVE.equals(status)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.section.validate.status.error");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "market.section.validate.status.error");
         }
         String data = request.getData();
         if (!DataUtil.isNullOrEmpty(data) && !DataUtil.isValidFormatJson(data)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.section.validate.data.error.format");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "market.section.validate.data.error.format");
         }
     }
 
@@ -155,7 +155,7 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
                 .flatMap(marketSectionByCode -> {
                     if ((isInsert && marketSectionByCode.getCode() != null) ||
                             (!isInsert && marketSectionByCode.getCode() != null && !DataUtil.safeEqual(marketSectionByCode.getId(), id))) {
-                        return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "market.section.validate.code.is.exist"));
+                        return Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "market.section.validate.code.is.exist"));
                     }
                     return Mono.just(true);
                 });
@@ -169,7 +169,7 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
         String code = DataUtil.safeTrim(request.getCode());
         Long displayOrder = request.getDisplayOrder();
         return Mono.zip(
-                        SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
+                        SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "user.null"))),
                         validateExistCode(code, true, null))
                 .flatMap(userValidate -> {
                     String type = request.getType();
@@ -197,7 +197,7 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
                     return marketSectionRepository
                             .save(marketSection)
                             .switchIfEmpty(Mono.error(new BusinessException(
-                                    CommonErrorCode.INTERNAL_SERVER_ERROR, "market.section.insert.failed")))
+                                    ErrorCode.INTERNAL_SERVER_ERROR, "market.section.insert.failed")))
                             .flatMap(x -> Mono.just(new DataResponse<>("success", null)));
                 });
     }
@@ -207,11 +207,11 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
             HeaderInfoDTO headerInfo = DataUtil.parseStringToObject(data, HeaderInfoDTO.class);
             if (headerInfo == null || DataUtil.isNullOrEmpty(headerInfo.getIconUrl())) {
                 return Mono.error(new BusinessException(
-                        CommonErrorCode.INVALID_PARAMS, "market.section.error.header.info.icon.url.empty"));
+                        ErrorCode.INVALID_PARAMS, "market.section.error.header.info.icon.url.empty"));
             }
             return minioUtils
                     .uploadMedia(headerInfo.getIconUrl(), minioProperties.getBucket())
-                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "market.section.error.insert.market.section.fail")))
+                    .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "market.section.error.insert.market.section.fail")))
                     .flatMap(url -> {
                         headerInfo.setIconUrl(url);
                         LocalDateTime now = LocalDateTime.now();
@@ -235,7 +235,7 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
         if (DataUtil.safeEqual(type, "SLIDE")) {
             SlideDTO slideDTO = DataUtil.parseStringToObject(data, SlideDTO.class);
             if (slideDTO == null || DataUtil.isNullOrEmpty(slideDTO.getMedias())) {
-                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.section.error.slide.media.empty"));
+                return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "market.section.error.slide.media.empty"));
             }
             List<Mono<MediaDTO>> mediaList = slideDTO.getMedias().stream()
                     .map(slide -> uploadMediaForSlide(slide, user.getUsername(), user.getUsername()))
@@ -252,12 +252,12 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
 
     private Mono<MediaDTO> uploadMediaForSlide(MediaDTO mediaDTO, String createUser, String updateUser) {
         if (DataUtil.isNullOrEmpty(mediaDTO.getUrl())) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.section.error.slide.media.empty");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "market.section.error.slide.media.empty");
         }
         return minioUtils
                 .uploadMedia(mediaDTO.getUrl(), minioProperties.getBucket())
                 .switchIfEmpty(Mono.error(new BusinessException(
-                        CommonErrorCode.INTERNAL_SERVER_ERROR, "market.section.error.insert.market.section.fail")))
+                        ErrorCode.INTERNAL_SERVER_ERROR, "market.section.error.insert.market.section.fail")))
                 .flatMap(url -> {
                     LocalDateTime now = LocalDateTime.now();
                     ServiceMedia serviceMedia = new ServiceMedia();
@@ -306,7 +306,7 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
                                 data.getT1().getUsername())
                         .defaultIfEmpty(new MarketSection())
                         .switchIfEmpty(Mono.error(new BusinessException(
-                                CommonErrorCode.INTERNAL_SERVER_ERROR, "market.section.update.failed")))
+                                ErrorCode.INTERNAL_SERVER_ERROR, "market.section.update.failed")))
                         .flatMap(x -> Mono.just(new DataResponse<>("success", null))));
     }
 
@@ -315,14 +315,14 @@ public class MarketSectionServiceImpl extends BaseServiceHandler implements Mark
     public Mono<DataResponse<MarketSection>> deleteMarketSection(String id) {
         String marketSectionId = DataUtil.safeTrim(id);
         if (DataUtil.isNullOrEmpty(marketSectionId)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.section.validate.id.null");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "market.section.validate.id.null");
         }
         return Mono.zip(
                         SecurityUtils.getCurrentUser().switchIfEmpty(Mono.just(new TokenUser())),
                         marketSectionRepository
                                 .findMarketSectionById(marketSectionId, Constants.Activation.ACTIVE)
                                 .switchIfEmpty(Mono.error(new BusinessException(
-                                        CommonErrorCode.NOT_FOUND, "market.section.validate.find.by.id.null"))))
+                                        ErrorCode.NOT_FOUND, "market.section.validate.find.by.id.null"))))
                 .flatMap(tuple -> marketSectionRepository
                         .updateStatus(
                                 marketSectionId,
