@@ -17,8 +17,8 @@ public class BaseRepositoryTemplate {
 
     @Autowired
     private R2dbcEntityTemplate entityTemplate;
-
-    private ObjectMapper objectMapper;
+    @Autowired
+    private final ObjectMapper objectMapper;
 
     public BaseRepositoryTemplate() {
         objectMapper = JsonMapper.builder()

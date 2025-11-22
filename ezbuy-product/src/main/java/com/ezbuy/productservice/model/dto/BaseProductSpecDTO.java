@@ -1,8 +1,6 @@
 package com.ezbuy.productservice.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +10,6 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-
 public class BaseProductSpecDTO {
 
     @JsonIgnore

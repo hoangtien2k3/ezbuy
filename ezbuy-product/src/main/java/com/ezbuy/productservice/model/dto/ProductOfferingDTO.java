@@ -12,7 +12,6 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-
 @JsonIgnoreProperties
 public class ProductOfferingDTO {
     String code;
