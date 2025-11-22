@@ -10,7 +10,7 @@ import com.ezbuy.auth.model.entity.PermissionPolicyEntity;
 import com.ezbuy.auth.repository.AuthServiceCustom;
 import com.ezbuy.auth.repository.PermissionPolicyRepository;
 import com.ezbuy.auth.service.PermissionPolicyService;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.model.TokenUser;
@@ -42,17 +42,17 @@ public class PermissionPolicyServiceImpl implements PermissionPolicyService {
             String filter, Integer state, Integer pageIndex, Integer pagesize, String sort) {
         int size = DataUtil.safeToInt(pagesize, 0);
         if (size == 0) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, MessageUtils.getMessage("size.invalid")));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, MessageUtils.getMessage("size.invalid")));
         }
         if (size < 0 || size > 100) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, MessageUtils.getMessage("size.exceed", 100)));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, MessageUtils.getMessage("size.exceed", 100)));
         }
         int page = DataUtil.safeToInt(pageIndex, 0);
         if (page == 0) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, MessageUtils.getMessage("page.invalid")));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, MessageUtils.getMessage("page.invalid")));
         }
         if (page < 0) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, MessageUtils.getMessage("page.exceed", 1)));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, MessageUtils.getMessage("page.exceed", 1)));
         }
         int offset = PageUtils.getOffset(page, size);
         Mono<Integer> countTotal = authServiceCustom.countPermissionPolicyDetail(filter, state, sort);
@@ -78,7 +78,7 @@ public class PermissionPolicyServiceImpl implements PermissionPolicyService {
         try {
             if (DataUtil.isNullOrEmpty(permissionPolicyId)) {
                 return Mono.error(new BusinessException(
-                        CommonErrorCode.INVALID_PARAMS,
+                        ErrorCode.INVALID_PARAMS,
                         MessageUtils.getMessage("input.invalid", "PermissionPolicyId")));
             }
             return permissionPolicyRepository
@@ -88,7 +88,7 @@ public class PermissionPolicyServiceImpl implements PermissionPolicyService {
                         return Mono.just(DataResponse.success(true));
                     })
                     .switchIfEmpty(Mono.error(new BusinessException(
-                            CommonErrorCode.NOT_FOUND, MessageUtils.getMessage("data.not.found"))));
+                            ErrorCode.NOT_FOUND, MessageUtils.getMessage("data.not.found"))));
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
         }

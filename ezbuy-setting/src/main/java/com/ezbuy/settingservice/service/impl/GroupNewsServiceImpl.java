@@ -9,7 +9,7 @@ import com.ezbuy.settingservice.model.dto.response.SearchGroupNewsResponse;
 import com.ezbuy.settingservice.repository.GroupNewsRepository;
 import com.ezbuy.settingservice.repositoryTemplate.GroupNewsRepositoryTemplate;
 import com.ezbuy.settingservice.service.GroupNewsService;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.model.response.DataResponse;
@@ -41,7 +41,7 @@ public class GroupNewsServiceImpl extends BaseServiceHandler implements GroupNew
         String code = DataUtil.safeTrim(request.getCode());
         Integer displayOrder = request.getDisplayOrder();
         var getSysDate = groupNewsRepository.getSysDate();
-        return Mono.zip(SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
+        return Mono.zip(SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "user.null"))),
                         validateExistGroupNews(code, displayOrder),
                         getSysDate)
                 .flatMap(tuple -> {
@@ -62,7 +62,7 @@ public class GroupNewsServiceImpl extends BaseServiceHandler implements GroupNew
                             .build();
                     return groupNewsRepository
                             .save(groupNews)
-                            .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "group.news.insert.failed")))
+                            .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "group.news.insert.failed")))
                             .flatMap(x -> Mono.just(new DataResponse<>("success", groupNews)));
                 });
     }
@@ -70,31 +70,31 @@ public class GroupNewsServiceImpl extends BaseServiceHandler implements GroupNew
     public void validateInput(CreateGroupNewsRequest request) {
         String code = DataUtil.safeTrim(request.getCode());
         if (DataUtil.isNullOrEmpty(code)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.group.news.code.empty");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "create.group.news.code.empty");
         }
         if (code.length() > 200) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.group.news.code.max.length");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "create.group.news.code.max.length");
         }
         String name = DataUtil.safeTrim(request.getName());
         if (DataUtil.isNullOrEmpty(name)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.group.news.name");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "create.group.news.name");
         }
         if (name.length() > 200) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.group.news.name.max.length");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "create.group.news.name.max.length");
         }
         Integer displayOrder = request.getDisplayOrder();
         if (displayOrder == null) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.group.news.order");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "create.group.news.order");
         }
         if (displayOrder < 1) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.group.news.order.min");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "create.group.news.order.min");
         }
         Integer status = request.getStatus();
         if (status == null) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.service.status.null");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "create.service.status.null");
         }
         if (!Constants.Activation.ACTIVE.equals(status) && !Constants.Activation.INACTIVE.equals(status)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.service.status.error");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "create.service.status.error");
         }
     }
 
@@ -105,12 +105,12 @@ public class GroupNewsServiceImpl extends BaseServiceHandler implements GroupNew
                     GroupNews groupNewsByCode = tuple.getT1();
                     if (groupNewsByCode.getCode() != null) {
                         return Mono.error(
-                                new BusinessException(CommonErrorCode.NOT_FOUND, "create.group.news.code.is.exists"));
+                                new BusinessException(ErrorCode.NOT_FOUND, "create.group.news.code.is.exists"));
                     }
                     GroupNews groupNewsByDisplayOrder = tuple.getT2();
                     if (groupNewsByDisplayOrder.getDisplayOrder() != null) {
                         return Mono.error(
-                                new BusinessException(CommonErrorCode.NOT_FOUND, "create.group.news.order.is.exits"));
+                                new BusinessException(ErrorCode.NOT_FOUND, "create.group.news.order.is.exits"));
                     }
                     return Mono.just(true);
                 });
@@ -122,14 +122,14 @@ public class GroupNewsServiceImpl extends BaseServiceHandler implements GroupNew
         validateInput(request);
         String groupNewsId = DataUtil.safeTrim(id);
         if (DataUtil.isNullOrEmpty(groupNewsId)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "group.news.id.not.empty");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "group.news.id.not.empty");
         }
         return Mono.zip(
                         SecurityUtils.getCurrentUser()
                                 .switchIfEmpty(
-                                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
+                                        Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "user.null"))),
                         groupNewsRepository.getById(groupNewsId)
-                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "group.news.not.found"))))
+                                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "group.news.not.found"))))
                 .flatMap(tuple -> {
                     GroupNews groupNews = tuple.getT2();
                     Mono<Boolean> checkExistGroupCode = Mono.just(true);
@@ -160,11 +160,11 @@ public class GroupNewsServiceImpl extends BaseServiceHandler implements GroupNew
         request.setPageSize(pageSize);
         if ((Objects.isNull(request.getFromDate()) && Objects.nonNull(request.getToDate()))
                 || (Objects.nonNull(request.getFromDate()) && Objects.isNull(request.getToDate()))) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.date.request.invalid");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "params.date.request.invalid");
         }
         if (!Objects.isNull(request.getFromDate())) {
             if (request.getFromDate().isAfter(request.getToDate())) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.from-date.larger.to-date");
+                throw new BusinessException(ErrorCode.INVALID_PARAMS, "params.from-date.larger.to-date");
             }
         }
         Flux<GroupNewsDTO> groupNews = groupNewsRepositoryTemplate.findGroupNews(request);

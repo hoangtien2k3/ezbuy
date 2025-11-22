@@ -17,7 +17,7 @@ import com.ezbuy.productservice.model.entity.Product;
 import com.ezbuy.productservice.repository.ProductRepository;
 import com.ezbuy.productservice.repository.repoTemplate.ProductCustomRepository;
 import com.ezbuy.productservice.service.ProductService;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.model.response.DataResponse;
 import com.ezbuy.core.util.DataUtil;
@@ -53,55 +53,55 @@ public class ProductServiceImpl implements ProductService {
     private Mono<Boolean> validateRequestCreateProduct(Product product, boolean isCreate) {
         product.trim();
         if (DataUtil.isNullOrEmpty(product.getCode())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.code.empty"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "product.error.code.empty"));
         }
         if (DataUtil.isNullOrEmpty(product.getName())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.name.empty"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "product.error.name.empty"));
         }
         if (DataUtil.isNullOrEmpty(product.getTaxRatio())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.tax.ratio.empty"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "product.error.tax.ratio.empty"));
         }
         if (product.getCode().length() > 15) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.code.length"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "product.error.code.length"));
         }
         if (product.getName().length() > 500) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.name.length"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "product.error.name.length"));
         }
         if (!DataUtil.isNullOrEmpty(product.getUnit()) && product.getUnit().length() > 150) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.unit.length"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "product.error.unit.length"));
         }
         if (product.getPriceImport() != null
                 && (product.getPriceImport() < 0D || product.getPriceImport() >= 10000000000D)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.price.import.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "product.error.price.import.invalid"));
         }
         if (product.getPriceExport() != null
                 && (product.getPriceExport() < 0D || product.getPriceExport() >= 10000000000D)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.price.export.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "product.error.price.export.invalid"));
         }
         if (product.getDiscount() != null && (product.getDiscount() < 0D || product.getDiscount() >= 10000000000D)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.discount.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "product.error.discount.invalid"));
         }
         if (!TAX_RATIO_LIST.contains(product.getTaxRatio())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.tax.ratio.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "product.error.tax.ratio.invalid"));
         }
         if (!DataUtil.isNullOrEmpty(product.getRevenueRatio())
                 && !REVENUE_RATIO_LIST.contains(DataUtil.safeToString(product.getRevenueRatio()))) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.revenue.ratio.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "product.error.revenue.ratio.invalid"));
         }
         if (!DataUtil.isNullOrEmpty(product.getPriceExport())
                 && !DataUtil.isNullOrEmpty(product.getDiscount())
                 && product.getPriceExport() < product.getDiscount()) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.price.export.smaller.than.discount"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "product.error.price.export.smaller.than.discount"));
         }
         return productRepository
                 .findFirstByCode(product.getCode())
                 .switchIfEmpty(Mono.just(new Product()))
                 .flatMap(productDb -> {
                     if (isCreate && !DataUtil.isNullOrEmpty(productDb.getCode())) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.code.exist"));
+                        return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "product.error.code.exist"));
                     }
                     if (!isCreate && !DataUtil.isNullOrEmpty(productDb.getCode()) && !DataUtil.safeEqual(product.getId(), productDb.getId())) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "product.error.code.exist"));
+                        return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "product.error.code.exist"));
                     }
                     return Mono.just(true);
                 });
@@ -145,7 +145,7 @@ public class ProductServiceImpl implements ProductService {
                     return productRepository
                             .save(product)
                             .map(rsp -> new DataResponse<>(SUCCESS, rsp))
-                            .onErrorReturn(new DataResponse<>(CommonErrorCode.INTERNAL_SERVER_ERROR, Translator.toLocaleVi(COMMON_ERROR), new Product()))
+                            .onErrorReturn(new DataResponse<>(ErrorCode.INTERNAL_SERVER_ERROR, Translator.toLocaleVi(COMMON_ERROR), new Product()))
                             .doOnError(throwable -> log.error("Save product error: {}", throwable.getMessage()));
                 });
     }
@@ -154,7 +154,7 @@ public class ProductServiceImpl implements ProductService {
     public Mono<Product> detailProduct(String productId) {
         return productRepository
                 .findFirstById(productId)
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "product.error.not.exist")))
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "product.error.not.exist")))
                 .map(product -> product);
     }
 
@@ -180,7 +180,7 @@ public class ProductServiceImpl implements ProductService {
                             return productRepository
                                     .save(productDb)
                                     .map(rsp -> DataResponse.success(true))
-                                    .onErrorResume(throwable -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, COMMON_ERROR)));
+                                    .onErrorResume(throwable -> Mono.error(new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, COMMON_ERROR)));
                         }));
     }
 
@@ -188,7 +188,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public Mono<DataResponse<Boolean>> deleteProduct(String productId) {
         return Mono.zip(productRepository.findFirstByIdAndStatus(productId, STATUS_ACTIVE)
-                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "product.error.not.exist.or.inactive"))),
+                                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "product.error.not.exist.or.inactive"))),
                         SecurityUtils.getCurrentUser())
                 .flatMap(productUser -> {
                     Product product = productUser.getT1();
@@ -199,7 +199,7 @@ public class ProductServiceImpl implements ProductService {
                     return productRepository
                             .save(product)
                             .map(rsp -> DataResponse.success(true))
-                            .onErrorResume(error -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, COMMON_ERROR)));
+                            .onErrorResume(error -> Mono.error(new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, COMMON_ERROR)));
                 });
     }
 
@@ -210,7 +210,7 @@ public class ProductServiceImpl implements ProductService {
                         productRepository
                                 .findFirstById(request.getProductId())
                                 .switchIfEmpty(Mono.error(
-                                        new BusinessException(CommonErrorCode.NOT_FOUND, "product.error.not.exist"))),
+                                        new BusinessException(ErrorCode.NOT_FOUND, "product.error.not.exist"))),
                         SecurityUtils.getCurrentUser())
                 .flatMap(productUser -> {
                     Product product = productUser.getT1();
@@ -225,7 +225,7 @@ public class ProductServiceImpl implements ProductService {
                             .save(product)
                             .map(rsp -> DataResponse.success(true))
                             .onErrorResume(error -> Mono.error(
-                                    new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, COMMON_ERROR)));
+                                    new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, COMMON_ERROR)));
                 });
     }
 
@@ -233,7 +233,7 @@ public class ProductServiceImpl implements ProductService {
     public Mono<Boolean> lockMultiProduct(LockMultiProductRequest request) {
         return Mono.zip(productRepository.findAllByIdIn(request.getProductIdList())
                                 .collectList()
-                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "product.error.not.exist"))),
+                                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "product.error.not.exist"))),
                         SecurityUtils.getCurrentUser())
                 .flatMap(productListUser -> {
                     List<Product> productDbList = productListUser.getT1();
@@ -247,7 +247,7 @@ public class ProductServiceImpl implements ProductService {
                             .saveAll(productDbList)
                             .collectList()
                             .map(rsp -> true)
-                            .onErrorResume(error -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, COMMON_ERROR)));
+                            .onErrorResume(error -> Mono.error(new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, COMMON_ERROR)));
                 });
     }
 
@@ -255,25 +255,25 @@ public class ProductServiceImpl implements ProductService {
     public Mono<GetProductInfoResponse> getProductInfo(GetProductInfoRequest request) {
         String type = DataUtil.safeTrim(request.getType());
         if (DataUtil.isNullOrEmpty(type)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "sync.history.type.not.empty"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "sync.history.type.not.empty"));
         }
         UUID organizationId = request.getOrganizationId();
         List<String> ids = request.getIds();
         if (DataUtil.isNullOrEmpty(ids) && DataUtil.isNullOrEmpty(organizationId)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "sync.history.ids.not.empty"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "sync.history.ids.not.empty"));
         }
         if (!SYNC_TYPE.equals(type)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "sync.history.type.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "sync.history.type.invalid"));
         }
         Integer offset = request.getOffset();
         Integer limit = request.getLimit();
         if (offset != null && offset < 0) {
             return Mono.error(new BusinessException(
-                    CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("sync.history.params.pageIndex.invalid")));
+                    ErrorCode.INVALID_PARAMS, Translator.toLocaleVi("sync.history.params.pageIndex.invalid")));
         }
         if (limit != null && limit < 1) {
             return Mono.error(new BusinessException(
-                    CommonErrorCode.INVALID_PARAMS, Translator.toLocaleVi("sync.history.params.pageSize.invalid")));
+                    ErrorCode.INVALID_PARAMS, Translator.toLocaleVi("sync.history.params.pageSize.invalid")));
         }
         return productCustomRepository
                 .getProductByIdAndOrganizationIdAndTransId(ids, organizationId, offset, limit, request.getTransactionId())

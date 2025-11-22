@@ -3,7 +3,7 @@ package com.ezbuy.settingservice.repositoryTemplate;
 import com.ezbuy.settingservice.model.dto.ContentDisplayDTO;
 import com.ezbuy.settingservice.model.entity.ContentDisplay;
 import com.ezbuy.settingservice.model.dto.request.ComponentPageRequest;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.repository.BaseTemplateRepository;
 import com.ezbuy.core.util.DataUtil;
@@ -110,7 +110,7 @@ public class ContentDisplayRepositoryTemplateImpl extends BaseTemplateRepository
         params.put("id", id);
         return listQuery(query, params, ContentDisplayDTO.class)
                 .switchIfEmpty(
-                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content-display.not.found")))
+                        Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "content-display.not.found")))
                 .collectList()
                 .flatMap(map -> {
                     // fix case null cua code cu

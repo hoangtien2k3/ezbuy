@@ -15,7 +15,7 @@
  */
 package com.ezbuy.core.model;
 
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import java.util.Collections;
 import java.util.List;
@@ -88,7 +88,7 @@ public abstract class SagaProcess {
                     if (stepResult.isSuccess()) {
                         synchronousSink.next(true); // Step succeeded
                     } else {
-                        synchronousSink.error(new BusinessException(CommonErrorCode.BAD_REQUEST, stepResult.getMessage())); // Handle
+                        synchronousSink.error(new BusinessException(ErrorCode.BAD_REQUEST, stepResult.getMessage())); // Handle
                     }
                 })
                 .subscribeOn(Schedulers.boundedElastic()) // Run on a bounded elastic scheduler

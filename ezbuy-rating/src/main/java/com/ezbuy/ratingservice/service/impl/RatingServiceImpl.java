@@ -19,7 +19,7 @@ import com.ezbuy.ratingservice.service.RatingCountService;
 import com.ezbuy.ratingservice.service.RatingHistoryService;
 import com.ezbuy.ratingservice.service.RatingService;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.constants.MessageConstant;
 import com.ezbuy.core.exception.BusinessException;
@@ -101,7 +101,7 @@ public class RatingServiceImpl extends BaseServiceHandler implements RatingServi
                 .getAll()
                 .collectList()
                 .map(lstRating -> lstRating)
-                .doOnError(e -> Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "telecom.not.found")));
+                .doOnError(e -> Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "telecom.not.found")));
     }
 
     @Override
@@ -112,7 +112,7 @@ public class RatingServiceImpl extends BaseServiceHandler implements RatingServi
         return Mono.zip(
                         SecurityUtils.getCurrentUser() // get info user
                                 .switchIfEmpty(
-                                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
+                                        Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "user.null"))),
                         getSysDate)
                 .flatMap(tuple -> {
                     LocalDateTime now = tuple.getT2();
@@ -132,7 +132,7 @@ public class RatingServiceImpl extends BaseServiceHandler implements RatingServi
                         );
                     }
                     return Mono.zip(ratingCountMono, ratingRepository.save(rating).switchIfEmpty(Mono.error(new BusinessException(
-                                    CommonErrorCode.INTERNAL_SERVER_ERROR,
+                                    ErrorCode.INTERNAL_SERVER_ERROR,
                                     "service.rating.insert.failed"))))
                             .flatMap(x -> Mono.just(new DataResponse<>("success", x.getT2())));
                 });
@@ -143,11 +143,11 @@ public class RatingServiceImpl extends BaseServiceHandler implements RatingServi
         validateInput(request);
         String finalId = DataUtil.safeTrim(id);
         if (DataUtil.isNullOrEmpty(finalId)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "service.rating.id.not.empty");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "service.rating.id.not.empty");
         }
         var getSysDate = ratingRepository.getSysDate();
-        return Mono.zip(SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
-                        ratingRepository.getById(finalId).switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "service.rating.not.found"))), getSysDate)
+        return Mono.zip(SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "user.null"))),
+                        ratingRepository.getById(finalId).switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "service.rating.not.found"))), getSysDate)
                 .flatMap(tuple -> {
                     String userUpdate = tuple.getT1().getUsername();
                     LocalDateTime now = tuple.getT3();
@@ -207,7 +207,7 @@ public class RatingServiceImpl extends BaseServiceHandler implements RatingServi
         request.setPageSize(pageSize);
         if (!Objects.isNull(request.getFromDate()) && !Objects.isNull(request.getToDate())) {
             if (request.getFromDate().compareTo(request.getToDate()) > 0) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.from-date.larger.to-date");
+                throw new BusinessException(ErrorCode.INVALID_PARAMS, "params.from-date.larger.to-date");
             }
         }
         Flux<RatingDTO> serviceRatings = ratingRepositoryTemplate.findRating(request);
@@ -228,21 +228,21 @@ public class RatingServiceImpl extends BaseServiceHandler implements RatingServi
     public void validateInput(RatingRequest request) {
         String username = DataUtil.safeTrim(request.getUsername());
         if (username.length() > 50) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "service.rating.username.max.length");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "service.rating.username.max.length");
         }
         String custName = DataUtil.safeTrim(request.getCustName());
         if (DataUtil.isNullOrEmpty(custName)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "service.rating.custname.empty");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "service.rating.custname.empty");
         }
         if (custName.length() > 200) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "service.rating.custname.max.length");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "service.rating.custname.max.length");
         }
         Integer status = request.getStatus();
         if (status == null) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "service.rating.status.null");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "service.rating.status.null");
         }
         if (!Constants.Activation.ACTIVE.equals(status) && !Constants.Activation.INACTIVE.equals(status)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "service.rating.status.error");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "service.rating.status.error");
         }
     }
 
@@ -252,13 +252,13 @@ public class RatingServiceImpl extends BaseServiceHandler implements RatingServi
                 .getRatingCountService(alias)
                 .collectList()
                 .map(lstRating -> lstRating)
-                .doOnError(e -> Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "telecom.not.found")));
+                .doOnError(e -> Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "telecom.not.found")));
     }
 
     @Override
     public Mono<DataResponse<RatingServiceResponse>> getRatingServicePaging(SearchRatingRequest request) {
         if (request == null) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.pageIndex.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "params.pageIndex.invalid"));
         }
         int pageIndex = DataUtil.validatePageIndex(request.getPageIndex(), request.getPageSize());
         request.setPageIndex(pageIndex);

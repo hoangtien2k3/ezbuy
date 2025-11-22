@@ -20,7 +20,7 @@ import com.ezbuy.settingservice.repository.TelecomServiceConfigRep;
 import com.ezbuy.settingservice.repositoryTemplate.TelecomRepositoryTemplate;
 import com.ezbuy.settingservice.service.TelecomService;
 import com.ezbuy.core.cache.LocalCache;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.model.response.DataResponse;
 import com.ezbuy.core.util.DataUtil;
@@ -90,11 +90,11 @@ public class TelecomServiceImpl extends BaseServiceHandler implements TelecomSer
     @Override
     public Mono<DataResponse<Telecom>> updateStatus(StatusLockingRequest params) {
         return SecurityUtils.getCurrentUser()
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null")))
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "user.null")))
                 .flatMap(user -> telecomRepository
                         .getById(params.getId())
                         .switchIfEmpty(
-                                Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "telecom.not.found")))
+                                Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "telecom.not.found")))
                         .flatMap(p -> {
                             telecomRepository.updateStatus(params.getId(), params.getStatus(), user.getId()).subscribe();
                             return Mono.just(new DataResponse<>(null, "success", null));
@@ -110,7 +110,7 @@ public class TelecomServiceImpl extends BaseServiceHandler implements TelecomSer
     @Override
     public Mono<DataResponse> initFilterV2(String serviceAlias) {
         if (DataUtil.isNullOrEmpty(serviceAlias)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "serviceAlias.required"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "serviceAlias.required"));
         }
         return telecomRepository
                 .updateIsFilterByAlias(serviceAlias)
@@ -191,7 +191,7 @@ public class TelecomServiceImpl extends BaseServiceHandler implements TelecomSer
                     });
                     return Mono.just(lstTelecomResponse);
                 })
-                .doOnError(e -> Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "telecom.not.found")));
+                .doOnError(e -> Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "telecom.not.found")));
     }
 
     @Override
@@ -214,37 +214,37 @@ public class TelecomServiceImpl extends BaseServiceHandler implements TelecomSer
     public Mono<DataResponse<List<TelecomServiceConfigDTO>>> getTelecomServiceConfig(
             List<String> telecomServiceIds, List<String> originalIds, String syncType) {
         if (DataUtil.isNullOrEmpty(syncType)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "syncType.not.null"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "syncType.not.null"));
         }
         if (telecomServiceIds != null) {
             return telecomServiceConfigRep
                     .getTelecomServiceConfig("$.".concat(syncType), telecomServiceIds)
-                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "config.not.found")))
+                    .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "config.not.found")))
                     .collectList()
                     .flatMap(rs -> Mono.just(new DataResponse<>("success", rs)));
         }
         if (originalIds != null) {
             return telecomServiceConfigRep
                     .getTelecomServiceConfig2("$.".concat(syncType), originalIds)
-                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "config.not.found")))
+                    .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "config.not.found")))
                     .collectList()
                     .flatMap(rs -> Mono.just(new DataResponse<>("success", rs)));
         }
-        return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "Dữ liệu truyền vào không hợp lệ"));
+        return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "Dữ liệu truyền vào không hợp lệ"));
     }
 
     @Override
     public Mono<DataResponse<List<TelecomServiceConfigDTO>>> getTelecomServiceConfigV2(
             GetServiceConfigRequest request) {
         if (DataUtil.isNullOrEmpty(request.getSyncType())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "syncType.not.null"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "syncType.not.null"));
         }
         if (DataUtil.isNullOrEmpty(request.getLstServiceAlias())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "lstServiceAlis.not.null"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "lstServiceAlis.not.null"));
         }
         return telecomServiceConfigRep
                 .getTelecomServiceConfigByAlias("$.".concat(request.getSyncType()), request.getLstServiceAlias())
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "config.not.found")))
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "config.not.found")))
                 .collectList()
                 .flatMap(rs -> Mono.just(new DataResponse<>("success", rs)));
     }
@@ -261,7 +261,7 @@ public class TelecomServiceImpl extends BaseServiceHandler implements TelecomSer
     public Mono<DataResponse<List<Telecom>>> getTelecomByLstOriginId(List<String> lstOriginId) {
         if (DataUtil.isNullOrEmpty(lstOriginId)) {
             return Mono.error(
-                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "setting.validate.list.origin.id.null"));
+                    new BusinessException(ErrorCode.INVALID_PARAMS, "setting.validate.list.origin.id.null"));
         }
         return telecomRepository
                 .findTelecomByLstOriginId(lstOriginId)
@@ -273,7 +273,7 @@ public class TelecomServiceImpl extends BaseServiceHandler implements TelecomSer
     public Mono<ClientTelecom> getAliasByClientCode(String clientCode) {
         if (DataUtil.isNullOrEmpty(clientCode)) {
             return Mono.error(
-                    new BusinessException(CommonErrorCode.INVALID_PARAMS, "setting.validate.client.code.null"));
+                    new BusinessException(ErrorCode.INVALID_PARAMS, "setting.validate.client.code.null"));
         }
         return telecomRepository
                 .checkExistClientCode(clientCode)
@@ -281,7 +281,7 @@ public class TelecomServiceImpl extends BaseServiceHandler implements TelecomSer
                 .flatMap(cd -> {
                     if (DataUtil.isNullOrEmpty(cd)) {
                         return Mono.error(new BusinessException(
-                                CommonErrorCode.BAD_REQUEST, Translator.toLocaleVi("client.code.validate.null")));
+                                ErrorCode.BAD_REQUEST, Translator.toLocaleVi("client.code.validate.null")));
                     }
                     return telecomRepository.getAliasByClientCode(clientCode);
                 });

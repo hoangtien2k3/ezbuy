@@ -15,7 +15,7 @@
  */
 package com.ezbuy.core.config;
 
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import java.security.KeyFactory;
 import java.security.PublicKey;
@@ -84,7 +84,7 @@ public class CipherManager {
             byte[] encryptedBytes = rsaCipher.doFinal(message.getBytes());
             return Base64.getEncoder().encodeToString(encryptedBytes);
         } catch (Exception ex) {
-            throw new BusinessException(CommonErrorCode.HASHING_PASSWORD_FAULT, ex.getMessage());
+            throw new BusinessException(ErrorCode.HASHING_PASSWORD_FAULT, ex.getMessage());
         }
     }
 

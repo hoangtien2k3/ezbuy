@@ -1,19 +1,19 @@
-name: auth-service service ci
+name: ezbuy-payment service ci
 
 on:
   push:
     branches: [ "master" ]
     paths:
-      - "auth-service/**"
+      - "ezbuy-payment/**"
       - ".github/workflows/actions/action.yaml"
-      - ".github/workflows/auth-service-ci.yaml"
+      - ".github/workflows/ezbuy-payment-ci.yaml"
       - "pom.xml"
   pull_request:
     branches: [ "master" ]
     paths:
-      - "auth-service/**"
+      - "ezbuy-payment/**"
       - ".github/workflows/actions/action.yaml"
-      - ".github/workflows/auth-service-ci.yaml"
+      - ".github/workflows/ezbuy-payment-ci.yaml"
       - "pom.xml"
   workflow_dispatch:
 
@@ -28,21 +28,21 @@ jobs:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - uses: ./.github/workflows/actions
       - name: Run Maven Build Command
-        run: mvn clean install -DskipTests -f auth-service
+        run: mvn clean install -DskipTests -f ezbuy-payment
       - name: Run Maven Test
-        run: mvn test -f auth-service
+        run: mvn test -f ezbuy-payment
       - name: Unit Test Results
         uses: dorny/test-reporter@v1
         if: ${{ env.FROM_ORIGINAL_REPOSITORY == 'true' && (success() || failure()) }}
         with:
           name: Unit-Test-Results
-          path: "auth-service/**/surefire-reports/*.xml"
+          path: "ezbuy-payment/**/surefire-reports/*.xml"
           reporter: java-junit
       - name: Analyze with sonar cloud
         if: ${{ env.FROM_ORIGINAL_REPOSITORY == 'true' }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -f auth-service
+        run: mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -f ezbuy-payment
       - name: Log in to the Container registry
         if: ${{ github.ref == 'refs/heads/main' }}
         uses: docker/login-action@v3
@@ -54,6 +54,6 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         uses: docker/build-push-action@v6
         with:
-          context: ./auth-service
+          context: ./ezbuy-payment
           push: true
-          tags: ghcr.io/hoangtien2k3/ezbuy-auth-service:latest
+          tags: ghcr.io/hoangtien2k3/ezbuy-payment:latest

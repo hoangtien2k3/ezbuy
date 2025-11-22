@@ -9,7 +9,7 @@ import com.ezbuy.searchservice.dto.response.SearchDTOResponse;
 import com.ezbuy.searchservice.service.SearchService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.model.response.DataResponse;
 import com.ezbuy.core.util.DataUtil;
@@ -48,7 +48,7 @@ public class SearchServiceImpl implements SearchService {
             if (Constants.INDEX.ALLOW_INDEX.contains(request.getType())) {
                 stringList.add(request.getType());
             } else {
-                return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "type.invalid"));
+                return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "type.invalid"));
             }
         }
         if (DataUtil.isNullOrEmpty(request.getFrom()) || request.getFrom() < 0) {

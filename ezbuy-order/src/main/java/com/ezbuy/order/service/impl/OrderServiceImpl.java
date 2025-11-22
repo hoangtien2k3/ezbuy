@@ -9,7 +9,7 @@ import com.ezbuy.order.dto.response.SearchOrderHistoryResponse;
 import com.ezbuy.order.repoTemplate.OrderRepositoryTemplate;
 import com.ezbuy.order.repository.*;
 import com.ezbuy.order.service.OrderService;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.model.response.DataResponse;
 import com.ezbuy.core.util.*;
@@ -44,12 +44,12 @@ public class OrderServiceImpl implements OrderService {
     public Mono<DataResponse> searchOrder(SearchOrderRequest request) {
         int size = DataUtil.safeToInt(request.getPageSize(), 20);
         if (size <= 0 || size > 100) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "size.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "size.invalid"));
         }
 
         int page = DataUtil.safeToInt(request.getPageIndex(), 1);
         if (page <= 0) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "page.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "page.invalid"));
         }
 
         Integer state = Constants.ORDER_STATE_MAP.get(DataUtil.safeTrim(request.getState()));
@@ -98,7 +98,7 @@ public class OrderServiceImpl implements OrderService {
     public Mono<DataResponse> findDetail(String orderId) {
         String trimOrderId = DataUtil.safeTrim(orderId);
         if (!ValidateUtils.validateUUID(trimOrderId)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "orderId.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "orderId.invalid"));
         }
 
         return SecurityUtils.getCurrentUser()
@@ -107,7 +107,7 @@ public class OrderServiceImpl implements OrderService {
                         .collectList())
                 .flatMap(orderList -> {
                     if (DataUtil.isNullOrEmpty(orderList)) {
-                        return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "order.not.found"));
+                        return Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "order.not.found"));
                     }
 
                     OrderDetailDTO orderDetail = orderList.getFirst();

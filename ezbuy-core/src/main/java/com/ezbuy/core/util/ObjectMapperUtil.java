@@ -19,7 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -130,7 +130,7 @@ public class ObjectMapperUtil {
         try {
             return objectMapper.readValue(byteArray, valueType);
         } catch (Exception ex) {
-            throw new BusinessException(CommonErrorCode.UN_DESERIALIZE, ex.getMessage());
+            throw new BusinessException(ErrorCode.UN_DESERIALIZE, ex.getMessage());
         }
     }
 
@@ -153,7 +153,7 @@ public class ObjectMapperUtil {
             }
             return results;
         } catch (Exception ex) {
-            throw new BusinessException(CommonErrorCode.UN_DESERIALIZE, ex.getMessage());
+            throw new BusinessException(ErrorCode.UN_DESERIALIZE, ex.getMessage());
         }
     }
 
@@ -172,7 +172,7 @@ public class ObjectMapperUtil {
         try {
             return objectMapper.convertValue(input, valueType);
         } catch (Exception ex) {
-            throw new BusinessException(CommonErrorCode.UN_DESERIALIZE, ex.getMessage());
+            throw new BusinessException(ErrorCode.UN_DESERIALIZE, ex.getMessage());
         }
     }
 

@@ -12,7 +12,7 @@ import com.ezbuy.settingservice.repository.OptionSetValueRepository;
 import com.ezbuy.settingservice.repositoryTemplate.OptionSetRepositoryTemplate;
 import com.ezbuy.settingservice.service.OptionSetService;
 import com.ezbuy.core.cache.LocalCache;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.model.response.DataResponse;
@@ -57,7 +57,7 @@ public class OptionSetServiceImpl extends BaseServiceHandler implements OptionSe
         validateInput(request);
         var getSysDate = optionSetRepository.getSysDate();
         String code = DataUtil.safeTrim(request.getCode());
-        return Mono.zip(SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
+        return Mono.zip(SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "user.null"))),
                         validateDuplicateCode(code),
                         getSysDate)
                 .flatMap(tuple -> {
@@ -77,7 +77,7 @@ public class OptionSetServiceImpl extends BaseServiceHandler implements OptionSe
                             .build();
                     return optionSetRepository
                             .save(optionSet)
-                            .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "option.set.insert.failed")))
+                            .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "option.set.insert.failed")))
                             .flatMap(x -> Mono.just(new DataResponse<>("success", optionSet)));
                 });
     }
@@ -85,24 +85,24 @@ public class OptionSetServiceImpl extends BaseServiceHandler implements OptionSe
     public void validateInput(CreateOptionSetRequest request) {
         String code = DataUtil.safeTrim(request.getCode());
         if (DataUtil.isNullOrEmpty(code)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.option.set.code.empty");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "create.option.set.code.empty");
         }
         if (code.length() > 200) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.option.set.code.max.length");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "create.option.set.code.max.length");
         }
         String description = DataUtil.safeTrim(request.getDescription());
         if (DataUtil.isNullOrEmpty(description)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.option.set.name");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "create.option.set.name");
         }
         if (description.length() > 1000) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.option.set.name.max.length");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "create.option.set.name.max.length");
         }
         Integer status = request.getStatus();
         if (status == null) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.service.status.null");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "create.service.status.null");
         }
         if (!Constants.Activation.ACTIVE.equals(status) && !Constants.Activation.INACTIVE.equals(status)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "create.service.status.error");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "create.service.status.error");
         }
     }
 
@@ -112,7 +112,7 @@ public class OptionSetServiceImpl extends BaseServiceHandler implements OptionSe
                 .defaultIfEmpty(new OptionSet())
                 .flatMap(response -> {
                     if (!DataUtil.isNullOrEmpty(response.getCode())) {
-                        return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "create.option.set.code.is.exists"));
+                        return Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "create.option.set.code.is.exists"));
                     }
                     return Mono.just(true);
                 });
@@ -124,13 +124,13 @@ public class OptionSetServiceImpl extends BaseServiceHandler implements OptionSe
         validateInput(request);
         String optionSetId = DataUtil.safeTrim(id);
         if (DataUtil.isNullOrEmpty(optionSetId)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "option.set.id.not.empty");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "option.set.id.not.empty");
         }
         return Mono.zip(
-                        SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
+                        SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "user.null"))),
                         optionSetRepository
                                 .getById(optionSetId)
-                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "option.set.not.found"))))
+                                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "option.set.not.found"))))
                 .flatMap(tuple -> {
                     OptionSet optionSet = tuple.getT2();
                     Mono<Boolean> checkExistCode = Mono.just(true);
@@ -148,7 +148,7 @@ public class OptionSetServiceImpl extends BaseServiceHandler implements OptionSe
                                     tuple.getT1().getUsername())
                             .defaultIfEmpty(new OptionSet())
                             .switchIfEmpty(Mono.error(new BusinessException(
-                                    CommonErrorCode.INTERNAL_SERVER_ERROR, "option.set.update.failed")))
+                                    ErrorCode.INTERNAL_SERVER_ERROR, "option.set.update.failed")))
                             .flatMap(response -> Mono.just(new DataResponse<>("success", null))));
                 });
     }
@@ -163,7 +163,7 @@ public class OptionSetServiceImpl extends BaseServiceHandler implements OptionSe
         request.setPageSize(pageSize);
         if (!Objects.isNull(request.getFromDate()) && !Objects.isNull(request.getToDate())) {
             if (request.getFromDate().isAfter(request.getToDate())) {
-                throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.from-date.larger.to-date");
+                throw new BusinessException(ErrorCode.INVALID_PARAMS, "params.from-date.larger.to-date");
             }
         }
         Flux<OptionSetDTO> lstOptionSetDTO = optionSetRepositoryTemplate.findOptionSet(request);

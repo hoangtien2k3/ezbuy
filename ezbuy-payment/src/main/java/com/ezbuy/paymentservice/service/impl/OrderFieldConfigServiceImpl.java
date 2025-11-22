@@ -5,7 +5,7 @@ import com.ezbuy.paymentservice.model.dto.OrderFieldConfig;
 import com.ezbuy.paymentservice.model.dto.OrderFieldConfigDTO;
 import com.ezbuy.paymentservice.repository.OrderFieldConfigRepository;
 import com.ezbuy.paymentservice.service.OrderFieldConfigService;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.factory.ObjectMapperFactory;
 import com.ezbuy.core.model.response.DataResponse;
@@ -29,7 +29,7 @@ public class OrderFieldConfigServiceImpl implements OrderFieldConfigService {
             GetOrderFieldConfigRequest request) {
         if (DataUtil.isNullOrEmpty(request.getLstTelecomServiceAlias())
                 || DataUtil.isNullOrEmpty(request.getOrderType())) {
-            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "params.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "params.invalid"));
         }
         String orderType = request.getOrderType().trim();
         return orderFieldConfigRepository
@@ -37,7 +37,7 @@ public class OrderFieldConfigServiceImpl implements OrderFieldConfigService {
                 .collectList()
                 .flatMap(configs -> {
                     if (DataUtil.isNullOrEmpty(configs)) {
-                        return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "config.not.found"));
+                        return Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "config.not.found"));
                     }
                     Map<String, String> rsConfigMap = new HashMap<>();
                     for (OrderFieldConfig config : configs) {

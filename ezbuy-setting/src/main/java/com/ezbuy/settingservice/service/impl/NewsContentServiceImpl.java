@@ -5,7 +5,7 @@ import com.ezbuy.settingservice.model.entity.NewsContent;
 import com.ezbuy.settingservice.model.dto.request.CreateNewsContentRequest;
 import com.ezbuy.settingservice.repository.NewsContentRepository;
 import com.ezbuy.settingservice.service.NewsContentService;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.model.response.DataResponse;
 import com.ezbuy.core.util.DataUtil;
@@ -30,7 +30,7 @@ public class NewsContentServiceImpl implements NewsContentService {
     @Override
     public Mono<DataResponse<NewsContent>> createNewsContent(CreateNewsContentRequest request) {
         var getSysDate = newsContentRepository.getSysDate();
-        return Mono.zip(SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))), getSysDate)
+        return Mono.zip(SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "user.null"))), getSysDate)
                 .flatMap(tuple -> {
                             String groupNewsId = UUID.randomUUID().toString();
                             LocalDateTime now = tuple.getT2();
@@ -49,7 +49,7 @@ public class NewsContentServiceImpl implements NewsContentService {
                             return newsContentRepository
                                     .save(newsContent)
                                     .switchIfEmpty(Mono.error(new BusinessException(
-                                            CommonErrorCode.INTERNAL_SERVER_ERROR, "news.content.insert.failed")))
+                                            ErrorCode.INTERNAL_SERVER_ERROR, "news.content.insert.failed")))
                                     .flatMap(x -> Mono.just(new DataResponse<>("success", newsContent)));
                         });
     }
@@ -58,13 +58,13 @@ public class NewsContentServiceImpl implements NewsContentService {
     public Mono<DataResponse<NewsContent>> editNewsContent(String id, CreateNewsContentRequest request) {
         String newsContentId = DataUtil.safeTrim(id);
         if (DataUtil.isNullOrEmpty(newsContentId)) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "news.content.id.not.empty");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "news.content.id.not.empty");
         }
         return Mono.zip(
-                        SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
+                        SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "user.null"))),
                         newsContentRepository
                                 .getById(newsContentId)
-                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "news.content.not.found"))))
+                                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "news.content.not.found"))))
                 .flatMap(tuple -> {
                     String content = DataUtil.safeTrim(request.getContent());
                     return newsContentRepository

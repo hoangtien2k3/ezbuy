@@ -1,6 +1,6 @@
 package com.ezbuy.settingservice.service.impl;
 
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 
 public class BaseServiceHandler {
@@ -8,7 +8,7 @@ public class BaseServiceHandler {
         if (pageSize == null) {
             pageSize = defaultPageSize;
         } else if (pageSize <= 0) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.pageSize.invalid");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "params.pageSize.invalid");
         }
         return pageSize;
     }
@@ -17,7 +17,7 @@ public class BaseServiceHandler {
         if (pageIndex == null) {
             pageIndex = 1;
         } else if (pageIndex < 0) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.pageIndex.invalid");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "params.pageIndex.invalid");
         }
         return pageIndex;
     }

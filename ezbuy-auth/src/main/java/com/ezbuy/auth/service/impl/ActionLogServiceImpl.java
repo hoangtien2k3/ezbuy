@@ -7,7 +7,7 @@ import com.ezbuy.auth.model.entity.ActionLogEntity;
 import com.ezbuy.auth.repotemplate.ActionLogRepositoryTemplate;
 import com.ezbuy.auth.service.ActionLogService;
 import com.ezbuy.auth.constants.AuthConstants;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.util.DataUtil;
@@ -69,7 +69,7 @@ public class ActionLogServiceImpl implements ActionLogService {
         if (!DataUtil.isNullOrEmpty(request.getFromDate())
                 && !DataUtil.isNullOrEmpty(request.getToDate())
                 && request.getToDate().getDayOfYear() - request.getFromDate().getDayOfYear() > 31) {
-            throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "data.search.exceed.error");
+            throw new BusinessException(ErrorCode.INVALID_PARAMS, "data.search.exceed.error");
         }
     }
 
@@ -84,7 +84,7 @@ public class ActionLogServiceImpl implements ActionLogService {
             };
         } catch (IOException e) {
             log.error(e.getMessage(), e);
-            throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "export.error");
+            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "export.error");
         }
     }
 

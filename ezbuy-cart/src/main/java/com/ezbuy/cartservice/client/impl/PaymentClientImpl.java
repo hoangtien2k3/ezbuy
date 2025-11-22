@@ -4,7 +4,7 @@ import com.ezbuy.cartservice.domain.dto.EstimatePriceDTO;
 import com.ezbuy.cartservice.domain.dto.request.ProductPriceRequest;
 import com.ezbuy.cartservice.client.PaymentClient;
 import com.ezbuy.core.client.BaseRestClient;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.model.response.DataResponse;
 import com.ezbuy.core.util.DataUtil;
@@ -36,7 +36,7 @@ public class PaymentClientImpl implements PaymentClient {
                 .post(payment, "/price/calculate", null, productPriceRequest, DataResponse.class)
                 .flatMap(resp -> {
                     if (resp.isEmpty()) {
-                        return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, Translator.toLocaleVi("server.error")));
+                        return Mono.error(new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, Translator.toLocaleVi("server.error")));
                     }
                     String jsonValue = DataUtil.parseObjectToString(resp.get().getData());
                     EstimatePriceDTO totalPrice = DataUtil.parseStringToObject(jsonValue, EstimatePriceDTO.class);

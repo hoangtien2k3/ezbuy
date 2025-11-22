@@ -16,7 +16,7 @@
 package com.ezbuy.core.util;
 
 import com.ezbuy.core.config.properties.MinioProperties;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import io.minio.*;
 import io.minio.errors.*;
@@ -850,7 +850,7 @@ public class MinioUtils {
             log.info("Upload file successfully {} ", filePath);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, e.getMessage());
+            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -983,7 +983,7 @@ public class MinioUtils {
                     return uploadFileSync(bytes, bucketName, object, contentType);
                 }).subscribeOn(Schedulers.boundedElastic());
             } else {
-                return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "minio.bucket.not-existed"));
+                return Mono.error(new BusinessException(ErrorCode.BAD_REQUEST, "minio.bucket.not-existed"));
             }
         });
     }

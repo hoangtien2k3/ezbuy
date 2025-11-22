@@ -23,7 +23,7 @@ import com.ezbuy.auth.config.KeycloakProvider;
 import com.ezbuy.core.config.properties.KeycloakProperties;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.util.DataUtil;
@@ -96,7 +96,7 @@ public class KeycloakClientImpl implements KeyCloakClient {
                         formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, clientRepresentation.getSecret());
                         return requestToken(formParameters);
                     })
-                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "client.id.not.valid")));
+                    .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "client.id.not.valid")));
         } else {
             formParameters.add(OAuth2ParameterNames.CLIENT_ID, keyCloakConfig.getKeycloakAuth().getClientId());
             formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, keyCloakConfig.getKeycloakAuth().getClientSecret());
@@ -128,7 +128,7 @@ public class KeycloakClientImpl implements KeyCloakClient {
                     formParameters.add(OAuth2ParameterNames.CLIENT_ID, clientLogin.getClientId());
                     return requestToken(formParameters);
                 })
-                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "login.client.id.not.exist")));
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "login.client.id.not.exist")));
     }
 
     @Override
@@ -180,7 +180,7 @@ public class KeycloakClientImpl implements KeyCloakClient {
                     .retrieve()
                     .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
                             .flatMap(errorBody -> Mono.error(
-                                    new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getErrorDescription()))))
+                                    new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, errorBody.getErrorDescription()))))
                     .bodyToMono(Object.class)
                     .switchIfEmpty(Mono.just(true))
                     .map(response -> true)
@@ -204,7 +204,7 @@ public class KeycloakClientImpl implements KeyCloakClient {
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
                         .flatMap(errorBody -> Mono.error(
-                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getErrorDescription()))))
+                                new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, errorBody.getErrorDescription()))))
                 .bodyToFlux(Map.class)
                 .mapNotNull(responseMap -> {
                     if (responseMap == null) return null;
@@ -226,7 +226,7 @@ public class KeycloakClientImpl implements KeyCloakClient {
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
                         .flatMap(errorBody -> Mono.error(
-                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getErrorDescription()))))
+                                new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, errorBody.getErrorDescription()))))
                 .bodyToMono(AccessToken.class)
                 .map(Optional::ofNullable)
                 .doOnError(err -> log.error("Keycloak get token error", err));
@@ -318,7 +318,7 @@ public class KeycloakClientImpl implements KeyCloakClient {
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
                         .flatMap(errorBody -> Mono.error(
-                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getErrorDescription()))))
+                                new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, errorBody.getErrorDescription()))))
                 .toEntity(Object.class)
                 .flatMap(response -> {
                     String location = Objects.requireNonNull(
@@ -344,7 +344,7 @@ public class KeycloakClientImpl implements KeyCloakClient {
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
                         .flatMap(errorBody -> Mono.error(
-                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getErrorDescription()))))
+                                new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, errorBody.getErrorDescription()))))
                 .toEntity(Object.class)
                 .flatMap(response -> Mono.just(true))
                 .doOnError(err -> log.error("Keycloak create role user error", err));
@@ -361,7 +361,7 @@ public class KeycloakClientImpl implements KeyCloakClient {
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
                         .flatMap(errorBody -> Mono.error(
-                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getErrorDescription()))))
+                                new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, errorBody.getErrorDescription()))))
                 .toEntity(Object.class)
                 .flatMap(response -> Mono.just(true))
                 .doOnError(err -> log.error("Keycloak update user error", err));
@@ -376,7 +376,7 @@ public class KeycloakClientImpl implements KeyCloakClient {
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
                         .flatMap(errorBody -> Mono.error(
-                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getErrorDescription()))))
+                                new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, errorBody.getErrorDescription()))))
                 .toEntity(Object.class)
                 .flatMap(response -> Mono.just(true))
                 .doOnError(err -> log.error("Keycloak Remove group to user error", err));
@@ -391,7 +391,7 @@ public class KeycloakClientImpl implements KeyCloakClient {
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
                         .flatMap(errorBody -> Mono.error(
-                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getErrorDescription()))))
+                                new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, errorBody.getErrorDescription()))))
                 .toEntity(Object.class)
                 .flatMap(response -> Mono.just(true))
                 .doOnError(err -> log.error("Keycloak Add group to user error", err));
@@ -411,7 +411,7 @@ public class KeycloakClientImpl implements KeyCloakClient {
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
                         .flatMap(errorBody -> Mono.error(
-                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getErrorDescription()))))
+                                new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, errorBody.getErrorDescription()))))
                 .toEntity(Object.class)
                 .flatMap(response -> Mono.just(true))
                 .doOnError(err -> log.error("Keycloak Remove role user error", err));
@@ -426,7 +426,7 @@ public class KeycloakClientImpl implements KeyCloakClient {
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
                         .flatMap(errorBody -> Mono.error(
-                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "keycloakClient.failed"))))
+                                new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "keycloakClient.failed"))))
                 .bodyToMono(String.class)
                 .map(response -> {
                     Gson gson = new Gson();
@@ -436,7 +436,7 @@ public class KeycloakClientImpl implements KeyCloakClient {
                     return gson.<List<RoleDTO>>fromJson(response, listType);
                 })
                 .doOnError(err -> log.error("Call keycloak error ", err))
-                .onErrorResume(throwable -> Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "Call keycloak that bai")));
+                .onErrorResume(throwable -> Mono.error(new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "Call keycloak that bai")));
     }
 
     @Override
@@ -448,7 +448,7 @@ public class KeycloakClientImpl implements KeyCloakClient {
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
                         .flatMap(errorBody -> Mono.error(
-                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getErrorDescription()))))
+                                new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, errorBody.getErrorDescription()))))
                 .bodyToMono(UserRepresentation.class)
                 .doOnError(err -> log.error("Get delete user error", err));
     }
@@ -494,7 +494,7 @@ public class KeycloakClientImpl implements KeyCloakClient {
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(KeycloakError.class)
                         .flatMap(errorBody -> Mono.error(
-                                new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody.getErrorDescription()))))
+                                new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, errorBody.getErrorDescription()))))
                 .bodyToMono(Object.class)
                 .switchIfEmpty(Mono.just(true))
                 .map(response -> true)

@@ -16,7 +16,7 @@
 package com.ezbuy.core.client.impl;
 
 import com.ezbuy.core.client.BaseRestClient;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.util.DataUtil;
@@ -339,7 +339,7 @@ public class BaseRestClientImpl implements BaseRestClient {
     private static Mono<? extends Throwable> handleErrorResponse(ClientResponse response) {
         return response.bodyToMono(String.class).flatMap(errorBody -> {
             log.info("log when call error {}", errorBody);
-            return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody));
+            return Mono.error(new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, errorBody));
         });
     }
 

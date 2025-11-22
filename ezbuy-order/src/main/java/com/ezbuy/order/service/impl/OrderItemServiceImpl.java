@@ -3,7 +3,7 @@ package com.ezbuy.order.service.impl;
 import com.ezbuy.order.dto.request.ReviewOrderItemRequest;
 import com.ezbuy.order.repository.OrderItemRepository;
 import com.ezbuy.order.service.OrderItemService;
-import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.constants.MessageConstant;
 import com.ezbuy.core.exception.BusinessException;
@@ -22,25 +22,25 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public Mono<DataResponse> review(ReviewOrderItemRequest request) {
         if (DataUtil.isNullOrEmpty(request.getOrderItemId())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.item.required"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "order.item.required"));
         }
         String orderId = request.getOrderItemId().trim();
         if (!ValidateUtils.validateUUID(orderId)) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "order.item.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "order.item.invalid"));
         }
         if (DataUtil.isNullOrEmpty(request.getContent())) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "review.content.required"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "review.content.required"));
         }
         String content = request.getContent().trim();
         if (content.length() > 2000) {
-            return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "review.content.invalid"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "review.content.invalid"));
         }
 
         return SecurityUtils.getCurrentUser()
                 .flatMap(user -> Mono.zip(checkExistItem(orderId, user.getId()), Mono.just(user.getUsername())))
                 .flatMap(existGroupData -> {
                     if (!existGroupData.getT1()) {
-                        return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "order.item.not.found"));
+                        return Mono.error(new BusinessException(ErrorCode.NOT_FOUND, "order.item.not.found"));
                     }
                     var updateMono = orderItemRepository.updateContent(orderId, content, existGroupData.getT2());
                     return AppUtils.insertData(updateMono);
