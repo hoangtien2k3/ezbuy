@@ -1,0 +1,109 @@
+server:
+  port: 8999
+---
+spring:
+  cloud:
+    consul:
+      host: "${CONSUL_HOST:localhost}"
+      port: 8500
+      discovery:
+        heartbeat:
+          enabled: false
+        prefer-ip-address: true
+        instance-id: ${spring.application.name}-${random.uuid}
+        health-check-path: /actuator/health
+        health-check-interval: 60s
+        service-name: ${spring.application.name}
+        register-health-check: true
+---
+spring:
+  application:
+    name: setting_service
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+  messages:
+    basename: i18n/messages
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  http:
+    codecs:
+      max-in-memory-size: 100MB
+  r2dbc:
+    url: "${R2DBC_URL:r2dbc:postgresql://localhost:5434/setting}"
+    username: "${R2DBC_USERNAME:admin}"
+    password: "${R2DBC_PASSWORD:admin}"
+    pool:
+      max-size: 10
+      initial-size: 5
+      max-idle-time: 30m
+      max-create-connection-time: 30s
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            token-uri: ${keycloak.server-url}/realms/${keycloak.realm}/protocol/openid-connect/token
+        registration:
+          oidc:
+            client-id: ${keycloak.client-id}
+            client-secret: ${keycloak.client-secret}
+            authorization-grant-type: ${keycloak.grant-type}
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${keycloak.server-url}/realms/${keycloak.realm}/protocol/openid-connect/certs
+      keycloak:
+        client-id: ${keycloak.client-id}
+  data:
+    elasticsearch:
+      repositories:
+        enabled: false
+  elasticsearch:
+    uris: http://localhost:9200
+---
+keycloak:
+  client-id: "${KEYCLOAK_CLIENT_ID:ezbuy-client}"
+  client-secret: "${KEYCLOAK_CLIENT_SECRET:5dnfDh6XitmAMc7vQUNxGkJw0HF4e9tI}"
+  realm: "${KEYCLOAK_REALM:ezbuy-server}"
+  server-url: "${KEYCLOAK_SERVER_URL:http://localhost:8080}"
+  grant-type: "${KEYCLOAK_GRANT_TYPE:password}" #client_credentials
+  host: "${KEYCLOAK_HOST:localhost}"
+---
+client:
+  elasticsearch:
+    address: "${CLIENT_ELASTICSEARCH_ADDRESS:http://localhost:9200}"
+    name: elasticSearchClient
+---
+application:
+  index:
+    indexScores:
+      - name: news
+        score: 1
+      - name: services
+        score: 4
+  whiteList:
+    - uri: /actuator/health
+      methods:
+        - GET
+    - uri: /v1/page
+      methods:
+        - GET
+    - uri: /v1/search-services
+      methods:
+        - GET
+---
+springdoc:
+  api-docs:
+    path: /v1/auth/v3/api-docs
+  swagger-ui:
+    path: /v1/auth/swagger-ui.html
+    url: /v1/auth/v3/api-docs
+---
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

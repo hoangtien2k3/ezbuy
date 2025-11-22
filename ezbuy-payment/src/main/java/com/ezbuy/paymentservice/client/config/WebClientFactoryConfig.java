@@ -1,0 +1,27 @@
+package com.ezbuy.paymentservice.client.config;
+
+import com.ezbuy.paymentservice.client.properties.*;
+import com.ezbuy.core.client.WebClientFactory;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@RequiredArgsConstructor
+public class WebClientFactoryConfig {
+    private final OrderClientProperties orderClientProperties;
+    private final PaymentClientProperties paymentClientProperties;
+    private final ProductClientProperties productClientProperties;
+    private final SettingClientProperties settingClientProperties;
+
+    @Bean(name = "webClientFactory")
+    public WebClientFactory webClientFactory() {
+        return new WebClientFactory(List.of(
+                orderClientProperties,
+                paymentClientProperties,
+                productClientProperties,
+                settingClientProperties
+        ));
+    }
+}

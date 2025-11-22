@@ -1,0 +1,75 @@
+plugins {
+    id 'java'
+    id 'java-library'
+    id 'maven-publish'
+    id 'application'
+}
+
+group = 'com.ezbuy'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url = uri('https://repo.maven.apache.org/maven2/') }
+}
+
+subprojects {
+    apply plugin: 'java-library'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    configurations {
+        developmentOnly
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    dependencies {
+        annotationProcessor libs.org.projectlombok.lombok
+
+        implementation libs.org.springframework.boot.spring.boot.starter.webflux
+        implementation libs.org.springframework.boot.spring.boot.starter.validation
+        implementation libs.org.springframework.boot.spring.boot.starter.actuator
+        implementation libs.org.springframework.boot.spring.boot.configuration.processor
+        implementation libs.org.springframework.boot.spring.boot.starter.data.r2dbc
+        implementation libs.org.springframework.cloud.spring.cloud.starter.consul.discovery
+        implementation libs.org.springdoc.springdoc.openapi.starter.webflux.api
+        implementation libs.com.fasterxml.jackson.core.jackson.databind
+        implementation libs.org.modelmapper.modelmapper
+        implementation libs.io.r2dbc.r2dbc.pool
+        implementation libs.org.apache.commons.commons.lang3
+        implementation libs.org.projectlombok.lombok
+
+        runtimeOnly libs.org.postgresql.r2dbc.postgresql
+        runtimeOnly libs.org.postgresql.postgresql
+
+        compileOnly libs.org.projectlombok.lombok
+
+        testImplementation libs.org.springframework.boot.spring.boot.starter.test
+    }
+
+    java {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+        options.compilerArgs += ["-parameters", "-Xlint:unchecked", "-Xlint:deprecation"]
+    }
+
+    tasks.withType(Javadoc).configureEach {
+        options.encoding = 'UTF-8'
+    }
+
+    test.classpath += configurations.developmentOnly
+
+    test {
+        useJUnitPlatform()
+    }
+}

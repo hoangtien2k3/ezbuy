@@ -1,0 +1,18 @@
+package com.ezbuy.ratingservice.service;
+
+import com.ezbuy.ratingservice.model.entity.RatingHistory;
+import java.time.LocalDateTime;
+import reactor.core.publisher.Mono;
+
+public interface RatingHistoryService {
+
+    Mono<RatingHistory> createRatingHistory(
+            String ratingId,
+            Long ratingBf,
+            Long ratingAf,
+            String contentBf,
+            String contentAf,
+            String approveBy,
+            LocalDateTime approveAt,
+            String state);
+}

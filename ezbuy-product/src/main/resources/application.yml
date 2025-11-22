@@ -1,0 +1,120 @@
+server:
+  port: 9057
+---
+spring:
+  cloud:
+    consul:
+      host: "${CONSUL_HOST:localhost}"
+      port: 8500
+      discovery:
+        heartbeat:
+          enabled: false
+        prefer-ip-address: true
+        instance-id: ${spring.application.name}-${random.uuid}
+        health-check-path: /actuator/health
+        health-check-interval: 60s
+        service-name: ${spring.application.name}
+        register-health-check: true
+---
+spring:
+  application:
+    name: product-service
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+  messages:
+    basename: i18n/messages
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  http:
+    codecs:
+      max-in-memory-size: 100MB
+  r2dbc:
+    url: "${R2DBC_URL:r2dbc:postgresql://localhost:5434/product}"
+    username: "${R2DBC_USERNAME:admin}"
+    password: "${R2DBC_PASSWORD:admin}"
+    pool:
+      max-size: 10
+      initial-size: 5
+      max-idle-time: 30m
+      max-create-connection-time: 30s
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            token-uri: ${keycloak.server-url}/realms/${keycloak.realm}/protocol/openid-connect/token
+        registration:
+          oidc:
+            client-id: ${keycloak.client-id}
+            client-secret: ${keycloak.client-secret}
+            authorization-grant-type: ${keycloak.grant-type}
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${keycloak.server-url}/realms/${keycloak.realm}/protocol/openid-connect/certs
+      keycloak:
+        client-id: ${keycloak.client-id}
+---
+client:
+  order:
+    internal-oauth: true
+    address: "${CLIENT_ORDER_ADDRESS:http://localhost:8082/v1/order}"
+    name: orderClient
+---
+application:
+  http-logging:
+    request:
+      enable: true
+    response:
+      enable: true
+  whiteList:
+    - uri: /v1/auth/swagger-ui.html
+      methods:
+        - GET
+    - uri: /v1/auth/swagger-ui/index.html
+      methods:
+        - GET
+    - uri: /v1/auth/v3/api-docs
+      methods:
+        - GET
+    - uri: /v1/auth/swagger-resources
+      methods:
+        - GET
+    - uri: /v1/auth/webjars
+      methods:
+        - GET
+    - uri: /actuator/health
+      methods:
+        - GET
+---
+keycloak:
+  client-id: "${KEYCLOAK_CLIENT_ID:ezbuy-client}"
+  client-secret: "${KEYCLOAK_CLIENT_SECRET:5dnfDh6XitmAMc7vQUNxGkJw0HF4e9tI}"
+  realm: "${KEYCLOAK_REALM:ezbuy-server}"
+  server-url: "${KEYCLOAK_SERVER_URL:http://localhost:8080}"
+  grant-type: "${KEYCLOAK_GRANT_TYPE:password}" #client_credentials
+  host: "${KEYCLOAK_HOST:localhost}"
+---
+minio:
+  enabled: true
+  bucket: "${MINIO_BUCKET:ezbuy-bucket}"
+  base-url: "${MINIO_BASE_URL:http://localhost:9000}"
+  public-url: "${MINIO_PUBLIC_URL:http://localhost:9000}"
+  access-key: "${MINIO_ACCESS_KEY:q875aHMpdL6IJ3n9ruil}"
+  secret-key: "${MINIO_SECRET_KEY:Q43tehRDv55Sw67ktA0pQdztEbtQjvinLOk6zwB3}"
+---
+springdoc:
+  api-docs:
+    path: /v1/auth/v3/api-docs
+  swagger-ui:
+    path: /v1/auth/swagger-ui.html
+    url: /v1/auth/v3/api-docs
+---
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

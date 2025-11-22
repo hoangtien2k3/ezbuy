@@ -1,0 +1,49 @@
+plugins {
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'com.google.cloud.tools.jib' version '3.4.5'
+    id 'com.palantir.git-version' version '4.0.0'
+}
+
+group = 'com.ezbuy.auth'
+version = '1.0-SNAPSHOT'
+description = 'ezbuy-auth'
+
+dependencies {
+    implementation project(':ezbuy-core')
+    implementation libs.org.apache.mina.mina.core
+    implementation libs.org.apache.poi.poi
+    implementation libs.org.apache.poi.poi.ooxml
+    implementation libs.org.keycloak.keycloak.admin.client
+    implementation libs.org.keycloak.bom.keycloak.adapter.bom
+    implementation libs.org.springdoc.springdoc.openapi.starter.webflux.api
+    implementation libs.org.springframework.cloud.spring.cloud.starter.consul.discovery
+    implementation platform(libs.org.springframework.cloud.spring.cloud.dependencies)
+}
+
+ext {
+    imageDocker = 'hoangtien2k3/ezbuy-auth'
+}
+
+def details = versionDetails()
+jib {
+    from {
+        image = 'amazoncorretto:21.0.3'
+    }
+    to {
+        image = imageDocker
+        tags = details.isCleanTag ? [details.lastTag] : [details.lastTag + '-SNAPSHOT']
+        auth {
+            username project.repoUser
+            password project.repoPassword
+        }
+    }
+    container {
+        creationTime = 'USE_CURRENT_TIMESTAMP'
+        jvmFlags = ['-Xms256m', '-Xmx1024m', '-XX:+UseShenandoahGC',
+                    '-XX:+UnlockExperimentalVMOptions',
+                    '-XX:ShenandoahUncommitDelay=1000',
+                    '-XX:ShenandoahGuaranteedGCInterval=10000']
+//        jvmFlags = ['-Xms512mb', '-Xdebug',
+//                    '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8089']
+    }
+}

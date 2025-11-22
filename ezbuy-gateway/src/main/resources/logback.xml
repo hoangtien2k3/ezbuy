@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <logger name="org.hibernate.metamodel.internal" level="OFF"/>
+    <logger name="brave.Tracer" level="WARN"/>
+    <logger name="org.springframework.cloud.gateway" level="DEBUG"/>
+    <logger name="reactor.netty.http.client" level="DEBUG"/>
+    <logger name="org.springframework.web" level="INFO"/>
+
+    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %X{traceId} %-5level %logger{36} - %replace(%.-10000msg){'[\n\t\s]+',' '}%n"/>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

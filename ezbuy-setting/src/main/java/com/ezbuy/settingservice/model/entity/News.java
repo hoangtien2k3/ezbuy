@@ -1,0 +1,24 @@
+package com.ezbuy.settingservice.model.entity;
+
+import java.time.LocalDateTime;
+import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
+
+@Data
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Table("news")
+public class News {
+    @Id
+    private String id;
+
+    private String title;
+    private String content;
+    private String path;
+    private String newsType;
+    private String sourceType;
+    private LocalDateTime updateAt;
+}

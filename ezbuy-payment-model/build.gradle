@@ -1,9 +1,0 @@
-plugins {
-    id 'buildlogic.java-conventions'
-}
-
-dependencies {
-    implementation project(':ezbuy-order-model')
-}
-
-description = 'ezbuy-payment-model'

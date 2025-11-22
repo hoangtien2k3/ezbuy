@@ -1,0 +1,105 @@
+server:
+  port: 8932
+---
+spring:
+  cloud:
+    consul:
+      host: "${CONSUL_HOST:localhost}"
+      port: 8500
+      discovery:
+        heartbeat:
+          enabled: false
+        prefer-ip-address: true
+        instance-id: ${spring.application.name}-${random.uuid}
+        health-check-path: /actuator/health
+        health-check-interval: 60s
+        service-name: ${spring.application.name}
+        register-health-check: true
+---
+spring:
+  application:
+    name: order-service
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+  messages:
+    basename: i18n/messages
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  http:
+    codecs:
+      max-in-memory-size: 100MB
+  r2dbc:
+    url: "${R2DBC_URL:r2dbc:postgresql://localhost:5434/order}"
+    username: "${R2DBC_USERNAME:admin}"
+    password: "${R2DBC_PASSWORD:admin}"
+    pool:
+      max-size: 10
+      initial-size: 5
+      max-idle-time: 30m
+      max-create-connection-time: 30s
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            token-uri: ${keycloak.server-url}/realms/${keycloak.realm}/protocol/openid-connect/token
+        registration:
+          oidc:
+            client-id: ${keycloak.client-id}
+            client-secret: ${keycloak.client-secret}
+            authorization-grant-type: ${keycloak.grant-type}
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${keycloak.server-url}/realms/${keycloak.realm}/protocol/openid-connect/certs
+      keycloak:
+        client-id: ${keycloak.client-id}
+---
+keycloak:
+  client-id: "${KEYCLOAK_CLIENT_ID:ezbuy-client}"
+  client-secret: "${KEYCLOAK_CLIENT_SECRET:5dnfDh6XitmAMc7vQUNxGkJw0HF4e9tI}"
+  realm: "${KEYCLOAK_REALM:ezbuy-server}"
+  server-url: "${KEYCLOAK_SERVER_URL:http://localhost:8080}"
+  grant-type: "${KEYCLOAK_GRANT_TYPE:password}" #client_credentials
+  host: "${KEYCLOAK_HOST:localhost}"
+---
+client:
+  auth:
+    address: "${CLIENT_AUTH_ADDRESS:http://localhost:8089/v1}"
+    name: authClient
+  order:
+    address: "${CLIENT_ORDER_ADDRESS:http://localhost:8035/v1}"
+    name: orderClient
+---
+application:
+  http-logging:
+    request:
+      enable: true
+    response:
+      enable: true
+  whiteList:
+    - uri: /actuator/health
+      methods:
+        - GET
+    - uri: /**
+      methods:
+        - GET
+        - POST
+    - uri: /v1/order/**
+      methods:
+        - GET
+        - POST
+        - OPTIONS
+    - uri: /v1/order/add-group-member
+    - uri: /v1/order/remove-group-member
+    - uri: /v1/order/update-group-member
+    - uri: /v1/order/get-number-sign
+---
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

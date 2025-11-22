@@ -1,0 +1,395 @@
+/*
+ * Copyright 2024-2025 the original author Hoàng Anh Tiến.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.ezbuy.core.client.impl;
+
+import com.ezbuy.core.client.BaseRestClient;
+import com.ezbuy.core.constants.CommonErrorCode;
+import com.ezbuy.core.constants.Constants;
+import com.ezbuy.core.exception.BusinessException;
+import com.ezbuy.core.util.DataUtil;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.epoll.EpollChannelOption;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.reactive.ClientHttpConnector;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.ClientResponse;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClient;
+import reactor.netty.resources.ConnectionProvider;
+import reactor.netty.transport.ProxyProvider;
+
+/**
+ * BaseRestClientImpl provides a base implementation of the
+ * {@link BaseRestClient} interface. This class uses
+ * Spring's {@link org.springframework.web.reactive.function.client.WebClient}
+ * for making REST API calls and handling various HTTP operations (GET, POST,
+ * DELETE ...). Each method utilizes reactive types like
+ * {@link reactor.core.publisher.Mono}, {@link reactor.core.publisher.Flux} for
+ * asynchronous and non-blocking execution, which is useful in a WebFlux
+ * environment. The class includes handling for error scenarios, logging, and
+ * response parsing.
+ *
+ * @author hoangtien2k3
+ */
+@Service
+public class BaseRestClientImpl implements BaseRestClient {
+
+    private static final Logger log = LoggerFactory.getLogger(BaseRestClientImpl.class);
+
+    @Override
+    public <T> Mono<Optional<T>> get(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerMap,
+            MultiValueMap<String, String> payload,
+            Class<T> resultClass) {
+        return execute(
+                webClient.get()
+                        .uri(uriBuilder -> uriBuilder
+                                .path(url)
+                                .queryParams(getSafePayload(payload))
+                                .build())
+                        .headers(h -> h.addAll(getSafeRestHeader(headerMap))),
+                resultClass
+        );
+    }
+
+    @Override
+    public <T> Mono<Optional<T>> get(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerMap,
+            MultiValueMap<String, String> payload,
+            ParameterizedTypeReference<T> typeRef) {
+        return execute(
+                webClient.get()
+                        .uri(uriBuilder -> uriBuilder
+                                .path(url)
+                                .queryParams(getSafePayload(payload))
+                                .build())
+                        .headers(h -> h.addAll(getSafeRestHeader(headerMap))),
+                typeRef
+        );
+    }
+
+    @Override
+    public <T> Mono<Optional<T>> post(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerList,
+            Object payload,
+            Class<T> resultClass) {
+        if (DataUtil.isNullOrEmpty(payload))
+            payload = new LinkedMultiValueMap<>();
+        return execute(
+                webClient.post()
+                        .uri(url)
+                        .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
+                        .bodyValue(payload),
+                resultClass
+        );
+    }
+
+    @Override
+    public <T> Mono<Optional<T>> post(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerList,
+            Object payload,
+            ParameterizedTypeReference<T> typeRef) {
+        if (DataUtil.isNullOrEmpty(payload))
+            payload = new LinkedMultiValueMap<>();
+        return execute(
+                webClient.post()
+                        .uri(url)
+                        .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
+                        .bodyValue(payload),
+                typeRef
+        );
+    }
+
+    @Override
+    public <T> Mono<Optional<T>> post(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerList,
+            MultiValueMap<String, String> formData,
+            Class<T> resultClass) {
+        if (formData == null)
+            formData = new LinkedMultiValueMap<>();
+        return execute(
+                webClient.post()
+                        .uri(url)
+                        .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .body(BodyInserters.fromFormData(formData)),
+                resultClass);
+    }
+
+    @Override
+    public <T> Mono<Optional<T>> post(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerList,
+            MultiValueMap<String, String> formData,
+            ParameterizedTypeReference<T> typeRef) {
+        if (formData == null)
+            formData = new LinkedMultiValueMap<>();
+        return execute(
+                webClient.post()
+                        .uri(url)
+                        .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .body(BodyInserters.fromFormData(formData)),
+                typeRef
+        );
+    }
+
+    @Override
+    public <T> Mono<Optional<T>> put(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerList,
+            Object payload,
+            Class<T> resultClass) {
+        if (DataUtil.isNullOrEmpty(payload))
+            payload = new LinkedMultiValueMap<>();
+        return execute(
+                webClient.put()
+                        .uri(url)
+                        .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
+                        .bodyValue(payload),
+                resultClass
+        );
+    }
+
+    @Override
+    public <T> Mono<Optional<T>> put(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerList,
+            Object payload,
+            ParameterizedTypeReference<T> typeRef) {
+        if (DataUtil.isNullOrEmpty(payload))
+            payload = new LinkedMultiValueMap<>();
+        return execute(
+                webClient.put()
+                        .uri(url)
+                        .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList)))
+                        .bodyValue(payload),
+                typeRef
+        );
+    }
+
+    @Override
+    public <T> Mono<Optional<T>> delete(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerList,
+            MultiValueMap<String, String> payload,
+            Class<T> resultClass) {
+        return execute(
+                webClient.delete()
+                        .uri(uriBuilder -> uriBuilder
+                                .path(url)
+                                .queryParams(getSafePayload(payload))
+                                .build())
+                        .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList))),
+                resultClass
+        );
+    }
+
+    @Override
+    public <T> Mono<Optional<T>> delete(
+            WebClient webClient,
+            String url,
+            MultiValueMap<String, String> headerList,
+            MultiValueMap<String, String> payload,
+            ParameterizedTypeReference<T> typeRef) {
+        return execute(
+                webClient.delete()
+                        .uri(uriBuilder -> uriBuilder
+                                .path(url)
+                                .queryParams(getSafePayload(payload))
+                                .build())
+                        .headers(httpHeaders -> httpHeaders.addAll(getSafeRestHeader(headerList))),
+                typeRef
+        );
+    }
+
+    /**
+     * Configures an HTTPS WebClient with optional proxy settings
+     */
+    @Override
+    public WebClient proxyClient(String proxyHost, Integer proxyPort, Boolean proxyEnable) {
+        ConnectionProvider connectionProvider = ConnectionProvider.builder(Constants.POOL.REST_CLIENT_POLL)
+                .maxConnections(2000)
+                .pendingAcquireMaxCount(2000)
+                .build();
+        HttpClient httpClient = HttpClient.create(connectionProvider)
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1000)
+                .responseTimeout(Duration.ofMillis(10000))
+                .option(ChannelOption.SO_KEEPALIVE, true)
+                .option(EpollChannelOption.TCP_KEEPIDLE, 300)
+                .option(EpollChannelOption.TCP_KEEPINTVL, 60)
+                .option(EpollChannelOption.TCP_KEEPCNT, 8);
+        if (Boolean.TRUE.equals(proxyEnable)) {
+            SslContext sslContext;
+            try {
+                sslContext = SslContextBuilder
+                        .forClient()
+                        .trustManager(InsecureTrustManagerFactory.INSTANCE)
+                        .build();
+                httpClient = httpClient
+                        .proxy(proxy ->
+                                proxy.type(ProxyProvider.Proxy.HTTP).host(proxyHost).port(proxyPort))
+                        .secure(t -> t.sslContext(sslContext));
+            } catch (Exception ex) {
+                log.error("Failed to configure proxy SSL context: {}", ex.getMessage(), ex);
+            }
+        }
+        return WebClient.builder()
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .codecs(clientCodecConfigurer -> {
+                    clientCodecConfigurer
+                            .defaultCodecs()
+                            .maxInMemorySize(16 * 1024 * 1024); //16MB
+                })
+                .build();
+    }
+
+    /**
+     * Configures an HTTP WebClient with proxy settings for non-secure connections
+     */
+    @Override
+    public WebClient proxyHttpClient(String proxyHost, Integer proxyPort) {
+        HttpClient httpClient = HttpClient.create()
+                .proxy(proxy -> proxy.type(ProxyProvider.Proxy.HTTP)
+                        .host(proxyHost)
+                        .port(proxyPort));
+        ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
+        return WebClient.builder()
+                .clientConnector(connector)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .build();
+    }
+
+    /**
+     * Ensures a safe MultiValueMap for headers, with a default "Content-Type:
+     * application/json" if empty.
+     *
+     * @param headerMap the header map to check and potentially initialize.
+     * @return the original header map if not empty, otherwise a new map with a JSON
+     * Content-Type.
+     */
+    private MultiValueMap<String, String> getSafeRestHeader(MultiValueMap<String, String> headerMap) {
+        if (!DataUtil.isNullOrEmpty(headerMap)) {
+            return headerMap;
+        }
+        headerMap = new LinkedMultiValueMap<>();
+        headerMap.set(Constants.HeaderType.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        return headerMap;
+    }
+
+    /**
+     * Handles error responses from a Spring WebFlux ClientResponse.
+     * <p>
+     * This method takes a ClientResponse as input, extracts the error body as a
+     * String, and converts it into a Mono that emits a BusinessException containing
+     * the error message. The method is designed to be used in error handling
+     * scenarios where the response indicates an error (non-2xx status code).
+     *
+     * @param response The ClientResponse to handle, which may contain error details.
+     * @return A Mono that emits a {@link BusinessException} with the error message
+     * from the response body. If the response body cannot be read, the
+     * error will be propagated.
+     */
+    private static Mono<? extends Throwable> handleErrorResponse(ClientResponse response) {
+        return response.bodyToMono(String.class).flatMap(errorBody -> {
+            log.info("log when call error {}", errorBody);
+            return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, errorBody));
+        });
+    }
+
+    /**
+     * Ensures a safe MultiValueMap for payload, returning an empty map if the input
+     * is null or empty.
+     *
+     * @param payload the payload map to check.
+     * @return the original payload if not empty, otherwise an empty
+     * LinkedMultiValueMap.
+     */
+    private MultiValueMap<String, String> getSafePayload(MultiValueMap<String, String> payload) {
+        return !DataUtil.isNullOrEmpty(payload) ? payload : new LinkedMultiValueMap<>();
+    }
+
+    // ================== Generic Execute Class ==================
+    private <T> Mono<Optional<T>> execute(WebClient.RequestHeadersSpec<?> requestSpec, Class<T> resultClass) {
+        return requestSpec
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, BaseRestClientImpl::handleErrorResponse)
+                .bodyToMono(String.class)
+                .map(response -> {
+                    if (DataUtil.isNullOrEmpty(response))
+                        return Optional.<T>empty();
+                    if (resultClass == String.class) {
+                        @SuppressWarnings("unchecked")
+                        T stringResponse = (T) response;
+                        return Optional.of(stringResponse);
+                    }
+                    T result = DataUtil.parseStringToObject(response, resultClass);
+                    return Optional.ofNullable(result);
+                })
+                .onErrorResume(WebClientResponseException.class, e -> {
+                    log.error("Call rest api error: ", e);
+                    String responseError = e.getResponseBodyAsString(StandardCharsets.UTF_8);
+                    T result = DataUtil.parseStringToObject(responseError, resultClass);
+                    return Mono.just(Optional.ofNullable(result));
+                });
+    }
+
+    // ================== Generic Execute ParameterizedTypeReference ==================
+    private <T> Mono<Optional<T>> execute(WebClient.RequestHeadersSpec<?> requestSpec, ParameterizedTypeReference<T> typeRef) {
+        return requestSpec
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, BaseRestClientImpl::handleErrorResponse)
+                .bodyToMono(typeRef)
+                .map(Optional::ofNullable)
+                .onErrorResume(WebClientResponseException.class, e -> {
+                    log.error("Call rest api error: ", e);
+                    return Mono.just(Optional.empty());
+                });
+    }
+}
