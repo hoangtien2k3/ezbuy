@@ -56,4 +56,4 @@ jobs:
         with:
           context: ./{{SERVICE_NAME}}
           push: true
-          tags: ghcr.io/hoangtien2k3/ezbuy-{{SERVICE_NAME}}:latest
+          tags: ghcr.io/hoangtien2k3/{{SERVICE_NAME}}:latest

@@ -1,19 +1,19 @@
-name: notification-send service ci
+name: ezbuy-auth service ci
 
 on:
   push:
     branches: [ "master" ]
     paths:
-      - "notification-send/**"
+      - "ezbuy-auth/**"
       - ".github/workflows/actions/action.yaml"
-      - ".github/workflows/notification-send-ci.yaml"
+      - ".github/workflows/ezbuy-auth-ci.yaml"
       - "pom.xml"
   pull_request:
     branches: [ "master" ]
     paths:
-      - "notification-send/**"
+      - "ezbuy-auth/**"
       - ".github/workflows/actions/action.yaml"
-      - ".github/workflows/notification-send-ci.yaml"
+      - ".github/workflows/ezbuy-auth-ci.yaml"
       - "pom.xml"
   workflow_dispatch:
 
@@ -28,21 +28,21 @@ jobs:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - uses: ./.github/workflows/actions
       - name: Run Maven Build Command
-        run: mvn clean install -DskipTests -f notification-send
+        run: mvn clean install -DskipTests -f ezbuy-auth
       - name: Run Maven Test
-        run: mvn test -f notification-send
+        run: mvn test -f ezbuy-auth
       - name: Unit Test Results
         uses: dorny/test-reporter@v1
         if: ${{ env.FROM_ORIGINAL_REPOSITORY == 'true' && (success() || failure()) }}
         with:
           name: Unit-Test-Results
-          path: "notification-send/**/surefire-reports/*.xml"
+          path: "ezbuy-auth/**/surefire-reports/*.xml"
           reporter: java-junit
       - name: Analyze with sonar cloud
         if: ${{ env.FROM_ORIGINAL_REPOSITORY == 'true' }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -f notification-send
+        run: mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -f ezbuy-auth
       - name: Log in to the Container registry
         if: ${{ github.ref == 'refs/heads/main' }}
         uses: docker/login-action@v3
@@ -54,6 +54,6 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         uses: docker/build-push-action@v6
         with:
-          context: ./notification-send
+          context: ./ezbuy-auth
           push: true
-          tags: ghcr.io/hoangtien2k3/ezbuy-notification-send:latest
+          tags: ghcr.io/hoangtien2k3/ezbuy-auth:latest
