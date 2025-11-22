@@ -10,16 +10,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 public class WebClientFactoryConfig {
-    private final AuthProperties authProperties;
     private final OrderProperties orderProperties;
-    private final SettingProperties settingProperties;
 
     @Bean(name = "webClientFactory")
     public WebClientFactory webClientFactory() {
         return new WebClientFactory(List.of(
-                authProperties,
-                orderProperties,
-                settingProperties
+                orderProperties
         ));
     }
 }

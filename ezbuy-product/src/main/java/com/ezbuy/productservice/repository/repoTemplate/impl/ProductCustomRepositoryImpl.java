@@ -1,7 +1,7 @@
 package com.ezbuy.productservice.repository.repoTemplate.impl;
 
-import com.ezbuy.productmodel.dto.request.SearchProductRequest;
-import com.ezbuy.productmodel.model.Product;
+import com.ezbuy.productservice.model.dto.request.SearchProductRequest;
+import com.ezbuy.productservice.model.entity.Product;
 import com.ezbuy.productservice.repository.repoTemplate.BaseRepositoryTemplate;
 import com.ezbuy.productservice.repository.repoTemplate.ProductCustomRepository;
 import com.ezbuy.core.util.DataUtil;
@@ -22,7 +22,8 @@ import reactor.core.publisher.Mono;
 
 @Repository
 @RequiredArgsConstructor
-public class ProductCustomRepositoryImpl extends BaseRepositoryTemplate implements ProductCustomRepository {
+public class ProductCustomRepositoryImpl extends BaseRepositoryTemplate
+        implements ProductCustomRepository {
 
     private final R2dbcEntityTemplate template;
 
@@ -122,9 +123,9 @@ public class ProductCustomRepositoryImpl extends BaseRepositoryTemplate implemen
             List<String> ids, UUID organizationId, Integer offset, Integer limit, String transactionId) {
         Map<String, Object> params = new HashMap<>();
         StringBuilder query = new StringBuilder();
-        query.append("select p.* " + "from sme_product.product p "
-                + "inner join sme_product.sync_history_detail d on p.id = d.target_id "
-                + "inner join sme_product.sync_history s on d.sync_history_id = s.id " + "where 1 = 1 ");
+        query.append("select p.* " + "from product p "
+                + "inner join sync_history_detail d on p.id = d.target_id "
+                + "inner join sync_history s on d.sync_history_id = s.id " + "where 1 = 1 ");
         if (!DataUtil.isNullOrEmpty(ids)) {
             query.append(" and p.id in (:ids) ");
             params.put("ids", ids);

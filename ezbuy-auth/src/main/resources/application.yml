@@ -134,10 +134,6 @@ application:
     - uri: /v1/user/contacts
       methods:
         - GET
-    - uri: /v1/identify/trusted-idNo-organization
-    - uri: /v1/sync-data/organization
-      methods:
-        - POST
 ---
 keycloak:
   client-id: "${KEYCLOAK_CLIENT_ID:ezbuy-client}"

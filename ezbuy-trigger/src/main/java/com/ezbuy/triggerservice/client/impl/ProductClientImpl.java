@@ -1,8 +1,7 @@
 package com.ezbuy.triggerservice.client.impl;
 
-import com.ezbuy.productmodel.dto.request.CreateSummaryRequest;
-import com.ezbuy.productmodel.dto.request.UnlockVoucherRequest;
-import com.ezbuy.productmodel.dto.request.UnlockVoucherRequest;
+import com.ezbuy.productmodel.model.dto.request.CreateSummaryRequest;
+import com.ezbuy.productmodel.model.dto.request.UnlockVoucherRequest;
 import com.ezbuy.triggerservice.client.ProductClient;
 import com.ezbuy.core.client.BaseRestClient;
 import com.ezbuy.core.model.response.DataResponse;

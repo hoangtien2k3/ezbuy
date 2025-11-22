@@ -1,9 +1,10 @@
 package com.ezbuy.productservice.repository.repoTemplate;
 
-import com.ezbuy.productmodel.dto.request.SearchProductRequest;
-import com.ezbuy.productmodel.model.Product;
 import java.util.List;
 import java.util.UUID;
+
+import com.ezbuy.productservice.model.dto.request.SearchProductRequest;
+import com.ezbuy.productservice.model.entity.Product;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -12,6 +13,5 @@ public interface ProductCustomRepository {
 
     Mono<Integer> countProduct(SearchProductRequest request, String organizationId);
 
-    Flux<Product> getProductByIdAndOrganizationIdAndTransId(
-            List<String> id, UUID organizationId, Integer offset, Integer limit, String transactionId);
+    Flux<Product> getProductByIdAndOrganizationIdAndTransId(List<String> id, UUID organizationId, Integer offset, Integer limit, String transactionId);
 }

@@ -10,9 +10,6 @@ description = 'ezbuy-product'
 
 dependencies {
     implementation project(':ezbuy-core')
-    implementation project(':ezbuy-product-model')
-    implementation project(':ezbuy-setting-model')
-    implementation project(':ezbuy-order-model')
     implementation libs.commons.io.commons.io
     implementation libs.org.apache.poi.poi
     implementation libs.org.apache.poi.poi.ooxml
