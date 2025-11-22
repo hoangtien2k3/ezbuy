@@ -1,4 +1,4 @@
-package com.ezbuy.searchmodel.constants;
+package com.ezbuy.searchservice.constants;
 
 import java.util.List;
 

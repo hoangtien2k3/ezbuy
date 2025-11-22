@@ -1,19 +1,10 @@
-# server config
 server:
   port: 8999
 ---
-#logging
-logging:
-  pattern:
-    console: "%d{dd/MM/yy HH:mm:ss}|%X{traceId}|%m%n"
-  level:
-    root: INFO
----
-#spring cloud consul config
 spring:
   cloud:
     consul:
-      host: localhost
+      host: "${CONSUL_HOST:localhost}"
       port: 8500
       discovery:
         heartbeat:
@@ -25,36 +16,44 @@ spring:
         service-name: ${spring.application.name}
         register-health-check: true
 ---
-# spring config
 spring:
   application:
     name: setting_service
   main:
+    web-application-type: reactive
     allow-bean-definition-overriding: true
   messages:
-    basename: lang
-  #r2dbc postgresql
+    basename: i18n/messages
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  http:
+    codecs:
+      max-in-memory-size: 100MB
   r2dbc:
-    url: r2dbc:postgresql://localhost:5434/setting
-    username: admin
-    password: admin
+    url: "${R2DBC_URL:r2dbc:postgresql://localhost:5434/setting}"
+    username: "${R2DBC_USERNAME:admin}"
+    password: "${R2DBC_PASSWORD:admin}"
+    pool:
+      max-size: 10
+      initial-size: 5
+      max-idle-time: 30m
+      max-create-connection-time: 30s
   security:
     oauth2:
       client:
         provider:
           oidc:
-            token-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/token
+            token-uri: ${keycloak.server-url}/realms/${keycloak.realm}/protocol/openid-connect/token
         registration:
           oidc:
-            client-id: ${keycloak.clientId}
-            client-secret: ${keycloak.clientSecret}
-            authorization-grant-type: password #client_credentials
+            client-id: ${keycloak.client-id}
+            client-secret: ${keycloak.client-secret}
+            authorization-grant-type: ${keycloak.grant-type}
       resourceserver:
         jwt:
-          jwk-set-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/certs
+          jwk-set-uri: ${keycloak.server-url}/realms/${keycloak.realm}/protocol/openid-connect/certs
       keycloak:
-        client-id: ${keycloak.clientId}
-        client-secret: ${keycloak.clientSecret}
+        client-id: ${keycloak.client-id}
   data:
     elasticsearch:
       repositories:
@@ -62,22 +61,19 @@ spring:
   elasticsearch:
     uris: http://localhost:9200
 ---
-#keycloak client config
 keycloak:
-  clientId: ezbuy-client
-  clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
-  realm: ezbuy-server
-  serverUrl: http://localhost:8080
-  grantType: password
-  host: localhost
+  client-id: "${KEYCLOAK_CLIENT_ID:ezbuy-client}"
+  client-secret: "${KEYCLOAK_CLIENT_SECRET:5dnfDh6XitmAMc7vQUNxGkJw0HF4e9tI}"
+  realm: "${KEYCLOAK_REALM:ezbuy-server}"
+  server-url: "${KEYCLOAK_SERVER_URL:http://localhost:8080}"
+  grant-type: "${KEYCLOAK_GRANT_TYPE:password}" #client_credentials
+  host: "${KEYCLOAK_HOST:localhost}"
 ---
-#client-elasticsearch
 client:
   elasticsearch:
-    address: http://localhost:9200
+    address: "${CLIENT_ELASTICSEARCH_ADDRESS:http://localhost:9200}"
     name: elasticSearchClient
 ---
-# unauthenticated endpoints config
 application:
   index:
     indexScores:
@@ -96,7 +92,13 @@ application:
       methods:
         - GET
 ---
-#health check config
+springdoc:
+  api-docs:
+    path: /v1/auth/v3/api-docs
+  swagger-ui:
+    path: /v1/auth/swagger-ui.html
+    url: /v1/auth/v3/api-docs
+---
 management:
   endpoints:
     web:

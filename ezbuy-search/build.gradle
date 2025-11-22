@@ -4,26 +4,20 @@ plugins {
     id 'com.palantir.git-version' version '4.0.0'
 }
 
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-    }
-}
+group = 'com.ezbuy.search'
+version = '1.0-SNAPSHOT'
+description = 'ezbuy-search'
 
 dependencies {
-//    implementation libs.io.github.hoangtien2k3.reactify.core
     implementation project(':ezbuy-core')
-    implementation project(':ezbuy-search-model')
-    implementation project(':ezbuy-setting-model')
     implementation libs.org.springframework.boot.spring.boot.starter.data.elasticsearch
     implementation libs.net.logstash.logback
     implementation libs.org.json.json
     implementation libs.com.google.code.gson.gson
     implementation libs.org.springframework.cloud.spring.cloud.starter.consul.discovery
+    implementation platform(libs.org.springframework.cloud.spring.cloud.dependencies)
     testImplementation libs.org.testcontainers.elasticsearch
 }
-
-description = 'ezbuy-search-service'
 
 ext {
     imageDocker = 'hoangtien2k3/ezbuy-search-service'

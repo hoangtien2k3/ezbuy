@@ -1,4 +1,4 @@
-package com.ezbuy.searchmodel.dto.request;
+package com.ezbuy.searchservice.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

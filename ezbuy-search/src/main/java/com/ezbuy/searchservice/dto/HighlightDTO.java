@@ -1,5 +1,6 @@
-package com.ezbuy.searchmodel.dto;
+package com.ezbuy.searchservice.dto;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class IndexDTO {
-    private String name;
+public class HighlightDTO {
+    private List<String> title;
+    private List<String> content;
 }

@@ -1,6 +1,7 @@
-package com.ezbuy.searchmodel.dto;
+package com.ezbuy.searchservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,12 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SearchResponseDTO {
-    private Integer took;
+public class HitsDTO {
+    @JsonProperty("max_score")
+    private Float maxScore;
 
-    @JsonProperty("time_out")
-    private Boolean timeOut;
-
-    @JsonProperty("hits")
-    private HitsDTO hitsDTO;
+    private List<HitDTO> hits;
 }

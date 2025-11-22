@@ -1,4 +1,4 @@
-package com.ezbuy.searchmodel.dto;
+package com.ezbuy.searchservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

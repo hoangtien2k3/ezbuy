@@ -1,7 +1,7 @@
 package com.ezbuy.searchservice.service;
 
-import com.ezbuy.searchmodel.dto.request.SearchDTORequest;
 import com.ezbuy.core.model.response.DataResponse;
+import com.ezbuy.searchservice.dto.request.SearchDTORequest;
 import reactor.core.publisher.Mono;
 
 public interface SearchService {

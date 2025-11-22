@@ -1,12 +1,12 @@
 package com.ezbuy.searchservice.service.impl;
 
-import com.ezbuy.searchmodel.dto.SearchResponseDTO;
-import com.ezbuy.searchmodel.dto.request.SearchDTORequest;
-import com.ezbuy.searchmodel.dto.response.SearchDTO;
-import com.ezbuy.searchmodel.dto.response.SearchDTOResponse;
 import com.ezbuy.searchservice.client.ElasticsearchClient;
+import com.ezbuy.searchservice.constants.Constants;
+import com.ezbuy.searchservice.dto.SearchResponseDTO;
+import com.ezbuy.searchservice.dto.request.SearchDTORequest;
+import com.ezbuy.searchservice.dto.response.SearchDTO;
+import com.ezbuy.searchservice.dto.response.SearchDTOResponse;
 import com.ezbuy.searchservice.service.SearchService;
-import com.ezbuy.settingmodel.constants.Constants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ezbuy.core.constants.CommonErrorCode;

@@ -1,4 +1,4 @@
-package com.ezbuy.searchmodel.dto.response;
+package com.ezbuy.searchservice.dto.response;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
