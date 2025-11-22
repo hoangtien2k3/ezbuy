@@ -1,22 +1,9 @@
 version: '3.9'
 
 services:
-  ###########################
-  #auth-service
-  #cart-service
-  #notification-send
-  #notification-service
-  #payment-service
-  #product-service
-  #rating-service
-  #search-service
-  #setting-service
-  #trigger-service
-  ###########################
-  #auth-service
   auth-service:
     build: ./auth-service
-    image: hoangtien2k3/ezbuy-auth-service:latest
+    image: hoangtien2k3/ezbuy-auth:latest
     container_name: ezbuy-auth-service
     environment:
       - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/auth
@@ -40,10 +27,9 @@ services:
     networks:
       - ezbuy-network
 
-  #cart-service
   cart-service:
     build: ./cart-service
-    image: hoangtien2k3/ezbuy-cart-service:latest
+    image: hoangtien2k3/ezbuy-cart:latest
     container_name: ezbuy-cart-service
     environment:
       - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/cart
@@ -62,32 +48,9 @@ services:
     networks:
       - ezbuy-network
 
-  #notification-send
-  notification-send:
-    build: ./notification-send
-    image: hoangtien2k3/ezbuy-notification-send:latest
-    container_name: ezbuy-notification-send
-    environment:
-      - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/notification
-      - SPRING_R2DBC_USERNAME
-      - SPRING_R2DBC_PASSWORD
-      - KEYCLOAK_SERVERURL
-      - KEYCLOAK_REALM
-      - KEYCLOAK_CLIENTID
-      - KEYCLOAK_CLIENTSECRET
-      - KEYCLOAK_GRANTTYPE
-      - CLIENT_KEYCLOAK_ADDRESS
-    volumes:
-      - ./deployment/app-config:/app-config
-    ports:
-      - "8888:8888"
-    networks:
-      - ezbuy-network
-
-  #notification-service
   notification-service:
     build: ./auth-service
-    image: hoangtien2k3/ezbuy-notification-service:latest
+    image: hoangtien2k3/ezbuy-notification:latest
     container_name: ezbuy-notification-service
     environment:
       - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/notification
@@ -106,10 +69,9 @@ services:
     networks:
       - ezbuy-network
 
-  #payment-service
   payment-service:
     build: ./payment-service
-    image: hoangtien2k3/ezbuy-payment-service:latest
+    image: hoangtien2k3/ezbuy-payment:latest
     container_name: ezbuy-payment-service
     environment:
       - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/payment
@@ -128,10 +90,9 @@ services:
     networks:
       - ezbuy-network
 
-  #product-service
   product-service:
     build: ./product-service
-    image: hoangtien2k3/ezbuy-product-service:latest
+    image: hoangtien2k3/ezbuy-product:latest
     container_name: ezbuy-product-service
     environment:
       - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/product
@@ -150,10 +111,9 @@ services:
     networks:
       - ezbuy-network
 
-  #rating-service
   rating-service:
     build: ./rating-service
-    image: hoangtien2k3/ezbuy-rating-service:latest
+    image: hoangtien2k3/ezbuy-rating:latest
     container_name: ezbuy-rating-service
     environment:
       - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/rating
@@ -172,10 +132,9 @@ services:
     networks:
       - ezbuy-network
 
-  #search-service
   search-service:
     build: ./search-service
-    image: hoangtien2k3/ezbuy-search-service:latest
+    image: hoangtien2k3/ezbuy-search:latest
     container_name: ezbuy-search-service
     environment:
       - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/search
@@ -194,10 +153,9 @@ services:
     networks:
       - ezbuy-network
 
-  #setting-service
   setting-service:
     build: ./setting-service
-    image: hoangtien2k3/ezbuy-setting-service:latest
+    image: hoangtien2k3/ezbuy-setting:latest
     container_name: ezbuy-setting-service
     environment:
       - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/setting
@@ -221,10 +179,9 @@ services:
     networks:
       - ezbuy-network
 
-  #trigger-service
   trigger-service:
     build: ./trigger-service
-    image: hoangtien2k3/ezbuy-trigger-service:latest
+    image: hoangtien2k3/ezbuy-trigger:latest
     container_name: ezbuy-trigger-service
     environment:
       - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/trigger
@@ -243,7 +200,6 @@ services:
     networks:
       - ezbuy-network
 
-  # networks:
 networks:
   ezbuy-network:
     driver: bridge
