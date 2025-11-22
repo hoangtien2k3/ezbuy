@@ -16,6 +16,10 @@ public class WebClientFactoryConfig {
 
     @Bean(name = "webClientFactory")
     public WebClientFactory webClientFactory() {
-        return new WebClientFactory(List.of(authProperties, orderProperties, settingProperties));
+        return new WebClientFactory(List.of(
+                authProperties,
+                orderProperties,
+                settingProperties
+        ));
     }
 }

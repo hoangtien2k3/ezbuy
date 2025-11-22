@@ -1,7 +1,7 @@
 package com.ezbuy.ratingservice.repository.repoTemplate;
 
-import com.ezbuy.ratingmodel.dto.RatingDTO;
-import com.ezbuy.ratingmodel.request.FindRatingRequest;
+import com.ezbuy.ratingservice.model.dto.RatingDTO;
+import com.ezbuy.ratingservice.model.dto.request.FindRatingRequest;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

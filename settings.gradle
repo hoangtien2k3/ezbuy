@@ -13,7 +13,6 @@ include(':ezbuy-trigger')
 include(':ezbuy-product')
 
 include(':ezbuy-order-model')
-include(':ezbuy-payment-model')
 include(':ezbuy-product-model')
 include(':ezbuy-rating-model')
 include(':ezbuy-search-model')

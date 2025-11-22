@@ -4,18 +4,15 @@ plugins {
     id 'com.palantir.git-version' version '4.0.0'
 }
 
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-    }
-}
+group = 'com.ezbuy.rating'
+version = '1.0-SNAPSHOT'
+description = 'ezbuy-rating'
 
 dependencies {
-//    implementation libs.io.github.hoangtien2k3.reactify.core
     implementation project(':ezbuy-core')
-    implementation project(':ezbuy-rating-model')
     implementation libs.org.springframework.boot.spring.boot.starter.quartz
     implementation libs.org.springframework.cloud.spring.cloud.starter.consul.discovery
+    implementation platform(libs.org.springframework.cloud.spring.cloud.dependencies)
 }
 
 description = 'ezbuy-rating-service'

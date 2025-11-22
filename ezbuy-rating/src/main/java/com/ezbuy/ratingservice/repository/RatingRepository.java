@@ -1,6 +1,6 @@
 package com.ezbuy.ratingservice.repository;
 
-import com.ezbuy.ratingmodel.model.Rating;
+import com.ezbuy.ratingservice.model.entity.Rating;
 
 import java.time.LocalDateTime;
 

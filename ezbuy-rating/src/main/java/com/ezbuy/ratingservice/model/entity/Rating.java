@@ -1,6 +1,5 @@
-package com.ezbuy.ratingmodel.model;
+package com.ezbuy.ratingservice.model.entity;
 
-import com.ezbuy.ratingmodel.model.base.EntityBase;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,20 +14,25 @@ import org.springframework.data.relational.core.mapping.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@Table(name = "rating_type")
-public class RatingHistory extends EntityBase implements Persistable<String> {
+@Table(name = "rating")
+public class Rating extends EntityBase implements Persistable<String> {
 
     @Id
     private String id;
-    private String ratingId;
-    private Long ratingBf;
-    private Long ratingAf;
-    private String contentBf;
-    private String contentAf;
-    private LocalDateTime approveAt;
-    private String approveBy;
-    private String state;
+    private String ratingTypeCode;
+    private String targetId;
+    private String username;
+    private String custName;
+    private Long rating;
+    private String content;
+    private LocalDateTime ratingDate;
+    private Integer hasImage;
+    private Integer hasVideo;
     private Integer status;
+    private String state;
+    private Integer displayStatus;
+    private Integer sumRateStatus;
+    private String targetUser;
 
     @Transient
     private boolean isNew = false;

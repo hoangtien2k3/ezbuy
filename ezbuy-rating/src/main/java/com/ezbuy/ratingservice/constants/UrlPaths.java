@@ -1,4 +1,4 @@
-package com.ezbuy.ratingmodel.constants;
+package com.ezbuy.ratingservice.constants;
 
 public class UrlPaths {
     public interface RatingService {

@@ -1,34 +1,31 @@
 package com.ezbuy.ratingservice.controller;
 
-import com.ezbuy.ratingmodel.constants.UrlPaths;
-import com.ezbuy.ratingmodel.model.Rating;
-import com.ezbuy.ratingmodel.model.RatingCount;
-import com.ezbuy.ratingmodel.request.FindRatingRequest;
-import com.ezbuy.ratingmodel.request.RatingRequest;
-import com.ezbuy.ratingmodel.response.SearchRatingResponse;
+import com.ezbuy.ratingservice.model.entity.Rating;
+import com.ezbuy.ratingservice.model.entity.RatingCount;
+import com.ezbuy.ratingservice.model.dto.request.FindRatingRequest;
+import com.ezbuy.ratingservice.model.dto.request.RatingRequest;
+import com.ezbuy.ratingservice.model.dto.response.SearchRatingResponse;
 import com.ezbuy.ratingservice.service.RatingService;
 import com.ezbuy.core.model.response.DataResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-@Slf4j
-@RestController
-@RequestMapping(UrlPaths.Rating.PREFIX)
 @RequiredArgsConstructor
+@RestController
+@RequestMapping("/v1/rating")
 public class RatingController {
 
     private final RatingService ratingService;
 
-    @GetMapping(value = UrlPaths.Rating.GET_ALL_RATTING_ACTIVE)
+    @GetMapping("/all-active")
     public Mono<DataResponse<List<RatingCount>>> getAllRatingActive() {
         return ratingService.getAllRatingActive().map(rs -> new DataResponse<>("success", rs));
     }
 
-    @PostMapping(value = UrlPaths.Rating.GET_RATTING_SERVICE)
+    @PostMapping("/rating-service")
     public Mono<DataResponse<List<RatingCount>>> getRatingByServiceId(@RequestBody List<String> alias) {
         return ratingService.getRatingByAlias(alias).map(rs -> new DataResponse<>("success", rs));
     }
@@ -38,17 +35,17 @@ public class RatingController {
         return ratingService.createRating(request);
     }
 
-    @PutMapping(value = UrlPaths.Rating.UPDATE)
+    @PutMapping("/{id}")
     public Mono<DataResponse<Rating>> editRating(@PathVariable String id, @Valid @RequestBody RatingRequest request) {
         return ratingService.editRating(id, request);
     }
 
-    @GetMapping(value = UrlPaths.Rating.SEARCH)
+    @GetMapping("/search")
     public Mono<SearchRatingResponse> findRating(FindRatingRequest request) {
         return ratingService.findRating(request);
     }
 
-    @GetMapping(UrlPaths.Rating.ALL)
+    @GetMapping("/all")
     public Mono<DataResponse<List<RatingCount>>> getAllServiceGroupActive() {
         return ratingService.getAllRatingActive().map(DataResponse::success);
     }

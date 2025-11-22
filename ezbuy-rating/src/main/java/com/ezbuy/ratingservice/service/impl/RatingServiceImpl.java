@@ -1,12 +1,17 @@
 package com.ezbuy.ratingservice.service.impl;
 
-import com.ezbuy.ratingmodel.dto.*;
-import com.ezbuy.ratingmodel.model.Rating;
-import com.ezbuy.ratingmodel.model.RatingCount;
-import com.ezbuy.ratingmodel.model.RatingHistory;
-import com.ezbuy.ratingmodel.request.FindRatingRequest;
-import com.ezbuy.ratingmodel.request.RatingRequest;
-import com.ezbuy.ratingmodel.response.SearchRatingResponse;
+import com.ezbuy.ratingservice.model.dto.PaginationDTO;
+import com.ezbuy.ratingservice.model.dto.RatingCommentDTO;
+import com.ezbuy.ratingservice.model.dto.RatingDTO;
+import com.ezbuy.ratingservice.model.dto.RatingDetailDTO;
+import com.ezbuy.ratingservice.model.dto.RatingServiceResponse;
+import com.ezbuy.ratingservice.model.dto.SearchRatingRequest;
+import com.ezbuy.ratingservice.model.entity.Rating;
+import com.ezbuy.ratingservice.model.entity.RatingCount;
+import com.ezbuy.ratingservice.model.entity.RatingHistory;
+import com.ezbuy.ratingservice.model.dto.request.FindRatingRequest;
+import com.ezbuy.ratingservice.model.dto.request.RatingRequest;
+import com.ezbuy.ratingservice.model.dto.response.SearchRatingResponse;
 import com.ezbuy.ratingservice.repository.RatingCountRepository;
 import com.ezbuy.ratingservice.repository.RatingRepository;
 import com.ezbuy.ratingservice.repository.repoTemplate.RatingRepositoryTemplate;
@@ -28,15 +33,17 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RatingServiceImpl extends BaseServiceHandler implements RatingService {
+
+    private final Logger log = LoggerFactory.getLogger(RatingServiceImpl.class);
 
     private final RatingCountRepository ratingCountRepository;
     private final RatingRepository ratingRepository;
@@ -46,12 +53,9 @@ public class RatingServiceImpl extends BaseServiceHandler implements RatingServi
 
     @Override
     public Mono<DataResponse<RatingServiceResponse>> getRatingService(String serviceAlias) {
-        return Mono.zip(
-                        ratingRepository.getListRatingService(serviceAlias).collectList(),
-                        ratingCountRepository
-                                .getRatingCountService(Collections.singletonList(serviceAlias))
-                                .collectList())
-                .flatMap(listRating -> {
+        return Mono.zip(ratingRepository.getListRatingService(serviceAlias).collectList(),
+                        ratingCountRepository.getRatingCountService(Collections.singletonList(serviceAlias)).collectList()
+                ).flatMap(listRating -> {
                     RatingServiceResponse ratingServiceResponse = new RatingServiceResponse();
                     List<Rating> lstRatingComment = listRating.getT1();
                     if (!DataUtil.isNullOrEmpty(lstRatingComment)) {
@@ -119,21 +123,17 @@ public class RatingServiceImpl extends BaseServiceHandler implements RatingServi
                     rating.setCreateBy(tuple.getT1().getUsername());
                     rating.setNew(true);
                     Mono<RatingCount> ratingCountMono = Mono.just(new RatingCount());
-                    // cap nhat rating count neu sumRateStatus = 1
                     if (Constants.Activation.ACTIVE.equals(rating.getSumRateStatus())) {
                         ratingCountMono = ratingCountService.changeStatusRatingCount(
                                 rating.getRatingTypeCode(),
                                 rating.getTargetId(),
                                 rating.getRating(),
-                                rating.getSumRateStatus());
+                                rating.getSumRateStatus()
+                        );
                     }
-                    return Mono.zip(
-                                    ratingCountMono,
-                                    ratingRepository
-                                            .save(rating)
-                                            .switchIfEmpty(Mono.error(new BusinessException(
-                                                    CommonErrorCode.INTERNAL_SERVER_ERROR,
-                                                    "service.rating.insert.failed"))))
+                    return Mono.zip(ratingCountMono, ratingRepository.save(rating).switchIfEmpty(Mono.error(new BusinessException(
+                                    CommonErrorCode.INTERNAL_SERVER_ERROR,
+                                    "service.rating.insert.failed"))))
                             .flatMap(x -> Mono.just(new DataResponse<>("success", x.getT2())));
                 });
     }
@@ -146,11 +146,8 @@ public class RatingServiceImpl extends BaseServiceHandler implements RatingServi
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "service.rating.id.not.empty");
         }
         var getSysDate = ratingRepository.getSysDate();
-        return Mono.zip(
-                        SecurityUtils.getCurrentUser().switchIfEmpty(
-                                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
-                        ratingRepository.getById(finalId)
-                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "service.rating.not.found"))), getSysDate)
+        return Mono.zip(SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
+                        ratingRepository.getById(finalId).switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "service.rating.not.found"))), getSysDate)
                 .flatMap(tuple -> {
                     String userUpdate = tuple.getT1().getUsername();
                     LocalDateTime now = tuple.getT3();
@@ -204,7 +201,6 @@ public class RatingServiceImpl extends BaseServiceHandler implements RatingServi
 
     @Override
     public Mono<SearchRatingResponse> findRating(FindRatingRequest request) {
-        // validate request
         int pageIndex = validatePageIndex(request.getPageIndex());
         request.setPageIndex(pageIndex);
         int pageSize = validatePageSize(request.getPageSize(), 10);

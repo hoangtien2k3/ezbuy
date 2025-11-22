@@ -1,4 +1,4 @@
-package com.ezbuy.ratingmodel.dto;
+package com.ezbuy.ratingservice.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;

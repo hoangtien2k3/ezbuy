@@ -1,4 +1,4 @@
-package com.ezbuy.ratingmodel.request;
+package com.ezbuy.ratingservice.model.dto.request;
 
 import java.math.BigInteger;
 import lombok.AllArgsConstructor;

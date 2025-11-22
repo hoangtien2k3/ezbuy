@@ -1,23 +1,10 @@
-# server config
 server:
   port: 8950
 ---
-#logging
-logging:
-  pattern:
-    console: "%d{dd/MM/yy HH:mm:ss}|%X{traceId}|%m%n"
-  level:
-    root: INFO
-    org.springframework.r2dbc: DEBUG
-    io.r2dbc.postgresql.QUERY: DEBUG
-    io.r2dbc.postgresql.PARAM: DEBUG
-    io.r2dbc.postgresql.CONNECTION: DEBUG
----
-#spring cloud consul config
 spring:
   cloud:
     consul:
-      host: localhost
+      host: "${CONSUL_HOST:localhost}"
       port: 8500
       discovery:
         heartbeat:
@@ -29,7 +16,6 @@ spring:
         service-name: ${spring.application.name}
         register-health-check: true
 ---
-# spring config
 spring:
   application:
     name: rating-service
@@ -37,39 +23,46 @@ spring:
     web-application-type: reactive
     allow-bean-definition-overriding: true
   messages:
-    basename: messages
+    basename: i18n/messages
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  http:
+    codecs:
+      max-in-memory-size: 100MB
   r2dbc:
-    url: r2dbc:postgresql://localhost:5434/rating
-    username: admin
-    password: admin
-  #security oauth2
+    url: "${R2DBC_URL:r2dbc:postgresql://localhost:5434/rating}"
+    username: "${R2DBC_USERNAME:admin}"
+    password: "${R2DBC_PASSWORD:admin}"
+    pool:
+      max-size: 10
+      initial-size: 5
+      max-idle-time: 30m
+      max-create-connection-time: 30s
   security:
     oauth2:
       client:
         provider:
           oidc:
-            token-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/token
+            token-uri: ${keycloak.server-url}/realms/${keycloak.realm}/protocol/openid-connect/token
         registration:
           oidc:
-            client-id: ${keycloak.clientId}
-            client-secret: ${keycloak.clientSecret}
-            authorization-grant-type: ${keycloak.grantType} #password || #client_credentials
+            client-id: ${keycloak.client-id}
+            client-secret: ${keycloak.client-secret}
+            authorization-grant-type: ${keycloak.grant-type}
       resourceserver:
         jwt:
-          jwk-set-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/certs
+          jwk-set-uri: ${keycloak.server-url}/realms/${keycloak.realm}/protocol/openid-connect/certs
       keycloak:
-        client-id: ${keycloak.clientId}
+        client-id: ${keycloak.client-id}
 ---
-#keycloak client config
 keycloak:
-  clientId: ezbuy-client
-  clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
-  realm: ezbuy-server
-  serverUrl: http://localhost:8080
-  grantType: password  #client_credentials
-  host: localhost
+  client-id: "${KEYCLOAK_CLIENT_ID:ezbuy-client}"
+  client-secret: "${KEYCLOAK_CLIENT_SECRET:5dnfDh6XitmAMc7vQUNxGkJw0HF4e9tI}"
+  realm: "${KEYCLOAK_REALM:ezbuy-server}"
+  server-url: "${KEYCLOAK_SERVER_URL:http://localhost:8080}"
+  grant-type: "${KEYCLOAK_GRANT_TYPE:password}" #client_credentials
+  host: "${KEYCLOAK_HOST:localhost}"
 ---
-#health check config
 management:
   endpoints:
     web:

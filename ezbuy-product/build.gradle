@@ -4,14 +4,11 @@ plugins {
     id 'com.palantir.git-version' version '4.0.0'
 }
 
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-    }
-}
+group = 'com.ezbuy.product'
+version = '1.0-SNAPSHOT'
+description = 'ezbuy-product'
 
 dependencies {
-//    implementation libs.io.github.hoangtien2k3.reactify.core
     implementation project(':ezbuy-core')
     implementation project(':ezbuy-product-model')
     implementation project(':ezbuy-setting-model')
@@ -21,9 +18,8 @@ dependencies {
     implementation libs.org.apache.poi.poi.ooxml
     implementation libs.org.apache.commons.commons.compress
     implementation libs.org.springframework.cloud.spring.cloud.starter.consul.discovery
+    implementation platform(libs.org.springframework.cloud.spring.cloud.dependencies)
 }
-
-description = 'ezbuy-product-service'
 
 ext {
     imageDocker = 'hoangtien2k3/ezbuy-product-service'

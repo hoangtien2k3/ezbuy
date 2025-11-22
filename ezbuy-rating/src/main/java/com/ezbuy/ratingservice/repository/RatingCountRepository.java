@@ -1,6 +1,6 @@
 package com.ezbuy.ratingservice.repository;
 
-import com.ezbuy.ratingmodel.model.RatingCount;
+import com.ezbuy.ratingservice.model.entity.RatingCount;
 import java.util.List;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;

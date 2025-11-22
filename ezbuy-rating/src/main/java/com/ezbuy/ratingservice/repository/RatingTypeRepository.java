@@ -1,6 +1,6 @@
 package com.ezbuy.ratingservice.repository;
 
-import com.ezbuy.ratingmodel.model.RatingType;
+import com.ezbuy.ratingservice.model.entity.RatingType;
 import java.time.LocalDateTime;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;

@@ -1,4 +1,4 @@
-package com.ezbuy.ratingmodel.model;
+package com.ezbuy.ratingservice.model.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package com.ezbuy.ratingmodel.model.base;
+package com.ezbuy.ratingservice.model.entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

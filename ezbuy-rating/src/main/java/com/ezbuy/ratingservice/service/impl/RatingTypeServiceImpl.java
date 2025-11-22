@@ -1,6 +1,6 @@
 package com.ezbuy.ratingservice.service.impl;
 
-import com.ezbuy.ratingmodel.model.RatingType;
+import com.ezbuy.ratingservice.model.entity.RatingType;
 import com.ezbuy.ratingservice.repository.RatingTypeRepository;
 import com.ezbuy.ratingservice.service.RatingTypeService;
 import java.util.*;

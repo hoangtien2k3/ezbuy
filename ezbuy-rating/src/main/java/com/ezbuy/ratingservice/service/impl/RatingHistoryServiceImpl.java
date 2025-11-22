@@ -1,6 +1,6 @@
 package com.ezbuy.ratingservice.service.impl;
 
-import com.ezbuy.ratingmodel.model.RatingHistory;
+import com.ezbuy.ratingservice.model.entity.RatingHistory;
 import com.ezbuy.ratingservice.repository.RatingHistoryRepository;
 import com.ezbuy.ratingservice.service.RatingHistoryService;
 import com.ezbuy.core.constants.CommonErrorCode;
@@ -9,11 +9,9 @@ import com.ezbuy.core.util.SecurityUtils;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RatingHistoryServiceImpl extends BaseServiceHandler implements RatingHistoryService {

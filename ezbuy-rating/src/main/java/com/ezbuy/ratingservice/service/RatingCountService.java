@@ -1,6 +1,6 @@
 package com.ezbuy.ratingservice.service;
 
-import com.ezbuy.ratingmodel.model.RatingCount;
+import com.ezbuy.ratingservice.model.entity.RatingCount;
 import reactor.core.publisher.Mono;
 
 public interface RatingCountService {
