@@ -1,23 +1,10 @@
-# server config
 server:
   port: 8082
 ---
-#logging-config
-logging:
-  pattern:
-    console: "%d{dd/MM/yy HH:mm:ss}|%X{traceId}|%m%n"
-  level:
-    root: INFO
-    org.springdoc: DEBUG
-    org.springframework.r2dbc: DEBUG
-    io.r2dbc.postgresql.QUERY: DEBUG
-    io.r2dbc.postgresql.PARAM: DEBUG
----
-#spring cloud consul config
 spring:
   cloud:
     consul:
-      host: localhost
+      host: "${CONSUL_HOST:localhost}"
       port: 8500
       discovery:
         heartbeat:
@@ -29,7 +16,6 @@ spring:
         service-name: ${spring.application.name}
         register-health-check: true
 ---
-# spring config
 spring:
   application:
     name: setting-service
@@ -37,58 +23,44 @@ spring:
     web-application-type: reactive
     allow-bean-definition-overriding: true
   messages:
-    basename: messages
-  codec:
-    max-in-memory-size: 20MB
-  #r2dbc postgresql
+    basename: i18n/messages
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  http:
+    codecs:
+      max-in-memory-size: 100MB
   r2dbc:
-    url: r2dbc:postgresql://localhost:5434/setting
-    username: admin
-    password: admin
+    url: "${R2DBC_URL:r2dbc:postgresql://localhost:5434/setting}"
+    username: "${R2DBC_USERNAME:admin}"
+    password: "${R2DBC_PASSWORD:admin}"
+    pool:
+      max-size: 10
+      initial-size: 5
+      max-idle-time: 30m
+      max-create-connection-time: 30s
   data:
     elasticsearch:
       repositories:
         enabled: false
   elasticsearch:
-    uris: http://localhost:9200
-  #security config
+    uris: "${ELASTICSEARCH_URIS:http://localhost:9200}"
   security:
     oauth2:
       client:
         provider:
           oidc:
-            token-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/token
+            token-uri: ${keycloak.server-url}/realms/${keycloak.realm}/protocol/openid-connect/token
         registration:
           oidc:
-            client-id: ${keycloak.clientId}
-            client-secret: ${keycloak.clientSecret}
-            authorization-grant-type: ${keycloak.grantType} #password || #client_credentials
+            client-id: ${keycloak.client-id}
+            client-secret: ${keycloak.client-secret}
+            authorization-grant-type: ${keycloak.grant-type}
       resourceserver:
         jwt:
-          jwk-set-uri: ${keycloak.serverUrl}/realms/${keycloak.realm}/protocol/openid-connect/certs
+          jwk-set-uri: ${keycloak.server-url}/realms/${keycloak.realm}/protocol/openid-connect/certs
       keycloak:
-        client-id: ${keycloak.clientId}
-  #plugin-config
-  plugin:
-    config:
-      readRequestData: true
-      readResponseData: true
-      logRequest: true
-      logResponse: true
+        client-id: ${keycloak.client-id}
 ---
-# web client config
-client:
-  keycloak:
-    address: http://localhost:8080/realms/ezbuy-server/protocol/openid-connect
-    name: keycloak
-    auth:
-      client-id: ezbuy-client
-      client-secret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
-    pool:
-      max-size: 100
-      max-pending-acquire: 100
----
-# unauthenticated endpoints config
 application:
   http-logging:
     request:
@@ -116,37 +88,29 @@ application:
       methods:
         - GET
 ---
-#keycloak client config
 keycloak:
-  clientId: ezbuy-client
-  clientSecret: mI92QDfvi20tZgFtjpRAPWu8TR6eMHmw
-  realm: ezbuy-server
-  serverUrl: http://localhost:8080
-  grantType: password
-  host: localhost
+  client-id: "${KEYCLOAK_CLIENT_ID:ezbuy-client}"
+  client-secret: "${KEYCLOAK_CLIENT_SECRET:5dnfDh6XitmAMc7vQUNxGkJw0HF4e9tI}"
+  realm: "${KEYCLOAK_REALM:ezbuy-server}"
+  server-url: "${KEYCLOAK_SERVER_URL:http://localhost:8080}"
+  grant-type: "${KEYCLOAK_GRANT_TYPE:password}" #client_credentials
+  host: "${KEYCLOAK_HOST:localhost}"
 ---
-# minio server config
 minio:
-  bucket: ezbuy-bucket
   enabled: true
-  baseUrl: http://localhost:9000
-  publicUrl: http://localhost:9000
-  accessKey: q875aHMpdL6IJ3n9ruil
-  secretKey: Q43tehRDv55Sw67ktA0pQdztEbtQjvinLOk6zwB3
-  private:
-    bucket: ezbuy-private
+  bucket: "${MINIO_BUCKET:ezbuy-bucket}"
+  base-url: "${MINIO_BASE_URL:http://localhost:9000}"
+  public-url: "${MINIO_PUBLIC_URL:http://localhost:9000}"
+  access-key: "${MINIO_ACCESS_KEY:q875aHMpdL6IJ3n9ruil}"
+  secret-key: "${MINIO_SECRET_KEY:Q43tehRDv55Sw67ktA0pQdztEbtQjvinLOk6zwB3}"
 ---
-#eureka-service config
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      default-zone: http://localhost:8761/eureka
+springdoc:
+  api-docs:
+    path: /v1/auth/v3/api-docs
+  swagger-ui:
+    path: /v1/auth/swagger-ui.html
+    url: /v1/auth/v3/api-docs
 ---
-#health check config
 management:
   endpoints:
     web:

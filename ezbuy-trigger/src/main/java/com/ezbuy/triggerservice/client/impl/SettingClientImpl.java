@@ -3,24 +3,24 @@ package com.ezbuy.triggerservice.client.impl;
 import com.ezbuy.triggerservice.client.SettingClient;
 import com.ezbuy.core.client.BaseRestClient;
 import com.ezbuy.core.model.response.DataResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-@Slf4j
 @Service
-@RequiredArgsConstructor
 @DependsOn("webClientFactory")
 public class SettingClientImpl implements SettingClient {
 
-    @Qualifier("settingClient")
     private final WebClient settingClient;
-
     private final BaseRestClient baseRestClient;
+
+    public SettingClientImpl(@Qualifier("settingClient") WebClient settingClient,
+                             BaseRestClient baseRestClient) {
+        this.settingClient = settingClient;
+        this.baseRestClient = baseRestClient;
+    }
 
     @Override
     public Mono<DataResponse> syncNews() {

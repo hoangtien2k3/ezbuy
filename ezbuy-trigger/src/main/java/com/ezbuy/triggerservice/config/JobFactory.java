@@ -4,12 +4,15 @@ import com.ezbuy.core.util.DataUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-@Slf4j
 public class JobFactory {
+
+    private final Logger logger = LoggerFactory.getLogger(JobFactory.class);
+
     private final JobConfigs jobConfigs;
     private final Map<String, String> jobMap = new HashMap<>();
 
@@ -35,7 +38,7 @@ public class JobFactory {
             if (!DataUtil.isNullOrEmpty(name)) {
                 String existedCronJob = getCronJobByName(jobProfile.getName());
                 if (existedCronJob != null) {
-                    log.error("Job existed, will be override {}", name);
+                    logger.error("Job existed, will be override {}", name);
                 } else {
                     jobMap.put(name, jobProfile.getCronJob());
                 }

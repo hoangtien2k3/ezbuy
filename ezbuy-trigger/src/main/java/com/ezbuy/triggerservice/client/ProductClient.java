@@ -8,12 +8,4 @@ public interface ProductClient {
     Mono<DataResponse> syncFilter();
 
     Mono<DataResponse> syncSubscriber();
-
-    Mono<DataResponse> syncDailyReport();
-
-    Mono<DataResponse> unlockVoucher();
-
-    Mono<DataResponse> unlockVoucherTransaction();
-
-    Mono<DataResponse> insertVoucher();
 }

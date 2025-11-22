@@ -1,8 +1,9 @@
-package com.ezbuy.ordermodel.dto.request;
+package com.ezbuy.triggerservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.time.LocalDateTime;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 @Data
 public class SyncOrderStateRequest {
@@ -21,15 +22,4 @@ public class SyncOrderStateRequest {
 
     @JsonIgnore
     private LocalDateTime endDate;
-
-    public void reduceCount() {
-        this.runCount = this.runCount - 1;
-    }
-
-    public long getOffSet() {
-        if (limit == null) {
-            limit = 0;
-        }
-        return (long) (100 - runCount) * limit;
-    }
 }

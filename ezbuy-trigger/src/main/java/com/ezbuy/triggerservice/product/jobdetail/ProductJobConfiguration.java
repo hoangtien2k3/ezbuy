@@ -28,40 +28,4 @@ public class ProductJobConfiguration {
                 .storeDurably(true)
                 .build();
     }
-
-    @Bean(name = "syncDailyReportJob")
-    public JobDetail syncDailyReport() {
-        return JobBuilder.newJob()
-                .ofType(SyncDailyReportJob.class)
-                .withIdentity(ProductJob.SYNC_DAILY_REPORT, JobGroup.PRODUCT_JOB)
-                .storeDurably(true)
-                .build();
-    }
-
-    @Bean(name = "unlockVoucherJob")
-    public JobDetail UnlockVoucher() {
-        return JobBuilder.newJob()
-                .ofType(UnlockVoucherJob.class)
-                .withIdentity(ProductJob.UNLOCK_VOUCHER, JobGroup.PRODUCT_JOB)
-                .storeDurably(true)
-                .build();
-    }
-
-    @Bean(name = "unlockVoucherTransactionJob")
-    public JobDetail UnlockVoucherTransaction() {
-        return JobBuilder.newJob()
-                .ofType(UnlockVoucherTransactionJob.class)
-                .withIdentity(ProductJob.UNLOCK_VOUCHER_TRANSACTION, JobGroup.PRODUCT_JOB)
-                .storeDurably(true)
-                .build();
-    }
-
-    @Bean(name = "insertVoucherJob")
-    public JobDetail insertVoucherJob() {
-        return JobBuilder.newJob()
-                .ofType(InsertVoucherJob.class)
-                .withIdentity(ProductJob.INSERT_VOUCHER, JobGroup.PRODUCT_JOB)
-                .storeDurably(true)
-                .build();
-    }
 }

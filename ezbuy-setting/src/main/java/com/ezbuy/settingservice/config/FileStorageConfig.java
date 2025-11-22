@@ -1,26 +1,22 @@
 package com.ezbuy.settingservice.config;
 
+import com.ezbuy.core.config.properties.MinioProperties;
 import io.minio.MinioClient;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@RequiredArgsConstructor
 public class FileStorageConfig {
-    @Value("${minio.baseUrl}")
-    private String minioBaseUrl;
 
-    @Value("${minio.accessKey}")
-    private String minioAccessKey;
-
-    @Value("${minio.secretKey}")
-    private String minioSecretKey;
+    private final MinioProperties minioProperties;
 
     @Bean
     public MinioClient minioClient() {
         return MinioClient.builder()
-                .endpoint(minioBaseUrl)
-                .credentials(minioAccessKey, minioSecretKey)
+                .endpoint(minioProperties.getBaseUrl())
+                .credentials(minioProperties.getAccessKey(), minioProperties.getSecretKey())
                 .build();
     }
 }

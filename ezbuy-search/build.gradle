@@ -20,7 +20,7 @@ dependencies {
 }
 
 ext {
-    imageDocker = 'hoangtien2k3/ezbuy-search-service'
+    imageDocker = 'hoangtien2k3/ezbuy-search'
 }
 
 def details = versionDetails()

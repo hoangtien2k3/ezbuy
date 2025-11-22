@@ -1,5 +1,0 @@
-dependencies {
-    implementation libs.io.github.hoangtien2k3.reactify.core
-}
-
-description = 'ezbuy-product-model'

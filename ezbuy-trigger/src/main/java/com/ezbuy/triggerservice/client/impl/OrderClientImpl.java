@@ -1,10 +1,9 @@
 package com.ezbuy.triggerservice.client.impl;
 
-import com.ezbuy.ordermodel.dto.request.SyncOrderStateRequest;
 import com.ezbuy.triggerservice.client.OrderClient;
 import com.ezbuy.core.client.BaseRestClient;
 import com.ezbuy.core.model.response.DataResponse;
-import lombok.RequiredArgsConstructor;
+import com.ezbuy.triggerservice.dto.SyncOrderStateRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
@@ -14,14 +13,17 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 @DependsOn("webClientFactory")
 public class OrderClientImpl implements OrderClient {
 
-    @Qualifier("orderClient")
     private final WebClient orderClient;
-
     private final BaseRestClient restClient;
+
+    public OrderClientImpl(@Qualifier("orderClient") WebClient orderClient,
+                           BaseRestClient restClient) {
+        this.orderClient = orderClient;
+        this.restClient = restClient;
+    }
 
     @Override
     public Mono<DataResponse> syncOrderState(SyncOrderStateRequest request) {
