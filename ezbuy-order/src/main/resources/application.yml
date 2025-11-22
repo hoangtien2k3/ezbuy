@@ -30,7 +30,7 @@ spring:
     codecs:
       max-in-memory-size: 100MB
   r2dbc:
-    url: "${R2DBC_URL:r2dbc:postgresql://localhost:5434/order}"
+    url: "${R2DBC_URL:r2dbc:postgresql://localhost:5432/order}"
     username: "${R2DBC_USERNAME:admin}"
     password: "${R2DBC_PASSWORD:admin}"
     pool:
@@ -54,14 +54,6 @@ spring:
           jwk-set-uri: ${keycloak.server-url}/realms/${keycloak.realm}/protocol/openid-connect/certs
       keycloak:
         client-id: ${keycloak.client-id}
----
-keycloak:
-  client-id: "${KEYCLOAK_CLIENT_ID:ezbuy-client}"
-  client-secret: "${KEYCLOAK_CLIENT_SECRET:5dnfDh6XitmAMc7vQUNxGkJw0HF4e9tI}"
-  realm: "${KEYCLOAK_REALM:ezbuy-server}"
-  server-url: "${KEYCLOAK_SERVER_URL:http://localhost:8080}"
-  grant-type: "${KEYCLOAK_GRANT_TYPE:password}" #client_credentials
-  host: "${KEYCLOAK_HOST:localhost}"
 ---
 client:
   auth:
@@ -94,6 +86,14 @@ application:
     - uri: /v1/order/remove-group-member
     - uri: /v1/order/update-group-member
     - uri: /v1/order/get-number-sign
+---
+keycloak:
+  client-id: "${KEYCLOAK_CLIENT_ID:ezbuy-client}"
+  client-secret: "${KEYCLOAK_CLIENT_SECRET:5dnfDh6XitmAMc7vQUNxGkJw0HF4e9tI}"
+  realm: "${KEYCLOAK_REALM:ezbuy-server}"
+  server-url: "${KEYCLOAK_SERVER_URL:http://localhost:8080}"
+  grant-type: "${KEYCLOAK_GRANT_TYPE:password}" #client_credentials
+  host: "${KEYCLOAK_HOST:localhost}"
 ---
 management:
   endpoints:

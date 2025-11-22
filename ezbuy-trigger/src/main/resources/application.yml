@@ -86,7 +86,7 @@ spring:
             jobDataSource:
               driver: org.postgresql.Driver
               provider: hikaricp
-              URL: jdbc:postgresql://localhost:5434/trigger
+              URL: jdbc:postgresql://localhost:5432/trigger
               user: admin
               password: admin
     wait-for-jobs-to-complete-on-shutdown: true
