@@ -1,16 +1,16 @@
 package com.ezbuy.settingservice.controller;
 
-import com.ezbuy.settingmodel.constants.UrlPaths;
-import com.ezbuy.settingmodel.dto.ContentSectionDetailDTO;
-import com.ezbuy.settingmodel.dto.TreeDataDTO;
-import com.ezbuy.settingmodel.dto.request.GetContentSectionRequest;
-import com.ezbuy.settingmodel.model.ContentSection;
-import com.ezbuy.settingmodel.request.ContentSectionRequest;
-import com.ezbuy.settingmodel.request.GetBySectionRequest;
-import com.ezbuy.settingmodel.request.GetByServiceRequest;
-import com.ezbuy.settingmodel.request.SearchContentSectionRequest;
-import com.ezbuy.settingmodel.request.v2.GetByServiceRequestV2;
-import com.ezbuy.settingmodel.response.SearchContentSectionResponse;
+import com.ezbuy.settingservice.constants.UrlPaths;
+import com.ezbuy.settingservice.model.dto.ContentSectionDetailDTO;
+import com.ezbuy.settingservice.model.dto.TreeDataDTO;
+import com.ezbuy.settingservice.model.dto.request.GetContentSectionRequest;
+import com.ezbuy.settingservice.model.entity.ContentSection;
+import com.ezbuy.settingservice.model.dto.request.ContentSectionRequest;
+import com.ezbuy.settingservice.model.dto.request.GetBySectionRequest;
+import com.ezbuy.settingservice.model.dto.request.GetByServiceRequest;
+import com.ezbuy.settingservice.model.dto.request.SearchContentSectionRequest;
+import com.ezbuy.settingservice.model.dto.request.v2.GetByServiceRequestV2;
+import com.ezbuy.settingservice.model.dto.response.SearchContentSectionResponse;
 import com.ezbuy.settingservice.service.ContentSectionService;
 import com.ezbuy.core.model.response.DataResponse;
 import jakarta.validation.Valid;

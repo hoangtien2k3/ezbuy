@@ -1,9 +1,9 @@
 package com.ezbuy.settingservice.controller;
 
-import com.ezbuy.settingmodel.constants.UrlPaths;
-import com.ezbuy.settingmodel.dto.NewsContentDTO;
-import com.ezbuy.settingmodel.model.NewsContent;
-import com.ezbuy.settingmodel.request.CreateNewsContentRequest;
+import com.ezbuy.settingservice.constants.UrlPaths;
+import com.ezbuy.settingservice.model.dto.NewsContentDTO;
+import com.ezbuy.settingservice.model.entity.NewsContent;
+import com.ezbuy.settingservice.model.dto.request.CreateNewsContentRequest;
 import com.ezbuy.settingservice.service.NewsContentService;
 import com.ezbuy.core.model.response.DataResponse;
 import jakarta.validation.Valid;

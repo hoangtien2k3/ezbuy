@@ -1,7 +1,7 @@
 package com.ezbuy.settingservice.repositoryTemplate;
 
-import com.ezbuy.settingmodel.model.Page;
-import com.ezbuy.settingmodel.request.SearchingPageRequest;
+import com.ezbuy.settingservice.model.entity.Page;
+import com.ezbuy.settingservice.model.dto.request.SearchingPageRequest;
 import com.ezbuy.core.repository.BaseTemplateRepository;
 import com.ezbuy.core.util.DataUtil;
 import com.ezbuy.core.util.SQLUtils;

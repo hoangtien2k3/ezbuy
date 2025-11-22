@@ -1,7 +1,7 @@
 package com.ezbuy.settingservice.controller;
 
-import com.ezbuy.settingmodel.constants.UrlPaths;
-import com.ezbuy.settingmodel.dto.AreaDTO;
+import com.ezbuy.settingservice.constants.UrlPaths;
+import com.ezbuy.settingservice.model.dto.AreaDTO;
 import com.ezbuy.settingservice.service.AreaService;
 import com.ezbuy.core.model.response.DataResponse;
 import java.util.List;
@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @RequestMapping(value = UrlPaths.Area.PREFIX)
 public class AreaController {
+
     private final AreaService areaService;
 
     @GetMapping

@@ -1,7 +1,7 @@
 package com.ezbuy.settingservice.repositoryTemplate;
 
-import com.ezbuy.settingmodel.dto.GroupNewsDTO;
-import com.ezbuy.settingmodel.dto.request.SearchGroupNewsRequest;
+import com.ezbuy.settingservice.model.dto.GroupNewsDTO;
+import com.ezbuy.settingservice.model.dto.request.SearchGroupNewsRequest;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

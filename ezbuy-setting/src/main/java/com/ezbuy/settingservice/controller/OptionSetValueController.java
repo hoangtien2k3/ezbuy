@@ -1,11 +1,11 @@
 package com.ezbuy.settingservice.controller;
 
-import com.ezbuy.settingmodel.constants.UrlPaths;
-import com.ezbuy.settingmodel.dto.OptionSetValueDTO;
-import com.ezbuy.settingmodel.dto.request.SearchOptionSetValueRequest;
-import com.ezbuy.settingmodel.model.OptionSetValue;
-import com.ezbuy.settingmodel.request.CreateOptionSetValueRequest;
-import com.ezbuy.settingmodel.response.SearchOptionSetValueResponse;
+import com.ezbuy.settingservice.constants.UrlPaths;
+import com.ezbuy.settingservice.model.dto.OptionSetValueDTO;
+import com.ezbuy.settingservice.model.dto.request.SearchOptionSetValueRequest;
+import com.ezbuy.settingservice.model.entity.OptionSetValue;
+import com.ezbuy.settingservice.model.dto.request.CreateOptionSetValueRequest;
+import com.ezbuy.settingservice.model.dto.response.SearchOptionSetValueResponse;
 import com.ezbuy.settingservice.service.OptionSetValueService;
 import com.ezbuy.core.model.response.DataResponse;
 import jakarta.validation.Valid;

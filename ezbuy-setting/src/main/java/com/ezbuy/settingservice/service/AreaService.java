@@ -1,6 +1,6 @@
 package com.ezbuy.settingservice.service;
 
-import com.ezbuy.settingmodel.dto.AreaDTO;
+import com.ezbuy.settingservice.model.dto.AreaDTO;
 import com.ezbuy.core.model.response.DataResponse;
 import java.util.List;
 import reactor.core.publisher.Mono;

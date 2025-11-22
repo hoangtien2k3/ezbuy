@@ -1,12 +1,12 @@
 package com.ezbuy.settingservice.controller;
 
-import com.ezbuy.settingmodel.constants.UrlPaths;
-import com.ezbuy.settingmodel.model.MarketPage;
-import com.ezbuy.settingmodel.request.GetByServiceRequest;
-import com.ezbuy.settingmodel.request.MarketPageRequest;
-import com.ezbuy.settingmodel.request.SearchMarketPageRequest;
-import com.ezbuy.settingmodel.request.v2.GetByServiceRequestV2;
-import com.ezbuy.settingmodel.response.SearchMarketPageResponse;
+import com.ezbuy.settingservice.constants.UrlPaths;
+import com.ezbuy.settingservice.model.entity.MarketPage;
+import com.ezbuy.settingservice.model.dto.request.GetByServiceRequest;
+import com.ezbuy.settingservice.model.dto.request.MarketPageRequest;
+import com.ezbuy.settingservice.model.dto.request.SearchMarketPageRequest;
+import com.ezbuy.settingservice.model.dto.request.v2.GetByServiceRequestV2;
+import com.ezbuy.settingservice.model.dto.response.SearchMarketPageResponse;
 import com.ezbuy.settingservice.service.MarketPageService;
 import com.ezbuy.core.model.response.DataResponse;
 import jakarta.validation.Valid;

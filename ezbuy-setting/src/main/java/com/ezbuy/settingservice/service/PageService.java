@@ -1,12 +1,12 @@
 package com.ezbuy.settingservice.service;
 
-import com.ezbuy.settingmodel.dto.PageDTO;
-import com.ezbuy.settingmodel.model.Page;
-import com.ezbuy.settingmodel.request.ChangePageStatusRequest;
-import com.ezbuy.settingmodel.request.PageCreatingRequest;
-import com.ezbuy.settingmodel.request.PagePolicyRequest;
-import com.ezbuy.settingmodel.request.SearchingPageRequest;
-import com.ezbuy.settingmodel.response.SearchingPageResponse;
+import com.ezbuy.settingservice.model.dto.PageDTO;
+import com.ezbuy.settingservice.model.entity.Page;
+import com.ezbuy.settingservice.model.dto.request.ChangePageStatusRequest;
+import com.ezbuy.settingservice.model.dto.request.PageCreatingRequest;
+import com.ezbuy.settingservice.model.dto.request.PagePolicyRequest;
+import com.ezbuy.settingservice.model.dto.request.SearchingPageRequest;
+import com.ezbuy.settingservice.model.dto.response.SearchingPageResponse;
 import com.ezbuy.core.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 

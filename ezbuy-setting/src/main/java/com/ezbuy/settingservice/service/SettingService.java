@@ -1,9 +1,9 @@
 package com.ezbuy.settingservice.service;
 
-import com.ezbuy.settingmodel.model.Setting;
-import com.ezbuy.settingmodel.request.CreateSettingRequest;
-import com.ezbuy.settingmodel.request.SearchSettingRequest;
-import com.ezbuy.settingmodel.response.SearchSettingResponse;
+import com.ezbuy.settingservice.model.entity.Setting;
+import com.ezbuy.settingservice.model.dto.request.CreateSettingRequest;
+import com.ezbuy.settingservice.model.dto.request.SearchSettingRequest;
+import com.ezbuy.settingservice.model.dto.response.SearchSettingResponse;
 import com.ezbuy.core.model.response.DataResponse;
 import java.util.List;
 import reactor.core.publisher.Mono;

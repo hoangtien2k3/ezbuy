@@ -1,8 +1,8 @@
 package com.ezbuy.settingservice.repositoryTemplate.impl;
 
-import com.ezbuy.settingmodel.dto.UploadImagesDTO;
-import com.ezbuy.settingmodel.dto.request.SearchImageRequest;
-import com.ezbuy.settingmodel.model.UploadImages;
+import com.ezbuy.settingservice.model.dto.UploadImagesDTO;
+import com.ezbuy.settingservice.model.dto.request.SearchImageRequest;
+import com.ezbuy.settingservice.model.entity.UploadImages;
 import com.ezbuy.settingservice.repositoryTemplate.UploadImageRepositoryTemplate;
 import com.ezbuy.core.util.DataUtil;
 import com.ezbuy.core.util.SQLUtils;

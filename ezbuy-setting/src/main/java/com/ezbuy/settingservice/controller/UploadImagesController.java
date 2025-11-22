@@ -1,9 +1,15 @@
 package com.ezbuy.settingservice.controller;
 
-import com.ezbuy.settingmodel.constants.UrlPaths;
-import com.ezbuy.settingmodel.dto.UploadImagesDTO;
-import com.ezbuy.settingmodel.dto.request.*;
-import com.ezbuy.settingmodel.dto.response.SearchImageResponse;
+import com.ezbuy.settingservice.constants.UrlPaths;
+import com.ezbuy.settingservice.model.dto.UploadImagesDTO;
+import com.ezbuy.settingservice.model.dto.request.CreateFileRequest;
+import com.ezbuy.settingservice.model.dto.request.DeleteFolderRequest;
+import com.ezbuy.settingservice.model.dto.request.DeleteImageRequest;
+import com.ezbuy.settingservice.model.dto.request.RenameFolderRequest;
+import com.ezbuy.settingservice.model.dto.request.SearchImageRequest;
+import com.ezbuy.settingservice.model.dto.request.UpdateImageRequest;
+import com.ezbuy.settingservice.model.dto.request.UploadImageRequest;
+import com.ezbuy.settingservice.model.dto.response.SearchImageResponse;
 import com.ezbuy.settingservice.service.UploadImagesService;
 import com.ezbuy.core.model.response.DataResponse;
 import jakarta.validation.Valid;

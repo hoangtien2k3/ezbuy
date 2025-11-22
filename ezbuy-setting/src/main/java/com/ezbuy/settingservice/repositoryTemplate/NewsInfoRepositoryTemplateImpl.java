@@ -1,10 +1,10 @@
 package com.ezbuy.settingservice.repositoryTemplate;
 
-import com.ezbuy.settingmodel.dto.GroupNewsDTO;
-import com.ezbuy.settingmodel.dto.NewsDetailDTO;
-import com.ezbuy.settingmodel.dto.NewsInfoDTO;
-import com.ezbuy.settingmodel.dto.RelateNewsDTO;
-import com.ezbuy.settingmodel.dto.request.SearchNewsInfoRequest;
+import com.ezbuy.settingservice.model.dto.GroupNewsDTO;
+import com.ezbuy.settingservice.model.dto.NewsDetailDTO;
+import com.ezbuy.settingservice.model.dto.NewsInfoDTO;
+import com.ezbuy.settingservice.model.dto.RelateNewsDTO;
+import com.ezbuy.settingservice.model.dto.request.SearchNewsInfoRequest;
 import com.ezbuy.core.repository.BaseTemplateRepository;
 import com.ezbuy.core.util.DataUtil;
 import com.ezbuy.core.util.SQLUtils;

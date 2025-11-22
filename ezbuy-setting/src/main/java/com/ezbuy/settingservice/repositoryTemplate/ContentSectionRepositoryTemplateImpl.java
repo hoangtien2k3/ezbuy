@@ -1,9 +1,9 @@
 package com.ezbuy.settingservice.repositoryTemplate;
 
-import com.ezbuy.settingmodel.dto.ContentSectionDTO;
-import com.ezbuy.settingmodel.dto.ContentSectionDetailDTO;
-import com.ezbuy.settingmodel.model.ContentSection;
-import com.ezbuy.settingmodel.request.SearchContentSectionRequest;
+import com.ezbuy.settingservice.model.dto.ContentSectionDTO;
+import com.ezbuy.settingservice.model.dto.ContentSectionDetailDTO;
+import com.ezbuy.settingservice.model.entity.ContentSection;
+import com.ezbuy.settingservice.model.dto.request.SearchContentSectionRequest;
 import com.ezbuy.core.util.DataUtil;
 import com.ezbuy.core.util.SortingUtils;
 import io.r2dbc.spi.Row;

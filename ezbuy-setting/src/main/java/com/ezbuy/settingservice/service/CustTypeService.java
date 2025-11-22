@@ -1,6 +1,6 @@
 package com.ezbuy.settingservice.service;
 
-import com.ezbuy.settingmodel.model.CustType;
+import com.ezbuy.settingservice.model.entity.CustType;
 import java.util.List;
 import reactor.core.publisher.Mono;
 

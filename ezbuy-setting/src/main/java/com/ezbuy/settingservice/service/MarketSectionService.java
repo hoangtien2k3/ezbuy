@@ -1,10 +1,10 @@
 package com.ezbuy.settingservice.service;
 
-import com.ezbuy.settingmodel.dto.MarketSectionDTO;
-import com.ezbuy.settingmodel.model.MarketSection;
-import com.ezbuy.settingmodel.request.CreateMarketSectionRequest;
-import com.ezbuy.settingmodel.request.MarketSectionSearchRequest;
-import com.ezbuy.settingmodel.response.MarketSectionSearchResponse;
+import com.ezbuy.settingservice.model.dto.MarketSectionDTO;
+import com.ezbuy.settingservice.model.entity.MarketSection;
+import com.ezbuy.settingservice.model.dto.request.CreateMarketSectionRequest;
+import com.ezbuy.settingservice.model.dto.request.MarketSectionSearchRequest;
+import com.ezbuy.settingservice.model.dto.response.MarketSectionSearchResponse;
 import com.ezbuy.core.model.response.DataResponse;
 import java.util.List;
 import reactor.core.publisher.Flux;

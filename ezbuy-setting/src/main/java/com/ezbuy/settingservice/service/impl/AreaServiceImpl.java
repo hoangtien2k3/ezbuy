@@ -1,15 +1,17 @@
 package com.ezbuy.settingservice.service.impl;
 
-import com.ezbuy.settingmodel.dto.AreaDTO;
-import com.ezbuy.settingmodel.model.Area;
+import com.ezbuy.settingservice.model.dto.AreaDTO;
+import com.ezbuy.settingservice.model.entity.Area;
 import com.ezbuy.settingservice.repository.AreaRepository;
 import com.ezbuy.settingservice.service.AreaService;
 import com.ezbuy.core.cache.LocalCache;
 import com.ezbuy.core.model.response.DataResponse;
 import com.ezbuy.core.util.DataUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;

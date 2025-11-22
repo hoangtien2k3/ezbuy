@@ -1,7 +1,7 @@
 package com.ezbuy.settingservice.repositoryTemplate;
 
-import com.ezbuy.settingmodel.dto.SettingDTO;
-import com.ezbuy.settingmodel.request.SearchSettingRequest;
+import com.ezbuy.settingservice.model.dto.SettingDTO;
+import com.ezbuy.settingservice.model.dto.request.SearchSettingRequest;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

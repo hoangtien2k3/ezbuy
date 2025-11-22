@@ -1,8 +1,8 @@
 package com.ezbuy.settingservice.repositoryTemplate;
 
-import com.ezbuy.settingmodel.dto.MarketInfoDTO;
-import com.ezbuy.settingmodel.model.MarketInfo;
-import com.ezbuy.settingmodel.request.SearchMarketInfoRequest;
+import com.ezbuy.settingservice.model.dto.MarketInfoDTO;
+import com.ezbuy.settingservice.model.entity.MarketInfo;
+import com.ezbuy.settingservice.model.dto.request.SearchMarketInfoRequest;
 import com.ezbuy.core.util.DataUtil;
 import com.ezbuy.core.util.SQLUtils;
 import com.ezbuy.core.util.SortingUtils;

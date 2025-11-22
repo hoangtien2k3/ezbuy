@@ -1,10 +1,10 @@
 package com.ezbuy.settingservice.controller;
 
-import com.ezbuy.settingmodel.constants.UrlPaths;
-import com.ezbuy.settingmodel.model.Setting;
-import com.ezbuy.settingmodel.request.CreateSettingRequest;
-import com.ezbuy.settingmodel.request.SearchSettingRequest;
-import com.ezbuy.settingmodel.response.SearchSettingResponse;
+import com.ezbuy.settingservice.constants.UrlPaths;
+import com.ezbuy.settingservice.model.entity.Setting;
+import com.ezbuy.settingservice.model.dto.request.CreateSettingRequest;
+import com.ezbuy.settingservice.model.dto.request.SearchSettingRequest;
+import com.ezbuy.settingservice.model.dto.response.SearchSettingResponse;
 import com.ezbuy.settingservice.service.SettingService;
 import com.ezbuy.core.model.response.DataResponse;
 import jakarta.validation.Valid;

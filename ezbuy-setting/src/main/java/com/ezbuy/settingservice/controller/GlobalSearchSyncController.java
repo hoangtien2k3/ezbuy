@@ -1,7 +1,7 @@
 package com.ezbuy.settingservice.controller;
 
-import com.ezbuy.settingmodel.constants.UrlPaths;
-import com.ezbuy.settingmodel.dto.request.GlobalSearchSyncRequest;
+import com.ezbuy.settingservice.constants.UrlPaths;
+import com.ezbuy.settingservice.model.dto.request.GlobalSearchSyncRequest;
 import com.ezbuy.settingservice.service.GlobalSearchService;
 import com.ezbuy.core.model.response.DataResponse;
 import lombok.RequiredArgsConstructor;

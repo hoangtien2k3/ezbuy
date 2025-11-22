@@ -1,19 +1,17 @@
 package com.ezbuy.settingservice.service.impl;
 
-import com.ezbuy.settingmodel.dto.ContentSectionDTO;
-import com.ezbuy.settingmodel.dto.ContentSectionDetailDTO;
-import com.ezbuy.settingmodel.dto.PaginationDTO;
-import com.ezbuy.settingmodel.dto.TreeDataDTO;
-import com.ezbuy.settingmodel.dto.request.GetContentSectionRequest;
-import com.ezbuy.settingmodel.model.ContentSection;
-import com.ezbuy.settingmodel.request.ContentSectionRequest;
-import com.ezbuy.settingmodel.request.SearchContentSectionRequest;
-import com.ezbuy.settingmodel.response.SearchContentSectionResponse;
+import com.ezbuy.settingservice.model.dto.ContentSectionDTO;
+import com.ezbuy.settingservice.model.dto.ContentSectionDetailDTO;
+import com.ezbuy.settingservice.model.dto.PaginationDTO;
+import com.ezbuy.settingservice.model.dto.TreeDataDTO;
+import com.ezbuy.settingservice.model.dto.request.GetContentSectionRequest;
+import com.ezbuy.settingservice.model.entity.ContentSection;
+import com.ezbuy.settingservice.model.dto.request.ContentSectionRequest;
+import com.ezbuy.settingservice.model.dto.request.SearchContentSectionRequest;
+import com.ezbuy.settingservice.model.dto.response.SearchContentSectionResponse;
 import com.ezbuy.settingservice.repository.ContentSectionRepository;
 import com.ezbuy.settingservice.repositoryTemplate.ContentSectionRepositoryTemplate;
 import com.ezbuy.settingservice.service.ContentSectionService;
-import com.ezbuy.settingservice.service.MarketSectionService;
-import com.ezbuy.settingservice.service.TelecomService;
 import com.ezbuy.core.constants.CommonErrorCode;
 import com.ezbuy.core.constants.Constants;
 import com.ezbuy.core.exception.BusinessException;
@@ -21,9 +19,10 @@ import com.ezbuy.core.factory.ObjectMapperFactory;
 import com.ezbuy.core.model.response.DataResponse;
 import com.ezbuy.core.util.DataUtil;
 import com.ezbuy.core.util.SecurityUtils;
-import com.ezbuy.core.util.Translator;
+
 import java.time.LocalDateTime;
 import java.util.*;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,8 +38,6 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
 
     private final ContentSectionRepository contentSectionRepository;
     private final ContentSectionRepositoryTemplate contentSectionRepositoryTemplate;
-    private final TelecomService telecomService;
-    private final MarketSectionService sectionService;
 
     @Override
     @Transactional
@@ -98,7 +95,7 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
                 .getById(id)
                 .switchIfEmpty(
                         Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content.section.not.found")))
-                .map(marketPage -> new DataResponse<>(Translator.toLocale("Success"), marketPage));
+                .map(marketPage -> new DataResponse<>("success", marketPage));
     }
 
     @Override
@@ -237,7 +234,7 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
                 .collectList()
                 .switchIfEmpty(
                         Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content.section.not.found")))
-                .map(contentSection -> new DataResponse<>(Translator.toLocale("Success"), contentSection));
+                .map(contentSection -> new DataResponse<>("success", contentSection));
     }
 
     // ham lay danh sach cau hinh huong dan va tai nguyen
@@ -248,7 +245,7 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
                 .collectList()
                 .switchIfEmpty(
                         Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content.section.not.found")))
-                .map(contentSection -> new DataResponse<>(Translator.toLocale("Success"), contentSection));
+                .map(contentSection -> new DataResponse<>("success", contentSection));
     }
 
     public Mono<DataResponse<List<ContentSection>>> getCSBySectionId(List<String> lstSectionId) {
@@ -257,7 +254,7 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
                 .collectList()
                 .switchIfEmpty(
                         Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "content.section.not.found")))
-                .map(contentSection -> new DataResponse<>(Translator.toLocale("Success"), contentSection));
+                .map(contentSection -> new DataResponse<>("success", contentSection));
     }
 
     private Mono<List<TreeDataDTO>> mapGetAllData(List<ContentSection> contentSectionList) {
@@ -266,7 +263,6 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
             return Mono.just(result);
         }
         contentSectionList.sort(Comparator.comparing(ContentSection::getDisplayOrder));
-        // lay danh sach dieu khoan goc (khong co parent id)
         for (ContentSection contentSection : contentSectionList) {
             if (DataUtil.isNullOrEmpty(contentSection.getParentId())) {
                 TreeDataDTO treeData = new TreeDataDTO();
@@ -276,7 +272,6 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
                 result.add(treeData);
             }
         }
-        // lay danh sach dieu khoan con
         for (TreeDataDTO data : result) {
             data.setChildren(handleChildrenContent(data, contentSectionList));
         }
@@ -311,9 +306,6 @@ public class ContentSectionServiceImpl extends BaseServiceHandler implements Con
         }
     }
 
-    /**
-     * ham de quy thuc hien lay danh sach cac node con theo node cha
-     */
     private List<TreeDataDTO> handleChildrenContent(TreeDataDTO dataNode, List<ContentSection> contentSectionList) {
         if (dataNode == null || DataUtil.isNullOrEmpty(contentSectionList)) {
             return new ArrayList<>();

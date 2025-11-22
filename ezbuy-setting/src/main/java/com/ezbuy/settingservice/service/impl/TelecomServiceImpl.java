@@ -1,15 +1,19 @@
 package com.ezbuy.settingservice.service.impl;
 
-import com.ezbuy.settingmodel.dto.PaginationDTO;
-import com.ezbuy.settingmodel.dto.TelecomDTO;
-import com.ezbuy.settingmodel.dto.TelecomServiceConfigDTO;
-import com.ezbuy.settingmodel.dto.request.GetServiceConfigRequest;
-import com.ezbuy.settingmodel.model.MarketInfo;
-import com.ezbuy.settingmodel.model.Telecom;
-import com.ezbuy.settingmodel.request.PageTelecomRequest;
-import com.ezbuy.settingmodel.request.StatusLockingRequest;
-import com.ezbuy.settingmodel.request.TelecomSearchingRequest;
-import com.ezbuy.settingmodel.response.*;
+import com.ezbuy.settingservice.model.dto.PaginationDTO;
+import com.ezbuy.settingservice.model.dto.TelecomDTO;
+import com.ezbuy.settingservice.model.dto.TelecomServiceConfigDTO;
+import com.ezbuy.settingservice.model.dto.request.GetServiceConfigRequest;
+import com.ezbuy.settingservice.model.dto.response.ClientTelecom;
+import com.ezbuy.settingservice.model.dto.response.PageResponse;
+import com.ezbuy.settingservice.model.dto.response.TelecomClient;
+import com.ezbuy.settingservice.model.dto.response.TelecomPagingResponse;
+import com.ezbuy.settingservice.model.dto.response.TelecomResponse;
+import com.ezbuy.settingservice.model.entity.MarketInfo;
+import com.ezbuy.settingservice.model.entity.Telecom;
+import com.ezbuy.settingservice.model.dto.request.PageTelecomRequest;
+import com.ezbuy.settingservice.model.dto.request.StatusLockingRequest;
+import com.ezbuy.settingservice.model.dto.request.TelecomSearchingRequest;
 import com.ezbuy.settingservice.repository.MarketInfoRepository;
 import com.ezbuy.settingservice.repository.TelecomRepository;
 import com.ezbuy.settingservice.repository.TelecomServiceConfigRep;
@@ -92,9 +96,7 @@ public class TelecomServiceImpl extends BaseServiceHandler implements TelecomSer
                         .switchIfEmpty(
                                 Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "telecom.not.found")))
                         .flatMap(p -> {
-                            telecomRepository
-                                    .updateStatus(params.getId(), params.getStatus(), user.getId())
-                                    .subscribe();
+                            telecomRepository.updateStatus(params.getId(), params.getStatus(), user.getId()).subscribe();
                             return Mono.just(new DataResponse<>(null, "success", null));
                         }));
     }
@@ -105,7 +107,6 @@ public class TelecomServiceImpl extends BaseServiceHandler implements TelecomSer
         return Mono.just(new DataResponse<>(null, "success", null));
     }
 
-    // Ham khoi tao filter cho dich vu theo serviceAlias
     @Override
     public Mono<DataResponse> initFilterV2(String serviceAlias) {
         if (DataUtil.isNullOrEmpty(serviceAlias)) {
@@ -125,7 +126,6 @@ public class TelecomServiceImpl extends BaseServiceHandler implements TelecomSer
                 .flatMap(telecoms -> Mono.just(new DataResponse<>("success", telecoms)));
     }
 
-    // Ham lay danh sach cau hinh dich vu theo danh sach alias
     @Override
     public Mono<DataResponse<List<Telecom>>> getByServiceAlias(String serviceAlias) {
         return this.telecomRepository
@@ -202,7 +202,6 @@ public class TelecomServiceImpl extends BaseServiceHandler implements TelecomSer
                 .switchIfEmpty(Mono.error(new BusinessException("error", "not.found")));
     }
 
-    // Ham lay roleAdmin va clientId cua dich vu theo serviceAlias
     @Override
     public Mono<TelecomClient> getAdminRoleOfServiceByServiceAlias(String serviceAlias) {
         return telecomRepository
@@ -214,11 +213,9 @@ public class TelecomServiceImpl extends BaseServiceHandler implements TelecomSer
     @Override
     public Mono<DataResponse<List<TelecomServiceConfigDTO>>> getTelecomServiceConfig(
             List<String> telecomServiceIds, List<String> originalIds, String syncType) {
-
         if (DataUtil.isNullOrEmpty(syncType)) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "syncType.not.null"));
         }
-
         if (telecomServiceIds != null) {
             return telecomServiceConfigRep
                     .getTelecomServiceConfig("$.".concat(syncType), telecomServiceIds)
@@ -226,7 +223,6 @@ public class TelecomServiceImpl extends BaseServiceHandler implements TelecomSer
                     .collectList()
                     .flatMap(rs -> Mono.just(new DataResponse<>("success", rs)));
         }
-
         if (originalIds != null) {
             return telecomServiceConfigRep
                     .getTelecomServiceConfig2("$.".concat(syncType), originalIds)
@@ -234,23 +230,18 @@ public class TelecomServiceImpl extends BaseServiceHandler implements TelecomSer
                     .collectList()
                     .flatMap(rs -> Mono.just(new DataResponse<>("success", rs)));
         }
-
         return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "Dữ liệu truyền vào không hợp lệ"));
     }
 
-    // Ham lay config cho dong bo theo danh sach alias cua dich vu va loai du lieu
-    // dong bo
     @Override
     public Mono<DataResponse<List<TelecomServiceConfigDTO>>> getTelecomServiceConfigV2(
             GetServiceConfigRequest request) {
         if (DataUtil.isNullOrEmpty(request.getSyncType())) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "syncType.not.null"));
         }
-
         if (DataUtil.isNullOrEmpty(request.getLstServiceAlias())) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "lstServiceAlis.not.null"));
         }
-
         return telecomServiceConfigRep
                 .getTelecomServiceConfigByAlias("$.".concat(request.getSyncType()), request.getLstServiceAlias())
                 .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "config.not.found")))

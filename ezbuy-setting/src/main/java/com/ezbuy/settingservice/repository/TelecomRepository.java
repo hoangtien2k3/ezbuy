@@ -1,8 +1,8 @@
 package com.ezbuy.settingservice.repository;
 
-import com.ezbuy.settingmodel.model.Telecom;
-import com.ezbuy.settingmodel.response.ClientTelecom;
-import com.ezbuy.settingmodel.response.TelecomClient;
+import com.ezbuy.settingservice.model.entity.Telecom;
+import com.ezbuy.settingservice.model.dto.response.ClientTelecom;
+import com.ezbuy.settingservice.model.dto.response.TelecomClient;
 import java.util.List;
 import org.springframework.data.r2dbc.repository.Modifying;
 import org.springframework.data.r2dbc.repository.Query;

@@ -1,12 +1,16 @@
 package com.ezbuy.settingservice.service.impl;
 
-import com.ezbuy.settingmodel.dto.ContentDisplayDTO;
-import com.ezbuy.settingmodel.dto.PageDTO;
-import com.ezbuy.settingmodel.dto.PaginationDTO;
-import com.ezbuy.settingmodel.model.ContentDisplay;
-import com.ezbuy.settingmodel.model.Page;
-import com.ezbuy.settingmodel.request.*;
-import com.ezbuy.settingmodel.response.SearchingPageResponse;
+import com.ezbuy.settingservice.model.dto.ContentDisplayDTO;
+import com.ezbuy.settingservice.model.dto.PageDTO;
+import com.ezbuy.settingservice.model.dto.PaginationDTO;
+import com.ezbuy.settingservice.model.dto.request.ChangePageStatusRequest;
+import com.ezbuy.settingservice.model.dto.request.ContentDisplayRequest;
+import com.ezbuy.settingservice.model.dto.request.PageCreatingRequest;
+import com.ezbuy.settingservice.model.dto.request.PagePolicyRequest;
+import com.ezbuy.settingservice.model.dto.request.SearchingPageRequest;
+import com.ezbuy.settingservice.model.entity.ContentDisplay;
+import com.ezbuy.settingservice.model.entity.Page;
+import com.ezbuy.settingservice.model.dto.response.SearchingPageResponse;
 import com.ezbuy.settingservice.constant.SettingConstant;
 import com.ezbuy.settingservice.repository.ContentDisplayRepository;
 import com.ezbuy.settingservice.repository.OptionSetValueRepository;
@@ -25,10 +29,11 @@ import com.ezbuy.core.model.response.DataResponse;
 import com.ezbuy.core.util.DataUtil;
 import com.ezbuy.core.util.MinioUtils;
 import com.ezbuy.core.util.SecurityUtils;
-import com.ezbuy.core.util.Translator;
+
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
@@ -44,11 +49,11 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 public class PageServiceImpl extends BaseServiceHandler implements PageService {
+
     private final PageRepository pageRepository;
     private final PageRepositoryTemplate pageRepositoryTemplate;
     private final ContentDisplayRepository contentDisplayRepository;
     private final ContentDisplayRepositoryTemplate contentDisplayRepositoryTemplate;
-    private final PageComponentRepository pageComponentRepository;
     private final OptionSetValueRepository optionSetValueRepository;
     private final MinioUtils minioUtils;
 
@@ -101,20 +106,6 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
         request.setPageIndex(pageIndex);
         int pageSize = validatePageSize(request.getPageSize(), 10);
         request.setPageSize(pageSize);
-        // if ((Objects.isNull(request.getFromDate()) &&
-        // Objects.nonNull(request.getToDate()))
-        // || (Objects.nonNull(request.getFromDate()) &&
-        // Objects.isNull(request.getToDate()))) {
-        // throw new BusinessException(CommonErrorCode.INVALID_PARAMS,
-        // "params.date.request.invalid");
-        // }
-        // if (!Objects.isNull(request.getFromDate()) &&
-        // !Objects.isNull(request.getToDate())) {
-        // if (request.getFromDate().isAfter(request.getToDate())) {
-        // throw new BusinessException(CommonErrorCode.INVALID_PARAMS,
-        // "params.from-date.larger.to-date");
-        // }
-        // }
 
         Flux<Page> pages = pageRepositoryTemplate.queryPages(request);
         Mono<Long> countMono = pageRepositoryTemplate.countPages(request);
@@ -135,16 +126,13 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
     @Override
     public Mono<PageDTO> getDetailPage(String pageId) {
         Mono<Page> pageMono = pageRepository.findById(pageId);
-        Mono<PageDTO> pageDTOMono = pageMono.map(
-                        p -> ModelMapperFactory.getInstance().map(p, PageDTO.class))
+        Mono<PageDTO> pageDTOMono = pageMono.map(p -> ModelMapperFactory.getInstance().map(p, PageDTO.class))
                 .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "page.not.found")));
 
         Mono<List<ContentDisplayDTO>> listMono = contentDisplayRepositoryTemplate.getAllByPageId(pageId);
-
         return Mono.zip(pageDTOMono, listMono).map(zip -> {
             PageDTO pageDTO = zip.getT1();
             pageDTO.setContentDisplayList(zip.getT2());
-
             return pageDTO;
         });
     }
@@ -475,18 +463,12 @@ public class PageServiceImpl extends BaseServiceHandler implements PageService {
     public Mono<DataResponse<PageDTO>> changeStatus(ChangePageStatusRequest request) {
         String pageId = DataUtil.safeTrim(request.getPageId());
         Integer status = request.getStatus();
-        return Mono.zip(
-                        SecurityUtils.getCurrentUser()
-                                .switchIfEmpty(
-                                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
-                        pageRepository
-                                .findById(pageId)
-                                .switchIfEmpty(
-                                        Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "page.not.found"))))
+        return Mono.zip(SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
+                        pageRepository.findById(pageId)
+                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "page.not.found"))))
                 .flatMap(zip -> {
                     Page page = zip.getT2();
                     TokenUser tokenUser = zip.getT1();
-
                     if (page.getStatus().equals(status)) {
                         if (status.equals(SettingConstant.PAGE_STATUS.LOCK)) {
                             return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "page.status.locked"));

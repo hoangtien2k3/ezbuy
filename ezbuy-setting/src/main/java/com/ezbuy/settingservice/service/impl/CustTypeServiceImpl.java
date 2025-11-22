@@ -1,10 +1,12 @@
 package com.ezbuy.settingservice.service.impl;
 
-import com.ezbuy.settingmodel.model.CustType;
+import com.ezbuy.settingservice.model.entity.CustType;
 import com.ezbuy.settingservice.repository.CustTypeRepository;
 import com.ezbuy.settingservice.service.CustTypeService;
 import com.ezbuy.core.cache.LocalCache;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;

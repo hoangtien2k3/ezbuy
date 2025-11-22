@@ -1,6 +1,6 @@
 package com.ezbuy.settingservice.repository;
 
-import com.ezbuy.settingmodel.model.GroupNews;
+import com.ezbuy.settingservice.model.entity.GroupNews;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import org.springframework.data.r2dbc.repository.Query;

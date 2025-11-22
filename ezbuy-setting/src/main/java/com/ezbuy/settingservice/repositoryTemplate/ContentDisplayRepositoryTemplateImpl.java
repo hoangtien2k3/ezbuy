@@ -1,8 +1,8 @@
 package com.ezbuy.settingservice.repositoryTemplate;
 
-import com.ezbuy.settingmodel.dto.ContentDisplayDTO;
-import com.ezbuy.settingmodel.model.ContentDisplay;
-import com.ezbuy.settingmodel.request.ComponentPageRequest;
+import com.ezbuy.settingservice.model.dto.ContentDisplayDTO;
+import com.ezbuy.settingservice.model.entity.ContentDisplay;
+import com.ezbuy.settingservice.model.dto.request.ComponentPageRequest;
 import com.ezbuy.core.constants.CommonErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.repository.BaseTemplateRepository;

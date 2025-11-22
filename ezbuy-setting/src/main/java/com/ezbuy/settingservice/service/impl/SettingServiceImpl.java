@@ -1,10 +1,10 @@
 package com.ezbuy.settingservice.service.impl;
 
-import com.ezbuy.settingmodel.dto.PaginationDTO;
-import com.ezbuy.settingmodel.model.Setting;
-import com.ezbuy.settingmodel.request.CreateSettingRequest;
-import com.ezbuy.settingmodel.request.SearchSettingRequest;
-import com.ezbuy.settingmodel.response.SearchSettingResponse;
+import com.ezbuy.settingservice.model.dto.PaginationDTO;
+import com.ezbuy.settingservice.model.entity.Setting;
+import com.ezbuy.settingservice.model.dto.request.CreateSettingRequest;
+import com.ezbuy.settingservice.model.dto.request.SearchSettingRequest;
+import com.ezbuy.settingservice.model.dto.response.SearchSettingResponse;
 import com.ezbuy.settingservice.repository.SettingRepository;
 import com.ezbuy.settingservice.repositoryTemplate.SettingRepositoryTemplate;
 import com.ezbuy.settingservice.service.SettingService;
@@ -17,11 +17,13 @@ import com.ezbuy.core.model.response.DataResponse;
 import com.ezbuy.core.util.AppUtils;
 import com.ezbuy.core.util.DataUtil;
 import com.ezbuy.core.util.SecurityUtils;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -69,10 +71,7 @@ public class SettingServiceImpl implements SettingService {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "params.from-date.larger.to-date");
         }
 
-        return Mono.zip(
-                        settingRepositoryTemplate
-                                .searchSettingByRequest(request)
-                                .collectList(),
+        return Mono.zip(settingRepositoryTemplate.searchSettingByRequest(request).collectList(),
                         settingRepositoryTemplate.count(request))
                 .map(zip -> {
                     PaginationDTO pagination = new PaginationDTO();
@@ -101,11 +100,7 @@ public class SettingServiceImpl implements SettingService {
 
         validateInput(request);
         String code = DataUtil.safeTrim(request.getCode());
-        return Mono.zip(
-                        SecurityUtils.getCurrentUser() // get info user
-                                .defaultIfEmpty(new TokenUser()), // TODO: dong comment ham nay khi chay
-                        // .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND,
-                        // "user.null"))), //TODO: mo comment ham nay khi chay
+        return Mono.zip(SecurityUtils.getCurrentUser().defaultIfEmpty(new TokenUser()),
                         validateExistCode(code, true, null))
                 .flatMap(data -> {
                     String settingId = UUID.randomUUID().toString();
@@ -134,13 +129,7 @@ public class SettingServiceImpl implements SettingService {
         validateInput(request);
         String code = DataUtil.safeTrim(request.getCode());
 
-        return Mono.zip(
-                        SecurityUtils.getCurrentUser() // get info user
-                                // .switchIfEmpty(Mono.error(new
-                                // BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))), //TODO: mo
-                                // comment ham
-                                // nay khi chay
-                                .switchIfEmpty(Mono.just(new TokenUser())), // TODO: comment lai dong nay khi chay
+        return Mono.zip(SecurityUtils.getCurrentUser().switchIfEmpty(Mono.just(new TokenUser())),
                         validateExistCode(code, false, id))
                 .flatMap(data -> settingRepository
                         .updateSetting(
@@ -163,14 +152,10 @@ public class SettingServiceImpl implements SettingService {
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "setting.validate.id.null");
         }
         return Mono.zip(
-                        SecurityUtils.getCurrentUser() // lay thong tin user
-                                // .switchIfEmpty(Mono.error(new
-                                // BusinessException(CommonErrorCode.NOT_FOUND, "user.null"))),
-                                .switchIfEmpty(Mono.just(new TokenUser())),
+                        SecurityUtils.getCurrentUser().switchIfEmpty(Mono.just(new TokenUser())),
                         settingRepository
-                                .getById(id) // lay thong tin setting theo id
-                                .switchIfEmpty(Mono.error(new BusinessException(
-                                        CommonErrorCode.NOT_FOUND, "setting.validate.find.by.id.null"))))
+                                .getById(id)
+                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "setting.validate.find.by.id.null"))))
                 .flatMap(tuple -> settingRepository
                         .updateStatus(
                                 settingId,
@@ -215,8 +200,8 @@ public class SettingServiceImpl implements SettingService {
         return settingRepository.getByCode(code).defaultIfEmpty(new Setting()).flatMap(settingByCode -> {
             if ((isInsert && settingByCode.getCode() != null)
                     || (!isInsert
-                            && settingByCode.getCode() != null
-                            && !DataUtil.safeEqual(settingByCode.getId(), id))) {
+                    && settingByCode.getCode() != null
+                    && !DataUtil.safeEqual(settingByCode.getId(), id))) {
                 return Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "setting.validate.code.is.exist"));
             }
             return Mono.just(true);

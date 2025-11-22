@@ -2,11 +2,11 @@ package com.ezbuy.settingservice.service.impl;
 
 import static com.ezbuy.core.constants.CommonErrorCode.SUCCESS;
 
-import com.ezbuy.settingmodel.dto.PaginationDTO;
-import com.ezbuy.settingmodel.dto.request.SearchMarketPageSectionRequest;
-import com.ezbuy.settingmodel.model.MarketPageSection;
-import com.ezbuy.settingmodel.request.MarketPageSectionRequest;
-import com.ezbuy.settingmodel.response.SearchMarketPageSectionResponse;
+import com.ezbuy.settingservice.model.dto.PaginationDTO;
+import com.ezbuy.settingservice.model.dto.request.SearchMarketPageSectionRequest;
+import com.ezbuy.settingservice.model.entity.MarketPageSection;
+import com.ezbuy.settingservice.model.dto.request.MarketPageSectionRequest;
+import com.ezbuy.settingservice.model.dto.response.SearchMarketPageSectionResponse;
 import com.ezbuy.settingservice.repository.MarketPageRepository;
 import com.ezbuy.settingservice.repository.MarketPageSectionRepository;
 import com.ezbuy.settingservice.repository.MarketSectionRepository;
@@ -19,8 +19,10 @@ import com.ezbuy.core.model.response.DataResponse;
 import com.ezbuy.core.util.DataUtil;
 import com.ezbuy.core.util.SecurityUtils;
 import com.ezbuy.core.util.Translator;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +39,6 @@ public class MarketPageSectionServiceImpl extends BaseServiceHandler implements 
 
     @Override
     public Mono<SearchMarketPageSectionResponse> getMarketPageSection(SearchMarketPageSectionRequest request) {
-        // validate request
         int pageIndex = validatePageIndex(request.getPageIndex());
         request.setPageIndex(pageIndex);
         int pageSize = validatePageSize(request.getPageSize(), 10);
@@ -61,8 +62,7 @@ public class MarketPageSectionServiceImpl extends BaseServiceHandler implements 
     @Override
     @Transactional
     public Mono<DataResponse<MarketPageSection>> createMarketPageSection(MarketPageSectionRequest request) {
-        return Mono.zip(
-                        SecurityUtils.getCurrentUser().switchIfEmpty(Mono.just(new TokenUser())),
+        return Mono.zip(SecurityUtils.getCurrentUser().switchIfEmpty(Mono.just(new TokenUser())),
                         validateExitsPageId(request.getPageId(), 1),
                         validateExitsSectionId(request.getSectionId(), 1))
                 .flatMap(zip -> {
@@ -95,9 +95,7 @@ public class MarketPageSectionServiceImpl extends BaseServiceHandler implements 
             throw new BusinessException(CommonErrorCode.INVALID_PARAMS, "market.page.id.not.empty");
         }
         return Mono.zip(
-                        SecurityUtils.getCurrentUser()
-                                .switchIfEmpty(Mono.error(
-                                        new BusinessException(CommonErrorCode.NOT_FOUND, "market.page.not.found"))),
+                        SecurityUtils.getCurrentUser().switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "market.page.not.found"))),
                         marketPageSectionRepository.getById(id))
                 .flatMap(zip -> {
                     LocalDateTime now = LocalDateTime.now();
@@ -120,12 +118,10 @@ public class MarketPageSectionServiceImpl extends BaseServiceHandler implements 
         return marketPageRepository
                 .findMarketPageById(pageId, status)
                 .switchIfEmpty(Mono.error(new BusinessException(
-                        CommonErrorCode.BAD_REQUEST, Translator.toLocaleVi("market.page.error.pageId.not.found"))))
+                        CommonErrorCode.BAD_REQUEST, "market.page.error.pageId.not.found")))
                 .flatMap(marketPages -> {
                     if (DataUtil.isNullOrEmpty(marketPages)) {
-                        Mono.error(new BusinessException(
-                                CommonErrorCode.BAD_REQUEST,
-                                Translator.toLocaleVi("market.page.error.service.not.found")));
+                        Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "market.page.error.service.not.found"));
                     }
                     return Mono.just(true);
                 });
@@ -135,12 +131,10 @@ public class MarketPageSectionServiceImpl extends BaseServiceHandler implements 
         return marketSectionRepository
                 .findMarketSectionById(sectionId, status)
                 .switchIfEmpty(Mono.error(new BusinessException(
-                        CommonErrorCode.BAD_REQUEST, Translator.toLocaleVi("market.page.error.sectionId.not.found"))))
+                        CommonErrorCode.BAD_REQUEST, "market.page.error.sectionId.not.found")))
                 .flatMap(marketPages -> {
                     if (DataUtil.isNullOrEmpty(marketPages)) {
-                        Mono.error(new BusinessException(
-                                CommonErrorCode.BAD_REQUEST,
-                                Translator.toLocaleVi("market.page.error.service.not.found")));
+                        Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "market.page.error.service.not.found"));
                     }
                     return Mono.just(true);
                 });

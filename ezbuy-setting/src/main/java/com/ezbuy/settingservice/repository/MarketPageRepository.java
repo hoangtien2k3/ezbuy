@@ -1,6 +1,6 @@
 package com.ezbuy.settingservice.repository;
 
-import com.ezbuy.settingmodel.model.MarketPage;
+import com.ezbuy.settingservice.model.entity.MarketPage;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.r2dbc.repository.Query;

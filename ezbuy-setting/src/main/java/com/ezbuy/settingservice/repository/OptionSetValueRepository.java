@@ -1,6 +1,6 @@
 package com.ezbuy.settingservice.repository;
 
-import com.ezbuy.settingmodel.model.OptionSetValue;
+import com.ezbuy.settingservice.model.entity.OptionSetValue;
 import java.time.LocalDateTime;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;

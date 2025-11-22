@@ -1,8 +1,8 @@
 package com.ezbuy.settingservice.repositoryTemplate;
 
-import com.ezbuy.settingmodel.dto.ContentDisplayDTO;
-import com.ezbuy.settingmodel.model.ContentDisplay;
-import com.ezbuy.settingmodel.request.ComponentPageRequest;
+import com.ezbuy.settingservice.model.dto.ContentDisplayDTO;
+import com.ezbuy.settingservice.model.entity.ContentDisplay;
+import com.ezbuy.settingservice.model.dto.request.ComponentPageRequest;
 import java.util.List;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

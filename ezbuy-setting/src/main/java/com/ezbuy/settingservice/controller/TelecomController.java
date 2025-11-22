@@ -1,14 +1,18 @@
 package com.ezbuy.settingservice.controller;
 
-import com.ezbuy.settingmodel.constants.UrlPaths;
-import com.ezbuy.settingmodel.dto.TelecomDTO;
-import com.ezbuy.settingmodel.dto.TelecomServiceConfigDTO;
-import com.ezbuy.settingmodel.dto.request.GetServiceConfigRequest;
-import com.ezbuy.settingmodel.model.Telecom;
-import com.ezbuy.settingmodel.request.PageTelecomRequest;
-import com.ezbuy.settingmodel.request.StatusLockingRequest;
-import com.ezbuy.settingmodel.request.TelecomSearchingRequest;
-import com.ezbuy.settingmodel.response.*;
+import com.ezbuy.settingservice.constants.UrlPaths;
+import com.ezbuy.settingservice.model.dto.TelecomDTO;
+import com.ezbuy.settingservice.model.dto.TelecomServiceConfigDTO;
+import com.ezbuy.settingservice.model.dto.request.GetServiceConfigRequest;
+import com.ezbuy.settingservice.model.dto.response.ClientTelecom;
+import com.ezbuy.settingservice.model.dto.response.PageResponse;
+import com.ezbuy.settingservice.model.dto.response.TelecomClient;
+import com.ezbuy.settingservice.model.dto.response.TelecomPagingResponse;
+import com.ezbuy.settingservice.model.dto.response.TelecomResponse;
+import com.ezbuy.settingservice.model.entity.Telecom;
+import com.ezbuy.settingservice.model.dto.request.PageTelecomRequest;
+import com.ezbuy.settingservice.model.dto.request.StatusLockingRequest;
+import com.ezbuy.settingservice.model.dto.request.TelecomSearchingRequest;
 import com.ezbuy.settingservice.service.TelecomService;
 import com.ezbuy.core.constants.MessageConstant;
 import com.ezbuy.core.model.response.DataResponse;

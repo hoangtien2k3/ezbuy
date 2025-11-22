@@ -2,12 +2,12 @@ package com.ezbuy.settingservice.service.impl;
 
 import static com.ezbuy.core.constants.CommonErrorCode.SUCCESS;
 
-import com.ezbuy.settingmodel.dto.MarketPageDTO;
-import com.ezbuy.settingmodel.dto.PaginationDTO;
-import com.ezbuy.settingmodel.model.MarketPage;
-import com.ezbuy.settingmodel.request.MarketPageRequest;
-import com.ezbuy.settingmodel.request.SearchMarketPageRequest;
-import com.ezbuy.settingmodel.response.SearchMarketPageResponse;
+import com.ezbuy.settingservice.model.dto.MarketPageDTO;
+import com.ezbuy.settingservice.model.dto.PaginationDTO;
+import com.ezbuy.settingservice.model.entity.MarketPage;
+import com.ezbuy.settingservice.model.dto.request.MarketPageRequest;
+import com.ezbuy.settingservice.model.dto.request.SearchMarketPageRequest;
+import com.ezbuy.settingservice.model.dto.response.SearchMarketPageResponse;
 import com.ezbuy.settingservice.repository.MarketPageRepository;
 import com.ezbuy.settingservice.repositoryTemplate.MarketPageRepositoryTemplate;
 import com.ezbuy.settingservice.service.MarketPageService;
@@ -19,9 +19,11 @@ import com.ezbuy.core.model.response.DataResponse;
 import com.ezbuy.core.util.DataUtil;
 import com.ezbuy.core.util.SecurityUtils;
 import com.ezbuy.core.util.Translator;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -46,9 +48,7 @@ public class MarketPageServiceImpl extends BaseServiceHandler implements MarketP
                     if (!marketPages.isEmpty()) {
                         return telecomService
                                 .getByOriginId(telecomServiceId, serviceAlias)
-                                .switchIfEmpty(Mono.error(new BusinessException(
-                                        CommonErrorCode.BAD_REQUEST,
-                                        Translator.toLocaleVi("market.page.error.service.not.found"))))
+                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "market.page.error.service.not.found")))
                                 .map(listDataResponse -> true);
                     }
                     return Mono.just(true);
@@ -63,9 +63,7 @@ public class MarketPageServiceImpl extends BaseServiceHandler implements MarketP
                     if (!marketPages.isEmpty()) {
                         return telecomService
                                 .getByServiceAlias(serviceAlias)
-                                .switchIfEmpty(Mono.error(new BusinessException(
-                                        CommonErrorCode.BAD_REQUEST,
-                                        Translator.toLocaleVi("market.page.error.service.not.found"))))
+                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "market.page.error.service.not.found")))
                                 .map(listDataResponse -> true);
                     }
                     return Mono.just(true);
@@ -111,7 +109,7 @@ public class MarketPageServiceImpl extends BaseServiceHandler implements MarketP
         return marketPageRepository
                 .getById(id)
                 .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "market.page.not.found")))
-                .map(marketPage -> new DataResponse<>(Translator.toLocale("Success"), marketPage));
+                .map(marketPage -> new DataResponse<>("success", marketPage));
     }
 
     @Override
@@ -119,7 +117,6 @@ public class MarketPageServiceImpl extends BaseServiceHandler implements MarketP
     public Mono<DataResponse<MarketPage>> createMarketPage(MarketPageRequest request) {
         LocalDateTime now = LocalDateTime.now();
         String code = DataUtil.safeTrim(request.getCode());
-        // bo sung validate cho serviceAlias, khong bi anh huong neu serviceAlias null
         var validateDuplicateService = DataUtil.isNullOrEmpty(request.getServiceAlias())
                 ? validateDuplicateServiceId(request.getServiceId(), request.getServiceAlias())
                 : validateDuplicateServiceAlias(request.getServiceAlias());
@@ -165,19 +162,13 @@ public class MarketPageServiceImpl extends BaseServiceHandler implements MarketP
                     TokenUser tokenUser = zip.getT1();
                     MarketPage marketPage = zip.getT2();
                     Mono<Boolean> checkExistServiceId = Mono.just(true);
-
-                    // bo sung them serviceAlias
-                    // neu serviceAlias null thi se khong co dieu kien serviceAlias trong cau sql
                     if (!DataUtil.safeEqual(request.getServiceId(), marketPage.getServiceId())) {
                         checkExistServiceId =
                                 validateDuplicateServiceId(request.getServiceId(), request.getServiceAlias());
                     }
-
-                    // neu serviceAlias null thi khong cap nhat
                     if (DataUtil.isNullOrEmpty(request.getServiceAlias())) {
                         request.setServiceAlias(marketPage.getServiceAlias());
                     }
-
                     Mono<MarketPage> updateMarketPageMono = marketPageRepository
                             .updateMarketPage(
                                     request.getServiceId(),
@@ -188,7 +179,7 @@ public class MarketPageServiceImpl extends BaseServiceHandler implements MarketP
                                     tokenUser.getUsername(),
                                     id,
                                     request.getServiceAlias())
-                            .defaultIfEmpty(new MarketPage()); // bo sung cap nhat serviceAlias
+                            .defaultIfEmpty(new MarketPage());
                     return Mono.zip(checkExistServiceId, updateMarketPageMono)
                             .flatMap(response -> Mono.just(new DataResponse<>(Translator.toLocaleVi(SUCCESS), null)));
                 })
@@ -205,7 +196,7 @@ public class MarketPageServiceImpl extends BaseServiceHandler implements MarketP
                 .getByServiceId(lstServiceId)
                 .collectList()
                 .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "market.page.not.found")))
-                .map(marketPage -> new DataResponse<>(Translator.toLocale("Success"), marketPage));
+                .map(marketPage -> new DataResponse<>("success", marketPage));
     }
 
     @Override
@@ -214,6 +205,6 @@ public class MarketPageServiceImpl extends BaseServiceHandler implements MarketP
                 .getByServiceAlias(lstAlias)
                 .collectList()
                 .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.NOT_FOUND, "market.page.not.found")))
-                .map(marketPage -> new DataResponse<>(Translator.toLocale("Success"), marketPage));
+                .map(marketPage -> new DataResponse<>("success", marketPage));
     }
 }

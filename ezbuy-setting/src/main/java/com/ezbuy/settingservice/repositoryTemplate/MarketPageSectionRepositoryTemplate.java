@@ -1,7 +1,7 @@
 package com.ezbuy.settingservice.repositoryTemplate;
 
-import com.ezbuy.settingmodel.dto.request.SearchMarketPageSectionRequest;
-import com.ezbuy.settingmodel.model.MarketPageSection;
+import com.ezbuy.settingservice.model.dto.request.SearchMarketPageSectionRequest;
+import com.ezbuy.settingservice.model.entity.MarketPageSection;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

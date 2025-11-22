@@ -1,12 +1,14 @@
 package com.ezbuy.settingservice.service.impl;
 
-import com.ezbuy.settingmodel.dto.ContentDisplayDTO;
-import com.ezbuy.settingmodel.dto.PaginationDTO;
-import com.ezbuy.settingmodel.request.ComponentPageRequest;
-import com.ezbuy.settingmodel.response.SearchingComponentResponse;
+import com.ezbuy.settingservice.model.dto.ContentDisplayDTO;
+import com.ezbuy.settingservice.model.dto.PaginationDTO;
+import com.ezbuy.settingservice.model.dto.request.ComponentPageRequest;
+import com.ezbuy.settingservice.model.dto.response.SearchingComponentResponse;
 import com.ezbuy.settingservice.repositoryTemplate.ContentDisplayRepositoryTemplate;
 import com.ezbuy.settingservice.service.ContentDisplayService;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -19,7 +21,6 @@ public class ContentDisplayServiceImpl extends BaseServiceHandler implements Con
 
     @Override
     public Mono<SearchingComponentResponse> searchOriginComponents(ComponentPageRequest request) {
-        // validate request
         int pageIndex = validatePageIndex(request.getPageIndex());
         request.setPageIndex(pageIndex);
         int pageSize = validatePageSize(request.getPageSize(), 10);
@@ -36,7 +37,6 @@ public class ContentDisplayServiceImpl extends BaseServiceHandler implements Con
             SearchingComponentResponse response = new SearchingComponentResponse();
             response.setContentDisplays(zip.getT1());
             response.setPagination(pagination);
-
             return response;
         });
     }

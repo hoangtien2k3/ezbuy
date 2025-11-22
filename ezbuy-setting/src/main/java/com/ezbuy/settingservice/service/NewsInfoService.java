@@ -1,11 +1,11 @@
 package com.ezbuy.settingservice.service;
 
-import com.ezbuy.settingmodel.dto.NewsDetailDTO;
-import com.ezbuy.settingmodel.dto.RelateNewsDTO;
-import com.ezbuy.settingmodel.dto.request.SearchNewsInfoRequest;
-import com.ezbuy.settingmodel.model.NewsInfo;
-import com.ezbuy.settingmodel.request.CreateNewsInfoRequest;
-import com.ezbuy.settingmodel.response.SearchNewsInfoResponse;
+import com.ezbuy.settingservice.model.dto.NewsDetailDTO;
+import com.ezbuy.settingservice.model.dto.RelateNewsDTO;
+import com.ezbuy.settingservice.model.dto.request.SearchNewsInfoRequest;
+import com.ezbuy.settingservice.model.entity.NewsInfo;
+import com.ezbuy.settingservice.model.dto.request.CreateNewsInfoRequest;
+import com.ezbuy.settingservice.model.dto.response.SearchNewsInfoResponse;
 import com.ezbuy.core.model.response.DataResponse;
 import java.util.List;
 import reactor.core.publisher.Mono;

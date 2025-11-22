@@ -1,10 +1,10 @@
 package com.ezbuy.settingservice.repositoryTemplate;
 
-import com.ezbuy.settingmodel.dto.ContentNewsDTO;
-import com.ezbuy.settingmodel.dto.PaginationDTO;
-import com.ezbuy.settingmodel.dto.request.QueryNewsRequest;
-import com.ezbuy.settingmodel.dto.response.QueryNewsResponse;
-import com.ezbuy.settingmodel.model.ContentNews;
+import com.ezbuy.settingservice.model.dto.ContentNewsDTO;
+import com.ezbuy.settingservice.model.dto.PaginationDTO;
+import com.ezbuy.settingservice.model.dto.request.QueryNewsRequest;
+import com.ezbuy.settingservice.model.dto.response.QueryNewsResponse;
+import com.ezbuy.settingservice.model.entity.ContentNews;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.json.JsonMapper;

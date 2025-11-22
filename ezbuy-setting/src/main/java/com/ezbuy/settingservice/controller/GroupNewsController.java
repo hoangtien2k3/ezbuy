@@ -1,10 +1,10 @@
 package com.ezbuy.settingservice.controller;
 
-import com.ezbuy.settingmodel.constants.UrlPaths;
-import com.ezbuy.settingmodel.dto.request.SearchGroupNewsRequest;
-import com.ezbuy.settingmodel.model.GroupNews;
-import com.ezbuy.settingmodel.request.CreateGroupNewsRequest;
-import com.ezbuy.settingmodel.response.SearchGroupNewsResponse;
+import com.ezbuy.settingservice.constants.UrlPaths;
+import com.ezbuy.settingservice.model.dto.request.SearchGroupNewsRequest;
+import com.ezbuy.settingservice.model.entity.GroupNews;
+import com.ezbuy.settingservice.model.dto.request.CreateGroupNewsRequest;
+import com.ezbuy.settingservice.model.dto.response.SearchGroupNewsResponse;
 import com.ezbuy.settingservice.service.GroupNewsService;
 import com.ezbuy.core.model.response.DataResponse;
 import jakarta.validation.Valid;

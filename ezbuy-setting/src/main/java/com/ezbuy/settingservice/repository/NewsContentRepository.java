@@ -1,7 +1,7 @@
 package com.ezbuy.settingservice.repository;
 
-import com.ezbuy.settingmodel.dto.NewsContentDTO;
-import com.ezbuy.settingmodel.model.NewsContent;
+import com.ezbuy.settingservice.model.dto.NewsContentDTO;
+import com.ezbuy.settingservice.model.entity.NewsContent;
 import java.time.LocalDateTime;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;

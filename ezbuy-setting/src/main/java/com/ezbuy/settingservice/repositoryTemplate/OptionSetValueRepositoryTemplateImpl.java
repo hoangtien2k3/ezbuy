@@ -1,7 +1,7 @@
 package com.ezbuy.settingservice.repositoryTemplate;
 
-import com.ezbuy.settingmodel.dto.OptionSetValueDTO;
-import com.ezbuy.settingmodel.dto.request.SearchOptionSetValueRequest;
+import com.ezbuy.settingservice.model.dto.OptionSetValueDTO;
+import com.ezbuy.settingservice.model.dto.request.SearchOptionSetValueRequest;
 import com.ezbuy.core.repository.BaseTemplateRepository;
 import com.ezbuy.core.util.DataUtil;
 import com.ezbuy.core.util.SQLUtils;

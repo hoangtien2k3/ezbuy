@@ -1,8 +1,8 @@
 package com.ezbuy.settingservice.repositoryTemplate;
 
-import com.ezbuy.settingmodel.dto.SettingDTO;
-import com.ezbuy.settingmodel.model.Setting;
-import com.ezbuy.settingmodel.request.SearchSettingRequest;
+import com.ezbuy.settingservice.model.dto.SettingDTO;
+import com.ezbuy.settingservice.model.entity.Setting;
+import com.ezbuy.settingservice.model.dto.request.SearchSettingRequest;
 import com.ezbuy.core.util.DataUtil;
 import com.ezbuy.core.util.SortingUtils;
 import java.math.BigDecimal;

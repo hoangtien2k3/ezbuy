@@ -1,12 +1,12 @@
 package com.ezbuy.settingservice.service;
 
-import com.ezbuy.settingmodel.dto.ContentSectionDetailDTO;
-import com.ezbuy.settingmodel.dto.TreeDataDTO;
-import com.ezbuy.settingmodel.dto.request.GetContentSectionRequest;
-import com.ezbuy.settingmodel.model.ContentSection;
-import com.ezbuy.settingmodel.request.ContentSectionRequest;
-import com.ezbuy.settingmodel.request.SearchContentSectionRequest;
-import com.ezbuy.settingmodel.response.SearchContentSectionResponse;
+import com.ezbuy.settingservice.model.dto.ContentSectionDetailDTO;
+import com.ezbuy.settingservice.model.dto.TreeDataDTO;
+import com.ezbuy.settingservice.model.dto.request.GetContentSectionRequest;
+import com.ezbuy.settingservice.model.entity.ContentSection;
+import com.ezbuy.settingservice.model.dto.request.ContentSectionRequest;
+import com.ezbuy.settingservice.model.dto.request.SearchContentSectionRequest;
+import com.ezbuy.settingservice.model.dto.response.SearchContentSectionResponse;
 import com.ezbuy.core.model.response.DataResponse;
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;

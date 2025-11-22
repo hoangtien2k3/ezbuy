@@ -1,10 +1,10 @@
 package com.ezbuy.settingservice.service;
 
-import com.ezbuy.settingmodel.dto.request.SearchOptionSetRequest;
-import com.ezbuy.settingmodel.model.OptionSet;
-import com.ezbuy.settingmodel.model.OptionSetValue;
-import com.ezbuy.settingmodel.request.CreateOptionSetRequest;
-import com.ezbuy.settingmodel.response.SearchOptionSetResponse;
+import com.ezbuy.settingservice.model.dto.request.SearchOptionSetRequest;
+import com.ezbuy.settingservice.model.entity.OptionSet;
+import com.ezbuy.settingservice.model.entity.OptionSetValue;
+import com.ezbuy.settingservice.model.dto.request.CreateOptionSetRequest;
+import com.ezbuy.settingservice.model.dto.response.SearchOptionSetResponse;
 import com.ezbuy.core.model.response.DataResponse;
 import java.util.List;
 import reactor.core.publisher.Mono;

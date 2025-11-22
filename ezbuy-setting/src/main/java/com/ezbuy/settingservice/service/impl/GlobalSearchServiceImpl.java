@@ -1,8 +1,8 @@
 package com.ezbuy.settingservice.service.impl;
 
-import com.ezbuy.settingmodel.dto.request.GlobalSearchSyncRequest;
-import com.ezbuy.settingmodel.model.News;
-import com.ezbuy.settingmodel.model.Services;
+import com.ezbuy.settingservice.model.dto.request.GlobalSearchSyncRequest;
+import com.ezbuy.settingservice.model.entity.News;
+import com.ezbuy.settingservice.model.entity.Services;
 import com.ezbuy.settingservice.repository.ContentDisplayRepository;
 import com.ezbuy.settingservice.repository.NewsRepository;
 import com.ezbuy.settingservice.repository.ServicesRepository;
@@ -11,12 +11,13 @@ import com.ezbuy.core.constants.CommonErrorCode;
 import com.ezbuy.core.exception.BusinessException;
 import com.ezbuy.core.model.response.DataResponse;
 import com.ezbuy.core.util.DataUtil;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -27,18 +28,14 @@ import reactor.core.publisher.Mono;
 public class GlobalSearchServiceImpl implements GlobalSearchService {
 
     private final ContentDisplayRepository contentDisplayRepository;
-
-    @Autowired
-    private ApplicationContext context;
+    private final ApplicationContext context;
 
     @Override
     public Mono<DataResponse> syncService(GlobalSearchSyncRequest request) {
-
         long duration = 86400L;
         if (!DataUtil.isNullOrEmpty(request)) {
             duration = request.getDuration() * 60;
         }
-
         if (request.getDuration() < 0) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "duration.invalid"));
         }
@@ -59,13 +56,11 @@ public class GlobalSearchServiceImpl implements GlobalSearchService {
                         }
                         servicesList.add(service);
                     }
-                    log.info("contentDisplayRepository count {}", r.size());
                     try {
                         Object servicesRepositoryBean = context.getBean(ServicesRepository.class);
-                        var servicesRepository = (ServicesRepository) servicesRepositoryBean;
+                        ServicesRepository servicesRepository = (ServicesRepository) servicesRepositoryBean;
                         return servicesRepository.saveAll(servicesList).collectList();
                     } catch (Exception ex) {
-                        log.error("Get ServicesRepository bean error {}", ex);
                         return Mono.error(new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "error"));
                     }
                 })
@@ -74,12 +69,10 @@ public class GlobalSearchServiceImpl implements GlobalSearchService {
 
     @Override
     public Mono<DataResponse> syncNews(GlobalSearchSyncRequest request) {
-
         long duration = 86400L;
         if (!DataUtil.isNullOrEmpty(request)) {
             duration = request.getDuration() * 60;
         }
-
         if (request.getDuration() < 0) {
             return Mono.error(new BusinessException(CommonErrorCode.INVALID_PARAMS, "duration.invalid"));
         }
@@ -102,7 +95,7 @@ public class GlobalSearchServiceImpl implements GlobalSearchService {
                     }
                     log.info("contentDisplayRepository count {}", r.size());
                     Object newsRepositoryBean = context.getBean(NewsRepository.class);
-                    var newsRepository = (NewsRepository) newsRepositoryBean;
+                    NewsRepository newsRepository = (NewsRepository) newsRepositoryBean;
                     return newsRepository.saveAll(newsList).collectList();
                 })
                 .flatMap(rs -> Mono.just(new DataResponse<>("success", rs.size()))));

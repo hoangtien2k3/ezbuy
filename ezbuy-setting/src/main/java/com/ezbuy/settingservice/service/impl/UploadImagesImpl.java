@@ -2,13 +2,20 @@ package com.ezbuy.settingservice.service.impl;
 
 import static com.ezbuy.core.constants.MessageConstant.SUCCESS;
 
-import com.ezbuy.settingmodel.constants.Constants;
-import com.ezbuy.settingmodel.dto.FileDTO;
-import com.ezbuy.settingmodel.dto.PaginationDTO;
-import com.ezbuy.settingmodel.dto.UploadImagesDTO;
-import com.ezbuy.settingmodel.dto.request.*;
-import com.ezbuy.settingmodel.dto.response.SearchImageResponse;
-import com.ezbuy.settingmodel.model.UploadImages;
+import com.ezbuy.settingservice.constants.Constants;
+import com.ezbuy.settingservice.model.dto.FileDTO;
+import com.ezbuy.settingservice.model.dto.PaginationDTO;
+import com.ezbuy.settingservice.model.dto.UploadImagesDTO;
+import com.ezbuy.settingservice.model.dto.request.CreateFileRequest;
+import com.ezbuy.settingservice.model.dto.request.DeleteFolderRequest;
+import com.ezbuy.settingservice.model.dto.request.DeleteImageRequest;
+import com.ezbuy.settingservice.model.dto.request.RenameFolderRequest;
+import com.ezbuy.settingservice.model.dto.request.SearchImageRequest;
+import com.ezbuy.settingservice.model.dto.request.UpdateImageRequest;
+import com.ezbuy.settingservice.model.dto.request.UploadDTO;
+import com.ezbuy.settingservice.model.dto.request.UploadImageRequest;
+import com.ezbuy.settingservice.model.dto.response.SearchImageResponse;
+import com.ezbuy.settingservice.model.entity.UploadImages;
 import com.ezbuy.settingservice.repository.UploadImagesRepository;
 import com.ezbuy.settingservice.repositoryTemplate.UploadImageRepositoryTemplate;
 import com.ezbuy.settingservice.service.UploadImagesService;
@@ -20,10 +27,11 @@ import com.ezbuy.core.util.DataUtil;
 import com.ezbuy.core.util.MinioUtils;
 import com.ezbuy.core.util.SecurityUtils;
 import com.ezbuy.core.util.Translator;
+
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-import jakarta.activation.MimetypesFileTypeMap;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
@@ -39,14 +47,12 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class UploadImagesImpl implements UploadImagesService {
 
-    // private final FileService fileService;
     private final MinioUtils minioUtils;
     private final UploadImagesRepository uploadImagesRepository;
     private final UploadImageRepositoryTemplate uploadImageRepositoryTemplate;
 
     @Override
     public Mono<DataResponse<List<UploadImagesDTO>>> uploadFile(UploadImageRequest request) {
-        // validate input
         if (DataUtil.isNullOrEmpty(request.getImages())) {
             return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "params.invalid.code"));
         }
@@ -58,7 +64,7 @@ public class UploadImagesImpl implements UploadImagesService {
                         CommonErrorCode.BAD_REQUEST, Translator.toLocaleVi("upload.image.existed", fileDTO.getName())));
             }
         }
-        // Load parent info
+
         Mono<UploadImages> parentInfoMono;
         if (DataUtil.isNullOrEmpty(request.getParentId())) {
             UploadImages newUploadImage = new UploadImages();
@@ -92,17 +98,6 @@ public class UploadImagesImpl implements UploadImagesService {
                 .map(res -> new DataResponse<>(Translator.toLocaleVi(SUCCESS), res));
     }
 
-    /**
-     * save new image
-     *
-     * @param fileDTO
-     *            request payload
-     * @param tokenUser
-     *            user login
-     * @param parent
-     *            parent folder
-     * @return saved image
-     */
     private Mono<UploadImages> createImage(FileDTO fileDTO, TokenUser tokenUser, UploadImages parent) {
         byte[] file = Base64.decodeBase64(fileDTO.getImageBase64());
         validateFileSize(file);
@@ -134,8 +129,7 @@ public class UploadImagesImpl implements UploadImagesService {
                 .collectList()
                 .flatMap(sameName -> {
                     if (!sameName.isEmpty()) {
-                        return Mono.error(new BusinessException(
-                                CommonErrorCode.BAD_REQUEST, Translator.toLocaleVi("upload.image.existed", fileName)));
+                        return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, Translator.toLocaleVi("upload.image.existed", fileName)));
                     }
                     return Mono.just(true);
                 });
@@ -154,8 +148,7 @@ public class UploadImagesImpl implements UploadImagesService {
         return uploadImagesRepository
                 .findById(fileDTO.getId())
                 .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.image.notfound")))
-                .flatMap(oldInfo -> validateDuplicateName(
-                                oldInfo.getParentId(), DataUtil.safeTrim(fileDTO.getName()), oldInfo.getId())
+                .flatMap(oldInfo -> validateDuplicateName(oldInfo.getParentId(), DataUtil.safeTrim(fileDTO.getName()), oldInfo.getId())
                         .thenReturn(oldInfo))
                 .flatMap(oldInfo -> {
                     String newPath = parent.getPath() + DataUtil.safeTrim(fileDTO.getName());
@@ -163,9 +156,7 @@ public class UploadImagesImpl implements UploadImagesService {
                             .uploadFile(file, minioUtils.getMinioProperties().getBucket(), newPath)
                             .doOnNext(uploadResult -> {
                                 if (!oldInfo.getPath().equals(newPath)) {
-                                    minioUtils
-                                            .removeObject(
-                                                    minioUtils
+                                    minioUtils.removeObject(minioUtils
                                                             .getMinioProperties()
                                                             .getBucket(),
                                                     oldInfo.getPath())
@@ -188,15 +179,13 @@ public class UploadImagesImpl implements UploadImagesService {
         if (!request.getType().equals(Constants.UPLOAD_TYPE.FOLDER)) {
             return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.not.folder"));
         }
-
         Mono<DataResponse<UploadImagesDTO>> createFolder = Mono.zip(
                         SecurityUtils.getCurrentUser(),
                         DataUtil.isNullOrEmpty(request.getParentId())
                                 ? Mono.just(new UploadImages())
                                 : uploadImagesRepository
-                                        .findById(request.getParentId())
-                                        .switchIfEmpty(Mono.error(new BusinessException(
-                                                CommonErrorCode.BAD_REQUEST, "upload.root.folder.notfound"))))
+                                .findById(request.getParentId())
+                                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.root.folder.notfound"))))
                 .flatMap(zip -> {
                     TokenUser tokenUser = zip.getT1();
                     UploadImages parent = zip.getT2();
@@ -301,35 +290,28 @@ public class UploadImagesImpl implements UploadImagesService {
     public Mono<DataResponse<UploadImagesDTO>> renameFolder(RenameFolderRequest request) {
         Mono<UploadImages> findFolder = uploadImagesRepository
                 .findById(request.getId().trim())
-                .switchIfEmpty(
-                        Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.folder.notfound")));
+                .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.folder.notfound")));
 
         String folderName = DataUtil.safeTrim(request.getNewName());
         Flux<UploadImages> findSameName = uploadImagesRepository.findByName(folderName);
-
-        return findFolder
-                .flatMap(folder -> findSameName.collectList().flatMap(itemSameName -> {
+        return findFolder.flatMap(folder -> findSameName.collectList().flatMap(itemSameName -> {
                     for (UploadImages element : itemSameName) {
                         if (!Objects.equals(element.getId(), folder.getId())) {
-                            return Mono.error(
-                                    new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.folder.existed"));
+                            return Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, "upload.folder.existed"));
                         }
                     }
                     return Mono.zip(
                             SecurityUtils.getCurrentUser(),
                             Mono.just(folder),
-                            getPathByObjectId(folder.getParentId())
-                                    .switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, ""))));
+                            getPathByObjectId(folder.getParentId()).switchIfEmpty(Mono.error(new BusinessException(CommonErrorCode.BAD_REQUEST, ""))));
                 }))
                 .flatMap(zip -> {
                     TokenUser tokenUser = zip.getT1();
                     UploadImages uploadImages = zip.getT2();
                     String parentPath = zip.getT3();
-
                     if (uploadImages.getName().equals(request.getNewName().trim())) {
                         return Mono.just(new DataResponse<>("success", mapToDto(uploadImages)));
                     }
-
                     String oldPath = uploadImages.getPath() + "/";
                     String newPath = parentPath + request.getNewName() + "/";
 
@@ -341,8 +323,7 @@ public class UploadImagesImpl implements UploadImagesService {
 
                     return minioUtils
                             .copyObject(minioUtils.getMinioProperties().getBucket(), oldPath, newPath)
-                            .doOnNext((unused) -> minioUtils
-                                    .removeObject(
+                            .doOnNext((unused) -> minioUtils.removeObject(
                                             minioUtils.getMinioProperties().getBucket(), oldPath)
                                     .subscribe())
                             .then(uploadImagesRepository.save(uploadImages))
@@ -353,12 +334,6 @@ public class UploadImagesImpl implements UploadImagesService {
                 });
     }
 
-    /**
-     * update path for folder items
-     *
-     * @param folder
-     *            folder info
-     */
     private Mono<Void> updatePathFolderItem(UploadImages folder) {
         return uploadImagesRepository
                 .findAllByParentId(folder.getId())
@@ -381,13 +356,6 @@ public class UploadImagesImpl implements UploadImagesService {
         return uploadImagesRepository.findById(id).map(uploadImages -> DataUtil.safeToString(uploadImages.getPath()));
     }
 
-    /**
-     * update existed image
-     *
-     * @param uploadDTO
-     *            update image
-     * @return updated image
-     */
     private Mono<UploadImagesDTO> updateImage(UploadDTO uploadDTO) {
         return uploadImagesRepository
                 .findById(uploadDTO.getId().trim())
@@ -446,8 +414,7 @@ public class UploadImagesImpl implements UploadImagesService {
         }
         request.setPageIndex(pageIndex);
         request.setPageSize(pageSize);
-        return Mono.zip(
-                        uploadImageRepositoryTemplate.queryList(request).collectList(),
+        return Mono.zip(uploadImageRepositoryTemplate.queryList(request).collectList(),
                         uploadImageRepositoryTemplate.count(request))
                 .flatMap(zip -> {
                     List<UploadImagesDTO> content = zip.getT1();
@@ -532,12 +499,6 @@ public class UploadImagesImpl implements UploadImagesService {
     }
 
     public String appendFullPath(String rawPath) {
-        return minioUtils.getMinioProperties().getPublicUrl() + "/"
-                + minioUtils.getMinioProperties().getBucket() + "/" + rawPath;
-    }
-
-    private String getContentType(String fileName) {
-        MimetypesFileTypeMap typeMap = new MimetypesFileTypeMap();
-        return typeMap.getContentType(fileName);
+        return minioUtils.getMinioProperties().getPublicUrl() + "/" + minioUtils.getMinioProperties().getBucket() + "/" + rawPath;
     }
 }

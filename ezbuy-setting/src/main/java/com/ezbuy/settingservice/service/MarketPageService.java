@@ -1,9 +1,9 @@
 package com.ezbuy.settingservice.service;
 
-import com.ezbuy.settingmodel.model.MarketPage;
-import com.ezbuy.settingmodel.request.MarketPageRequest;
-import com.ezbuy.settingmodel.request.SearchMarketPageRequest;
-import com.ezbuy.settingmodel.response.SearchMarketPageResponse;
+import com.ezbuy.settingservice.model.entity.MarketPage;
+import com.ezbuy.settingservice.model.dto.request.MarketPageRequest;
+import com.ezbuy.settingservice.model.dto.request.SearchMarketPageRequest;
+import com.ezbuy.settingservice.model.dto.response.SearchMarketPageResponse;
 import com.ezbuy.core.model.response.DataResponse;
 import java.util.List;
 import reactor.core.publisher.Mono;

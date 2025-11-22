@@ -1,9 +1,9 @@
 package com.ezbuy.settingservice.repositoryTemplate;
 
-import com.ezbuy.settingmodel.dto.TelecomDTO;
-import com.ezbuy.settingmodel.model.Telecom;
-import com.ezbuy.settingmodel.request.PageTelecomRequest;
-import com.ezbuy.settingmodel.request.TelecomSearchingRequest;
+import com.ezbuy.settingservice.model.dto.TelecomDTO;
+import com.ezbuy.settingservice.model.entity.Telecom;
+import com.ezbuy.settingservice.model.dto.request.PageTelecomRequest;
+import com.ezbuy.settingservice.model.dto.request.TelecomSearchingRequest;
 import com.ezbuy.core.repository.BaseTemplateRepository;
 import com.ezbuy.core.util.DataUtil;
 import com.ezbuy.core.util.SQLUtils;

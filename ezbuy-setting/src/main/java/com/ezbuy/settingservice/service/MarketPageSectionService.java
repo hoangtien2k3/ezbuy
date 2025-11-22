@@ -1,9 +1,9 @@
 package com.ezbuy.settingservice.service;
 
-import com.ezbuy.settingmodel.dto.request.SearchMarketPageSectionRequest;
-import com.ezbuy.settingmodel.model.MarketPageSection;
-import com.ezbuy.settingmodel.request.MarketPageSectionRequest;
-import com.ezbuy.settingmodel.response.SearchMarketPageSectionResponse;
+import com.ezbuy.settingservice.model.dto.request.SearchMarketPageSectionRequest;
+import com.ezbuy.settingservice.model.entity.MarketPageSection;
+import com.ezbuy.settingservice.model.dto.request.MarketPageSectionRequest;
+import com.ezbuy.settingservice.model.dto.response.SearchMarketPageSectionResponse;
 import com.ezbuy.core.model.response.DataResponse;
 import reactor.core.publisher.Mono;
 

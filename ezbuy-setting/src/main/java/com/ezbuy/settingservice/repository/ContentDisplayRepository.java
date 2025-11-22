@@ -1,8 +1,8 @@
 package com.ezbuy.settingservice.repository;
 
-import com.ezbuy.settingmodel.model.ContentDisplay;
-import com.ezbuy.settingmodel.model.News;
-import com.ezbuy.settingmodel.model.Services;
+import com.ezbuy.settingservice.model.entity.ContentDisplay;
+import com.ezbuy.settingservice.model.entity.News;
+import com.ezbuy.settingservice.model.entity.Services;
 import java.util.List;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
