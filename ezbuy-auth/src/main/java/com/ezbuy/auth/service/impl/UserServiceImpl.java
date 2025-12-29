@@ -10,6 +10,7 @@ import com.ezbuy.auth.model.entity.UserProfileEntity;
 import com.ezbuy.auth.config.KeycloakProvider;
 import com.ezbuy.auth.repository.UserRepository;
 import com.ezbuy.auth.service.UserService;
+import com.ezbuy.core.config.properties.KeycloakProperties;
 import com.ezbuy.core.constants.ErrorCode;
 import com.ezbuy.core.constants.Regex;
 import com.ezbuy.core.exception.BusinessException;
@@ -25,7 +26,6 @@ import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -37,9 +37,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final KeycloakProvider kcProvider;
-
-    @Value("${keycloak.realm}")
-    public String realm;
+    private final KeycloakProperties keycloakProperties;
 
     @Override
     public Mono<Optional<UserProfileEntity>> getUserProfile() {
@@ -76,8 +74,7 @@ public class UserServiceImpl implements UserService {
                             return userProfile;
                         })
                         .flatMap(userRepository::save))
-                .switchIfEmpty(
-                        Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "query.user.not.found")));
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "query.user.not.found")));
     }
 
     @Override
@@ -90,13 +87,15 @@ public class UserServiceImpl implements UserService {
             return Flux.error(new BusinessException(ErrorCode.INVALID_PARAMS, "array.limit"));
         }
         UsersResource usersResource = kcProvider.getRealmResource().users();
-        return Flux.fromIterable(unixUserIds).map(userId -> mappingUserContract(userId, usersResource));
+        return Flux.fromIterable(unixUserIds)
+                .map(userId -> mappingUserContract(userId, usersResource));
     }
 
     private UserContact mappingUserContract(UUID userId, UsersResource usersResource) {
         try {
-            String email =
-                    usersResource.get(userId.toString()).toRepresentation().getEmail();
+            String email = usersResource.get(userId.toString())
+                    .toRepresentation()
+                    .getEmail();
             return new UserContact(userId, email);
         } catch (Exception ex) {
             log.error("Get UserResource error {}", userId, ex);
@@ -125,12 +124,10 @@ public class UserServiceImpl implements UserService {
         if (size <= 0 || size > 500) {
             return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "size.invalid"));
         }
-
         int page = DataUtil.safeToInt(request.getPageIndex(), 1);
         if (page <= 0) {
             return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "page.invalid"));
         }
-
         String sort = DataUtil.safeToString(request.getSort(), "-createAt");
         request.setSort(sort);
         return findKeycloakUser(request.getName()).collectList().flatMap(kcUsers -> {
@@ -145,8 +142,10 @@ public class UserServiceImpl implements UserService {
                 return Mono.just(emptyResponse);
             }
             if (!DataUtil.isNullOrEmpty(request.getName())) {
-                request.setUserIds(
-                        kcUsers.stream().map(UserRepresentation::getId).collect(Collectors.toList()));
+                request.setUserIds(kcUsers.stream()
+                        .map(UserRepresentation::getId)
+                        .collect(Collectors.toList())
+                );
             }
             Flux<UserProfileDTO> userProfileFlux = userRepository
                     .queryUserProfile(request)
@@ -181,7 +180,9 @@ public class UserServiceImpl implements UserService {
      * @param name filter by name
      */
     public Flux<UserRepresentation> findKeycloakUser(String name) {
-        UsersResource usersResource = kcProvider.getInstance().realm(realm).users();
+        UsersResource usersResource = kcProvider.getInstance()
+                .realm(keycloakProperties.getRealm())
+                .users();
         return Flux.fromIterable(usersResource.list()).filter(userRepresentation -> {
             String fullName = getFullName(userRepresentation);
             return DataUtil.isNullOrEmpty(name) || fullName.toLowerCase().contains(name.trim().toLowerCase());
@@ -190,7 +191,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Mono<UserProfileDTO> getUserProfile(String id) {
-        UsersResource usersResource = kcProvider.getInstance().realm(realm).users();
+        UsersResource usersResource = kcProvider.getInstance()
+                .realm(keycloakProperties.getRealm())
+                .users();
         return userRepository
                 .findById(String.valueOf(UUID.fromString(id)))
                 .map(userProfile -> {
@@ -209,7 +212,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Mono<UserRepresentation> getEmailsByKeycloakUsername(String username) {
-        RealmResource resource = kcProvider.getInstance().realm(realm);
+        RealmResource resource = kcProvider.getInstance()
+                .realm(keycloakProperties.getRealm());
         return Flux.fromIterable(resource.users().search(username))
                 .collectList()
                 .mapNotNull(userRepresentations -> userRepresentations.stream()
