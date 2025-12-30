@@ -1,5 +1,5 @@
 [versions]
-com-google-code-gson-gson = "2.11.0"
+com-google-code-gson-gson = "2.13.2"
 com-sun-activation-jakarta-activation = "2.0.1"
 com-zaxxer-hikaricp = "5.1.0"
 commons-io-commons-io = "2.16.1"
