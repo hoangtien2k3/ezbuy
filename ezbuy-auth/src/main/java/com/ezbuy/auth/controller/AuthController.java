@@ -5,7 +5,6 @@ import com.ezbuy.auth.model.dto.request.ClientLogin;
 import com.ezbuy.auth.model.dto.request.ConfirmOTPRequest;
 import com.ezbuy.auth.model.dto.request.CreateAccount;
 import com.ezbuy.auth.model.dto.request.ForgotPasswordRequest;
-import com.ezbuy.auth.model.dto.request.GetActionLoginReportRequest;
 import com.ezbuy.auth.model.dto.request.LoginRequest;
 import com.ezbuy.auth.model.dto.request.LogoutRequest;
 import com.ezbuy.auth.model.dto.request.ProviderLogin;
@@ -13,7 +12,6 @@ import com.ezbuy.auth.model.dto.request.RefreshTokenRequest;
 import com.ezbuy.auth.model.dto.request.ResetPasswordRequest;
 import com.ezbuy.auth.model.dto.request.SignupRequest;
 import com.ezbuy.auth.model.dto.AccessToken;
-import com.ezbuy.auth.model.dto.response.GetActionLoginReportResponse;
 import com.ezbuy.auth.model.dto.response.GetTwoWayPasswordResponse;
 import com.ezbuy.auth.model.dto.response.Permission;
 import com.ezbuy.auth.model.entity.IndividualEntity;
@@ -26,17 +24,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-@Slf4j
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/v1/auth")
-@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
@@ -68,16 +64,6 @@ public class AuthController {
             @RequestParam(name = "clientId") String clientId) {
         return authService
                 .getPermission(clientId)
-                .map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
-    }
-
-    @GetMapping("/org-permissions")
-    public Mono<ResponseEntity<DataResponse<List<Permission>>>> getOrgPermission(
-            @RequestParam(name = "client_id", defaultValue = "ezbuy-client") String clientId,
-            @RequestParam(name = "organization_id", required = false) String organizationId,
-            @RequestParam(name = "id_no", required = false) String idNo) {
-        return authService
-                .getOrgPermission(clientId, idNo, organizationId)
                 .map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
     }
 
@@ -137,14 +123,6 @@ public class AuthController {
             @RequestParam(name = "username", required = false) String username) {
         return authService
                 .getTwoWayPassword(username)
-                .map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
-    }
-
-    @GetMapping("/action-login")
-    public Mono<ResponseEntity<DataResponse<GetActionLoginReportResponse>>> getActionLoginReport(
-            @RequestBody GetActionLoginReportRequest request) {
-        return authService
-                .getActionLoginReport(request)
                 .map(rs -> ResponseEntity.ok(new DataResponse<>("common.success", rs)));
     }
 

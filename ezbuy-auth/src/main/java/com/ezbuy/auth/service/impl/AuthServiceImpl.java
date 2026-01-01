@@ -5,7 +5,6 @@ import com.ezbuy.auth.model.dto.request.ConfirmOTPRequest;
 import com.ezbuy.auth.model.dto.request.CreateAccount;
 import com.ezbuy.auth.model.dto.request.CreateNotificationDTO;
 import com.ezbuy.auth.model.dto.request.ForgotPasswordRequest;
-import com.ezbuy.auth.model.dto.request.GetActionLoginReportRequest;
 import com.ezbuy.auth.model.dto.request.LoginRequest;
 import com.ezbuy.auth.model.dto.request.LogoutRequest;
 import com.ezbuy.auth.model.dto.request.NotiContentDTO;
@@ -16,19 +15,15 @@ import com.ezbuy.auth.model.dto.request.ResetPasswordRequest;
 import com.ezbuy.auth.model.dto.request.SignupRequest;
 import com.ezbuy.auth.model.entity.ActionLogEntity;
 import com.ezbuy.auth.model.entity.IndividualEntity;
-import com.ezbuy.auth.model.entity.PermissionPolicyEntity;
 import com.ezbuy.auth.model.entity.UserCredentialEntity;
 import com.ezbuy.auth.model.entity.UserOtpEntity;
 import com.ezbuy.auth.repository.ActionLogRepository;
-import com.ezbuy.auth.repository.IndOrgPermissionRepo;
 import com.ezbuy.auth.repository.IndividualRepository;
-import com.ezbuy.auth.repository.OrganizationRepo;
 import com.ezbuy.auth.repository.OtpRepository;
 import com.ezbuy.auth.repository.UserCredentialRepo;
 import com.ezbuy.auth.constants.AuthConstants;
 import com.ezbuy.auth.model.dto.AccessToken;
 import com.ezbuy.auth.model.dto.KeycloakErrorResponse;
-import com.ezbuy.auth.model.dto.response.GetActionLoginReportResponse;
 import com.ezbuy.auth.model.dto.response.GetTwoWayPasswordResponse;
 import com.ezbuy.auth.model.dto.response.Permission;
 import com.ezbuy.auth.client.KeyCloakClient;
@@ -48,18 +43,16 @@ import java.security.SecureRandom;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
-import org.keycloak.representations.idm.authorization.DecisionEffect;
-import org.keycloak.representations.idm.authorization.PolicyEvaluationRequest;
-import org.keycloak.representations.idm.authorization.PolicyEvaluationResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
@@ -68,13 +61,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 import reactor.util.function.Tuple2;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
 
     private final ObjectMapperUtil objectMapperUtil;
     private final KeyCloakClient keyCloakClient;
@@ -82,8 +75,6 @@ public class AuthServiceImpl implements AuthService {
     private final NotiServiceClient notiServiceClient;
     private final OtpRepository otpRepository;
     private final IndividualRepository individualRepository;
-    private final IndOrgPermissionRepo indOrgPermissionRepo;
-    private final OrganizationRepo organizationRepo;
     private final UserCredentialRepo userCredentialRepo;
     private final CipherManager cipherManager;
     private final ActionLogRepository actionLogRepository;
@@ -128,89 +119,6 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Mono<List<Permission>> getOrgPermission(String clientId, String idNo, String orgId) {
-        return SecurityUtils.getCurrentUser().flatMap(currentUser -> {
-            if (DataUtil.isNullOrEmpty(idNo) && DataUtil.isNullOrEmpty(orgId)) {
-                return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "org.define.not.exist"));
-            }
-            if (DataUtil.isNullOrEmpty(orgId) && !DataUtil.isNullOrEmpty(idNo)) {
-                return organizationRepo
-                        .findOrganizationByIdentify(AuthConstants.TenantType.ORGANIZATION, idNo)
-                        .flatMap(orgIdDb -> getPermission(clientId, orgIdDb, currentUser.getId()))
-                        .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "id.no.not.existed")));
-            } else {
-                return getPermission(clientId, orgId, currentUser.getId());
-            }
-        });
-    }
-
-    @Override
-    public Mono<List<Permission>> getPermission(String clientId, String orgId, String userId) {
-        return indOrgPermissionRepo.getOrgIds(userId).flatMap(orgNumber -> {
-            log.debug("Organization number for user {}: {}", userId, orgNumber);
-            if (orgNumber < 2) {
-                return getPermission(clientId);
-            }
-            return kcProvider
-                    .getClient(clientId)
-                    .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "client.not.existed")))
-                    .flatMap(client -> {
-                        PolicyEvaluationRequest policyEvaluationRequest = new PolicyEvaluationRequest();
-                        policyEvaluationRequest.setUserId(userId);
-                        policyEvaluationRequest.setEntitlements(false);
-                        Mono<PolicyEvaluationResponse> allPermissionsMono = Mono.fromCallable(() -> kcProvider
-                                        .getRealmResource()
-                                        .clients()
-                                        .get(client.getId())
-                                        .authorization()
-                                        .policies()
-                                        .evaluate(policyEvaluationRequest))
-                                .subscribeOn(Schedulers.boundedElastic());
-                        Mono<List<PermissionPolicyEntity>> orgPoliciesMono = indOrgPermissionRepo
-                                .getAllByUserId(orgId, userId)
-                                .collectList();
-                        return Mono.zip(allPermissionsMono, orgPoliciesMono)
-                                .map(tuple -> findOrgPermissions(tuple.getT1(), tuple.getT2()))
-                                .defaultIfEmpty(Collections.emptyList())
-                                .doOnError(err -> log.error("Error getting permissions for user {} and client {}: {}",
-                                        userId,
-                                        clientId,
-                                        err.getMessage())
-                                );
-                    });
-        });
-    }
-
-    private List<Permission> findOrgPermissions(
-            PolicyEvaluationResponse allPermissions, List<PermissionPolicyEntity> orgPermissionPolicies) {
-        if (allPermissions.getResults() == null) {
-            return Collections.emptyList();
-        }
-        Set<String> orgPolicyIdSet = orgPermissionPolicies.stream()
-                .map(PermissionPolicyEntity::getPolicyId)
-                .collect(Collectors.toSet());
-        return allPermissions.getResults().stream()
-                .filter(pe -> DecisionEffect.PERMIT.equals(pe.getStatus())
-                        && pe.getPolicies() != null
-                        && !pe.getPolicies().isEmpty())
-                .flatMap(pe -> pe.getPolicies().stream()
-                        .filter(policy -> isOrgPermit(policy.getAssociatedPolicies(), orgPolicyIdSet))
-                        .map(policy -> {
-                            var resource = pe.getResource();
-                            return new Permission(resource.getId(), resource.getName());
-                        })
-                        .limit(1))
-                .collect(Collectors.toList());
-    }
-
-    private boolean isOrgPermit(
-            List<PolicyEvaluationResponse.PolicyResultRepresentation> associatedPolicies, Set<String> policyIds) {
-        return associatedPolicies.stream()
-                .anyMatch(policy -> policyIds.contains(policy.getPolicy().getId())
-                        && DecisionEffect.PERMIT.equals(policy.getStatus()));
-    }
-
-    @Override
     @Transactional
     public Mono<UserOtpEntity> signUp(SignupRequest signupRequest) {
         String requestEmail = DataUtil.safeTrim(signupRequest.getEmail());
@@ -226,8 +134,8 @@ public class AuthServiceImpl implements AuthService {
                 otpValue,
                 Translator.toLocale("email.title.signup"),
                 AuthConstants.TemplateMail.SIGN_UP,
-                ReceiverDataDTO.builder().email(requestEmail).build(),
-                null);
+                ReceiverDataDTO.builder().email(requestEmail).build()
+        );
         return otpRepository.currentTimeDB().flatMap(localDateTime -> {
             UserOtpEntity otp = UserOtpEntity.builder()
                     .id(String.valueOf(UUID.randomUUID()))
@@ -247,7 +155,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private CreateNotificationDTO createNotificationDTO(
-            String subTitle, String title, String template, ReceiverDataDTO data, String externalData) {
+            String subTitle, String title, String template, ReceiverDataDTO data) {
         CreateNotificationDTO createNotificationDTO = new CreateNotificationDTO();
         createNotificationDTO.setSender(AuthConstants.RoleName.SYSTEM);
         createNotificationDTO.setSeverity(AuthConstants.Notification.SEVERITY);
@@ -255,7 +163,7 @@ public class AuthServiceImpl implements AuthService {
         createNotificationDTO.setNotiContentDTO(NotiContentDTO.builder()
                 .title(title)
                 .subTitle(subTitle)
-                .externalData(externalData)
+                .externalData(null)
                 .build());
         createNotificationDTO.setContentType(AuthConstants.Notification.CONTENT_TYPE);
         createNotificationDTO.setCategoryType(AuthConstants.Notification.CATEGORY_TYPE);
@@ -284,8 +192,8 @@ public class AuthServiceImpl implements AuthService {
                 ReceiverDataDTO.builder()
                         .userId(user.getId())
                         .email(requestEmail)
-                        .build(),
-                null);
+                        .build()
+        );
         return otpRepository
                 .currentTimeDB()
                 .flatMap(time -> {
@@ -300,13 +208,11 @@ public class AuthServiceImpl implements AuthService {
                             .expTime(time.plusMinutes(AuthConstants.Otp.EXP_MINUTE))
                             .type(AuthConstants.Otp.FORGOT_PASSWORD)
                             .build();
-                    AppUtils.runHiddenStream(otpRepository.disableOtp(
-                            requestEmail, AuthConstants.Otp.FORGOT_PASSWORD, AuthConstants.RoleName.SYSTEM));
+                    AppUtils.runHiddenStream(otpRepository.disableOtp(requestEmail, AuthConstants.Otp.FORGOT_PASSWORD, AuthConstants.RoleName.SYSTEM));
                     AppUtils.runHiddenStream(generateOtpAndSave(otpBuild));
                     return insertTransmission(createNotificationDTO, otpBuild);
                 })
-                .onErrorResume(throwable ->
-                        Mono.error(new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "noti.service.error")));
+                .onErrorResume(throwable -> Mono.error(new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "noti.service.error")));
     }
 
     private Mono<UserOtpEntity> insertTransmission(CreateNotificationDTO createNotificationDTO, UserOtpEntity userOtp) {
@@ -366,7 +272,6 @@ public class AuthServiceImpl implements AuthService {
                 .get(AuthConstants.RoleName.USER)
                 .toRepresentation();
         userResource.roles().realmLevel().add(Collections.singletonList(userRealmRole));
-        // get and add role 'user' for ezbuy-client
         String clientIdOfEzbuy = kcProvider
                 .getRealmResource()
                 .clients()
@@ -470,16 +375,6 @@ public class AuthServiceImpl implements AuthService {
                     LoginRequest loginRequest = new LoginRequest();
                     loginRequest.setUsername(tokenUser.getUsername());
                     loginRequest.setPassword(request.getOldPassword());
-                    // update individual
-                    Mono<IndividualEntity> updateIndividual = individualRepository
-                            .findByUsername(tokenUser.getUsername())
-                            .flatMap(individual -> {
-                                individual.setPasswordChange(true);
-                                individual.setNew(false);
-                                return individualRepository.save(individual);
-                            })
-                            .switchIfEmpty(Mono.error(new BusinessException(
-                                    ErrorCode.NOT_FOUND, Translator.toLocaleVi("individual.not.exits"))));
                     // update user credential
                     Mono<UserCredentialEntity> updateCredential = userCredentialRepo
                             .getUserCredentialByUserName(tokenUser.getUsername(), Constants.STATUS.ACTIVE)
@@ -514,7 +409,7 @@ public class AuthServiceImpl implements AuthService {
                                     ErrorCode.BAD_REQUEST,
                                     Translator.toLocaleVi("change-pass.old-password.invalid")));
                     // zip mono
-                    return Mono.zip(updateIndividual, getTokenInfo, updateCredential)
+                    return Mono.zip(getTokenInfo, updateCredential)
                             .map(Tuple2::getT2);
                 })
                 .flatMap(tokenUser -> {
@@ -642,17 +537,6 @@ public class AuthServiceImpl implements AuthService {
         log.setCreateAt(LocalDateTime.now());
         log.setIp(RequestUtils.getIpAddress(request));
         return actionLogRepository.save(log).map(rs -> true);
-    }
-
-    @Override
-    public Mono<GetActionLoginReportResponse> getActionLoginReport(GetActionLoginReportRequest request) {
-        if (DataUtil.isNullOrEmpty(request.getDateReport())) {
-            return Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "dateReport.not.empty"));
-        }
-        return actionLogRepository
-                .countLoginInOneDay(request.getDateReport(), AuthConstants.LOGIN)
-                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.INVALID_PARAMS, "action-log.login.not.found")))
-                .flatMap(rs -> Mono.just(GetActionLoginReportResponse.builder().loginCount(rs).build()));
     }
 
     @Override

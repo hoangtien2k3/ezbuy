@@ -14,8 +14,7 @@ public final class AuthConstants {
             Map.entry(LOGIN, Translator.toLocale("action.login")),
             Map.entry(CHANGE_PASSWORD, Translator.toLocale("action.change.password")),
             Map.entry(FORGOT_PASSWORD, Translator.toLocale("action.forgot.password")));
-
-    public static final String SUCCESS = "common.success";
+    
     public static final int STATUS_ACTIVE = 1;
     public static final int STATUS_INACTIVE = 0;
 
@@ -29,27 +28,11 @@ public final class AuthConstants {
     public static class TemplateMail {
         public static final String FORGOT_PASSWORD = "FORGOT_PASSWORD";
         public static final String SIGN_UP = "SIGN_UP";
-        public static final String CUSTOMER_ACTIVE_SUCCESS = "CUSTOMER_ACTIVE_SUCCESS";
-        public static final String CUSTOMER_REGISTER_SUCCESS = "CUSTOMER_REGISTER_SUCCESS";
-        public static final String EMPLOYEE_REGISTER_SUCCESS = "EMPLOYEE_REGISTER_SUCCESS";
-        public static final String ACCOUNT_ACTIVE = "ACCOUNT_ACTIVE";
-        public static final String SIGN_UP_PASSWORD = "SIGN_UP_PASSWORD";
-        public static final String VERIFY_ACCOUNT_SUCESS = "VERIFY_ACCOUNT_SUCESS";
-        public static final String NOTI_VERIFY_ACCOUNT = "NOTI_VERIFY_ACCOUNT";
-        public static final String CREATE_ACCOUNT_SUCCESS = "CREATE_ACCOUNT_SUCCESS";
-
-        public static final String CHANGE_PASSWORD_SUCCESS = "CHANGE_PASSWORD_SUCCESS";
-        public static final String APPROVE_ORDER_SUCCESS = "APPROVE_ORDER_SUCCESS";
-        public static final String APPROVE_ORDER_FAIL = "APPROVE_ORDER_FAIL";
-        public static final String NEED_APPROVE = "NEED_APPROVE";
-        public static final String VERIFY_IDENTIFY_REJECTED = "VERIFY_IDENTIFY_REJECTED";
     }
 
     public static final class Otp {
         public static final String REGISTER = "REGISTER";
         public static final String FORGOT_PASSWORD = "FORGOT_PASSWORD";
-        public static final String FORGOT_PASSWORD_CONTENT = "OTP for forgot password user";
-        public static final String REGISTER_CONTENT = "OTP for register user";
         public static final Integer EXP_MINUTE = 5;
         public static final Integer EXP_OTP_AM_MINUTE = 5;
     }
@@ -71,22 +54,8 @@ public final class AuthConstants {
         public static final String USER = "user";
     }
 
-    public static final class PERMISSION_TYPE {
-        public static final String ROLE = "ROLE";
-        public static final String GROUP = "GROUP";
-    }
-
-    public static final class TenantType {
-        public static final String ORGANIZATION = "ORGANIZATION";
-    }
-
     public static final class System {
         public static final String EZBUY = "EZBUY";
-    }
-
-    public static final class Field {
-        public static final String STATE = "state";
-        public static final String ORGANIZATION_ID = "organizationId";
     }
 
     public static final class OPTION_SET {

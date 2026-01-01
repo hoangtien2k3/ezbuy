@@ -9,14 +9,6 @@ import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Mono;
 
 public interface OtpRepository extends R2dbcRepository<UserOtpEntity, String> {
-    @Query("""
-            SELECT *
-            FROM user_otp uo
-            WHERE uo.email = :email
-              AND uo.type = :type
-              AND uo.status = :status
-            """)
-    Mono<UserOtpEntity> findForgotPasswordOtp(String email, String type, Integer status);
 
     @Query("""
             UPDATE user_otp

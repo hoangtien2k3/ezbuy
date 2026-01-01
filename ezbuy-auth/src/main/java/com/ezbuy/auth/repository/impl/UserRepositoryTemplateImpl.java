@@ -61,9 +61,7 @@ public class UserRepositoryTemplateImpl extends BaseTemplateRepository implement
         }
         if (!DataUtil.isNullOrEmpty(request.getCompanyName())) {
             builder.append("and company_name like concat('%', :companyName, '%') \n");
-            params.put(
-                    "companyName",
-                    SQLUtils.replaceSpecialDigit(request.getCompanyName().trim()));
+            params.put("companyName", SQLUtils.replaceSpecialDigit(request.getCompanyName().trim()));
         }
         if (!DataUtil.isNullOrEmpty(request.getPhoneNumber())) {
             builder.append("and phone like concat('%',:phone, '%') \n");
@@ -71,8 +69,7 @@ public class UserRepositoryTemplateImpl extends BaseTemplateRepository implement
         }
         if (!DataUtil.isNullOrEmpty(request.getTaxCode())) {
             builder.append("and tax_code like concat('%', :taxCode, '%') \n");
-            params.put(
-                    "taxCode", SQLUtils.replaceSpecialDigit(request.getTaxCode().trim()));
+            params.put("taxCode", SQLUtils.replaceSpecialDigit(request.getTaxCode().trim()));
         }
         if (!DataUtil.isNullOrEmpty(request.getProvinceCode())) {
             builder.append("and province_code like :provinceCode \n");

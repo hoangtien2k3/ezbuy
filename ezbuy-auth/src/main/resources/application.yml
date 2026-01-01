@@ -65,7 +65,7 @@ client:
   notification:
     internal-oauth: true
     address: "${NOTI_SERVICE_URL:http://localhost:7777/v1/noti/transmission}"
-    name: notiServiceClient
+    name: notification
     pool:
       max-size: 100
       max-pending-acquire: 100
@@ -74,7 +74,7 @@ client:
       connection: 1000
   setting:
     address: "${SETTING_SERVICE_URL:http://localhost:8081/}"
-    name: settingServiceClient
+    name: setting
 ---
 application:
   http-logging:

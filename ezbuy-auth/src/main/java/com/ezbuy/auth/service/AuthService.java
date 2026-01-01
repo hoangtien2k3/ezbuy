@@ -5,14 +5,12 @@ import com.ezbuy.auth.model.dto.request.ChangePasswordRequest;
 import com.ezbuy.auth.model.dto.request.ConfirmOTPRequest;
 import com.ezbuy.auth.model.dto.request.CreateAccount;
 import com.ezbuy.auth.model.dto.request.ForgotPasswordRequest;
-import com.ezbuy.auth.model.dto.request.GetActionLoginReportRequest;
 import com.ezbuy.auth.model.dto.request.LoginRequest;
 import com.ezbuy.auth.model.dto.request.LogoutRequest;
 import com.ezbuy.auth.model.dto.request.ProviderLogin;
 import com.ezbuy.auth.model.dto.request.RefreshTokenRequest;
 import com.ezbuy.auth.model.dto.request.ResetPasswordRequest;
 import com.ezbuy.auth.model.dto.request.SignupRequest;
-import com.ezbuy.auth.model.dto.response.GetActionLoginReportResponse;
 import com.ezbuy.auth.model.dto.response.GetTwoWayPasswordResponse;
 import com.ezbuy.auth.model.dto.response.Permission;
 import com.ezbuy.auth.model.entity.IndividualEntity;
@@ -38,16 +36,11 @@ public interface AuthService {
 
     Mono<List<Permission>> getPermission(String clientId);
 
-    Mono<List<Permission>> getOrgPermission(String clientId, String idNo, String orgId);
-
-    Mono<List<Permission>> getPermission(String clientId, String orgId, String userId);
-
     Mono<UserOtpEntity> signUp(SignupRequest signupRequest);
 
     Mono<UserOtpEntity> forgotPassword(ForgotPasswordRequest forgotPasswordRequest);
 
-    Mono<DataResponse<Object>> resetPassword(
-            ResetPasswordRequest resetPasswordRequest, ServerWebExchange serverWebExchange);
+    Mono<DataResponse<Object>> resetPassword(ResetPasswordRequest resetPasswordRequest, ServerWebExchange serverWebExchange);
 
     Mono<Void> changePassword(ChangePasswordRequest request, ServerWebExchange serverWebExchange);
 
@@ -57,10 +50,7 @@ public interface AuthService {
 
     Mono<GetTwoWayPasswordResponse> getTwoWayPassword(String request);
 
-    Mono<GetActionLoginReportResponse> getActionLoginReport(GetActionLoginReportRequest request);
-
-    Mono<DataResponse<Map<String, String>>> confirmOTP(
-            ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange);
+    Mono<DataResponse<Map<String, String>>> confirmOTP(ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange);
 
     Mono<DataResponse<String>> generateOtp(ConfirmOTPRequest confirmOTPRequest, ServerWebExchange serverWebExchange);
 }

@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface UserRepository extends R2dbcRepository<UserProfileEntity, String>, UserRepositoryTemplate {
+
     @Query(value = "select now()")
     Mono<LocalDateTime> currentTimeDb();
 }

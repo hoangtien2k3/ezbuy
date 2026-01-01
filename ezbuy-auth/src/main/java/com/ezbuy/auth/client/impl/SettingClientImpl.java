@@ -4,10 +4,8 @@ import com.ezbuy.auth.constants.AuthConstants;
 import com.ezbuy.auth.client.SettingClient;
 import com.ezbuy.core.client.BaseRestClient;
 import com.ezbuy.core.model.response.DataResponse;
-import com.ezbuy.core.util.Translator;
 
 import java.util.Optional;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
@@ -18,7 +16,6 @@ import reactor.core.publisher.Mono;
 
 import static com.ezbuy.core.client.BaseRestClient.typeOf;
 
-@Slf4j
 @Service
 @DependsOn("webClientFactory")
 public class SettingClientImpl implements SettingClient {
@@ -26,7 +23,7 @@ public class SettingClientImpl implements SettingClient {
     private final WebClient settingClient;
     private final BaseRestClient baseRestClient;
 
-    public SettingClientImpl(@Qualifier("settingServiceClient") WebClient settingClient,
+    public SettingClientImpl(@Qualifier("setting") WebClient settingClient,
                              BaseRestClient baseRestClient) {
         this.settingClient = settingClient;
         this.baseRestClient = baseRestClient;

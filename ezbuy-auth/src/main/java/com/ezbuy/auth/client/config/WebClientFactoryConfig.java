@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 public class WebClientFactoryConfig {
+
     private final KeycloakClientProperties keycloakClientProperties;
     private final NotiServiceProperties notiServiceProperties;
     private final SettingClientProperties settingClientProperties;

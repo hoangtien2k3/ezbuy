@@ -22,7 +22,7 @@ public class NotiServiceClientImpl implements NotiServiceClient {
     private final WebClient notiServiceClient;
     private final BaseRestClient baseRestClient;
 
-    public NotiServiceClientImpl(@Qualifier("notiServiceClient") WebClient notiServiceClient,
+    public NotiServiceClientImpl(@Qualifier("notification") WebClient notiServiceClient,
                                  BaseRestClient baseRestClient) {
         this.notiServiceClient = notiServiceClient;
         this.baseRestClient = baseRestClient;
