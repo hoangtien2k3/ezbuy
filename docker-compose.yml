@@ -95,59 +95,6 @@ services:
     networks:
       - ezbuy-network
 
-  logstash:
-    build:
-      context: ./docker/logstash/
-      args:
-        ELASTIC_VERSION: 8.15.0
-    container_name: logstash
-    volumes:
-      - ./docker/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
-      - ./docker/logstash/pipeline:/usr/share/logstash/pipeline:ro,Z
-    ports:
-      - "5044:5044"
-      - "50000:50000/tcp"
-      - "50000:50000/udp"
-      - "9600:9600"
-    environment:
-      LS_JAVA_OPTS: -Xms256m -Xmx256m
-      LOGSTASH_INTERNAL_PASSWORD: tienha@!@#
-    depends_on:
-      - elasticsearch
-    restart: unless-stopped
-    networks:
-      - ezbuy-network
-
-  kibana:
-    build:
-      context: ./docker/kibana/
-      args:
-        ELASTIC_VERSION: 8.15.0
-    container_name: kibana
-    volumes:
-      - ./docker/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
-    ports:
-      - "5601:5601"
-    environment:
-      KIBANA_SYSTEM_PASSWORD: tienha@!@#
-    depends_on:
-      - elasticsearch
-    restart: unless-stopped
-    networks:
-      - ezbuy-network
-
-  portainer:
-    image: portainer/portainer-ce:2.27.1
-    container_name: portainer
-    restart: unless-stopped
-    ports:
-      - "9999:9000"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - portainer:/data
-    networks:
-      - ezbuy-network
-
   consul:
     image: consul:1.15.4
     container_name: consul
