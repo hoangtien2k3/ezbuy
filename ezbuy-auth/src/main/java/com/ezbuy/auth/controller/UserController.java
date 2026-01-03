@@ -1,10 +1,10 @@
 package com.ezbuy.auth.controller;
 
 import com.ezbuy.auth.model.dto.UserProfileDTO;
-import com.ezbuy.auth.model.dto.request.QueryUserRequest;
-import com.ezbuy.auth.model.dto.request.UpdateUserRequest;
-import com.ezbuy.auth.model.dto.response.QueryUserResponse;
-import com.ezbuy.auth.model.dto.response.UserContact;
+import com.ezbuy.auth.model.request.QueryUserRequest;
+import com.ezbuy.auth.model.request.UpdateUserRequest;
+import com.ezbuy.auth.model.response.QueryUserResponse;
+import com.ezbuy.auth.model.response.UserContact;
 import com.ezbuy.auth.model.entity.UserProfileEntity;
 import com.ezbuy.auth.service.UserService;
 import com.ezbuy.core.constants.MessageConstant;

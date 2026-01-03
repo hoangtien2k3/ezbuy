@@ -1,7 +1,7 @@
 package com.ezbuy.auth.repository.impl;
 
 import com.ezbuy.auth.model.dto.UserProfileDTO;
-import com.ezbuy.auth.model.dto.request.QueryUserRequest;
+import com.ezbuy.auth.model.request.QueryUserRequest;
 import com.ezbuy.auth.model.entity.UserProfileEntity;
 import com.ezbuy.auth.repository.UserRepositoryTemplate;
 import com.ezbuy.core.repository.BaseTemplateRepository;

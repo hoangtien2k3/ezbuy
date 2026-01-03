@@ -2,10 +2,10 @@ package com.ezbuy.auth.service.impl;
 
 import com.ezbuy.auth.model.dto.PaginationDTO;
 import com.ezbuy.auth.model.dto.UserProfileDTO;
-import com.ezbuy.auth.model.dto.request.QueryUserRequest;
-import com.ezbuy.auth.model.dto.request.UpdateUserRequest;
-import com.ezbuy.auth.model.dto.response.QueryUserResponse;
-import com.ezbuy.auth.model.dto.response.UserContact;
+import com.ezbuy.auth.model.request.QueryUserRequest;
+import com.ezbuy.auth.model.request.UpdateUserRequest;
+import com.ezbuy.auth.model.response.QueryUserResponse;
+import com.ezbuy.auth.model.response.UserContact;
 import com.ezbuy.auth.model.entity.UserProfileEntity;
 import com.ezbuy.auth.config.KeycloakProvider;
 import com.ezbuy.auth.repository.UserRepository;

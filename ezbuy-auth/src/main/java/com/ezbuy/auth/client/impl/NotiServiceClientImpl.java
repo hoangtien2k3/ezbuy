@@ -1,6 +1,6 @@
 package com.ezbuy.auth.client.impl;
 
-import com.ezbuy.auth.model.dto.request.CreateNotificationDTO;
+import com.ezbuy.auth.model.request.CreateNotificationDTO;
 import com.ezbuy.auth.client.NotiServiceClient;
 import com.ezbuy.core.client.BaseRestClient;
 import com.ezbuy.core.model.response.DataResponse;
